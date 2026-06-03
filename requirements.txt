@@ -1,0 +1,40 @@
+# ============================================================
+# Cyber Attack Classification — Python dependencies
+# Tested on Python 3.10+.
+# Re-pin with `pip freeze > requirements.lock` after first install.
+# ============================================================
+
+# --- Core data + ML stack ---
+pandas>=2.0
+numpy>=1.24,<2.0          # SHAP / older sklearn lag on numpy 2.x
+scikit-learn>=1.3
+imbalanced-learn>=0.11
+pyarrow>=13.0              # parquet I/O
+
+# --- Visualization ---
+matplotlib>=3.7
+seaborn>=0.12
+
+# --- Explainable AI ---
+shap>=0.43
+
+# --- Dashboard ---
+streamlit>=1.28
+
+# --- Notebooks ---
+jupyterlab>=4.0
+ipykernel>=6.25
+notebook>=7.0
+
+# --- Persistence / configuration / logging ---
+joblib>=1.3
+pyyaml>=6.0
+python-json-logger>=2.0
+
+# --- Testing ---
+pytest>=7.4
+pytest-cov>=4.1
+
+# --- Lint / format (dev) ---
+ruff>=0.1
+black>=23.7

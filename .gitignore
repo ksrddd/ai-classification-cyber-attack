@@ -1,0 +1,80 @@
+# ============================================================
+# Cyber Attack Classification — .gitignore
+# ============================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.env
+.python-version
+*.egg-info/
+build/
+dist/
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# --- Test / coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+
+# --- Lint / format caches ---
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Data: never commit raw CICIDS2017 (multi-GB, license-restricted) ---
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+# data/sample/ IS committed — small stratified subset for tests + dashboard demo
+
+# --- Trained models (regenerable, often large) ---
+models/*.joblib
+models/*.pkl
+!models/.gitkeep
+
+# --- Generated outputs ---
+results/metrics/*.csv
+results/figures/*.png
+results/figures/*.pdf
+results/shap/*.png
+!results/metrics/.gitkeep
+!results/figures/.gitkeep
+!results/shap/.gitkeep
+reports/*.md
+!reports/.gitkeep
+
+# --- Logs ---
+logs/*.log
+logs/*.jsonl
+!logs/.gitkeep
+
+# --- Streamlit ---
+.streamlit/secrets.toml

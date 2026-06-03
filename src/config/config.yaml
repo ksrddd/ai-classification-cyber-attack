@@ -1,0 +1,148 @@
+# ============================================================
+# Cyber Attack Classification — runtime configuration
+# All hyperparameters, paths, and class lists live here.
+# Code reads via src.config.loader.load_config().
+# ============================================================
+
+project:
+  name: "cyber-attack-classification"
+  version: "0.1.0"
+  random_state: 42
+
+# ------------------------------------------------------------
+# Data
+# ------------------------------------------------------------
+data:
+  raw_dir:       "data/raw"
+  interim_dir:   "data/interim"
+  processed_dir: "data/processed"
+  sample_dir:    "data/sample"
+
+  # Must match src.config.constants.TARGET_LABELS.
+  target_labels:
+    - "BENIGN"
+    - "DoS Hulk"
+    - "PortScan"
+    - "FTP-Patator"
+
+  label_column: "Label"
+
+  # Minimum subset of CICIDS2017 CSVs needed for the 4 target classes.
+  # PortScan + DoS Hulk → Friday afternoon CSVs; FTP-Patator → Tuesday CSV.
+  required_files:
+    - "Tuesday-WorkingHours.pcap_ISCX.csv"
+    - "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+    - "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+
+  # Stratified row-subsample for memory-bound models (MLP, GridSearchCV).
+  # Set to null to use full data.
+  subsample_n: 200000
+
+# ------------------------------------------------------------
+# Preprocessing
+# ------------------------------------------------------------
+preprocessing:
+  test_size: 0.2
+  stratify: true
+  drop_duplicates: true
+  drop_inf: true
+  drop_na: true
+  scaler: "standard"           # "standard" | "minmax"
+  imbalance_strategy: "class_weight"  # "class_weight" | "smote" | "none"
+
+# ------------------------------------------------------------
+# Feature selection (Phase 5)
+# ------------------------------------------------------------
+feature_selection:
+  methods:
+    - "correlation"
+    - "random_forest_importance"
+    - "select_k_best"
+    - "rfe"
+  k_best: 30
+  rfe_n_features: 25
+  correlation_threshold: 0.95   # drop one of any pair above this
+
+# ------------------------------------------------------------
+# Cross-validation
+# ------------------------------------------------------------
+cv:
+  n_splits: 5
+  shuffle: true
+  scoring_primary: "f1_weighted"
+  scoring_secondary: "f1_macro"
+
+# ------------------------------------------------------------
+# Models — baseline hyperparameters + GridSearchCV grids
+# ------------------------------------------------------------
+models:
+  logistic_regression:
+    baseline:
+      max_iter: 1000
+      class_weight: "balanced"
+      n_jobs: -1
+    grid:
+      clf__C: [0.01, 0.1, 1.0, 10.0]
+      clf__penalty: ["l2"]
+      clf__solver: ["lbfgs"]
+
+  random_forest:
+    baseline:
+      n_estimators: 100
+      max_depth: null
+      class_weight: "balanced"
+      n_jobs: -1
+    grid:
+      clf__n_estimators: [100, 200]
+      clf__max_depth: [null, 20, 40]
+      clf__min_samples_split: [2, 5]
+
+  mlp:
+    baseline:
+      hidden_layer_sizes: [128, 64]
+      activation: "relu"
+      max_iter: 200
+      early_stopping: true
+    grid:
+      clf__hidden_layer_sizes: [[64], [128, 64], [128, 64, 32]]
+      clf__alpha: [0.0001, 0.001]
+      clf__learning_rate_init: [0.001, 0.01]
+
+# ------------------------------------------------------------
+# Evaluation
+# ------------------------------------------------------------
+evaluation:
+  metrics:
+    - "accuracy"
+    - "precision_weighted"
+    - "recall_weighted"
+    - "f1_weighted"
+    - "f1_macro"
+    - "roc_auc_ovr"
+    - "matthews_corrcoef"
+  save_formats: ["csv", "png", "md"]
+
+# ------------------------------------------------------------
+# SHAP
+# ------------------------------------------------------------
+shap:
+  explainer: "tree"           # tree | linear | kernel
+  background_samples: 100
+  analysis_samples: 500
+  top_k_features: 5
+
+# ------------------------------------------------------------
+# Dashboard
+# ------------------------------------------------------------
+dashboard:
+  title: "AI-Based Cyber Attack Classification"
+  page_icon: "shield"
+  default_model: "random_forest"
+
+# ------------------------------------------------------------
+# Logging
+# ------------------------------------------------------------
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+  file: "logs/pipeline.log"

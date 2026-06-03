@@ -1,0 +1,116 @@
+# ============================================================
+# Cyber Attack Classification — pyproject.toml
+# Project metadata + tool configuration (ruff, black, pytest).
+# ============================================================
+
+[project]
+name = "cyber-attack-classification"
+version = "0.1.0"
+description = "AI-Based Cyber Attack Classification System using CICIDS2017"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Sirachet Chotithakulanon", email = "66070191@kmitl.ac.th" },
+    { name = "Sukhum Ridmethakul",        email = "66070315@kmitl.ac.th" },
+]
+keywords = ["cybersecurity", "intrusion-detection", "machine-learning",
+            "CICIDS2017", "explainable-ai", "SHAP"]
+
+# Runtime deps mirror requirements.txt for `pip install -e .`
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24,<2.0",
+    "scikit-learn>=1.3",
+    "imbalanced-learn>=0.11",
+    "pyarrow>=13.0",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "shap>=0.43",
+    "streamlit>=1.28",
+    "joblib>=1.3",
+    "pyyaml>=6.0",
+    "python-json-logger>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.1",
+    "black>=23.7",
+    "jupyterlab>=4.0",
+    "ipykernel>=6.25",
+]
+
+[project.scripts]
+# `cyberml --stage train --model rf` will be wired in Phase 6.
+cyberml = "main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+# ------------------------------------------------------------
+# ruff — lint + import sort. Replaces flake8/isort/pylint.
+# ------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["notebooks", "data", "models", "results"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # bugbear
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "SIM", # simplify
+]
+ignore = [
+    "E501",  # line too long — black handles wrapping
+    "N803",  # allow X, X_train, X_test (ML convention)
+    "N806",  # allow X_train inside functions
+]
+
+# ------------------------------------------------------------
+# black — formatter
+# ------------------------------------------------------------
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+extend-exclude = '''
+/(
+    notebooks
+  | data
+  | models
+  | results
+)/
+'''
+
+# ------------------------------------------------------------
+# pytest
+# ------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "7.4"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html:results/coverage",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+markers = [
+    "slow: marks tests that take > 10s (deselect with '-m \"not slow\"')",
+    "integration: end-to-end pipeline tests",
+]
