@@ -60,11 +60,11 @@ models/*.joblib
 models/*.pkl
 !models/.gitkeep
 
-# --- Generated outputs ---
-results/metrics/*.csv
-results/figures/*.png
-results/figures/*.pdf
-results/shap/*.png
+# --- Generated outputs (everything under results/ is regenerable) ---
+results/metrics/*
+results/figures/*
+results/shap/*
+results/coverage/
 !results/metrics/.gitkeep
 !results/figures/.gitkeep
 !results/shap/.gitkeep

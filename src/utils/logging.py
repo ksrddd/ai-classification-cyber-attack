@@ -43,6 +43,17 @@ def configure_logging(
     if _CONFIGURED:
         return
 
+    # On Windows with a non-UTF-8 console codepage (e.g. Thai cp874),
+    # any non-ASCII character in a log message raises UnicodeEncodeError.
+    # Force stdout/stderr to UTF-8 with replacement on Python 3.7+ where
+    # ``reconfigure`` exists.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+
     root = logging.getLogger()
     root.setLevel(level)
 
@@ -54,6 +65,7 @@ def configure_logging(
 
     if log_file is not None:
         log_file.parent.mkdir(parents=True, exist_ok=True)
+        # encoding="utf-8" ensures the log file is portable across OS / locales.
         file_handler = logging.FileHandler(log_file, encoding="utf-8")
         file_handler.setFormatter(formatter)
         root.addHandler(file_handler)
