@@ -1,4 +1,4 @@
-"""EDA pipeline stage — loads raw data, runs EDA, prints + saves summary.
+"""EDA pipeline stage -- loads raw data, runs EDA, prints + saves summary.
 
 Invoked via ``python main.py --stage eda``.
 """
@@ -9,11 +9,16 @@ import json
 import logging
 from pathlib import Path
 
-from src.config.constants import FIGURES_DIR, METRICS_DIR
-from src.config.loader import load_config
+from src.config.constants import (
+    FIGURES_DIR,
+    MAPPED_LABEL_COLUMN,
+    METRICS_DIR,
+)
+from src.config.loader import get_classification_mode, load_config
 from src.data.eda import run_eda
+from src.data.label_mapping import add_mapped_column
 from src.data.loader import load_raw
-from src.features.cleaning import clean, filter_target_classes
+from src.features.cleaning import clean, drop_other_class
 from src.utils.io import ensure_dir
 
 logger = logging.getLogger(__name__)
@@ -32,23 +37,23 @@ def run(config_path: Path, raw_dir_override: Path | None = None) -> dict:
         ``data/sample/`` without modifying the config.
     """
     cfg = load_config(config_path)
-    target_labels = cfg["data"]["target_labels"]
+    mode = get_classification_mode(cfg)
+    drop_other = cfg["data"].get("drop_other_class", False)
 
-    if raw_dir_override is not None:
-        logger.info("Using raw_dir override: %s (ignoring required_files)", raw_dir_override)
-        df = load_raw(
-            raw_dir=raw_dir_override,
-            subsample_n=cfg["data"].get("subsample_n"),
-        )
-    else:
-        df = load_raw(
-            files=cfg["data"].get("required_files"),
-            subsample_n=cfg["data"].get("subsample_n"),
-        )
+    raw_dir = raw_dir_override if raw_dir_override is not None else Path(cfg["data"]["raw_dir"])
+    df = load_raw(
+        files=cfg["data"].get("required_files"),
+        raw_dir=raw_dir,
+        subsample_n=cfg["data"].get("subsample_n"),
+    )
     df = clean(df)
-    df = filter_target_classes(df, target_labels)
+    df = add_mapped_column(df, mode=mode)
+    if drop_other and mode == "multiclass":
+        df = drop_other_class(df, label_col=MAPPED_LABEL_COLUMN)
 
-    summary = run_eda(df, output_dir=FIGURES_DIR)
+    summary = run_eda(df, output_dir=FIGURES_DIR, label_col=MAPPED_LABEL_COLUMN)
+    summary["classification_mode"] = mode
+
     ensure_dir(METRICS_DIR)
     summary_path = METRICS_DIR / "eda_summary.json"
     with summary_path.open("w", encoding="utf-8") as f:

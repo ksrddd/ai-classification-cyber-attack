@@ -15,7 +15,7 @@ It is **not** a substitute for real data:
 
 It IS useful for:
 - making ``pytest`` green
-- running the dashboard's "Predict New CSV" page in demo mode
+- running the dashboard's Predict-New-CSV page in demo mode
 - driving the EDA pipeline before the real CSVs are downloaded
 
 Usage
@@ -37,15 +37,31 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.config.constants import RANDOM_STATE, SAMPLE_DIR, TARGET_LABELS  # noqa: E402
+from src.config.constants import RANDOM_STATE, SAMPLE_DIR  # noqa: E402
 from src.data.schema import EXPECTED_FEATURES  # noqa: E402
 
 # Class mix roughly mirrors CICIDS2017 imbalance (BENIGN dominant).
+# Labels here are the RAW CICIDS strings; the label-mapping module
+# normalizes them downstream. The Web Attack label uses the same 0x96
+# control byte the real CSVs ship with.
+_WEB_ATTACK_PREFIX = "Web Attack \x96 "
+
 CLASS_WEIGHTS: dict[str, float] = {
-    "BENIGN":       0.55,
-    "DoS Hulk":     0.25,
-    "PortScan":     0.15,
-    "FTP-Patator":  0.05,
+    "BENIGN":                              0.55,
+    "DoS Hulk":                            0.13,
+    "DDoS":                                0.08,
+    "PortScan":                            0.08,
+    "DoS GoldenEye":                       0.03,
+    "FTP-Patator":                         0.03,
+    "SSH-Patator":                         0.02,
+    "DoS slowloris":                       0.02,
+    "DoS Slowhttptest":                    0.02,
+    "Bot":                                 0.01,
+    _WEB_ATTACK_PREFIX + "Brute Force":    0.01,
+    _WEB_ATTACK_PREFIX + "XSS":            0.005,
+    _WEB_ATTACK_PREFIX + "Sql Injection":  0.003,
+    "Infiltration":                        0.002,
+    "Heartbleed":                          0.001,
 }
 
 
@@ -54,30 +70,32 @@ def generate(n_rows: int, seed: int = RANDOM_STATE) -> pd.DataFrame:
 
     Features are drawn from per-class log-normal distributions whose
     parameters are mildly class-dependent (so EDA + models have something
-    to learn) but kept simple — this is fixture data, not research data.
+    to learn) but kept simple -- this is fixture data, not research data.
     """
     rng = np.random.default_rng(seed)
-    # Per-class row counts via multinomial; ensures totals sum to n_rows exactly.
+    # Normalize weights (may not sum to 1.0 exactly).
     labels_array, weights = zip(*CLASS_WEIGHTS.items(), strict=True)
-    if set(labels_array) != set(TARGET_LABELS):
-        raise RuntimeError("CLASS_WEIGHTS labels diverged from TARGET_LABELS.")
-    counts = rng.multinomial(n_rows, weights)
+    weights_arr = np.array(weights, dtype=float)
+    weights_arr = weights_arr / weights_arr.sum()
+    counts = rng.multinomial(n_rows, weights_arr)
 
     rows: list[pd.DataFrame] = []
     for label, count in zip(labels_array, counts, strict=True):
-        rows.append(_synthesize_class(label, count, rng))
+        if count == 0:
+            continue
+        rows.append(_synthesize_class(label, int(count), rng))
     df = pd.concat(rows, axis=0, ignore_index=True)
 
     # Shuffle so labels aren't in blocks.
     df = df.sample(frac=1.0, random_state=seed).reset_index(drop=True)
 
     # Inject a few real-data quirks the cleaning step is supposed to fix:
-    # - a handful of ±Inf values in Flow Bytes/s
+    # - a handful of +/-Inf values in Flow Bytes/s
     # - a handful of NaN rows
     # - a small number of exact duplicate rows
     df = _inject_dirty_values(df, rng)
 
-    # Column-name leading whitespace bug — present in real CICIDS CSVs.
+    # Column-name leading whitespace bug -- present in real CICIDS CSVs.
     df = df.rename(columns={c: f" {c}" if c != "Label" else c for c in df.columns})
 
     return df
@@ -85,9 +103,7 @@ def generate(n_rows: int, seed: int = RANDOM_STATE) -> pd.DataFrame:
 
 def _synthesize_class(label: str, n: int, rng: np.random.Generator) -> pd.DataFrame:
     """Generate ``n`` rows for one class."""
-    # Class-specific multiplicative bias on each feature (deterministic per class).
-    bias = _class_bias_vector(label, len(EXPECTED_FEATURES), rng)
-
+    bias = _class_bias_vector(label, len(EXPECTED_FEATURES))
     base = rng.lognormal(mean=2.0, sigma=1.5, size=(n, len(EXPECTED_FEATURES)))
     base = base * bias
     df = pd.DataFrame(base, columns=list(EXPECTED_FEATURES))
@@ -95,7 +111,7 @@ def _synthesize_class(label: str, n: int, rng: np.random.Generator) -> pd.DataFr
     return df
 
 
-def _class_bias_vector(label: str, n_features: int, rng: np.random.Generator) -> np.ndarray:
+def _class_bias_vector(label: str, n_features: int) -> np.ndarray:
     """Deterministic per-class bias so each class has a distinct fingerprint."""
     label_seed = abs(hash(label)) % (2**32)
     class_rng = np.random.default_rng(label_seed)

@@ -1,12 +1,17 @@
-"""Tests for src.features.cleaning."""
+"""Tests for src.features.cleaning + src.data.label_mapping."""
 
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
 
-from src.config.constants import LABEL_COLUMN, TARGET_LABELS
-from src.features.cleaning import clean, filter_target_classes
+from src.config.constants import LABEL_COLUMN, MAPPED_LABEL_COLUMN
+from src.data.label_mapping import (
+    add_mapped_column,
+    map_to_binary,
+    map_to_multiclass,
+    normalize_label,
+)
+from src.features.cleaning import clean, drop_other_class, filter_target_classes
 
 
 def test_clean_strips_columns_and_drops_inf_na(synthetic_cicids_df) -> None:
@@ -15,14 +20,10 @@ def test_clean_strips_columns_and_drops_inf_na(synthetic_cicids_df) -> None:
 
     cleaned = clean(raw)
 
-    # 1. Column names stripped.
     assert not any(col.startswith(" ") for col in cleaned.columns)
-    # 2. No inf left.
     numeric = cleaned.select_dtypes(include=np.number)
     assert not np.isinf(numeric.to_numpy()).any()
-    # 3. No NaN left.
     assert cleaned.isna().sum().sum() == 0
-    # 4. Fewer rows than input (we injected NaN/Inf/duplicates).
     assert len(cleaned) < len(raw)
 
 
@@ -39,14 +40,57 @@ def test_clean_does_not_mutate_input(synthetic_cicids_df) -> None:
     assert list(synthetic_cicids_df.columns) == before_cols
 
 
-def test_filter_target_classes_keeps_only_allowed(cleaned_df) -> None:
-    out = filter_target_classes(cleaned_df, TARGET_LABELS)
-    assert set(out[LABEL_COLUMN].unique()) <= set(TARGET_LABELS)
+def test_normalize_label_strips_control_chars() -> None:
+    raw = "Web Attack \x96 Brute Force"
+    assert normalize_label(raw) == "web attack brute force"
 
 
-def test_filter_target_classes_drops_other(synthetic_cicids_df) -> None:
-    df = synthetic_cicids_df.copy()
-    df = df.rename(columns={c: c.strip() for c in df.columns})
-    df.loc[df.index[:5], LABEL_COLUMN] = "Heartbleed"  # not in TARGET_LABELS
-    out = filter_target_classes(df, TARGET_LABELS)
-    assert "Heartbleed" not in out[LABEL_COLUMN].unique()
+def test_map_to_multiclass_maps_all_real_labels() -> None:
+    cases = {
+        "BENIGN":                              "BENIGN",
+        "DoS Hulk":                            "DoS",
+        "DoS GoldenEye":                       "DoS",
+        "DoS slowloris":                       "DoS",
+        "DoS Slowhttptest":                    "DoS",
+        "DDoS":                                "DDoS",
+        "PortScan":                            "PortScan",
+        "Bot":                                 "Bot",
+        "FTP-Patator":                         "Brute Force",
+        "SSH-Patator":                         "Brute Force",
+        "Infiltration":                        "Infiltration",
+        "Heartbleed":                          "Heartbleed",
+        "Web Attack \x96 Brute Force":         "Web Attack",
+        "Web Attack \x96 XSS":                 "Web Attack",
+        "Web Attack \x96 Sql Injection":       "Web Attack",
+    }
+    for raw, expected in cases.items():
+        assert map_to_multiclass(raw) == expected, raw
+
+
+def test_map_to_multiclass_unknown_goes_to_other() -> None:
+    assert map_to_multiclass("CompletelyNewAttack") == "Other"
+    assert map_to_multiclass(None) == "Other"
+
+
+def test_map_to_binary_distinguishes_benign() -> None:
+    assert map_to_binary("BENIGN") == "Normal"
+    assert map_to_binary("DoS Hulk") == "Attack"
+    assert map_to_binary("Heartbleed") == "Attack"
+
+
+def test_add_mapped_column_creates_categorical(synthetic_cicids_df) -> None:
+    df = clean(synthetic_cicids_df)
+    out = add_mapped_column(df, mode="multiclass")
+    assert MAPPED_LABEL_COLUMN in out.columns
+    assert out[MAPPED_LABEL_COLUMN].dtype.name == "category"
+
+
+def test_filter_target_classes_drops_unwanted(cleaned_df) -> None:
+    keep = {"BENIGN", "DoS"}
+    out = filter_target_classes(cleaned_df, keep, label_col=MAPPED_LABEL_COLUMN)
+    assert set(out[MAPPED_LABEL_COLUMN].dropna().astype(object).unique()) <= keep
+
+
+def test_drop_other_class_removes_other_rows(cleaned_df) -> None:
+    out = drop_other_class(cleaned_df, label_col=MAPPED_LABEL_COLUMN)
+    assert "Other" not in out[MAPPED_LABEL_COLUMN].astype(object).unique()

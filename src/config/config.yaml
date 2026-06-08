@@ -1,13 +1,21 @@
 # ============================================================
-# Cyber Attack Classification — runtime configuration
+# Cyber Attack Classification -- runtime configuration
 # All hyperparameters, paths, and class lists live here.
 # Code reads via src.config.loader.load_config().
 # ============================================================
 
 project:
   name: "cyber-attack-classification"
-  version: "0.1.0"
+  version: "0.2.0"
   random_state: 42
+
+# ------------------------------------------------------------
+# Classification mode
+# ------------------------------------------------------------
+# "binary"     -> BENIGN vs Attack
+# "multiclass" -> 10-class CICIDS2017 grouping
+classification:
+  mode: "multiclass"
 
 # ------------------------------------------------------------
 # Data
@@ -18,42 +26,57 @@ data:
   processed_dir: "data/processed"
   sample_dir:    "data/sample"
 
-  # Must match src.config.constants.TARGET_LABELS.
-  target_labels:
+  # Target labels per mode. Must match src.config.constants.{BINARY,MULTICLASS}_LABELS.
+  binary_labels:
+    - "Normal"
+    - "Attack"
+
+  multiclass_labels:
     - "BENIGN"
-    - "DoS Hulk"
+    - "DoS"
+    - "DDoS"
     - "PortScan"
-    - "FTP-Patator"
+    - "Bot"
+    - "Web Attack"
+    - "Brute Force"
+    - "Infiltration"
+    - "Heartbleed"
+    - "Other"
 
   label_column: "Label"
+  mapped_label_column: "Label_mapped"
 
-  # Minimum subset of CICIDS2017 CSVs needed for the 4 target classes.
-  # PortScan + DoS Hulk → Friday afternoon CSVs; FTP-Patator → Tuesday CSV.
-  required_files:
-    - "Tuesday-WorkingHours.pcap_ISCX.csv"
-    - "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
-    - "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+  # null = load every *.csv under raw_dir. Override with an explicit list to
+  # restrict the training corpus (e.g. for quick experiments).
+  required_files: null
+
+  # Drop rows whose raw label maps to "Other" before training. Useful when
+  # you don't want a noisy catch-all bucket biasing the model.
+  drop_other_class: false
 
   # Stratified row-subsample for memory-bound models (MLP, GridSearchCV).
-  # Set to null to use full data.
-  subsample_n: 200000
+  # Set to null to use full data. Combined dataset is ~2.8M rows so a
+  # subsample is strongly recommended on a laptop.
+  subsample_n: 300000
 
 # ------------------------------------------------------------
 # Preprocessing
 # ------------------------------------------------------------
 preprocessing:
   test_size: 0.2
+  val_size: 0.2         # of (train + val); test is carved out first
   stratify: true
   drop_duplicates: true
   drop_inf: true
   drop_na: true
-  scaler: "standard"           # "standard" | "minmax"
+  scaler: "standard"    # "standard" | "minmax" | "robust"
   imbalance_strategy: "class_weight"  # "class_weight" | "smote" | "none"
 
 # ------------------------------------------------------------
 # Feature selection (Phase 5)
 # ------------------------------------------------------------
 feature_selection:
+  enabled: true
   methods:
     - "correlation"
     - "random_forest_importance"
@@ -62,6 +85,8 @@ feature_selection:
   k_best: 30
   rfe_n_features: 25
   correlation_threshold: 0.95   # drop one of any pair above this
+  # Which method's selected features feed the actual training pipeline.
+  primary_method: "random_forest_importance"
 
 # ------------------------------------------------------------
 # Cross-validation
@@ -73,40 +98,89 @@ cv:
   scoring_secondary: "f1_macro"
 
 # ------------------------------------------------------------
-# Models — baseline hyperparameters + GridSearchCV grids
+# Models -- baseline hyperparameters + GridSearchCV grids
 # ------------------------------------------------------------
 models:
-  logistic_regression:
-    baseline:
-      max_iter: 1000
-      class_weight: "balanced"
-      n_jobs: -1
-    grid:
-      clf__C: [0.01, 0.1, 1.0, 10.0]
-      clf__penalty: ["l2"]
-      clf__solver: ["lbfgs"]
-
   random_forest:
+    enabled: true
     baseline:
-      n_estimators: 100
+      n_estimators: 200
       max_depth: null
+      min_samples_split: 2
       class_weight: "balanced"
       n_jobs: -1
     grid:
-      clf__n_estimators: [100, 200]
+      clf__n_estimators: [100, 200, 400]
       clf__max_depth: [null, 20, 40]
       clf__min_samples_split: [2, 5]
 
+  xgboost:
+    enabled: true
+    baseline:
+      n_estimators: 300
+      max_depth: 8
+      learning_rate: 0.1
+      subsample: 0.9
+      colsample_bytree: 0.9
+      tree_method: "hist"
+      n_jobs: -1
+    grid:
+      clf__n_estimators: [200, 400]
+      clf__max_depth: [6, 8, 10]
+      clf__learning_rate: [0.05, 0.1]
+
+  lightgbm:
+    enabled: true
+    baseline:
+      n_estimators: 400
+      num_leaves: 63
+      learning_rate: 0.05
+      feature_fraction: 0.9
+      bagging_fraction: 0.9
+      bagging_freq: 5
+      class_weight: "balanced"
+      n_jobs: -1
+    grid:
+      clf__n_estimators: [300, 500]
+      clf__num_leaves: [31, 63, 127]
+      clf__learning_rate: [0.03, 0.05, 0.1]
+
+  catboost:
+    enabled: true
+    baseline:
+      iterations: 400
+      depth: 8
+      learning_rate: 0.05
+      auto_class_weights: "Balanced"
+      thread_count: -1
+      verbose: 0
+    grid:
+      clf__iterations: [300, 500]
+      clf__depth: [6, 8, 10]
+      clf__learning_rate: [0.03, 0.05, 0.1]
+
   mlp:
+    enabled: true
     baseline:
       hidden_layer_sizes: [128, 64]
       activation: "relu"
+      solver: "adam"
       max_iter: 200
       early_stopping: true
     grid:
       clf__hidden_layer_sizes: [[64], [128, 64], [128, 64, 32]]
       clf__alpha: [0.0001, 0.001]
       clf__learning_rate_init: [0.001, 0.01]
+
+# ------------------------------------------------------------
+# Hyperparameter tuning
+# ------------------------------------------------------------
+tuning:
+  enabled: true
+  # "grid" = GridSearchCV; "random" = RandomizedSearchCV (cheaper on big grids)
+  strategy: "random"
+  random_n_iter: 20
+  verbose: 1
 
 # ------------------------------------------------------------
 # Evaluation
@@ -117,8 +191,10 @@ evaluation:
     - "precision_weighted"
     - "recall_weighted"
     - "f1_weighted"
+    - "precision_macro"
+    - "recall_macro"
     - "f1_macro"
-    - "roc_auc_ovr"
+    - "roc_auc"
     - "matthews_corrcoef"
   save_formats: ["csv", "png", "md"]
 
@@ -126,10 +202,11 @@ evaluation:
 # SHAP
 # ------------------------------------------------------------
 shap:
-  explainer: "tree"           # tree | linear | kernel
-  background_samples: 100
-  analysis_samples: 500
-  top_k_features: 5
+  # tree-based models (RF/XGB/LGBM/CatBoost) -> TreeExplainer
+  # MLP -> KernelExplainer (slow, sampled)
+  background_samples: 200
+  analysis_samples: 1000
+  top_k_features: 10
 
 # ------------------------------------------------------------
 # Dashboard
@@ -138,6 +215,7 @@ dashboard:
   title: "AI-Based Cyber Attack Classification"
   page_icon: "shield"
   default_model: "random_forest"
+  default_mode: "multiclass"
 
 # ------------------------------------------------------------
 # Logging

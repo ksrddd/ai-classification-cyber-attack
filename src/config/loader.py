@@ -1,8 +1,8 @@
 """YAML config loader.
 
-Single entry point: ``load_config()`` returns a frozen dict-like object.
-Validates that critical keys exist; raises early with a clear message
-rather than letting a ``KeyError`` surface deep in a pipeline.
+Single entry point: ``load_config()`` returns a dict. Validates that
+critical keys exist and that the per-mode label lists in YAML agree
+with the source-of-truth tuples in ``src.config.constants``.
 """
 
 from __future__ import annotations
@@ -13,14 +13,29 @@ from typing import Any
 
 import yaml
 
-from src.config.constants import CONFIG_PATH, TARGET_LABELS
+from src.config.constants import (
+    BINARY_LABELS,
+    CLASSIFICATION_MODES,
+    CONFIG_PATH,
+    MULTICLASS_LABELS,
+)
 
 logger = logging.getLogger(__name__)
 
 # Top-level YAML keys we require. Missing any of these = misconfiguration.
 _REQUIRED_SECTIONS: tuple[str, ...] = (
-    "project", "data", "preprocessing", "cv", "models",
-    "evaluation", "shap", "dashboard", "logging",
+    "project",
+    "classification",
+    "data",
+    "preprocessing",
+    "feature_selection",
+    "cv",
+    "models",
+    "tuning",
+    "evaluation",
+    "shap",
+    "dashboard",
+    "logging",
 )
 
 
@@ -43,8 +58,8 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     FileNotFoundError
         If the config file is missing.
     ValueError
-        If a required section is absent or target_labels diverges from
-        ``constants.TARGET_LABELS``.
+        If a required section is absent or a label list diverges from
+        ``src.config.constants``.
     """
     cfg_path = Path(path) if path else CONFIG_PATH
     if not cfg_path.exists():
@@ -58,17 +73,41 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     return cfg
 
 
+def get_classification_mode(cfg: dict[str, Any]) -> str:
+    """Return the active classification mode from a loaded config."""
+    return cfg["classification"]["mode"]
+
+
+def get_active_target_labels(cfg: dict[str, Any]) -> tuple[str, ...]:
+    """Return the label tuple for the active classification mode."""
+    mode = get_classification_mode(cfg)
+    if mode == "binary":
+        return tuple(cfg["data"]["binary_labels"])
+    return tuple(cfg["data"]["multiclass_labels"])
+
+
 def _validate(cfg: dict[str, Any]) -> None:
     missing = [s for s in _REQUIRED_SECTIONS if s not in cfg]
     if missing:
         raise ValueError(f"config.yaml is missing required sections: {missing}")
 
-    # constants.TARGET_LABELS is the source of truth; config.yaml must agree.
-    yaml_labels = tuple(cfg["data"]["target_labels"])
-    if yaml_labels != TARGET_LABELS:
+    mode = cfg["classification"]["mode"]
+    if mode not in CLASSIFICATION_MODES:
         raise ValueError(
-            "config.yaml::data.target_labels diverges from "
-            "src.config.constants.TARGET_LABELS. "
-            f"YAML={yaml_labels}  CONST={TARGET_LABELS}. "
-            "Edit both to keep them in sync."
+            f"classification.mode={mode!r} is not in {CLASSIFICATION_MODES}"
+        )
+
+    yaml_binary = tuple(cfg["data"]["binary_labels"])
+    if yaml_binary != BINARY_LABELS:
+        raise ValueError(
+            "config.yaml::data.binary_labels diverges from constants.BINARY_LABELS. "
+            f"YAML={yaml_binary}  CONST={BINARY_LABELS}."
+        )
+
+    yaml_multi = tuple(cfg["data"]["multiclass_labels"])
+    if yaml_multi != MULTICLASS_LABELS:
+        raise ValueError(
+            "config.yaml::data.multiclass_labels diverges from "
+            "constants.MULTICLASS_LABELS. "
+            f"YAML={yaml_multi}  CONST={MULTICLASS_LABELS}."
         )

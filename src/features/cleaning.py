@@ -1,4 +1,4 @@
-"""Data cleaning — row-count-changing steps.
+"""Data cleaning -- row-count-changing steps.
 
 Why this lives OUTSIDE the sklearn Pipeline: these operations remove
 rows (drop NaN/Inf, drop duplicates), and sklearn transformers can't
@@ -16,7 +16,7 @@ from collections.abc import Iterable
 import numpy as np
 import pandas as pd
 
-from src.config.constants import LABEL_COLUMN
+from src.config.constants import LABEL_COLUMN, MAPPED_LABEL_COLUMN
 from src.data.schema import DUPLICATE_COLUMNS, clean_column_names
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ def clean(
     -----
     1. Strip column-name whitespace (idempotent).
     2. Drop CICIDS's literal duplicate column ``Fwd Header Length.1``.
-    3. Replace ``±inf`` with ``NaN`` so downstream code only sees one
+    3. Replace ``+/-inf`` with ``NaN`` so downstream code only sees one
        sentinel for "broken value".
     4. Drop rows with any ``NaN`` in feature columns.
     5. Drop exact duplicate rows.
@@ -65,13 +65,19 @@ def clean(
 def filter_target_classes(
     df: pd.DataFrame,
     labels: Iterable[str],
-    label_col: str = LABEL_COLUMN,
+    label_col: str = MAPPED_LABEL_COLUMN,
 ) -> pd.DataFrame:
     """Keep only rows whose label is in ``labels``.
 
-    Useful right after ``clean`` to discard attack classes the project
-    doesn't target. Logs per-class drop counts.
+    Default reads from the mapped-label column produced by
+    ``label_mapping.add_mapped_column``. Useful when you want to drop
+    the ``"Other"`` bucket or restrict to a specific subset.
     """
+    if label_col not in df.columns:
+        raise ValueError(
+            f"Column {label_col!r} not present. Did you call "
+            f"add_mapped_column() before filter_target_classes()?"
+        )
     allowed = set(labels)
     before = df[label_col].value_counts(dropna=False)
     mask = df[label_col].isin(allowed)
@@ -84,6 +90,39 @@ def filter_target_classes(
         sorted(allowed), dropped, before.sum(), after.sum(),
     )
     return out
+
+
+def drop_other_class(
+    df: pd.DataFrame,
+    label_col: str = MAPPED_LABEL_COLUMN,
+    other_value: str = "Other",
+) -> pd.DataFrame:
+    """Drop rows whose mapped label is ``"Other"``."""
+    if label_col not in df.columns:
+        return df
+    before = len(df)
+    out = df.loc[df[label_col].astype(object) != other_value].reset_index(drop=True)
+    if len(out) != before:
+        logger.info(
+            "Dropped %d rows mapped to %r (kept %d)",
+            before - len(out), other_value, len(out),
+        )
+    return out
+
+
+def split_features_and_label(
+    df: pd.DataFrame,
+    label_col: str = MAPPED_LABEL_COLUMN,
+) -> tuple[pd.DataFrame, pd.Series]:
+    """Return ``(X, y)`` ready for sklearn.
+
+    The raw ``LABEL_COLUMN`` is also dropped from X so the label never
+    leaks back into features.
+    """
+    drop_cols = [c for c in (LABEL_COLUMN, label_col) if c in df.columns]
+    X = df.drop(columns=drop_cols)
+    y = df[label_col].astype(object) if label_col in df.columns else df[LABEL_COLUMN]
+    return X, pd.Series(y, index=df.index, name=label_col)
 
 
 # ---------------------------------------------------------------------------
@@ -101,6 +140,8 @@ def _drop_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 def _replace_inf_with_nan(df: pd.DataFrame) -> pd.DataFrame:
     numeric = df.select_dtypes(include=np.number).columns
+    if len(numeric) == 0:
+        return df
     n_inf = int(np.isinf(df[numeric].to_numpy()).sum())
     if n_inf:
         logger.info("Replacing %d +/-Inf values with NaN", n_inf)

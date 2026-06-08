@@ -17,7 +17,8 @@ import pandas as pd  # noqa: E402
 import pytest  # noqa: E402
 
 from scripts.generate_sample import generate  # noqa: E402
-from src.features.cleaning import clean, filter_target_classes  # noqa: E402
+from src.data.label_mapping import add_mapped_column  # noqa: E402
+from src.features.cleaning import clean  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -30,15 +31,23 @@ def synthetic_cicids_df() -> pd.DataFrame:
     """Tiny synthetic CICIDS-shaped DataFrame.
 
     Column names INCLUDE the leading-space quirk so tests that exercise
-    ``clean_column_names`` have something to strip.
+    ``clean_column_names`` have something to strip. Labels include the
+    full CICIDS attack family with the 0x96 byte inside Web Attack labels.
     """
-    return generate(n_rows=400, seed=42)
+    return generate(n_rows=600, seed=42)
 
 
 @pytest.fixture(scope="session")
 def cleaned_df(synthetic_cicids_df) -> pd.DataFrame:
-    """Synthetic frame after cleaning. Used by encoder / pipeline tests."""
-    from src.config.constants import TARGET_LABELS
+    """Synthetic frame after cleaning + label mapping (multiclass)."""
     df = clean(synthetic_cicids_df)
-    df = filter_target_classes(df, TARGET_LABELS)
+    df = add_mapped_column(df, mode="multiclass")
+    return df
+
+
+@pytest.fixture(scope="session")
+def cleaned_binary_df(synthetic_cicids_df) -> pd.DataFrame:
+    """Synthetic frame after cleaning + label mapping (binary)."""
+    df = clean(synthetic_cicids_df)
+    df = add_mapped_column(df, mode="binary")
     return df

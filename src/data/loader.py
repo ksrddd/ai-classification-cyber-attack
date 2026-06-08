@@ -4,10 +4,11 @@ Reads one-or-many CSV files from ``data/raw/``, normalizes column names,
 validates schema, optionally row-subsamples (stratified on label), and
 returns a single concatenated DataFrame.
 
-Memory note: CICIDS Friday-Afternoon-DDos is ~225 MB on disk and grows
-to ~1.5 GB in pandas because every numeric column defaults to float64.
-We don't downcast here (would mask Inf bugs); cleaning + parquet
-serialisation cut the on-disk size later.
+Memory note: ``Wednesday-workingHours.pcap_ISCX.csv`` is ~215 MB on disk
+and expands to ~1.5 GB in pandas because every numeric column defaults
+to float64. The full 8-file corpus is ~2.8M rows. On a 16 GB laptop
+prefer ``subsample_n`` for development; the production training run can
+use the full corpus.
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.config.constants import LABEL_COLUMN, RAW_DIR, RANDOM_STATE
+from src.config.constants import LABEL_COLUMN, RANDOM_STATE, RAW_DIR
 from src.data.schema import clean_column_names, validate_schema
 
 logger = logging.getLogger(__name__)
@@ -35,13 +36,14 @@ def load_raw(
     Parameters
     ----------
     files
-        Explicit file list (names relative to ``raw_dir``). If ``None``,
-        loads every ``*.csv`` under ``raw_dir``.
+        Explicit file list (names relative to ``raw_dir``). If ``None`` or
+        empty, loads every ``*.csv`` under ``raw_dir`` -- the default for
+        the new pipeline so all 15 attack labels are represented.
     raw_dir
         Directory containing the CSVs.
     subsample_n
         If given, return a stratified row sample of this size on
-        ``LABEL_COLUMN``. Useful for development / MLP training.
+        ``LABEL_COLUMN``. Strongly recommended for development.
     validate_strict
         Forward to ``schema.validate_schema``. Strict mode treats
         schema drift as an error rather than a warning.
@@ -54,16 +56,15 @@ def load_raw(
     Raises
     ------
     FileNotFoundError
-        If no CSVs are found in ``raw_dir`` (likely cause: dataset not
-        downloaded yet).
+        If no CSVs are found in ``raw_dir`` (dataset not extracted).
     """
     raw_dir = Path(raw_dir)
     paths = _resolve_paths(files, raw_dir)
     if not paths:
         raise FileNotFoundError(
             f"No CSV files found in {raw_dir}. "
-            "Download CICIDS2017 from https://www.unb.ca/cic/datasets/ids-2017.html "
-            "and place the CSVs under data/raw/."
+            "Extract MachineLearningCSV.zip from "
+            "https://www.unb.ca/cic/datasets/ids-2017.html into data/raw/."
         )
 
     logger.info("Loading %d CSV file(s) from %s", len(paths), raw_dir)
@@ -81,20 +82,26 @@ def load_raw(
     return df
 
 
+def list_raw_files(raw_dir: Path = RAW_DIR) -> list[Path]:
+    """Return all CSV paths under ``raw_dir`` in sorted order."""
+    return sorted(Path(raw_dir).glob("*.csv"))
+
+
 def _resolve_paths(files: list[str] | None, raw_dir: Path) -> list[Path]:
-    if files is None:
-        return sorted(raw_dir.glob("*.csv"))
+    if not files:
+        return list_raw_files(raw_dir)
     return [raw_dir / f for f in files]
 
 
 def _read_one(path: Path) -> pd.DataFrame:
-    """Read a single CSV with CICIDS-aware options."""
+    """Read a single CICIDS CSV with format-aware options."""
     if not path.exists():
         raise FileNotFoundError(f"CICIDS CSV not found: {path}")
 
     logger.debug("Reading %s", path.name)
     # low_memory=False: forces pandas to read the whole column before
-    # inferring dtype, avoiding the mixed-type warnings CICIDS triggers.
+    # inferring dtype, avoiding mixed-type warnings CICIDS triggers.
+    # latin-1: tolerates the 0x96 byte inside Web Attack labels.
     df = pd.read_csv(path, low_memory=False, encoding="latin-1")
     logger.debug("  -> %s rows x %s cols", *df.shape)
     return df
@@ -105,20 +112,24 @@ def stratified_subsample(
     n: int,
     label_col: str = LABEL_COLUMN,
     random_state: int = RANDOM_STATE,
+    min_per_class: int = 1,
 ) -> pd.DataFrame:
     """Return ``n`` rows stratified on ``label_col``.
 
     Each class contributes ``n * class_freq`` rows (rounded), so the class
-    distribution of the subsample matches the original. If a class has
-    fewer rows than its quota, all of its rows are kept.
+    distribution of the subsample matches the original. Classes with fewer
+    rows than their quota contribute all their rows.
+
+    ``min_per_class`` ensures rare classes (Heartbleed = 11 rows) never
+    drop to zero when n is very small.
     """
     if n >= len(df):
         return df.copy()
 
     rng = np.random.default_rng(random_state)
     pieces: list[pd.DataFrame] = []
-    for label, group in df.groupby(label_col, sort=False):
-        quota = max(1, round(n * len(group) / len(df)))
+    for _label, group in df.groupby(label_col, sort=False):
+        quota = max(min_per_class, round(n * len(group) / len(df)))
         take = min(quota, len(group))
         idx = rng.choice(group.index.to_numpy(), size=take, replace=False)
         pieces.append(df.loc[idx])

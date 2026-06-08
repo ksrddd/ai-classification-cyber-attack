@@ -20,7 +20,7 @@ from matplotlib.patches import FancyBboxPatch
 # ---------------------------------------------------------------------------
 PROJECT_TITLE = "AI-Based Cyber Attack Classification"
 SUBTITLE = "Senior Project - KMITL Faculty of Information Technology"
-AUTHORS = "Sirachet Chotithakulanon (66070191) and Sukhum Ridmethakul (66070315)"
+AUTHORS = "Sirachet Chotthakunanan (66070191) and Sukhum Rudeemaetakul (66070315)"
 ADVISOR = "Asst. Prof. Dr. Prapan Pavarangkoon"
 
 PHASES = [
