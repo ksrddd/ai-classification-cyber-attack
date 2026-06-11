@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonus Features & Recommendations — CyberML Project</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --primary: #1e40af;
+    --primary-light: #dbeafe;
+    --success: #166534;
+    --success-light: #dcfce7;
+    --warning: #92400e;
+    --warning-light: #fef3c7;
+    --danger: #991b1b;
+    --danger-light: #fee2e2;
+    --neutral: #374151;
+    --border: #e5e7eb;
+    --bg: #f9fafb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #111827;
+    background: white;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 40px 60px;
+  }
+
+  /* ---- COVER ---- */
+  .cover {
+    text-align: center;
+    padding: 60px 0 50px;
+    border-bottom: 3px solid var(--primary);
+    margin-bottom: 50px;
+  }
+  .cover .tag {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: .05em;
+    margin-bottom: 20px;
+  }
+  .cover h1 { font-size: 28px; font-weight: 700; color: var(--primary); line-height: 1.3; margin-bottom: 8px; }
+  .cover h2 { font-size: 16px; font-weight: 400; color: #6b7280; margin-bottom: 30px; }
+  .cover .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .cover .meta-item { background: var(--bg); padding: 10px 16px; border-radius: 8px; }
+  .cover .meta-item .label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; }
+  .cover .meta-item .value { font-weight: 600; color: var(--neutral); }
+
+  /* ---- SECTIONS ---- */
+  h2.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    border-left: 5px solid var(--primary);
+    padding-left: 14px;
+    margin: 40px 0 20px;
+  }
+  h3.sub-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 24px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h3.sub-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+
+  p { margin-bottom: 10px; color: #374151; }
+
+  /* ---- CALLOUT BOXES ---- */
+  .callout {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-left: 4px solid;
+    font-size: 13.5px;
+  }
+  .callout.success { background: var(--success-light); border-color: #16a34a; }
+  .callout.warning { background: var(--warning-light); border-color: #d97706; }
+  .callout.info    { background: var(--primary-light);  border-color: var(--primary); }
+  .callout.danger  { background: var(--danger-light);   border-color: #dc2626; }
+  .callout strong  { font-weight: 700; }
+
+  /* ---- TABLES ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 20px;
+    font-size: 13px;
+  }
+  thead th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+  tbody tr:nth-child(even) { background: #f3f4f6; }
+  tbody td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* ---- BADGES ---- */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge.done     { background: var(--success-light); color: var(--success); }
+  .badge.proposal { background: #ede9fe; color: #5b21b6; }
+  .badge.bonus    { background: #fef9c3; color: #854d0e; }
+  .badge.todo     { background: #f1f5f9; color: #475569; }
+  .badge.high     { background: #fee2e2; color: #991b1b; }
+  .badge.medium   { background: #fef3c7; color: #92400e; }
+  .badge.low      { background: #f0fdf4; color: #166534; }
+  .badge.pass     { background: var(--success-light); color: var(--success); }
+  .badge.warn     { background: var(--warning-light); color: var(--warning); }
+
+  /* ---- STAT CARDS ---- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stat-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-card .num  { font-size: 28px; font-weight: 700; color: var(--primary); }
+  .stat-card .unit { font-size: 11px; color: #6b7280; }
+  .stat-card .desc { font-size: 12px; color: #374151; margin-top: 4px; }
+
+  /* ---- CODE ---- */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #0f172a;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    overflow-x: auto;
+    margin: 10px 0;
+  }
+
+  /* ---- COVERAGE BAR ---- */
+  .cov-row { display: flex; align-items: center; gap: 10px; margin: 5px 0; font-size: 13px; }
+  .cov-bar { flex: 1; background: #e5e7eb; border-radius: 4px; height: 10px; overflow: hidden; }
+  .cov-bar .fill { height: 100%; border-radius: 4px; }
+  .fill.high   { background: #16a34a; }
+  .fill.medium { background: #d97706; }
+  .fill.low    { background: #dc2626; }
+  .cov-pct { width: 42px; text-align: right; font-weight: 600; font-size: 12px; }
+  .cov-name { width: 260px; color: #374151; font-family: monospace; font-size: 12px; }
+
+  /* ---- RECOMMENDATION CARDS ---- */
+  .rec-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  .rec-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .rec-header .icon { font-size: 20px; }
+  .rec-header .title { font-weight: 700; color: #1f2937; flex: 1; }
+  .rec-body { padding: 14px 16px; }
+  .rec-body ul { padding-left: 20px; }
+  .rec-body li { margin-bottom: 6px; color: #374151; }
+
+  /* ---- PRINT ---- */
+  @media print {
+    body { padding: 20px; max-width: 100%; }
+    .no-print { display: none; }
+    h2.section-title { page-break-before: auto; }
+    table { page-break-inside: avoid; }
+    .rec-card { page-break-inside: avoid; }
+  }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 30px 0; }
+  .page-break { page-break-after: always; }
+  .toc-list { list-style: none; padding: 0; }
+  .toc-list li { padding: 6px 0; border-bottom: 1px dotted var(--border); display: flex; justify-content: space-between; }
+  .toc-list a { color: var(--primary); text-decoration: none; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- ========== COVER ========== -->
+<div class="cover">
+  <div class="tag">KMITL · IT Faculty · Senior Project 2569</div>
+  <h1>รายงาน Bonus Features<br>และข้อเสนอแนะการพัฒนา</h1>
+  <h2>AI-Based Attack Type Classification System from Network Log</h2>
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">นักศึกษา</div>
+      <div class="value">ศิรเชษฐ์ โชติฐากุลอนันต์</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">นักศึกษา</div>
+      <div class="value">สุขุม ฤดีเมธากุล</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">อาจารย์ที่ปรึกษา</div>
+      <div class="value">ผศ.ดร.ประพันธ์ ปวรางกูร</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Proposal อนุมัติ</div>
+      <div class="value">25 เมษายน 2569</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Dataset</div>
+      <div class="value">CICIDS2017</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">วันที่จัดทำ</div>
+      <div class="value">11 มิถุนายน 2569</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TOC ========== -->
+<h2 class="section-title">สารบัญ</h2>
+<ul class="toc-list">
+  <li><a href="#sec-test">1. ผลการรัน Test Suite</a><span>หน้า 1</span></li>
+  <li><a href="#sec-proposal">2. สรุป Proposal — ทำครบหรือยัง?</a><span>หน้า 2</span></li>
+  <li><a href="#sec-bonus">3. Bonus Features ที่ทำแล้ว (เกิน Proposal)</a><span>หน้า 3</span></li>
+  <li><a href="#sec-rec">4. ข้อเสนอแนะ — สิ่งที่สามารถพัฒนาต่อได้</a><span>หน้า 4</span></li>
+  <li><a href="#sec-conclusion">5. สรุปและ Priority Matrix</a><span>หน้า 5</span></li>
+</ul>
+
+<hr class="divider">
+
+<!-- ========== SECTION 1: TESTS ========== -->
+<div id="sec-test">
+<h2 class="section-title">1. ผลการรัน Test Suite</h2>
+
+<div class="callout success">
+  <strong>✅ ผ่านทั้งหมด: 61/61 tests passed</strong> — ไม่มี test ล้มเหลวแม้แต่ตัวเดียว<br>
+  รันด้วย: <code>.venv\Scripts\python.exe -m pytest tests/ -v --tb=short</code>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="num">61</div>
+    <div class="unit">tests</div>
+    <div class="desc">ทั้งหมด</div>
+  </div>
+  <div class="stat-card">
+    <div class="num" style="color:#16a34a">61</div>
+    <div class="unit">passed</div>
+    <div class="desc">ผ่าน</div>
+  </div>
+  <div class="stat-card">
+    <div class="num" style="color:#d97706">0</div>
+    <div class="unit">failed</div>
+    <div class="desc">ล้มเหลว</div>
+  </div>
+  <div class="stat-card">
+    <div class="num" style="color:#6b7280">3</div>
+    <div class="unit">warnings</div>
+    <div class="desc">คำเตือน (ไม่ใช่ error)</div>
+  </div>
+</div>
+
+<h3 class="sub-title">ผลแยกตาม Test File</h3>
+<table>
+  <thead>
+    <tr><th>Test File</th><th>จำนวน Tests</th><th>สถานะ</th><th>ครอบคลุมอะไร</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>test_config.py</code></td><td>8</td><td><span class="badge pass">✅ 8/8 passed</span></td><td>ค่า constants, config.yaml, RANDOM_STATE=42, label modes</td></tr>
+    <tr><td><code>test_data_loader.py</code></td><td>9</td><td><span class="badge pass">✅ 9/9 passed</span></td><td>โหลด CSV, schema validation, clean columns, stratified subsample</td></tr>
+    <tr><td><code>test_eda.py</code></td><td>4</td><td><span class="badge pass">✅ 4/4 passed</span></td><td>describe_dataset, สร้าง PNG plots, run_eda pipeline</td></tr>
+    <tr><td><code>test_evaluation.py</code></td><td>5</td><td><span class="badge pass">✅ 5/5 passed</span></td><td>compute_metrics keys, classification_report, confusion matrix shape, comparison sort</td></tr>
+    <tr><td><code>test_features.py</code></td><td>10</td><td><span class="badge pass">✅ 10/10 passed</span></td><td>label encoder, scaler pipeline, feature selector, validator</td></tr>
+    <tr><td><code>test_models.py</code></td><td>13</td><td><span class="badge pass">✅ 13/13 passed</span></td><td>model registry, aliases, abstract base, build pipeline สำหรับทุก 6 โมเดล, train+predict บน synthetic data</td></tr>
+    <tr><td><code>test_preprocessing.py</code></td><td>9</td><td><span class="badge pass">✅ 9/9 passed</span></td><td>cleaning, label normalization, multiclass/binary mapping, filter classes</td></tr>
+    <tr><td><code>test_utils.py</code></td><td>3</td><td><span class="badge pass">✅ 3/3 passed</span></td><td>seed, logging, ensure_dir, joblib roundtrip</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">คำเตือน (Warnings) — ไม่ใช่ Error</h3>
+<div class="callout warning">
+  <strong>⚠️ 3 warnings: "Glyph 150 missing from font Arial"</strong><br>
+  เกิดเฉพาะใน <code>test_eda.py</code> ตอนสร้างกราฟ PNG — เป็นปัญหาที่ Matplotlib บน Windows ไม่มี glyph สำหรับ dash character (–) ในฟอนต์ Arial<br>
+  <strong>ไม่กระทบผลลัพธ์ใดๆ</strong> ภาพออกมาถูกต้อง แค่ตัวอักษรบางตัวในชื่อ label อาจแสดงผลเพี้ยนเล็กน้อยบนกราฟ
+</div>
+
+<h3 class="sub-title">Coverage Report</h3>
+<p>Coverage รวมอยู่ที่ <strong>47%</strong> — ตัวเลขนี้ <strong>ปกติสำหรับโปรเจคนี้</strong> เพราะ pipeline modules ไม่ได้ unit-test แต่ถูกทดสอบผ่านการรัน pipeline จริง</p>
+
+<div style="margin: 10px 0;">
+  <div class="cov-row"><span class="cov-name">src/config/</span><div class="cov-bar"><div class="fill high" style="width:97%"></div></div><span class="cov-pct" style="color:#16a34a">97%</span></div>
+  <div class="cov-row"><span class="cov-name">src/data/eda.py</span><div class="cov-bar"><div class="fill high" style="width:98%"></div></div><span class="cov-pct" style="color:#16a34a">98%</span></div>
+  <div class="cov-row"><span class="cov-name">src/data/loader.py</span><div class="cov-bar"><div class="fill high" style="width:90%"></div></div><span class="cov-pct" style="color:#16a34a">90%</span></div>
+  <div class="cov-row"><span class="cov-name">src/features/cleaning.py</span><div class="cov-bar"><div class="fill high" style="width:89%"></div></div><span class="cov-pct" style="color:#16a34a">89%</span></div>
+  <div class="cov-row"><span class="cov-name">src/models/ (all models)</span><div class="cov-bar"><div class="fill high" style="width:100%"></div></div><span class="cov-pct" style="color:#16a34a">100%</span></div>
+  <div class="cov-row"><span class="cov-name">src/utils/</span><div class="cov-bar"><div class="fill high" style="width:95%"></div></div><span class="cov-pct" style="color:#16a34a">95%</span></div>
+  <div class="cov-row"><span class="cov-name">src/evaluation/metrics.py</span><div class="cov-bar"><div class="fill medium" style="width:76%"></div></div><span class="cov-pct" style="color:#d97706">76%</span></div>
+  <div class="cov-row"><span class="cov-name">src/data/label_mapping.py</span><div class="cov-bar"><div class="fill medium" style="width:80%"></div></div><span class="cov-pct" style="color:#d97706">80%</span></div>
+  <div class="cov-row"><span class="cov-name">src/evaluation/comparison.py</span><div class="cov-bar"><div class="fill low" style="width:37%"></div></div><span class="cov-pct" style="color:#dc2626">37%</span></div>
+  <div class="cov-row"><span class="cov-name">src/pipelines/ (ทั้งหมด)</span><div class="cov-bar"><div class="fill low" style="width:0%"></div></div><span class="cov-pct" style="color:#dc2626">0%</span></div>
+  <div class="cov-row"><span class="cov-name">src/explainability/shap_analyzer.py</span><div class="cov-bar"><div class="fill low" style="width:0%"></div></div><span class="cov-pct" style="color:#dc2626">0%</span></div>
+  <div class="cov-row"><span class="cov-name">src/inference/predictor.py</span><div class="cov-bar"><div class="fill low" style="width:0%"></div></div><span class="cov-pct" style="color:#dc2626">0%</span></div>
+</div>
+
+<div class="callout info">
+  <strong>ℹ️ ทำไม Pipelines มี Coverage 0%?</strong><br>
+  Pipeline modules (<code>train.py</code>, <code>evaluate.py</code>, <code>explain.py</code> ฯลฯ) เรียกผ่าน <code>python main.py --stage &lt;X&gt;</code> ซึ่งเป็น integration test ที่ต้องใช้ data จริง ไม่ใช่ unit test<br>
+  การรัน pipeline ครบทุก stage แล้ว → results/models มีไฟล์ครบ → ยืนยันว่า pipeline ทำงานได้จริง
+</div>
+</div>
+
+<hr class="divider page-break">
+
+<!-- ========== SECTION 2: PROPOSAL CHECKLIST ========== -->
+<div id="sec-proposal">
+<h2 class="section-title">2. สรุป Proposal — ทำครบหรือยัง?</h2>
+
+<div class="callout success">
+  <strong>✅ Proposal ทำครบทุก Phase แล้ว</strong> — อาจารย์ที่ปรึกษา ผศ.ดร.ประพันธ์ ปวรางกูร อนุมัติเมื่อ 25/4/69
+</div>
+
+<table>
+  <thead>
+    <tr><th>Phase</th><th>สิ่งที่ Proposal กำหนด</th><th>สถานะ</th><th>หลักฐาน</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Phase 1</strong><br>ศึกษาและเตรียมข้อมูล</td>
+      <td>ดาวน์โหลด dataset (CICIDS2017/UNSW-NB15), EDA, preprocessing, feature selection</td>
+      <td><span class="badge done">✅ ครบ</span></td>
+      <td><code>data/raw/</code> 8 CSV (~880 MB), <code>results/figures/</code> EDA plots, <code>data/processed/</code> train/val/test parquet</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 2</strong><br>พัฒนาโมเดล</td>
+      <td>Logistic Regression, Random Forest, Neural Network (MLP)</td>
+      <td><span class="badge done">✅ ครบ</span></td>
+      <td><code>models/logistic_regression.joblib</code> (9 KB), <code>random_forest.joblib</code> (30 MB), <code>mlp.joblib</code> (451 KB)</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 3</strong><br>ประเมินผลและเปรียบเทียบ</td>
+      <td>Accuracy, Precision, Recall, F1-score, Confusion Matrix, ตารางเปรียบเทียบ</td>
+      <td><span class="badge done">✅ ครบ</span></td>
+      <td><code>results/metrics/*.json</code>, <code>results/figures/confusion_matrix_*.png</code>, <code>reports/model_comparison.md</code></td>
+    </tr>
+    <tr>
+      <td><strong>Phase 4</strong><br>วิเคราะห์โมเดล</td>
+      <td>Feature importance หรือ SHAP</td>
+      <td><span class="badge done">✅ ครบ</span></td>
+      <td><code>results/shap/&lt;model&gt;/</code> SHAP plots ทุก class, <code>results/shap/shap_report.md</code></td>
+    </tr>
+    <tr>
+      <td><strong>Phase 5</strong><br>แสดงผลและสรุป</td>
+      <td>ตารางเปรียบเทียบ, กราฟ, "อาจพัฒนา dashboard"</td>
+      <td><span class="badge done">✅ ครบ</span></td>
+      <td>Streamlit dashboard 6 หน้า, <code>reports/model_comparison.md</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">ผลลัพธ์สรุป (Test Set, 56,957 rows)</h3>
+<table>
+  <thead>
+    <tr><th>Model</th><th>ประเภท</th><th>Accuracy</th><th>F1-weighted</th><th>F1-macro</th><th>หมายเหตุ</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Random Forest</strong></td><td><span class="badge proposal">Proposal</span></td><td>99.83%</td><td>0.9984</td><td>0.9456</td><td>ดีที่สุดใน 3 โมเดล proposal</td></tr>
+    <tr><td>MLP (Neural Network)</td><td><span class="badge proposal">Proposal</span></td><td>98.20%</td><td>0.9817</td><td>0.8065</td><td>อ่อนที่ Web Attack (F1=0.23)</td></tr>
+    <tr><td>Logistic Regression</td><td><span class="badge proposal">Proposal</span></td><td>85.09%</td><td>0.8927</td><td>0.5652</td><td>Linear ไม่พอสำหรับ non-linear attacks</td></tr>
+  </tbody>
+</table>
+</div>
+
+<hr class="divider page-break">
+
+<!-- ========== SECTION 3: BONUS ========== -->
+<div id="sec-bonus">
+<h2 class="section-title">3. Bonus Features ที่ทำแล้ว (เกิน Proposal)</h2>
+
+<div class="callout warning">
+  <strong>⚠️ หมายเหตุ:</strong> Features ในส่วนนี้ <strong>ไม่ได้อยู่ใน proposal ที่อนุมัติ</strong> — ทำเพิ่มเพื่อความสมบูรณ์ของโครงงาน ควรแจ้งอาจารย์ที่ปรึกษาเพื่อรับทราบ
+</div>
+
+<h3 class="sub-title">3.1 โมเดลเพิ่มเติม 3 ตัว</h3>
+<p>Proposal กำหนด 3 โมเดล แต่โครงงานเพิ่มอีก 3 ตัวเพื่อให้การเปรียบเทียบสมบูรณ์ยิ่งขึ้น</p>
+
+<table>
+  <thead>
+    <tr><th>Model</th><th>ประเภท</th><th>F1-weighted</th><th>F1-macro</th><th>เหตุผลที่เพิ่ม</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>LightGBM</strong></td>
+      <td><span class="badge bonus">Bonus</span></td>
+      <td>0.9989</td>
+      <td><strong>0.9643</strong> (ดีสุด)</td>
+      <td>Gradient boosting ที่เร็วและแม่นยำที่สุดในงาน tabular data</td>
+    </tr>
+    <tr>
+      <td><strong>XGBoost</strong></td>
+      <td><span class="badge bonus">Bonus</span></td>
+      <td>0.9989</td>
+      <td>0.9571</td>
+      <td>มาตรฐาน Kaggle competition, เปรียบเทียบกับ LightGBM ได้ดี</td>
+    </tr>
+    <tr>
+      <td><strong>CatBoost</strong></td>
+      <td><span class="badge bonus">Bonus</span></td>
+      <td>0.9975</td>
+      <td>0.9212</td>
+      <td>รองรับ categorical features โดยตรง, เปรียบเทียบ boosting library</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">3.2 SHAP สำหรับทุกโมเดล (ไม่ใช่แค่ตัวเดียว)</h3>
+<p>Proposal บอกให้วิเคราะห์ feature importance <em>ของโมเดล</em> — โครงงานทำ SHAP ครบทุก 6 โมเดล พร้อม per-class beeswarm plots</p>
+<table>
+  <thead>
+    <tr><th>โมเดล</th><th>Explainer ที่ใช้</th><th>ผลลัพธ์</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Random Forest, XGBoost, LightGBM</td><td>TreeExplainer (exact, fast)</td><td>8 PNG + top_features.json ต่อโมเดล</td></tr>
+    <tr><td>MLP, Logistic Regression</td><td>KernelExplainer (model-agnostic)</td><td>8 PNG + top_features.json ต่อโมเดล</td></tr>
+    <tr><td>CatBoost</td><td>CatBoost native ShapValues (หลีกเลี่ยง segfault บน Windows)</td><td>8 PNG + top_features.json</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">3.3 Streamlit Dashboard 6 หน้า (Proposal บอก "อาจพัฒนา")</h3>
+<table>
+  <thead>
+    <tr><th>หน้า</th><th>ไฟล์</th><th>ฟีเจอร์</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Landing / Home</td><td><code>dashboard/app.py</code></td><td>KPI strip, status pills, navigation cards</td></tr>
+    <tr><td>1. Dataset Overview</td><td><code>pages/01_Dataset_Overview.py</code></td><td>Row counts, class balance, bar chart</td></tr>
+    <tr><td>2. EDA</td><td><code>pages/02_EDA.py</code></td><td>4 tabs: class distribution / missing values / correlation heatmap / feature distributions</td></tr>
+    <tr><td>3. Model Performance</td><td><code>pages/03_Model_Performance.py</code></td><td>Radar chart + confusion matrix + classification report ต่อโมเดล</td></tr>
+    <tr><td>4. Model Comparison</td><td><code>pages/04_Model_Comparison.py</code></td><td>Leaderboard + grouped bar chart + ดาวน์โหลด CSV</td></tr>
+    <tr><td>5. SHAP</td><td><code>pages/05_SHAP.py</code></td><td>Top features overall + per-class + beeswarm plot</td></tr>
+    <tr><td>6. Predict New CSV</td><td><code>pages/06_Predict_New_CSV.py</code></td><td><strong>Bonus พิเศษ</strong>: อัพโหลด CSV → validate schema → predict + probabilities</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">3.4 Metrics เพิ่มเติมนอกเหนือ Proposal</h3>
+<table>
+  <thead>
+    <tr><th>Metric</th><th>สูตร / คำอธิบาย</th><th>ประโยชน์</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>ROC AUC</strong></td><td>Area under ROC curve (one-vs-rest, macro)</td><td>วัด discrimination ของโมเดลโดยไม่ขึ้นกับ threshold</td></tr>
+    <tr><td><strong>Matthews Correlation Coefficient (MCC)</strong></td><td>Geometric mean ของ TP/TN/FP/FN</td><td>ดีกว่า F1 สำหรับ imbalanced multi-class มาก</td></tr>
+    <tr><td><strong>F1-macro vs F1-weighted</strong></td><td>Macro = เฉลี่ยเท่ากันทุก class</td><td>F1-macro เปิดเผย class น้อย (Bot) ที่ F1-weighted ซ่อนไว้</td></tr>
+    <tr><td><strong>Per-class breakdown</strong></td><td>Precision/Recall/F1 ต่อ attack type</td><td>เห็นว่าโมเดลอ่อนใน class ไหน</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">3.5 Infrastructure / Code Quality</h3>
+<table>
+  <thead>
+    <tr><th>สิ่งที่ทำ</th><th>รายละเอียด</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Unit Tests 61 ตัว</strong></td><td>ครอบคลุม config, data loading, preprocessing, features, models, evaluation, utils</td></tr>
+    <tr><td><strong>Coverage Report</strong></td><td>HTML report ที่ <code>results/coverage/index.html</code> — 47% overall</td></tr>
+    <tr><td><strong>Hyperparameter Tuning (Optuna)</strong></td><td><code>src/models/tuner.py</code> — Bayesian optimization สำหรับทุก 6 โมเดล (optional, <code>--skip-tuning</code> ข้ามได้)</td></tr>
+    <tr><td><strong>Inference Pipeline</strong></td><td><code>src/inference/predictor.py</code> — โหลด model + predict CSV ใหม่ได้ทันที</td></tr>
+    <tr><td><strong>Synthetic Test Data</strong></td><td><code>data/sample/synthetic_cicids.csv</code> — ใช้รัน smoke test โดยไม่ต้องใช้ data จริง 880 MB</td></tr>
+    <tr><td><strong>Documentation</strong></td><td><code>docs/</code> มี architecture, dataset_preparation, evaluation, training_workflow, SHAP explanation, testing guide (13 ขั้นตอน)</td></tr>
+  </tbody>
+</table>
+</div>
+
+<hr class="divider page-break">
+
+<!-- ========== SECTION 4: RECOMMENDATIONS ========== -->
+<div id="sec-rec">
+<h2 class="section-title">4. ข้อเสนอแนะ — สิ่งที่สามารถพัฒนาต่อได้</h2>
+
+<div class="callout info">
+  <strong>ℹ️ หมายเหตุ:</strong> ข้อเสนอแนะทั้งหมดนี้ <strong>ยังไม่ได้ทำ</strong> และอยู่นอกขอบเขต proposal — ต้องได้รับอนุมัติจากอาจารย์ก่อนดำเนินการ
+</div>
+
+<div class="rec-card">
+  <div class="rec-header">
+    <span class="icon">⚖️</span>
+    <span class="title">A. แก้ปัญหา Class Imbalance</span>
+    <span class="badge high">สำคัญมาก</span>
+  </div>
+  <div class="rec-body">
+    <p><strong>ปัญหาปัจจุบัน:</strong> Bot มีแค่ 208 rows (0.07%) จาก 284,786 ทำให้ F1=0.66 ต่ำที่สุด ทุกโมเดลทำได้ไม่ดีกับ Bot</p>
+    <ul>
+      <li><strong>SMOTE (Synthetic Minority Oversampling Technique)</strong> — สร้าง synthetic samples สำหรับ class น้อย เช่น Bot, Web Attack → เพิ่ม F1 ของ minority classes</li>
+      <li><strong>ADASYN (Adaptive Synthetic Sampling)</strong> — คล้าย SMOTE แต่สร้าง samples มากขึ้นในบริเวณที่ classify ยาก</li>
+      <li><strong>Random Under Sampling</strong> — ลด BENIGN (2.2 ล้าน rows) ลงให้ balance กัน</li>
+      <li><strong>คาดว่า F1-macro จะเพิ่มจาก 0.9456 เป็น 0.96+</strong> สำหรับ Random Forest</li>
+    </ul>
+  </div>
+</div>
+
+<div class="rec-card">
+  <div class="rec-header">
+    <span class="icon">📊</span>
+    <span class="title">B. Cross-Dataset Evaluation</span>
+    <span class="badge high">สำคัญมาก</span>
+  </div>
+  <div class="rec-body">
+    <p><strong>ปัญหาปัจจุบัน:</strong> Train และ Test ใช้ dataset เดียวกัน (CICIDS2017) — ไม่รู้ว่า model generalize ข้าม dataset ได้แค่ไหน</p>
+    <ul>
+      <li><strong>UNSW-NB15</strong> (อยู่ใน proposal) — train บน CICIDS2017, test บน UNSW-NB15 ดู accuracy drop</li>
+      <li><strong>CICIDS2018</strong> — เป็น dataset รุ่นใหม่กว่า, attack patterns คล้ายกันแต่ traffic volume ต่างกัน</li>
+      <li>ผลลัพธ์นี้จะทำให้โครงงาน <strong>น่าเชื่อถือขึ้นมากในด้านวิชาการ</strong></li>
+    </ul>
+  </div>
+</div>
+
+<div class="rec-card">
+  <div class="rec-header">
+    <span class="icon">🧠</span>
+    <span class="title">C. โมเดลเพิ่มเติมเพื่อการเปรียบเทียบ</span>
+    <span class="badge medium">ปานกลาง</span>
+  </div>
+  <div class="rec-body">
+    <p>โมเดลที่ยังไม่ได้ทดลองและน่าสนใจ:</p>
+    <ul>
+      <li><strong>Decision Tree (CART เดี่ยว)</strong> — interpretable ที่สุด, สามารถ visualize decision rules ให้อาจารย์ดูได้, เหมาะสำหรับอธิบาย "โมเดลคิดยังไง"</li>
+      <li><strong>Extra Trees</strong> — คล้าย Random Forest แต่ randomize split มากกว่า, มักเร็วกว่าและ variance ต่ำกว่า</li>
+      <li><strong>Support Vector Machine (LinearSVC)</strong> — เปรียบเทียบ linear vs non-linear กับ Logistic Regression</li>
+      <li><strong>K-Nearest Neighbours</strong> — non-parametric, ดูว่า instance-based learning ได้ผลต่างกันไหม</li>
+    </ul>
+  </div>
+</div>
+
+<div class="rec-card">
+  <div class="rec-header">
+    <span class="icon">🔬</span>
+    <span class="title">D. Feature Engineering เพิ่มเติม</span>
+    <span class="badge medium">ปานกลาง</span>
+  </div>
+  <div class="rec-body">
+    <p>ตอนนี้ใช้ original 77 features จาก CICFlowMeter — สามารถสร้าง derived features:</p>
+    <ul>
+      <li><strong>Packet length ratios</strong> — Fwd/Bwd ratio, เพื่อจับ asymmetric attack patterns</li>
+      <li><strong>Flow duration bins</strong> — แบ่ง short/medium/long flows เป็น categorical</li>
+      <li><strong>TCP flag combinations</strong> — encode flag combination เป็น integer feature (SYN+FIN = scan pattern)</li>
+      <li><strong>Port classification</strong> — well-known (0-1023), registered (1024-49151), dynamic (&gt;49151)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="rec-card">
+  <div class="rec-header">
+    <span class="icon">🚀</span>
+    <span class="title">E. MLOps &amp; Deployment</span>
+    <span class="badge low">ระยะยาว</span>
+  </div>
+  <div class="rec-body">
+    <p>สำหรับ demo หรือ showcase ในอนาคต (เกิน scope โครงงานนี้มาก):</p>
+    <ul>
+      <li><strong>FastAPI REST API</strong> — <code>POST /predict</code> รับ JSON flow features → ส่งคืน attack type + probability</li>
+      <li><strong>Docker containerization</strong> — package ทั้ง API + model เป็น container เดียว</li>
+      <li><strong>MLflow Tracking</strong> — log experiments, compare model versions, model registry</li>
+      <li><strong>GitHub Actions CI/CD</strong> — รัน pytest + coverage check ทุกครั้งที่ push</li>
+    </ul>
+  </div>
+</div>
+
+<div class="rec-card">
+  <div class="rec-header">
+    <span class="icon">🔧</span>
+    <span class="title">F. แก้ไข Coverage ที่ต่ำ (ถ้าต้องการ)</span>
+    <span class="badge low">ทางเลือก</span>
+  </div>
+  <div class="rec-body">
+    <p>Pipeline modules มี 0% coverage — ถ้าต้องการเพิ่ม:</p>
+    <ul>
+      <li><strong>Integration tests</strong> — รัน pipeline แบบ end-to-end ใน pytest โดยใช้ <code>data/sample/synthetic_cicids.csv</code></li>
+      <li><strong>Mock tests สำหรับ SHAP</strong> — patch <code>shap.TreeExplainer</code> ใน test เพื่อหลีกเลี่ยงการโหลด model จริง</li>
+      <li>เป้าหมาย: เพิ่ม coverage จาก 47% → 70%+ โดยไม่ต้องใช้ data จริง 880 MB</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<hr class="divider page-break">
+
+<!-- ========== SECTION 5: CONCLUSION ========== -->
+<div id="sec-conclusion">
+<h2 class="section-title">5. สรุปและ Priority Matrix</h2>
+
+<h3 class="sub-title">สรุปสถานะโดยรวม</h3>
+
+<table>
+  <thead>
+    <tr><th>หมวด</th><th>รายการ</th><th>สถานะ</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Proposal Phase 1–5</td><td>ทำครบทุก Phase ตาม proposal</td><td><span class="badge done">✅ ครบ</span></td></tr>
+    <tr><td>Tests</td><td>61/61 tests ผ่าน ไม่มี failure</td><td><span class="badge done">✅ ผ่าน</span></td></tr>
+    <tr><td>Test Warning</td><td>Arial font glyph — ไม่กระทบผลลัพธ์</td><td><span class="badge warn">⚠️ Minor</span></td></tr>
+    <tr><td>Models จาก Proposal</td><td>LR, RF, MLP — ทุกตัว train เสร็จแล้ว</td><td><span class="badge done">✅ ครบ</span></td></tr>
+    <tr><td>Bonus Models</td><td>XGBoost, LightGBM, CatBoost</td><td><span class="badge bonus">⚠️ ต้องแจ้งอาจารย์</span></td></tr>
+    <tr><td>SHAP Analysis</td><td>ครบทุก 6 โมเดล, ทุก 7 class</td><td><span class="badge done">✅ ครบ</span></td></tr>
+    <tr><td>Dashboard</td><td>Streamlit 6 หน้า + Predict CSV</td><td><span class="badge done">✅ ครบ</span></td></tr>
+    <tr><td>Coverage</td><td>47% overall, Pipeline 0% (integration level)</td><td><span class="badge warn">⚠️ ยอมรับได้</span></td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">Priority Matrix: สิ่งที่แนะนำให้ทำต่อ</h3>
+
+<table>
+  <thead>
+    <tr><th>Priority</th><th>รายการ</th><th>ผลที่ได้</th><th>ความยาก</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="badge high">🔴 สูง</span></td>
+      <td>แจ้งอาจารย์เรื่อง XGBoost/LightGBM/CatBoost</td>
+      <td>ได้รับ formal approval, ไม่มีปัญหาตอน defense</td>
+      <td>ง่าย (แค่คุยกับอาจารย์)</td>
+    </tr>
+    <tr>
+      <td><span class="badge high">🔴 สูง</span></td>
+      <td>SMOTE สำหรับ Bot class (208 rows)</td>
+      <td>F1-macro เพิ่มขึ้น, ตอบคำถามเรื่อง imbalance ได้</td>
+      <td>ปานกลาง (~1-2 ชม.)</td>
+    </tr>
+    <tr>
+      <td><span class="badge medium">🟡 กลาง</span></td>
+      <td>Cross-dataset test บน UNSW-NB15</td>
+      <td>ยืนยัน generalization, น่าเชื่อถือทางวิชาการมากขึ้น</td>
+      <td>ปานกลาง (ต้อง download + preprocess dataset ใหม่)</td>
+    </tr>
+    <tr>
+      <td><span class="badge medium">🟡 กลาง</span></td>
+      <td>Decision Tree เดี่ยวเพื่อ visualization</td>
+      <td>อธิบาย "โมเดลคิดยังไง" ให้อาจารย์เห็นภาพได้</td>
+      <td>ง่าย (~30 นาที)</td>
+    </tr>
+    <tr>
+      <td><span class="badge low">🟢 ต่ำ</span></td>
+      <td>Integration tests สำหรับ pipeline</td>
+      <td>Coverage เพิ่มจาก 47% → 70%</td>
+      <td>ยาก (ต้องออกแบบ test ที่ไม่ต้องใช้ 880 MB data)</td>
+    </tr>
+    <tr>
+      <td><span class="badge low">🟢 ต่ำ</span></td>
+      <td>FastAPI + Docker</td>
+      <td>Demo production-ready deployment</td>
+      <td>ยาก (เกิน scope Senior Project)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="sub-title">Model Performance สุดท้าย (Reference)</h3>
+<table>
+  <thead>
+    <tr><th>Rank</th><th>Model</th><th>ประเภท</th><th>F1-weighted</th><th>F1-macro</th><th>Accuracy</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><strong>LightGBM</strong></td><td><span class="badge bonus">Bonus</span></td><td>0.9989</td><td><strong>0.9643</strong></td><td>99.89%</td></tr>
+    <tr><td>2</td><td>XGBoost</td><td><span class="badge bonus">Bonus</span></td><td>0.9989</td><td>0.9571</td><td>99.89%</td></tr>
+    <tr><td>3</td><td><strong>Random Forest</strong></td><td><span class="badge proposal">Proposal</span></td><td>0.9984</td><td>0.9456</td><td>99.83%</td></tr>
+    <tr><td>4</td><td>CatBoost</td><td><span class="badge bonus">Bonus</span></td><td>0.9975</td><td>0.9212</td><td>99.73%</td></tr>
+    <tr><td>5</td><td>MLP</td><td><span class="badge proposal">Proposal</span></td><td>0.9817</td><td>0.8065</td><td>98.20%</td></tr>
+    <tr><td>6</td><td>Logistic Regression</td><td><span class="badge proposal">Proposal</span></td><td>0.8927</td><td>0.5652</td><td>85.09%</td></tr>
+  </tbody>
+</table>
+
+<div class="callout success">
+  <strong>✅ สรุป:</strong> โครงงานทำงานได้จริงและครบ proposal ทุก phase แล้ว Test ผ่านทั้งหมด 61/61<br>
+  สิ่งที่ต้องทำก่อนนำเสนอ: <strong>(1)</strong> แจ้งอาจารย์เรื่อง bonus models 3 ตัว <strong>(2)</strong> พิจารณาทำ SMOTE เพื่อแก้ Bot F1=0.66
+</div>
+
+<br>
+<div style="text-align:center; color:#9ca3af; font-size:12px; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 30px;">
+  AI-Based Attack Type Classification System from Network Log · KMITL IT Faculty · Senior Project 2569<br>
+  ศิรเชษฐ์ โชติฐากุลอนันต์ (66070191) · สุขุม ฤดีเมธากุล (66070315)<br>
+  จัดทำโดย Claude Code · 11 มิถุนายน 2569
+</div>
+</div>
+
+<div class="no-print" style="position:fixed; bottom:20px; right:20px; background:var(--primary); color:white; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);" onclick="window.print()">
+  🖨️ Print / Save as PDF
+</div>
+
+</body>
+</html>

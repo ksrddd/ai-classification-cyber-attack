@@ -69,6 +69,19 @@ def run(config_path: Path, raw_dir_override: Path | None = None) -> dict:
     if drop_other and mode == "multiclass":
         df = drop_other_class(df, label_col=mapped_col)
 
+    # Drop classes too small to support stratified 60/20/20 split + 5-fold CV.
+    # Heartbleed has 11 rows in full CICIDS2017 and often subsamples to <5.
+    min_per_class = cfg["preprocessing"].get("min_samples_per_class", 10)
+    if min_per_class > 0:
+        counts = df[mapped_col].value_counts()
+        rare = counts[counts < min_per_class].index.tolist()
+        if rare:
+            logger.warning(
+                "Dropping %d class(es) with < %d samples (cannot stratify): %s",
+                len(rare), min_per_class, rare,
+            )
+            df = df[~df[mapped_col].isin(rare)].reset_index(drop=True)
+
     distribution = label_distribution(df, mapped_col).to_dict()
     logger.info("Post-mapping label distribution: %s", distribution)
 

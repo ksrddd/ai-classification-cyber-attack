@@ -71,6 +71,10 @@ preprocessing:
   drop_na: true
   scaler: "standard"    # "standard" | "minmax" | "robust"
   imbalance_strategy: "class_weight"  # "class_weight" | "smote" | "none"
+  # Drop classes with fewer samples than this before splitting. Heartbleed
+  # has 11 rows in full CICIDS2017 and often subsamples to <5, which breaks
+  # stratified split. Set to 0 to disable.
+  min_samples_per_class: 10
 
 # ------------------------------------------------------------
 # Feature selection (Phase 5)
@@ -171,6 +175,17 @@ models:
       clf__hidden_layer_sizes: [[64], [128, 64], [128, 64, 32]]
       clf__alpha: [0.0001, 0.001]
       clf__learning_rate_init: [0.001, 0.01]
+
+  logistic_regression:
+    enabled: true
+    baseline:
+      C: 1.0
+      solver: "lbfgs"
+      class_weight: "balanced"
+      max_iter: 1000
+    grid:
+      clf__C: [0.1, 1.0, 10.0]
+      clf__solver: ["lbfgs", "saga"]
 
 # ------------------------------------------------------------
 # Hyperparameter tuning

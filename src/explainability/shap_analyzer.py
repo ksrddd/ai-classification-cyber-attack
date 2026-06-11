@@ -92,8 +92,19 @@ def analyze_model(
     )
 
     if is_tree:
-        explainer = shap.TreeExplainer(classifier)
-        shap_values = explainer.shap_values(X_a_scaled)
+        # shap.TreeExplainer + CatBoost can segfault on Windows with multiclass
+        # models (catboost issue #2474). Use CatBoost's native ShapValues API
+        # instead -- returns (n_samples, n_classes, n_features+1) where the
+        # last column on axis 2 is the bias term.
+        if classifier.__class__.__name__ == "CatBoostClassifier":
+            from catboost import Pool
+            raw = classifier.get_feature_importance(
+                Pool(X_a_scaled), type="ShapValues",
+            )
+            shap_values = np.transpose(raw[:, :, :-1], (1, 0, 2))
+        else:
+            explainer = shap.TreeExplainer(classifier)
+            shap_values = explainer.shap_values(X_a_scaled)
     else:
         n_bg = min(background_samples, len(X))
         bg_idx = rng.choice(len(X), size=n_bg, replace=False)
