@@ -153,7 +153,7 @@ def _per_class_metrics(
     f = f1_score(y_true, y_pred, average=None, labels=lbls, zero_division=0)
 
     out: dict[str, dict[str, float]] = {}
-    for name, pi, ri, fi in zip(names, p, r, f, strict=False):
+    for name, pi, ri, fi in zip(names, p, r, f, strict=True):
         out[str(name)] = {
             "precision": float(pi),
             "recall":    float(ri),

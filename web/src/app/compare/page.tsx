@@ -2,45 +2,42 @@ import { AppShell } from "@/components/shell/AppShell";
 import { Panel, PanelHeader } from "@/components/ui/Panel";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { Pill } from "@/components/ui/Pill";
-import { getCompare } from "@/lib/api";
-import { modelColor, modelLabel } from "@/lib/colors";
+import { getCompare, FORCE_OPTS } from "@/lib/api";
+import { modelColor, modelLabel, modelShort } from "@/lib/colors";
 
+// force-dynamic means this page always SSRs; pairing it with FORCE_OPTS on the
+// underlying fetch ensures the data is also fresh (no 5-min stale fetch cache).
 export const dynamic = "force-dynamic";
 
 const METRIC_COLS = [
-  { k: "accuracy",            l: "Accuracy"   },
-  { k: "f1_weighted",         l: "F1 (W)"     },
-  { k: "f1_macro",            l: "F1 (M)"     },
-  { k: "precision_weighted",  l: "Precision"  },
-  { k: "recall_weighted",     l: "Recall"     },
-  { k: "roc_auc",             l: "ROC-AUC"    },
-  { k: "matthews_corrcoef",   l: "MCC"        },
+  { k: "accuracy",           l: "Accuracy"  },
+  { k: "f1_weighted",        l: "F1 (W)"    },
+  { k: "f1_macro",           l: "F1 (M)"    },
+  { k: "precision_weighted", l: "Precision" },
+  { k: "recall_weighted",    l: "Recall"    },
+  { k: "roc_auc",            l: "ROC-AUC"   },
+  { k: "matthews_corrcoef",  l: "MCC"       },
 ];
 
 const BAR_METRICS = [
-  { k: "f1_weighted",   l: "F1 weighted",  color: "#22D3EE" },
-  { k: "f1_macro",      l: "F1 macro",     color: "#6366F1" },
-  { k: "accuracy",      l: "Accuracy",     color: "#3B82F6" },
-  { k: "roc_auc",       l: "ROC-AUC",      color: "#10B981" },
+  { k: "f1_weighted",  l: "F1 weighted", color: "#22D3EE" },
+  { k: "f1_macro",     l: "F1 macro",    color: "#6366F1" },
+  { k: "accuracy",     l: "Accuracy",    color: "#3B82F6" },
+  { k: "roc_auc",      l: "ROC-AUC",     color: "#10B981" },
 ];
 
-function modelShort(name: string): string {
-  const map: Record<string, string> = {
-    random_forest: "RF", xgboost: "XGB", lightgbm: "LGB",
-    catboost: "CB", mlp: "MLP", logistic_regression: "LR",
-  };
-  return map[name] ?? name.slice(0, 3).toUpperCase();
-}
+const medals = ["1st", "2nd", "3rd", "4th", "5th", "6th"];
 
 export default async function ComparePage() {
-  const compare = await getCompare().catch(() => null);
+  // FORCE_OPTS bypasses fetch cache — consistent with force-dynamic intent
+  const compare = await getCompare(FORCE_OPTS).catch(() => null);
 
   if (!compare) {
     return (
       <AppShell title="Model Comparison">
         <div className="py-16 text-center text-ink-2 text-[13px]">
           No comparison data. Run{" "}
-          <code className="font-mono text-[10.5px] py-0.5 px-[5px] rounded bg-white/[.06] ring-1 ring-white/10 text-ink-1 inline-flex items-center">
+          <code className="font-mono text-[10.5px] py-0.5 px-[5px] rounded bg-surface-elevated ring-1 ring-line-base text-ink-1 inline-flex items-center">
             python main.py --stage evaluate
           </code>
         </div>
@@ -49,14 +46,11 @@ export default async function ComparePage() {
   }
 
   const ranked = Object.entries(compare).sort(
-    ([, a], [, b]) =>
-      ((b as Record<string, number>).f1_weighted ?? 0) -
-      ((a as Record<string, number>).f1_weighted ?? 0),
+    ([, a], [, b]) => (b.f1_weighted ?? 0) - (a.f1_weighted ?? 0),
   );
 
   const [bestName, bestMetrics] = ranked[0];
   const bestColor = modelColor(bestName);
-  const medals = ["1st", "2nd", "3rd", "4th", "5th", "6th"];
 
   return (
     <AppShell title="Model Comparison">
@@ -70,9 +64,9 @@ export default async function ComparePage() {
 
         {/* KPI row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <KpiCard label="Best model"      value={modelLabel(bestName)}  color={bestColor} />
-          <KpiCard label="Best F1 (W)"     value={(bestMetrics as Record<string,number>).f1_weighted?.toFixed(4) ?? "—"} color={bestColor} />
-          <KpiCard label="Models compared" value={ranked.length}         color="#6366F1" />
+          <KpiCard label="Best model"      value={modelLabel(bestName)}              color={bestColor} />
+          <KpiCard label="Best F1 (W)"     value={bestMetrics.f1_weighted?.toFixed(4) ?? "—"} color={bestColor} />
+          <KpiCard label="Models compared" value={ranked.length}                     color="#6366F1" />
         </div>
 
         {/* Hero best-model strip */}
@@ -97,12 +91,12 @@ export default async function ComparePage() {
                 <Pill tone="brand" size="sm">★ champion</Pill>
               </div>
               <div className="mt-2 flex items-center gap-4 flex-wrap text-[11px] tabular-nums">
-                {["f1_weighted", "accuracy", "precision_weighted", "recall_weighted", "roc_auc"].map((k) => (
+                {(["f1_weighted", "accuracy", "precision_weighted", "recall_weighted", "roc_auc"] as const).map((k) => (
                   <span key={k} className="inline-flex items-center gap-1.5 text-ink-1">
                     <span className="h-1 w-1 rounded-full" style={{ background: bestColor }} />
                     <span className="text-ink-3">{k.replace(/_/g, " ")}</span>
                     <span className="text-ink-0 font-medium">
-                      {((bestMetrics as Record<string, number>)[k] ?? 0).toFixed(4)}
+                      {(bestMetrics[k] ?? 0).toFixed(4)}
                     </span>
                   </span>
                 ))}
@@ -129,13 +123,12 @@ export default async function ComparePage() {
               </thead>
               <tbody>
                 {ranked.map(([name, m], i) => {
-                  const metrics = m as Record<string, number>;
                   const color = modelColor(name);
                   const isFirst = i === 0;
                   return (
                     <tr
                       key={name}
-                      className={`border-b border-line-subtle last:border-0 hover:bg-white/[.02] transition ${isFirst ? "bg-brand-blue/[.03]" : ""}`}
+                      className={`border-b border-line-subtle last:border-0 hover:bg-surface-hover transition ${isFirst ? "bg-brand-blue/[.03]" : ""}`}
                     >
                       <td className="px-4 py-3">
                         <span
@@ -158,9 +151,14 @@ export default async function ComparePage() {
                         </span>
                       </td>
                       {METRIC_COLS.map((col) => (
-                        <td key={col.k} className="px-4 py-3 text-right tabular-nums"
-                            style={{ color: isFirst ? "#10B981" : "#A8AFC0" }}>
-                          {(metrics[col.k] ?? 0).toFixed(4)}
+                        <td
+                          key={col.k}
+                          className="px-4 py-3 text-right tabular-nums"
+                          /* Use theme tokens instead of hardcoded hex —
+                             old #10B981 / #A8AFC0 both failed in light mode */
+                          style={{ color: isFirst ? "var(--success-text)" : "var(--text-secondary)" }}
+                        >
+                          {((m[col.k] as number | undefined) ?? 0).toFixed(4)}
                         </td>
                       ))}
                     </tr>
@@ -183,12 +181,13 @@ export default async function ComparePage() {
                 </div>
                 <div className="space-y-2">
                   {ranked.map(([name, m]) => {
-                    const val = (m as Record<string, number>)[k] ?? 0;
+                    const val = (m[k] as number | undefined) ?? 0;
                     const color = modelColor(name);
                     return (
                       <div key={name} className="grid grid-cols-[140px_1fr_64px] gap-3 items-center">
                         <span className="text-[11.5px] text-ink-1 truncate">{modelLabel(name)}</span>
-                        <div className="h-1.5 rounded-full bg-white/[.04] overflow-hidden">
+                        {/* bg-surface-elevated replaces dark-only bg-white/[.04] */}
+                        <div className="h-1.5 rounded-full bg-surface-elevated overflow-hidden">
                           <div
                             className="h-full rounded-full"
                             style={{ width: `${val * 100}%`, background: color }}

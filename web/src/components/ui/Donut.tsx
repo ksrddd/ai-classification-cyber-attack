@@ -32,7 +32,7 @@ export function Donut({
         acc += d.pct;
         return (
           <circle
-            key={i}
+            key={d.name ?? i}  /* stable key — name is unique per class */
             cx={size / 2}
             cy={size / 2}
             r={R}

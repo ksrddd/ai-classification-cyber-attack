@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/shell/AppShell";
 import { getModels, predictCsv } from "@/lib/api";
-import { classColor, modelColor, modelLabel } from "@/lib/colors";
+import { classColor, modelColor, modelLabel, modelShort } from "@/lib/colors";
 import { Upload, FileText, AlertTriangle, ChevronRight } from "lucide-react";
 
 type PredictResult = {
@@ -14,15 +14,7 @@ type PredictResult = {
   usedModel: string;
 };
 
-const CLASS_PROB_COLS = [
-  "proba_BENIGN", "proba_Bot", "proba_Brute Force",
-  "proba_DDoS", "proba_DoS", "proba_PortScan", "proba_Web Attack",
-];
-
-const MODEL_SHORT: Record<string, string> = {
-  random_forest: "RF", xgboost: "XGB", lightgbm: "LGB",
-  catboost: "CB", mlp: "MLP", logistic_regression: "LR",
-};
+const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50 MB
 
 /* ── tiny helpers ──────────────────────────────────────────────────────── */
 
@@ -63,13 +55,19 @@ export default function PredictPage() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    getModels().then((d) => {
+    let cancelled = false;
+    getModels().catch(() => ({ models: [] as string[] })).then((d) => {
+      if (cancelled) return;
       setModels(d.models);
       if (d.models[0]) setSelected(d.models[0]);
     });
+    return () => { cancelled = true; };
   }, []);
 
-  const handleFile = (f: File) => { setFile(f); setResult(null); setError(""); };
+  const handleFile = (f: File) => {
+    if (f.size > MAX_FILE_BYTES) { setError(`File too large (max 50 MB)`); return; }
+    setFile(f); setResult(null); setError("");
+  };
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault(); setDragOver(false);
     const f = e.dataTransfer.files[0];
@@ -88,7 +86,7 @@ export default function PredictPage() {
 
   const total = result ? Object.values(result.class_counts).reduce((a, b) => a + b, 0) : 0;
   const modelChanged = result && result.usedModel !== selected;
-  const availableProbs = result ? CLASS_PROB_COLS.filter((c) => result.columns.includes(c)) : [];
+  const availableProbs = result ? result.columns.filter((c) => c.startsWith("proba_")) : [];
   const sortedClasses = result
     ? Object.entries(result.class_counts).sort(([, a], [, b]) => b - a)
     : [];
@@ -122,7 +120,7 @@ export default function PredictPage() {
                 <p className="text-[13px] font-semibold text-ink-0 mt-0.5">Select model</p>
               </div>
               <span className="font-mono text-[10px] text-ink-3 bg-surface-elevated border border-line-base rounded-sm px-2 py-0.5">
-                {MODEL_SHORT[selected] ?? "—"}
+                {modelShort(selected)}
               </span>
             </div>
             <div className="p-4 space-y-2">
@@ -135,7 +133,7 @@ export default function PredictPage() {
                     onClick={() => setSelected(name)}
                     className="w-full flex items-center gap-3 h-9 px-3 rounded-sm border text-left transition-colors"
                     style={{
-                      borderColor: isActive ? `${c}50` : "rgba(255,255,255,0.06)",
+                      borderColor: isActive ? `${c}50` : "var(--border-subtle)",
                       background: isActive ? `${c}0E` : "transparent",
                     }}
                   >
@@ -143,9 +141,9 @@ export default function PredictPage() {
                       className="h-5 w-5 rounded-sm grid place-items-center font-mono text-[9px] font-bold flex-shrink-0"
                       style={{ background: `${c}20`, color: c }}
                     >
-                      {MODEL_SHORT[name] ?? "??"}
+                      {modelShort(name)}
                     </span>
-                    <span className="flex-1 text-[12px] font-medium" style={{ color: isActive ? c : "#A8AFC0" }}>
+                    <span className="flex-1 text-[12px] font-medium" style={{ color: isActive ? c : "var(--text-secondary)" }}>
                       {modelLabel(name)}
                     </span>
                     {isActive && <ChevronRight size={12} style={{ color: c }} />}
@@ -169,7 +167,7 @@ export default function PredictPage() {
                 onClick={() => inputRef.current?.click()}
                 className="flex-1 min-h-[140px] border border-dashed rounded-sm flex flex-col items-center justify-center cursor-pointer transition-colors"
                 style={{
-                  borderColor: dragOver ? "#22D3EE" : file ? "#10B981" : "rgba(255,255,255,0.1)",
+                  borderColor: dragOver ? "#22D3EE" : file ? "#10B981" : "var(--border-base)",
                   background: dragOver ? "rgba(34,211,238,0.04)" : file ? "rgba(16,185,129,0.04)" : "transparent",
                 }}
               >
@@ -236,7 +234,7 @@ export default function PredictPage() {
             {/* Result header */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { label: "Model", value: MODEL_SHORT[result.usedModel] ?? result.usedModel, sub: modelLabel(result.usedModel), color: modelColor(result.usedModel) },
+                { label: "Model", value: modelShort(result.usedModel), sub: modelLabel(result.usedModel), color: modelColor(result.usedModel) },
                 { label: "Rows classified", value: result.n_rows.toLocaleString(), sub: file?.name ?? "", color: "#38BDF8" },
                 { label: "Classes detected", value: Object.keys(result.class_counts).length, sub: `of 7 total`, color: "#6366F1" },
                 { label: "Top class", value: topClass, sub: `${((result.class_counts[topClass] ?? 0) / total * 100).toFixed(1)}% of rows`, color: classColor(topClass) },
@@ -298,7 +296,7 @@ export default function PredictPage() {
                     </p>
                   </div>
                   <span className="text-[9.5px] font-mono text-ink-3 border border-line-base rounded-sm px-2 py-0.5 mt-0.5">
-                    {MODEL_SHORT[result.usedModel]}
+                    {modelShort(result.usedModel)}
                   </span>
                 </div>
                 <div className="overflow-x-auto">
@@ -338,7 +336,7 @@ export default function PredictPage() {
                                   style={{ background: classColor(label) }} />
                                 <span
                                   className="text-[11.5px] font-semibold"
-                                  style={{ color: isThreat ? classColor(label) : "#E6E9F2" }}
+                                  style={{ color: isThreat ? classColor(label) : "var(--text-primary)" }}
                                 >
                                   {label}
                                 </span>

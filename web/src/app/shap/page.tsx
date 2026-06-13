@@ -6,7 +6,7 @@ import { Panel, PanelHeader } from "@/components/ui/Panel";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { BarRow } from "@/components/ui/BarRow";
 import { Pill } from "@/components/ui/Pill";
-import { figureUrl, getModels, getShap } from "@/lib/api";
+import { shapFigureUrl, getModels, getShap } from "@/lib/api";
 import { classColor, modelColor, modelLabel } from "@/lib/colors";
 
 export default function ShapPage() {
@@ -16,25 +16,36 @@ export default function ShapPage() {
     overall: [string, number][];
     per_class: Record<string, [string, number][]>;
   } | null>(null);
+  const [loadingShap, setLoadingShap] = useState(false);
+  const [shapError, setShapError] = useState(false);
   const [cls, setCls] = useState("");
 
   useEffect(() => {
-    getModels().then((d) => {
+    let cancelled = false;
+    getModels().catch(() => ({ models: [] as string[] })).then((d) => {
+      if (cancelled) return;
       setModels(d.models);
       if (d.models[0]) setSelected(d.models[0]);
     });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
     if (!selected) return;
     setShap(null);
+    setLoadingShap(true);
+    setShapError(false);
     getShap(selected)
       .then((s) => {
         setShap(s);
+        setLoadingShap(false);
         const classes = Object.keys(s.per_class ?? {});
         if (classes[0]) setCls(classes[0]);
       })
-      .catch(() => setShap(null));
+      .catch(() => {
+        setLoadingShap(false);
+        setShapError(true);
+      });
   }, [selected]);
 
   const color = modelColor(selected);
@@ -71,8 +82,8 @@ export default function ShapPage() {
                   className="px-3 h-8 rounded-lg text-[12px] font-medium transition ring-1"
                   style={{
                     background: isActive ? `${c}22` : "transparent",
-                    color: isActive ? c : "#6C7488",
-                    borderColor: isActive ? `${c}55` : "rgba(255,255,255,0.08)",
+                    color: isActive ? c : "var(--text-secondary)",
+                    borderColor: isActive ? `${c}55` : "var(--border-base)",
                     boxShadow: isActive ? `0 0 12px ${c}33` : "none",
                   }}
                 >
@@ -95,11 +106,23 @@ export default function ShapPage() {
           <KpiCard label="Explainer"         value={explainer}             color="#F59E0B" />
         </div>
 
-        {!shap ? (
+        {shapError ? (
+          <Panel>
+            <div className="py-16 text-center text-ink-2 text-[12px]">
+              Failed to load SHAP data for{" "}
+              <span className="text-ink-1 font-medium">{modelLabel(selected)}</span>.
+              Run{" "}
+              <code className="font-mono text-[10.5px] py-0.5 px-[5px] rounded bg-surface-elevated ring-1 ring-line-base text-ink-1 inline-flex items-center">
+                python main.py --stage shap
+              </code>{" "}
+              first.
+            </div>
+          </Panel>
+        ) : !shap ? (
           <Panel>
             <div className="py-16 text-center text-ink-2 text-[12px]">
               <span className="inline-flex items-center gap-2">
-                {selected
+                {loadingShap
                   ? <><span className="h-1.5 w-1.5 rounded-full bg-info animate-pulseDot" /> Loading SHAP data…</>
                   : "Select a model above"
                 }
@@ -149,7 +172,7 @@ export default function ShapPage() {
                           className="px-2 py-0.5 rounded text-[10.5px] font-medium transition"
                           style={{
                             background: c === cls ? `${classColor(c)}22` : "transparent",
-                            color: c === cls ? classColor(c) : "#6C7488",
+                            color: c === cls ? classColor(c) : "var(--text-secondary)",
                             boxShadow:
                               c === cls ? `inset 0 0 0 1px ${classColor(c)}44` : "none",
                           }}
@@ -221,7 +244,7 @@ export default function ShapPage() {
                       <div key={feat} className="flex items-center gap-2.5 text-[11.5px]">
                         <span className="tabular-nums text-ink-3 w-5 text-right font-mono">{i + 1}</span>
                         <span className="flex-1 text-ink-1 truncate">{feat}</span>
-                        <div className="h-0.5 w-12 rounded-full bg-white/[.05] overflow-hidden">
+                        <div className="h-0.5 w-12 rounded-full bg-surface-elevated overflow-hidden">
                           <div
                             className="h-full rounded-full"
                             style={{ width: `${(val / maxOverall) * 100}%`, background: color }}
@@ -241,7 +264,7 @@ export default function ShapPage() {
             {classes.slice(0, 1).map((c) => {
               const slug =
                 c.replace(/[^a-z0-9]/gi, "_").replace(/_+/g, "_").replace(/^_|_$/g, "") || "class";
-              const png = figureUrl(`summary_${slug}.png`);
+              const png = shapFigureUrl(selected, `summary_${slug}.png`);
               return (
                 <Panel key={c}>
                   <PanelHeader eyebrow="Beeswarm" title={`SHAP summary plot — ${c}`} />
@@ -251,7 +274,8 @@ export default function ShapPage() {
                       alt={`SHAP beeswarm ${c}`}
                       className="w-full rounded-lg"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).parentElement!.style.display = "none";
+                        const el = e.target as HTMLImageElement;
+                        if (el.parentElement) el.parentElement.style.display = "none";
                       }}
                     />
                   </div>

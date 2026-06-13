@@ -55,7 +55,11 @@ def build_model_pipeline(
     SelectFromModel between scaler and clf if they want. The CV-safety
     guarantee still holds because every step is inside the Pipeline.
     """
-    steps: list[tuple[str, Any]] = [("scaler", build_scaler(scaler_kind))]
+    scaler = build_scaler(scaler_kind)
+    # Preserve DataFrame column names through the scaler so downstream
+    # estimators (LightGBM, XGBoost) don't warn about missing feature names.
+    scaler.set_output(transform="pandas")
+    steps: list[tuple[str, Any]] = [("scaler", scaler)]
     if extra_steps:
         steps.extend(extra_steps)
     steps.append(("clf", estimator))
@@ -75,14 +79,33 @@ def is_tree_based(estimator: BaseEstimator) -> bool:
     """Heuristic -- is this an estimator SHAP TreeExplainer can handle?
 
     Used by the SHAP layer to pick TreeExplainer (RF/XGBoost/LightGBM/
-    CatBoost) vs KernelExplainer (MLP, Logistic).
+    CatBoost) vs KernelExplainer (MLP, Logistic). Uses ``isinstance`` so
+    subclasses (e.g. ``BalancedXGBClassifier``) are recognised too.
     """
-    klass = type(estimator).__name__
-    return klass in {
-        "RandomForestClassifier",
-        "ExtraTreesClassifier",
-        "GradientBoostingClassifier",
-        "XGBClassifier",
-        "LGBMClassifier",
-        "CatBoostClassifier",
-    }
+    from sklearn.ensemble import (
+        ExtraTreesClassifier,
+        GradientBoostingClassifier,
+        RandomForestClassifier,
+    )
+
+    tree_types: tuple[type, ...] = (
+        RandomForestClassifier,
+        ExtraTreesClassifier,
+        GradientBoostingClassifier,
+    )
+    try:
+        from xgboost import XGBClassifier
+        tree_types = (*tree_types, XGBClassifier)
+    except ImportError:
+        pass
+    try:
+        from lightgbm import LGBMClassifier
+        tree_types = (*tree_types, LGBMClassifier)
+    except ImportError:
+        pass
+    try:
+        from catboost import CatBoostClassifier
+        tree_types = (*tree_types, CatBoostClassifier)
+    except ImportError:
+        pass
+    return isinstance(estimator, tree_types)

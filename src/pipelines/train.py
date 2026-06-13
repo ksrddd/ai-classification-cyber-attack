@@ -200,11 +200,26 @@ def _eval_on_val(pipeline, X_val, y_val, labels, class_names) -> dict:
     )
 
 
+# These models use all CPU cores internally (OpenMP/threadpool).
+# Running CV folds in parallel on top would oversubscribe the CPU,
+# turning the machine unresponsive. Run folds sequentially instead and
+# let each individual fit claim the whole machine.
+_INTERNALLY_PARALLEL = frozenset({
+    "random_forest", "xgboost", "lightgbm", "catboost", "stacking",
+})
+
+
 def _tune_one(name, wrapper, cfg, X, y) -> dict | None:
     grid = wrapper.grid
     if not grid:
         logger.info("No tuning grid for %s; skipping.", name)
         return None
+    # Tree/ensemble models already saturate all cores per fit.
+    # Non-parallel models (lr, mlp) can benefit from parallel CV folds.
+    if name in _INTERNALLY_PARALLEL:
+        cv_n_jobs = 1
+    else:
+        cv_n_jobs = cfg["tuning"].get("n_jobs", 4)
     result = tune_model(
         model_name=name,
         pipeline=wrapper.build(),
@@ -214,7 +229,7 @@ def _tune_one(name, wrapper, cfg, X, y) -> dict | None:
         n_iter=cfg["tuning"].get("random_n_iter", 20),
         cv_splits=cfg["cv"]["n_splits"],
         scoring=cfg["cv"]["scoring_primary"],
-        n_jobs=-1,
+        n_jobs=cv_n_jobs,
         verbose=cfg["tuning"].get("verbose", 1),
     )
     cv_path = METRICS_DIR / f"{name}_cv_results.csv"

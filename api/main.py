@@ -23,7 +23,7 @@ app = FastAPI(title="CyberML API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -122,6 +122,14 @@ def get_shap(name: str):
     if not p.exists():
         raise HTTPException(404, f"No SHAP for {name}")
     return json.loads(p.read_text())
+
+
+@app.get("/api/shap/{name}/figures/{filename}")
+def get_shap_figure(name: str, filename: str):
+    p = SHAP_DIR / name / filename
+    if not p.exists():
+        raise HTTPException(404, f"No SHAP figure {filename} for {name}")
+    return FileResponse(str(p))
 
 
 # ---------------------------------------------------------------------------

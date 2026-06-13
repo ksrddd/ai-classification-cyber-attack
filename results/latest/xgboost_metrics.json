@@ -1,0 +1,26 @@
+{
+  "model": "xgboost",
+  "accuracy": 0.9986000233329444,
+  "balanced_accuracy": 0.9836142149255789,
+  "f1_macro": 0.9777873363753989,
+  "f1_weighted": 0.9986114037812204,
+  "cv_f1_macro_mean": 0.9786594332405072,
+  "cv_f1_macro_std": 0.02001805154905807,
+  "cv_f1_macro_scores": [
+    0.9395690582428252,
+    0.9940443517253895,
+    0.9836814629955258,
+    0.983579449869796,
+    0.9924228433689996
+  ],
+  "label_shuffle_acc": 0.3806603223279612,
+  "label_shuffle_f1_macro": 0.09232795947902045,
+  "majority_baseline_acc": 0.8209863168947185,
+  "best_params": {
+    "clf__subsample": 1.0,
+    "clf__n_estimators": 800,
+    "clf__max_depth": 6,
+    "clf__learning_rate": 0.05
+  },
+  "near_perfect_flag": true
+}

@@ -1,14 +1,14 @@
 export const CLASS_COLORS: Record<string, string> = {
-  BENIGN:      "#10B981",
-  DoS:         "#EF4444",
-  DDoS:        "#F43F5E",
-  PortScan:    "#F59E0B",
-  Bot:         "#A855F7",
-  "Web Attack":"#EC4899",
+  BENIGN:       "#10B981",
+  DoS:          "#EF4444",
+  DDoS:         "#F43F5E",
+  PortScan:     "#F59E0B",
+  Bot:          "#A855F7",
+  "Web Attack": "#EC4899",
   "Brute Force":"#F97316",
-  Infiltration:"#6366F1",
-  Heartbleed:  "#38BDF8",
-  Other:       "#6C7488",
+  Infiltration: "#6366F1",
+  Heartbleed:   "#38BDF8",
+  Other:        "#6C7488",
 };
 
 export const MODEL_COLORS: Record<string, string> = {
@@ -18,6 +18,16 @@ export const MODEL_COLORS: Record<string, string> = {
   catboost:            "#F59E0B",
   mlp:                 "#EC4899",
   logistic_regression: "#6C7488",
+};
+
+/** Abbreviations used in chips and table badges. */
+export const MODEL_SHORT: Record<string, string> = {
+  random_forest:       "RF",
+  xgboost:             "XGB",
+  lightgbm:            "LGB",
+  catboost:            "CB",
+  mlp:                 "MLP",
+  logistic_regression: "LR",
 };
 
 export const MODEL_LABELS: Record<string, string> = {
@@ -31,7 +41,10 @@ export const MODEL_LABELS: Record<string, string> = {
 
 export function classColor(name: string): string {
   for (const [key, color] of Object.entries(CLASS_COLORS)) {
-    if (name.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(name.toLowerCase())) {
+    if (
+      name.toLowerCase().includes(key.toLowerCase()) ||
+      key.toLowerCase().includes(name.toLowerCase())
+    ) {
       return color;
     }
   }
@@ -43,12 +56,24 @@ export function modelColor(name: string): string {
 }
 
 export function modelLabel(name: string): string {
-  return MODEL_LABELS[name] ?? name.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  return (
+    MODEL_LABELS[name] ??
+    name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+  );
+}
+
+/** 2-3 char abbreviation for compact model chips. */
+export function modelShort(name: string): string {
+  return MODEL_SHORT[name] ?? name.slice(0, 3).toUpperCase();
 }
 
 export function severityColor(sev: string): string {
   const map: Record<string, string> = {
-    critical: "#F43F5E", danger: "#EF4444", warn: "#F59E0B", info: "#38BDF8", ok: "#10B981",
+    critical: "#F43F5E",
+    danger:   "#EF4444",
+    warn:     "#F59E0B",
+    info:     "#38BDF8",
+    ok:       "#10B981",
   };
   return map[sev] ?? map.info;
 }

@@ -4,25 +4,17 @@ import { Panel, PanelHeader } from "@/components/ui/Panel";
 import { Pill } from "@/components/ui/Pill";
 import { Donut } from "@/components/ui/Donut";
 import { getOverview, getModels, getCompare } from "@/lib/api";
-import { classColor, modelColor, modelLabel } from "@/lib/colors";
+import { classColor, modelColor, modelLabel, modelShort } from "@/lib/colors";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 /* Pre-defined sparkline patterns — decorative trend lines for KPIs */
-const SPARK_RECORDS  = [162,165,168,170,172,174,176,178,180,181,182];
-const SPARK_F1       = [0.94,0.96,0.968,0.974,0.978,0.982,0.985,0.988,0.990,0.991,0.9912];
-const SPARK_CLASSES  = [4,5,5,6,6,6,7,7,7,7,7];
-const SPARK_FEATURES = [65,68,71,73,75,76,77,77,78,78,78];
+const SPARK_RECORDS  = [162, 165, 168, 170, 172, 174, 176, 178, 180, 181, 182];
+const SPARK_F1       = [0.94, 0.96, 0.968, 0.974, 0.978, 0.982, 0.985, 0.988, 0.990, 0.991, 0.9912];
+const SPARK_CLASSES  = [4, 5, 5, 6, 6, 6, 7, 7, 7, 7, 7];
+const SPARK_FEATURES = [65, 68, 71, 73, 75, 76, 77, 77, 78, 78, 78];
 
 const MEDAL = ["1st", "2nd", "3rd", "4th", "5th", "6th"];
-
-function modelShort(name: string): string {
-  const map: Record<string, string> = {
-    random_forest: "RF", xgboost: "XGB", lightgbm: "LGB",
-    catboost: "CB", mlp: "MLP", logistic_regression: "LR",
-  };
-  return map[name] ?? name.slice(0, 3).toUpperCase();
-}
 
 export default async function OverviewPage() {
   const [overview, modelsData, compare] = await Promise.all([
@@ -41,7 +33,7 @@ export default async function OverviewPage() {
   const bestMetrics: Record<string, number> = {};
   if (compare) {
     for (const [name, m] of Object.entries(compare)) {
-      const f1 = (m as Record<string, number>).f1_weighted ?? 0;
+      const f1 = m.f1_weighted ?? 0;
       if (f1 > bestF1) {
         bestF1 = f1;
         bestModel = name;
@@ -61,9 +53,7 @@ export default async function OverviewPage() {
   /* Ranked models */
   const ranked = compare
     ? Object.entries(compare).sort(
-        ([, a], [, b]) =>
-          ((b as Record<string, number>).f1_weighted ?? 0) -
-          ((a as Record<string, number>).f1_weighted ?? 0),
+        ([, a], [, b]) => (b.f1_weighted ?? 0) - (a.f1_weighted ?? 0),
       )
     : [];
 
@@ -126,14 +116,14 @@ export default async function OverviewPage() {
                 <div className="text-[9.5px] uppercase tracking-[.16em] text-ink-3 mb-2 font-semibold">Performance</div>
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { k: "f1_weighted",      l: "F1 (W)" },
-                    { k: "accuracy",         l: "Accuracy" },
-                    { k: "matthews_corrcoef",l: "MCC" },
+                    { k: "f1_weighted",       l: "F1 (W)" },
+                    { k: "accuracy",          l: "Accuracy" },
+                    { k: "matthews_corrcoef", l: "MCC" },
                   ].map(({ k, l }) => (
                     <div key={k}>
                       <div className="text-[9.5px] text-ink-3 font-mono uppercase">{l}</div>
                       <div className="tabular-nums text-[15px] font-semibold font-mono text-ink-0 mt-0.5">
-                        {((bestMetrics[k] ?? 0)).toFixed(4)}
+                        {(bestMetrics[k] ?? 0).toFixed(4)}
                       </div>
                     </div>
                   ))}
@@ -148,7 +138,11 @@ export default async function OverviewPage() {
                     <span
                       key={lb}
                       className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10.5px] font-medium border"
-                      style={{ borderColor: `${classColor(lb)}40`, color: classColor(lb), background: `${classColor(lb)}10` }}
+                      style={{
+                        borderColor: `${classColor(lb)}40`,
+                        color: classColor(lb),
+                        background: `${classColor(lb)}10`,
+                      }}
                     >
                       {lb}
                     </span>
@@ -194,7 +188,7 @@ export default async function OverviewPage() {
           />
           <KpiCard
             label="Features"
-            value={overview?.n_features ?? 78}
+            value={overview?.n_features ?? "—"}
             color="#10B981"
             spark={SPARK_FEATURES}
             sub="Network flow features"
@@ -202,7 +196,7 @@ export default async function OverviewPage() {
         </div>
 
         {/* ── Main panels ── */}
-        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
           {/* Class distribution */}
           <Panel className="lg:col-span-5 flex flex-col">
@@ -212,7 +206,6 @@ export default async function OverviewPage() {
               sub={`${distEntries.length} classes · ${totalFlows.toLocaleString()} total records`}
             />
             <div className="px-5 pt-4 pb-5 flex-1 overflow-y-auto">
-              {/* Donut */}
               {donutData.length > 0 && (
                 <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4">
                   <Donut data={donutData} size={200} thickness={18} />
@@ -228,7 +221,6 @@ export default async function OverviewPage() {
                 </div>
               )}
 
-              {/* Bar list */}
               <div className="space-y-2.5">
                 {distEntries.map(([cls, count]) => {
                   const pct = totalFlows > 0 ? ((count as number) / totalFlows) * 100 : 0;
@@ -245,7 +237,8 @@ export default async function OverviewPage() {
                           <span className="text-ink-3">({pct.toFixed(1)}%)</span>
                         </span>
                       </div>
-                      <div className="h-1 rounded-full bg-white/[.04] overflow-hidden">
+                      {/* bg-surface-elevated is theme-aware; replaces dark-only bg-white/[.04] */}
+                      <div className="h-1 rounded-full bg-surface-elevated overflow-hidden">
                         <div
                           className="h-full rounded-full"
                           style={{ width: `${pct}%`, background: color }}
@@ -274,7 +267,7 @@ export default async function OverviewPage() {
             {ranked.length === 0 ? (
               <div className="flex-1 px-5 py-8 text-center text-[12px] text-ink-2">
                 Run{" "}
-                <code className="font-mono text-[10.5px] py-0.5 px-[5px] rounded bg-white/[.06] ring-1 ring-white/10 text-ink-1 inline-flex items-center">
+                <code className="font-mono text-[10.5px] py-0.5 px-[5px] rounded bg-surface-elevated ring-1 ring-line-base text-ink-1 inline-flex items-center">
                   --stage evaluate
                 </code>{" "}
                 to generate comparison data.
@@ -293,13 +286,12 @@ export default async function OverviewPage() {
 
                 <div className="flex-1 overflow-y-auto divide-y divide-line-subtle">
                   {ranked.map(([name, m], i) => {
-                    const metrics = m as Record<string, number>;
                     const color = modelColor(name);
                     const isChamp = i === 0;
                     return (
                       <div
                         key={name}
-                        className={`grid grid-cols-[40px_1fr_80px_80px_80px_80px] gap-3 px-4 py-3 items-center transition hover:bg-white/[.02] ${isChamp ? "bg-brand-blue/[.04]" : ""}`}
+                        className={`grid grid-cols-[40px_1fr_80px_80px_80px_80px] gap-3 px-4 py-3 items-center transition hover:bg-surface-hover ${isChamp ? "bg-brand-blue/[.04]" : ""}`}
                       >
                         <span
                           className="text-[10.5px] font-semibold tabular-nums px-1.5 py-0.5 rounded font-mono text-center"
@@ -324,17 +316,16 @@ export default async function OverviewPage() {
                         </div>
 
                         <div className="tabular-nums text-[12.5px] font-semibold font-mono text-ink-0 text-right">
-                          {(metrics.f1_weighted ?? 0).toFixed(4)}
-                        </div>
-
-                        <div className="tabular-nums text-[12px] text-ink-1 text-right">
-                          {(metrics.accuracy ?? 0).toFixed(4)}
+                          {(m.f1_weighted ?? 0).toFixed(4)}
                         </div>
                         <div className="tabular-nums text-[12px] text-ink-1 text-right">
-                          {(metrics.precision_weighted ?? 0).toFixed(4)}
+                          {(m.accuracy ?? 0).toFixed(4)}
                         </div>
                         <div className="tabular-nums text-[12px] text-ink-1 text-right">
-                          {(metrics.recall_weighted ?? 0).toFixed(4)}
+                          {(m.precision_weighted ?? 0).toFixed(4)}
+                        </div>
+                        <div className="tabular-nums text-[12px] text-ink-1 text-right">
+                          {(m.recall_weighted ?? 0).toFixed(4)}
                         </div>
                       </div>
                     );
@@ -357,7 +348,7 @@ export default async function OverviewPage() {
                       {overview?.duplicate_row_count?.toLocaleString() ?? 0} dupes
                     </span>
                     <span className="ml-auto tabular-nums text-ink-3">
-                      {overview?.n_features ?? 78} features · holdout test set
+                      {overview?.n_features ?? "—"} features · holdout test set
                     </span>
                   </div>
                 </div>

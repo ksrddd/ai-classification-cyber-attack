@@ -6,8 +6,8 @@ import { Panel, PanelHeader } from "@/components/ui/Panel";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { BarRow } from "@/components/ui/BarRow";
 import { Pill } from "@/components/ui/Pill";
-import { getModels, getModelMetrics, getModelReport, figureUrl } from "@/lib/api";
-import { modelColor, modelLabel } from "@/lib/colors";
+import { getModels, getModelMetrics, figureUrl, type ModelMetrics } from "@/lib/api";
+import { modelColor, modelLabel, modelShort } from "@/lib/colors";
 
 const METRIC_DISPLAY = [
   { k: "accuracy",            l: "Accuracy",    color: "#38BDF8" },
@@ -18,46 +18,45 @@ const METRIC_DISPLAY = [
   { k: "roc_auc",             l: "ROC-AUC",     color: "#10B981" },
 ];
 
-function modelShort(name: string): string {
-  const map: Record<string, string> = {
-    random_forest: "RF", xgboost: "XGB", lightgbm: "LGB",
-    catboost: "CB", mlp: "MLP", logistic_regression: "LR",
-  };
-  return map[name] ?? name.slice(0, 3).toUpperCase();
-}
-
 export default function PerformancePage() {
   const [models, setModels] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
-  const [metrics, setMetrics] = useState<Record<string, number> | null>(null);
-  const [report, setReport] = useState<Record<string, Record<string, number>> | null>(null);
+  const [metrics, setMetrics] = useState<ModelMetrics | null>(null);
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getModels().then((d) => {
+    let cancelled = false;
+    getModels().catch(() => ({ models: [] as string[] })).then((d) => {
+      if (cancelled) return;
       setModels(d.models);
       if (d.models[0]) setSelected(d.models[0]);
     });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
     if (!selected) return;
+    const controller = new AbortController();
     setLoading(true);
-    Promise.all([
-      getModelMetrics(selected).catch(() => null),
-      getModelReport(selected).catch(() => null),
-    ]).then(([m, r]) => {
-      setMetrics(m as Record<string, number> | null);
-      setReport(r);
-      setLoading(false);
-    });
+    setError(false);
+    getModelMetrics(selected, controller.signal)
+      .then((m) => {
+        if (controller.signal.aborted) return;
+        setMetrics(m);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (controller.signal.aborted) return;
+        setError(true);
+        setLoading(false);
+      });
+    return () => controller.abort();
   }, [selected]);
 
   const color = modelColor(selected);
-  const m = metrics ?? {};
-
-  const perClass = (m as Record<string, unknown>).per_class as
-    Record<string, { precision: number; recall: number; f1: number }> | undefined;
+  const m = metrics ?? ({} as ModelMetrics);
+  const perClass = metrics?.per_class;
 
   return (
     <AppShell title="Model Performance">
@@ -83,8 +82,8 @@ export default function PerformancePage() {
                   className="px-3 h-8 rounded-lg text-[12px] font-medium transition ring-1"
                   style={{
                     background: isActive ? `${c}22` : "transparent",
-                    color: isActive ? c : "#6C7488",
-                    borderColor: isActive ? `${c}55` : "rgba(255,255,255,0.08)",
+                    color: isActive ? c : "var(--text-secondary)",
+                    borderColor: isActive ? `${c}55` : "var(--border-base)",
                     boxShadow: isActive ? `0 0 12px ${c}33` : "none",
                   }}
                 >
@@ -101,6 +100,12 @@ export default function PerformancePage() {
               <span className="h-1.5 w-1.5 rounded-full bg-info animate-pulseDot" />
               Loading metrics…
             </span>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16 text-ink-2 text-[12px]">
+            Failed to load metrics for{" "}
+            <span className="text-ink-1 font-medium">{modelLabel(selected)}</span>.
+            Ensure the backend is running and the model has been evaluated.
           </div>
         ) : (
           <>
@@ -157,7 +162,7 @@ export default function PerformancePage() {
                 <PanelHeader eyebrow="Radar" title="Metric fingerprint" sub="Weighted + macro scores" />
                 <div className="px-5 py-4 space-y-3">
                   {METRIC_DISPLAY.map(({ k, l, color: c }) => (
-                    <BarRow key={k} label={l} value={(m[k] ?? 0) * 100} max={100} color={c} suffix="%" />
+                    <BarRow key={k} label={l} value={((m[k] as number | undefined) ?? 0) * 100} max={100} color={c} suffix="%" />
                   ))}
                 </div>
               </Panel>
@@ -174,8 +179,13 @@ export default function PerformancePage() {
                     src={figureUrl(`confusion_matrix_${selected}.png`)}
                     alt="Confusion matrix"
                     className="w-full rounded-lg"
+                    width={640}
+                    height={520}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
+                      const el = e.target as HTMLImageElement;
+                      if (el.parentElement) el.parentElement.style.display = "none";
                     }}
                   />
                 </div>
@@ -208,11 +218,15 @@ export default function PerformancePage() {
                       {Object.entries(perClass).map(([cls, vals]) => {
                         const f1 = vals.f1 ?? 0;
                         const textColor =
-                          f1 >= 0.95 ? "#10B981" : f1 >= 0.85 ? "#E6E9F2" : "#F59E0B";
+                          f1 >= 0.95
+                            ? "var(--success-text)"
+                            : f1 >= 0.85
+                            ? "var(--text-primary)"
+                            : "var(--warning-text)";
                         return (
                           <tr
                             key={cls}
-                            className="border-b border-line-subtle last:border-0 hover:bg-white/[.02]"
+                            className="border-b border-line-subtle last:border-0 hover:bg-surface-hover transition"
                           >
                             <td className="px-4 py-2.5 text-ink-0 font-medium">{cls}</td>
                             {(["precision", "recall", "f1"] as const).map((k) => (
@@ -224,7 +238,7 @@ export default function PerformancePage() {
                                   >
                                     {(vals[k] ?? 0).toFixed(4)}
                                   </span>
-                                  <div className="hidden sm:block flex-1 h-0.5 rounded-full bg-white/[.04] overflow-hidden max-w-[60px]">
+                                  <div className="hidden sm:block flex-1 h-0.5 rounded-full bg-surface-elevated overflow-hidden max-w-[60px]">
                                     <div
                                       className="h-full rounded-full"
                                       style={{
@@ -237,8 +251,8 @@ export default function PerformancePage() {
                               </td>
                             ))}
                             <td className="px-4 py-2.5 tabular-nums text-ink-2">
-                              {(vals as Record<string, number>).support
-                                ? Math.round((vals as Record<string, number>).support).toLocaleString()
+                              {vals.support != null
+                                ? Math.round(vals.support).toLocaleString()
                                 : "—"}
                             </td>
                           </tr>

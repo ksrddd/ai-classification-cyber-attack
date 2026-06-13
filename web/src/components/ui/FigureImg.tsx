@@ -1,11 +1,14 @@
 "use client";
 
-export function FigureImg({ src, alt }: { src: string; alt: string }) {
+export function FigureImg({ src, alt, maxH }: { src: string; alt: string; maxH?: string }) {
   return (
     <img
       src={src}
       alt={alt}
-      className="w-full h-auto block rounded"
+      className="w-full block rounded"
+      loading="lazy"
+      decoding="async"
+      style={maxH ? { height: maxH, objectFit: "contain", objectPosition: "left center" } : { height: "auto" }}
       onError={(e) => {
         const el = e.target as HTMLImageElement;
         el.style.display = "none";

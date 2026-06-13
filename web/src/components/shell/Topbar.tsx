@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, Menu, Search } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Topbar({
   title,
@@ -40,6 +41,11 @@ export function Topbar({
       </div>
 
       <div className="flex items-center gap-1 flex-shrink-0">
+        {/* Theme toggle */}
+        <ThemeToggle />
+
+        <div className="h-4 w-px bg-line-base mx-0.5" />
+
         {/* Notification */}
         <button className="relative h-7 w-7 grid place-items-center rounded-sm hover:bg-surface-elevated transition-colors">
           <Bell size={14} className="text-ink-2" />

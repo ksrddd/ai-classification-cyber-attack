@@ -34,6 +34,7 @@ MODELS = (
     "cat", "catboost",
     "nn", "mlp",
     "lr", "logistic_regression",
+    "stack", "stacking",
 )
 
 

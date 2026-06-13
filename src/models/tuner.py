@@ -193,6 +193,9 @@ def cv_results_summary(cv_df: pd.DataFrame, top_n: int = 5) -> pd.DataFrame:
     out = out.reset_index(drop=True)
     # numpy floats -> python floats for clean JSON / Markdown serialisation
     for c in out.columns:
-        if np.issubdtype(out[c].dtype, np.floating):
-            out[c] = out[c].astype(float)
+        try:
+            if np.issubdtype(out[c].dtype, np.floating):
+                out[c] = out[c].astype(float)
+        except TypeError:
+            pass
     return out

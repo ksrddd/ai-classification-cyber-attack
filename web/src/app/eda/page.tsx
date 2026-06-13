@@ -3,7 +3,7 @@ import { figureUrl, getOverview } from "@/lib/api";
 import { FigureImg } from "@/components/ui/FigureImg";
 import { CheckCircle2, AlertTriangle, Info } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 const FIGURES = [
   {
@@ -13,6 +13,7 @@ const FIGURES = [
     sub: "Log-scaled class balance — 7 attack classes with severe minority imbalance",
     accent: "#F59E0B",
     col: "md:col-span-2",
+    maxH: "320px",
   },
   {
     key: "missing_value_audit",
@@ -214,7 +215,7 @@ export default async function EdaPage() {
 
         {/* ── Figure panels ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-          {FIGURES.map(({ key, label, eyebrow, sub, accent, col }) => (
+          {FIGURES.map(({ key, label, eyebrow, sub, accent, col, maxH }) => (
             <div
               key={key}
               className={`border border-line-base rounded bg-surface-raised overflow-hidden ${col}`}
@@ -237,7 +238,7 @@ export default async function EdaPage() {
                 />
               </div>
               <div className="p-4">
-                <FigureImg src={figureUrl(`${key}.png`)} alt={label} />
+                <FigureImg src={figureUrl(`${key}.png`)} alt={label} maxH={maxH} />
               </div>
             </div>
           ))}

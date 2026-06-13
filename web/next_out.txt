@@ -1,0 +1,25 @@
+
+> web@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 2.4s
+ ○ Compiling / ...
+ ✓ Compiled / in 14.8s (611 modules)
+ GET / 200 in 15445ms
+ ✓ Compiled in 621ms (295 modules)
+ GET / 200 in 85ms
+ ✓ Compiled /favicon.ico in 465ms (348 modules)
+ GET /favicon.ico 200 in 633ms
+ ✓ Compiled /dataset in 335ms (631 modules)
+ ✓ Compiled /eda in 300ms (648 modules)
+ ✓ Compiled /performance in 353ms (666 modules)
+ ✓ Compiled /compare in 250ms (668 modules)
+ ✓ Compiled /shap in 295ms (674 modules)
+ ✓ Compiled /predict in 484ms (686 modules)
+ GET /predict 200 in 142ms
+ GET /favicon.ico 200 in 30ms
+[?25h

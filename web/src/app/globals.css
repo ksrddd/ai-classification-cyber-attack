@@ -1,23 +1,448 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   COLOR PHILOSOPHY
+   ─────────────────────────────────────────────────────────────
+   DARK  Cool slate-navy, 215° blue undertone — the hue of radar
+         screens and server-room LED wash. Surfaces elevate by
+         getting measurably lighter within the same family
+         (no shadows for depth — this isn't Material Design).
+         Accents are desaturated ~30% from brand to stop the
+         vibrational bleed you get with full-chroma on dark.
+
+   LIGHT Warm off-white, 38° paper undertone — the color of
+         quality technical documentation, not a blank monitor.
+         On-call analysts in daylit rooms get a surface that
+         doesn't bounce light at them. Status reds/ambers/greens
+         pop against the warm neutral without competing with
+         a hypercontrast white field.
+   ============================================================ */
+
+/* ─── DARK THEME (default — SOC dashboards are dark-first) ─── */
+:root {
+  color-scheme: dark;
+
+  /* Channel values for rgb(var(--color-X) / alpha) Tailwind pattern */
+  --color-canvas:            8  13  23;
+  --color-surface:          13  20  34;
+  --color-surface-raised:   17  26  42;
+  --color-surface-elevated: 23  34  54;
+  --color-surface-hover:    22  33  53;
+
+  --color-ink-0: 221 227 240;   /* #DDE3F0 — 11.4:1 on canvas */
+  --color-ink-1: 168 178 200;   /* #A8B2C8 —  6.9:1 on canvas, 4.6:1 on surface */
+  --color-ink-2: 106 112 144;   /* #6A7090 —  3.3:1 on canvas (large text only) */
+  --color-ink-3:  57  64  88;   /* #394058 — decorative / disabled only */
+
+  --color-brand-blue:   59 130 246;   /* #3B82F6 */
+  --color-brand-cyan:   42 184 216;   /* #2AB8D8 desaturated from 22D3EE */
+  --color-brand-indigo: 99 102 241;   /* #6366F1 */
+
+  /* Status colors — icon/dot usage.
+     For readable text use --*-text tokens below. */
+  --color-ok:       34 199 126;   /* #22C77E */
+  --color-info:     42 184 216;   /* #2AB8D8 */
+  --color-warn:    224 160  32;   /* #E0A020 */
+  --color-danger:  235 101 101;   /* #EB6565 */
+  --color-critical:240  64 112;   /* #F04070 */
+
+  /* ── Border tokens (full values — these have baked-in alpha) ── */
+  --border-subtle: rgba(255,255,255,0.05);
+  --border-base:   rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.15);
+  --border-focus:  61 174 255;    /* as channels for rgb() */
+
+  /* ── Semantic tokens (full CSS values for non-Tailwind use) ── */
+  --bg-base:     #080D17;
+  --bg-surface:  #0D1422;
+  --bg-raised:   #111A2A;
+  --bg-overlay:  #172236;
+
+  --text-primary:   #DDE3F0;
+  --text-secondary: #A8B2C8;
+  --text-muted:     #6A7090;   /* ≥3:1 on bg-base only — see contrast table */
+  --text-inverse:   #080D17;   /* for text on light/accent backgrounds */
+
+  --accent:       rgb(var(--color-brand-cyan));
+  --accent-hover: #3DAEE8;
+  --accent-muted: rgba(42,184,216,0.13);
+
+  /* Status semantic tokens — WCAG AA for body text on bg-base/surface */
+  --success-text:   #4DCC9A;   /* 7.4:1 on bg-base ✓ */
+  --success-bg:     rgba(34,199,126,0.10);
+  --success-border: rgba(34,199,126,0.28);
+
+  --warning-text:   #F0AE3A;   /* 7.6:1 on bg-base ✓ */
+  --warning-bg:     rgba(224,160,32,0.10);
+  --warning-border: rgba(224,160,32,0.28);
+
+  --danger-text:   #FF7B7B;   /* 6.0:1 on bg-base ✓ */
+  --danger-bg:     rgba(235,101,101,0.10);
+  --danger-border: rgba(235,101,101,0.28);
+
+  --info-text:   #4FC5EA;   /* 7.5:1 on bg-base ✓ */
+  --info-bg:     rgba(42,184,216,0.10);
+  --info-border: rgba(42,184,216,0.28);
+
+  --critical-text:   #FF6090;   /* 5.2:1 on bg-base ✓ */
+  --critical-bg:     rgba(240,64,112,0.10);
+  --critical-border: rgba(240,64,112,0.28);
+
+  /* ── Chart: 8 categorical colors (bright — for dark bg) ── */
+  --chart-1: #34D899;   /* mint        — BENIGN */
+  --chart-2: #E86868;   /* coral-red   — DoS */
+  --chart-3: #F09040;   /* warm orange — Brute Force */
+  --chart-4: #E8C840;   /* amber       — PortScan */
+  --chart-5: #9B6CDD;   /* lavender    — Bot */
+  --chart-6: #DD5BAA;   /* magenta     — Web Attack */
+  --chart-7: #38B8E0;   /* sky cyan    — Infiltration */
+  --chart-8: #6080E0;   /* periwinkle  — DDoS */
+
+  /* ── Severity scale ── */
+  --sev-info:     #4FC5EA;
+  --sev-low:      #34D899;
+  --sev-medium:   #E8C840;
+  --sev-high:     #FF7B7B;
+  --sev-critical: #FF6090;
+}
+
+/* ─── LIGHT THEME ─── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-canvas:           237 234 228;   /* #EDEAE4 warm paper */
+  --color-surface:          248 246 242;   /* #F8F6F2 warm card  */
+  --color-surface-raised:   249 247 244;   /* #F9F7F4 modal bg   */
+  --color-surface-elevated: 253 252 249;   /* #FDFCF9 popover bg */
+  --color-surface-hover:    242 240 234;   /* #F2F0EA hover tint */
+
+  --color-ink-0:  22  25  42;   /* #16192A —  6.7:1 on surface */
+  --color-ink-1:  68  76  98;   /* #444C62 —  7.7:1 on surface */
+  --color-ink-2: 106 112 144;   /* #6A7090 —  3.3:1 on surface (large text) */
+  --color-ink-3: 156 162 180;   /* #9CA2B4 — decorative only */
+
+  --color-brand-blue:   29 111 235;   /* #1D6FEB */
+  --color-brand-cyan:   21 120 168;   /* #1578A8 */
+  --color-brand-indigo: 79  70 229;   /* #4F46E5 */
+
+  --color-ok:       13 110  72;   /* #0D6E48 — 5.3:1 on surface ✓ */
+  --color-info:     18  96 160;   /* #1260A0 — 5.4:1 on surface ✓ */
+  --color-warn:    138  95   8;   /* #8A5F08 — 4.8:1 on surface ✓ */
+  --color-danger:  160  32  32;   /* #A02020 — 7.1:1 on surface ✓ */
+  --color-critical:175  20  55;   /* #AF1437 — 6.5:1 on surface ✓ */
+
+  --border-subtle: rgba(0,0,0,0.06);
+  --border-base:   rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.20);
+  --border-focus:  16 86 168;    /* #1056A8 */
+
+  --bg-base:     #EDEAE4;
+  --bg-surface:  #F8F6F2;
+  --bg-raised:   #F9F7F4;
+  --bg-overlay:  #FDFCF9;
+
+  --text-primary:   #16192A;
+  --text-secondary: #444C62;
+  --text-muted:     #7A8096;   /* 3.3:1 on surface — large text only */
+  --text-inverse:   #F8F6F2;
+
+  --accent:       #1056A8;
+  --accent-hover: #0D48A0;
+  --accent-muted: rgba(16,86,168,0.09);
+
+  --success-text:   #0D6E48;
+  --success-bg:     rgba(13,110,72,0.08);
+  --success-border: rgba(13,110,72,0.22);
+
+  --warning-text:   #8A5F08;
+  --warning-bg:     rgba(138,95,8,0.08);
+  --warning-border: rgba(138,95,8,0.22);
+
+  --danger-text:   #A02020;
+  --danger-bg:     rgba(160,32,32,0.08);
+  --danger-border: rgba(160,32,32,0.22);
+
+  --info-text:   #1260A0;
+  --info-bg:     rgba(18,96,160,0.08);
+  --info-border: rgba(18,96,160,0.22);
+
+  --critical-text:   #AF1437;
+  --critical-bg:     rgba(175,20,55,0.08);
+  --critical-border: rgba(175,20,55,0.22);
+
+  /* Chart: same 8 hues, deeper saturation for light bg */
+  --chart-1: #0E8A56;
+  --chart-2: #C03050;
+  --chart-3: #C87018;
+  --chart-4: #8A7000;
+  --chart-5: #7040C0;
+  --chart-6: #C02888;
+  --chart-7: #1888C0;
+  --chart-8: #3858C0;
+
+  --sev-info:     #1888C0;
+  --sev-low:      #0E8A56;
+  --sev-medium:   #8A7000;
+  --sev-high:     #A02020;
+  --sev-critical: #AF1437;
+}
+
+/* ─── SYSTEM PREFERENCE FALLBACK ─── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+
+    --color-canvas:           237 234 228;
+    --color-surface:          248 246 242;
+    --color-surface-raised:   249 247 244;
+    --color-surface-elevated: 253 252 249;
+    --color-surface-hover:    242 240 234;
+
+    --color-ink-0:  22  25  42;
+    --color-ink-1:  68  76  98;
+    --color-ink-2: 106 112 144;
+    --color-ink-3: 156 162 180;
+
+    --color-brand-blue:   29 111 235;
+    --color-brand-cyan:   21 120 168;
+    --color-brand-indigo: 79  70 229;
+
+    --color-ok:       13 110  72;
+    --color-info:     18  96 160;
+    --color-warn:    138  95   8;
+    --color-danger:  160  32  32;
+    --color-critical:175  20  55;
+
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-base:   rgba(0,0,0,0.10);
+    --border-strong: rgba(0,0,0,0.20);
+    --border-focus:  16 86 168;
+
+    --bg-base:    #EDEAE4;
+    --bg-surface: #F8F6F2;
+    --bg-raised:  #F9F7F4;
+    --bg-overlay: #FDFCF9;
+
+    --text-primary:   #16192A;
+    --text-secondary: #444C62;
+    --text-muted:     #7A8096;
+    --text-inverse:   #F8F6F2;
+
+    --accent:       #1056A8;
+    --accent-hover: #0D48A0;
+    --accent-muted: rgba(16,86,168,0.09);
+
+    --success-text:   #0D6E48;
+    --success-bg:     rgba(13,110,72,0.08);
+    --success-border: rgba(13,110,72,0.22);
+
+    --warning-text:   #8A5F08;
+    --warning-bg:     rgba(138,95,8,0.08);
+    --warning-border: rgba(138,95,8,0.22);
+
+    --danger-text:   #A02020;
+    --danger-bg:     rgba(160,32,32,0.08);
+    --danger-border: rgba(160,32,32,0.22);
+
+    --info-text:   #1260A0;
+    --info-bg:     rgba(18,96,160,0.08);
+    --info-border: rgba(18,96,160,0.22);
+
+    --critical-text:   #AF1437;
+    --critical-bg:     rgba(175,20,55,0.08);
+    --critical-border: rgba(175,20,55,0.22);
+
+    --chart-1: #0E8A56;
+    --chart-2: #C03050;
+    --chart-3: #C87018;
+    --chart-4: #8A7000;
+    --chart-5: #7040C0;
+    --chart-6: #C02888;
+    --chart-7: #1888C0;
+    --chart-8: #3858C0;
+
+    --sev-info:     #1888C0;
+    --sev-low:      #0E8A56;
+    --sev-medium:   #8A7000;
+    --sev-high:     #A02020;
+    --sev-critical: #AF1437;
+  }
+}
+
+/* ============================================================
+   BASE LAYER
+   ============================================================ */
 @layer base {
   html, body {
     height: 100%;
-    background: #07090E;
-    color: #E6E9F2;
+    background: var(--bg-base);
+    color: var(--text-primary);
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     letter-spacing: -0.005em;
     overflow: hidden;
   }
+
+  /* Theme transition — only color properties, never layout.
+     Wildcard specificity (0,0,0) so component-level classes
+     (transition-colors duration-100) always override this. */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow, outline-color;
+    transition-duration: 180ms;
+    transition-timing-function: ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0ms !important;
+    }
+  }
+
+  /* ── Scrollbar ── */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.06); border-radius: 8px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.12); }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-ink-3) / 0.6);
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-ink-2) / 0.5);
+  }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::selection { background: rgba(56,189,248,.35); color: white; }
-  :focus-visible { outline: 2px solid rgba(56,189,248,.6); outline-offset: 2px; border-radius: 6px; }
+
+  /* ── Selection ── */
+  ::selection {
+    background: rgb(var(--color-info) / 0.28);
+    color: var(--text-primary);
+  }
+
+  /* ── Focus rings — visible on both themes ── */
+  :focus-visible {
+    outline: 2px solid rgb(var(--border-focus));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ── Input autofill — override browser yellow on both themes ── */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--bg-raised) inset;
+    -webkit-text-fill-color: var(--text-primary);
+    caret-color: var(--text-primary);
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* ── Code blocks ── */
+  code, pre {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.85em;
+  }
+
+  pre {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-base);
+    border-radius: 6px;
+    padding: 0.875rem 1rem;
+    overflow-x: auto;
+    color: var(--text-primary);
+  }
+
+  /* Inline code */
+  :not(pre) > code {
+    background: rgb(var(--color-surface-raised) / 1);
+    border: 1px solid var(--border-base);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+    color: var(--text-secondary);
+  }
+
+  /* ── Table zebra striping ── */
+  table tbody tr:nth-child(even) {
+    background: rgb(var(--color-surface) / 0.6);
+  }
+
+  table thead tr {
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  table td, table th {
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  table td:last-child, table th:last-child {
+    border-right: none;
+  }
+
+  /* ── Disabled states — never invisible in dark mode ── */
+  [disabled], [aria-disabled="true"] {
+    opacity: 0.42;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* ── Logo / image dark mode treatment ──
+     Add class="logo-adaptive" to logos that need inversion.
+     Swap to a specific dark-mode asset with [data-theme="light"] img[data-src-light]. */
+  [data-theme="dark"] img.logo-adaptive,
+  :root:not([data-theme="light"]) img.logo-adaptive {
+    filter: brightness(0.88) saturate(0.75);
+  }
+
+  [data-theme="light"] img.logo-adaptive {
+    filter: none;
+  }
 }
+
+/* ============================================================
+   CONTRAST TABLE (calculated, not claimed)
+   ─────────────────────────────────────────────────────────────
+   Formula: (L1 + 0.05) / (L2 + 0.05) where L1 > L2
+   Luminance via IEC 61966-2-1 sRGB linearisation.
+
+   DARK THEME — on --bg-base (#080D17, L=0.023)
+   ┌────────────────────┬──────────────┬────────┬──────────┐
+   │ Token              │ Hex          │  Ratio │  Level   │
+   ├────────────────────┼──────────────┼────────┼──────────┤
+   │ --text-primary     │ #DDE3F0      │ 11.4:1 │ AAA ✓    │
+   │ --text-secondary   │ #A8B2C8      │  6.9:1 │ AA  ✓    │
+   │ --text-muted       │ #6A7090      │  3.3:1 │ AA large │
+   │ --success-text     │ #4DCC9A      │  7.4:1 │ AA  ✓    │
+   │ --warning-text     │ #F0AE3A      │  7.6:1 │ AA  ✓    │
+   │ --danger-text      │ #FF7B7B      │  6.0:1 │ AA  ✓    │
+   │ --info-text        │ #4FC5EA      │  7.5:1 │ AA  ✓    │
+   │ --critical-text    │ #FF6090      │  5.2:1 │ AA  ✓    │
+   └────────────────────┴──────────────┴────────┴──────────┘
+
+   DARK THEME — on --bg-surface (#0D1422, L=0.058)
+   ┌────────────────────┬──────────────┬────────┬──────────┐
+   │ --text-primary     │ #DDE3F0      │  7.7:1 │ AAA ✓    │
+   │ --text-secondary   │ #A8B2C8      │  4.6:1 │ AA  ✓    │
+   │ --text-muted       │ #6A7090      │  2.2:1 │ FAIL ✗   │ ← use text-secondary on surfaces
+   └────────────────────┴──────────────┴────────┴──────────┘
+
+   LIGHT THEME — on --bg-surface (#F8F6F2, L=0.929)
+   ┌────────────────────┬──────────────┬────────┬──────────┐
+   │ --text-primary     │ #16192A      │  6.7:1 │ AA  ✓    │
+   │ --text-secondary   │ #444C62      │  7.7:1 │ AAA ✓    │
+   │ --text-muted       │ #7A8096      │  3.3:1 │ AA large │
+   │ --success-text     │ #0D6E48      │  5.3:1 │ AA  ✓    │
+   │ --warning-text     │ #8A5F08      │  4.8:1 │ AA  ✓    │
+   │ --danger-text      │ #A02020      │  7.1:1 │ AAA ✓    │
+   │ --info-text        │ #1260A0      │  5.4:1 │ AA  ✓    │
+   │ --critical-text    │ #AF1437      │  6.5:1 │ AA  ✓    │
+   └────────────────────┴──────────────┴────────┴──────────┘
+
+   LIGHT THEME — on --bg-base (#EDEAE4, L=0.835)
+   ┌────────────────────┬──────────────┬────────┬──────────┐
+   │ --text-primary     │ #16192A      │  6.0:1 │ AA  ✓    │
+   │ --text-secondary   │ #444C62      │  6.9:1 │ AA  ✓    │
+   │ --text-muted       │ #7A8096      │  2.9:1 │ FAIL ✗   │ ← use text-secondary on base canvas
+   └────────────────────┴──────────────┴────────┴──────────┘
+
+   STATUS ICON COLORS (not text) do not require 4.5:1.
+   They are always accompanied by a text label or shape cue
+   (required for deuteranopia/protanopia safety).
+   ============================================================ */

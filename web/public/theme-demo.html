@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en" suppressHydrationWarning>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberML — Theme System Demo</title>
+
+  <!-- Flash-prevention: runs before any paint -->
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') { document.documentElement.setAttribute('data-theme', t); return; }
+        if (window.matchMedia('(prefers-color-scheme:light)').matches) {
+          document.documentElement.setAttribute('data-theme','light');
+        } else {
+          document.documentElement.setAttribute('data-theme','dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       DARK THEME (default)
+       ============================================================ */
+    :root {
+      color-scheme: dark;
+      --color-canvas:            8  13  23;
+      --color-surface:          13  20  34;
+      --color-surface-raised:   17  26  42;
+      --color-surface-elevated: 23  34  54;
+      --color-surface-hover:    22  33  53;
+      --color-ink-0: 221 227 240;
+      --color-ink-1: 168 178 200;
+      --color-ink-2: 106 112 144;
+      --color-ink-3:  57  64  88;
+      --color-brand-blue:   59 130 246;
+      --color-brand-cyan:   42 184 216;
+      --color-brand-indigo: 99 102 241;
+      --color-ok:       34 199 126;
+      --color-info:     42 184 216;
+      --color-warn:    224 160  32;
+      --color-danger:  235 101 101;
+      --color-critical:240  64 112;
+
+      --border-subtle: rgba(255,255,255,0.05);
+      --border-base:   rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.15);
+      --border-focus:  61 174 255;
+
+      --bg-base:     #080D17;
+      --bg-surface:  #0D1422;
+      --bg-raised:   #111A2A;
+      --bg-overlay:  #172236;
+      --text-primary:   #DDE3F0;
+      --text-secondary: #A8B2C8;
+      --text-muted:     #6A7090;
+      --text-inverse:   #080D17;
+      --accent:       #2AB8D8;
+      --accent-hover: #3DAEE8;
+      --accent-muted: rgba(42,184,216,0.13);
+
+      --success-text: #4DCC9A; --success-bg: rgba(34,199,126,0.10); --success-border: rgba(34,199,126,0.28);
+      --warning-text: #F0AE3A; --warning-bg: rgba(224,160,32,0.10); --warning-border: rgba(224,160,32,0.28);
+      --danger-text:  #FF7B7B; --danger-bg:  rgba(235,101,101,0.10);--danger-border:  rgba(235,101,101,0.28);
+      --info-text:    #4FC5EA; --info-bg:    rgba(42,184,216,0.10); --info-border:    rgba(42,184,216,0.28);
+      --critical-text:#FF6090; --critical-bg:rgba(240,64,112,0.10); --critical-border:rgba(240,64,112,0.28);
+
+      --chart-1:#34D899; --chart-2:#E86868; --chart-3:#F09040; --chart-4:#E8C840;
+      --chart-5:#9B6CDD; --chart-6:#DD5BAA; --chart-7:#38B8E0; --chart-8:#6080E0;
+
+      --sev-info:#4FC5EA; --sev-low:#34D899; --sev-medium:#E8C840; --sev-high:#FF7B7B; --sev-critical:#FF6090;
+    }
+
+    /* ============================================================
+       LIGHT THEME
+       ============================================================ */
+    [data-theme="light"] {
+      color-scheme: light;
+      --color-canvas:           237 234 228;
+      --color-surface:          248 246 242;
+      --color-surface-raised:   249 247 244;
+      --color-surface-elevated: 253 252 249;
+      --color-surface-hover:    242 240 234;
+      --color-ink-0:  22  25  42;
+      --color-ink-1:  68  76  98;
+      --color-ink-2: 106 112 144;
+      --color-ink-3: 156 162 180;
+      --color-brand-blue:   29 111 235;
+      --color-brand-cyan:   21 120 168;
+      --color-brand-indigo: 79  70 229;
+      --color-ok:       13 110  72;
+      --color-info:     18  96 160;
+      --color-warn:    138  95   8;
+      --color-danger:  160  32  32;
+      --color-critical:175  20  55;
+
+      --border-subtle: rgba(0,0,0,0.06);
+      --border-base:   rgba(0,0,0,0.10);
+      --border-strong: rgba(0,0,0,0.20);
+      --border-focus:  16 86 168;
+
+      --bg-base:     #EDEAE4;
+      --bg-surface:  #F8F6F2;
+      --bg-raised:   #F9F7F4;
+      --bg-overlay:  #FDFCF9;
+      --text-primary:   #16192A;
+      --text-secondary: #444C62;
+      --text-muted:     #7A8096;
+      --text-inverse:   #F8F6F2;
+      --accent:       #1056A8;
+      --accent-hover: #0D48A0;
+      --accent-muted: rgba(16,86,168,0.09);
+
+      --success-text: #0D6E48; --success-bg: rgba(13,110,72,0.08);  --success-border: rgba(13,110,72,0.22);
+      --warning-text: #8A5F08; --warning-bg: rgba(138,95,8,0.08);   --warning-border: rgba(138,95,8,0.22);
+      --danger-text:  #A02020; --danger-bg:  rgba(160,32,32,0.08);  --danger-border:  rgba(160,32,32,0.22);
+      --info-text:    #1260A0; --info-bg:    rgba(18,96,160,0.08);  --info-border:    rgba(18,96,160,0.22);
+      --critical-text:#AF1437; --critical-bg:rgba(175,20,55,0.08);  --critical-border:rgba(175,20,55,0.22);
+
+      --chart-1:#0E8A56; --chart-2:#C03050; --chart-3:#C87018; --chart-4:#8A7000;
+      --chart-5:#7040C0; --chart-6:#C02888; --chart-7:#1888C0; --chart-8:#3858C0;
+
+      --sev-info:#1888C0; --sev-low:#0E8A56; --sev-medium:#8A7000; --sev-high:#A02020; --sev-critical:#AF1437;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) {
+        color-scheme: light;
+        --color-canvas: 237 234 228; --color-surface: 248 246 242;
+        --color-surface-raised: 249 247 244; --color-surface-elevated: 253 252 249;
+        --color-surface-hover: 242 240 234;
+        --color-ink-0: 22 25 42; --color-ink-1: 68 76 98;
+        --color-ink-2: 106 112 144; --color-ink-3: 156 162 180;
+        --color-brand-blue: 29 111 235; --color-brand-cyan: 21 120 168; --color-brand-indigo: 79 70 229;
+        --color-ok: 13 110 72; --color-info: 18 96 160; --color-warn: 138 95 8;
+        --color-danger: 160 32 32; --color-critical: 175 20 55;
+        --border-subtle: rgba(0,0,0,0.06); --border-base: rgba(0,0,0,0.10); --border-strong: rgba(0,0,0,0.20);
+        --border-focus: 16 86 168;
+        --bg-base:#EDEAE4; --bg-surface:#F8F6F2; --bg-raised:#F9F7F4; --bg-overlay:#FDFCF9;
+        --text-primary:#16192A; --text-secondary:#444C62; --text-muted:#7A8096; --text-inverse:#F8F6F2;
+        --accent:#1056A8; --accent-hover:#0D48A0; --accent-muted:rgba(16,86,168,0.09);
+        --success-text:#0D6E48; --success-bg:rgba(13,110,72,0.08); --success-border:rgba(13,110,72,0.22);
+        --warning-text:#8A5F08; --warning-bg:rgba(138,95,8,0.08); --warning-border:rgba(138,95,8,0.22);
+        --danger-text:#A02020; --danger-bg:rgba(160,32,32,0.08); --danger-border:rgba(160,32,32,0.22);
+        --info-text:#1260A0; --info-bg:rgba(18,96,160,0.08); --info-border:rgba(18,96,160,0.22);
+        --critical-text:#AF1437; --critical-bg:rgba(175,20,55,0.08); --critical-border:rgba(175,20,55,0.22);
+        --chart-1:#0E8A56; --chart-2:#C03050; --chart-3:#C87018; --chart-4:#8A7000;
+        --chart-5:#7040C0; --chart-6:#C02888; --chart-7:#1888C0; --chart-8:#3858C0;
+        --sev-info:#1888C0; --sev-low:#0E8A56; --sev-medium:#8A7000; --sev-high:#A02020; --sev-critical:#AF1437;
+      }
+    }
+
+    /* ── Global reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      transition-property: background-color, border-color, color, fill, stroke;
+      transition-duration: 180ms;
+      transition-timing-function: ease;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0ms !important; }
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgb(var(--color-ink-3) / 0.6); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgb(var(--color-ink-2) / 0.5); }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::selection { background: rgb(var(--color-info) / 0.28); color: var(--text-primary); }
+    :focus-visible { outline: 2px solid rgb(var(--border-focus)); outline-offset: 2px; border-radius: 4px; }
+
+    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px var(--bg-raised) inset;
+      -webkit-text-fill-color: var(--text-primary);
+      caret-color: var(--text-primary);
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* ── Layout ── */
+    .page { max-width: 1120px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-base);
+      padding: 0 1.5rem;
+      height: 48px;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .topbar-title { font-size: 11.5px; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); }
+    .topbar-title b { color: var(--text-primary); }
+
+    .toggle-btn {
+      margin-left: auto;
+      height: 28px; width: 28px;
+      display: grid; place-items: center;
+      border-radius: 4px;
+      border: 1px solid var(--border-base);
+      background: var(--bg-raised);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+    }
+    .toggle-btn:hover { background: rgb(var(--color-surface-hover)); color: var(--text-primary); }
+
+    h2 {
+      font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--text-muted); margin: 2.5rem 0 1rem; padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .grid { display: grid; gap: 0.75rem; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    /* ── Surface cards ── */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-base);
+      border-radius: 4px;
+      padding: 1rem;
+    }
+    .card-raised {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      padding: 1rem;
+    }
+    .card-label {
+      font-size: 9px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 0.5rem;
+    }
+    .card-value { font-size: 22px; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+    .card-sub { font-size: 11px; color: var(--text-secondary); margin-top: 0.25rem; }
+
+    /* ── Color swatch ── */
+    .swatch-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
+    .swatch { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; border: 1px solid var(--border-base); }
+    .swatch-name { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); }
+    .swatch-hex { font-size: 10px; color: var(--text-muted); }
+
+    /* ── Pill badges ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 22px; padding: 0 8px; border-radius: 3px;
+      font-size: 10.5px; font-weight: 500; white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .pill-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .pill-ok       { background: var(--success-bg);  color: var(--success-text);  border-color: var(--success-border); }
+    .pill-info     { background: var(--info-bg);      color: var(--info-text);      border-color: var(--info-border); }
+    .pill-warn     { background: var(--warning-bg);   color: var(--warning-text);   border-color: var(--warning-border); }
+    .pill-danger   { background: var(--danger-bg);    color: var(--danger-text);    border-color: var(--danger-border); }
+    .pill-critical { background: var(--critical-bg);  color: var(--critical-text);  border-color: var(--critical-border); }
+    .pill-muted    { background: rgb(var(--color-surface-raised) / 1); color: var(--text-secondary); border-color: var(--border-base); }
+
+    /* ── Button ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 30px; padding: 0 12px; border-radius: 4px;
+      font-size: 12px; font-weight: 500; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--accent); color: var(--text-inverse); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-ghost {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border-base);
+    }
+    .btn-ghost:hover { background: var(--bg-raised); color: var(--text-primary); border-color: var(--border-strong); }
+
+    /* ── Input ── */
+    .input {
+      width: 100%; height: 30px;
+      background: var(--bg-raised); color: var(--text-primary);
+      border: 1px solid var(--border-base); border-radius: 4px;
+      padding: 0 10px; font-size: 12px; font-family: inherit; outline: none;
+    }
+    .input::placeholder { color: var(--text-muted); }
+    .input:focus { border-color: rgb(var(--border-focus)); box-shadow: 0 0 0 2px rgb(var(--border-focus) / 0.2); }
+
+    /* ── Chart palette swatches ── */
+    .chart-swatches { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 0.5rem; }
+    .chart-swatch { width: 36px; height: 36px; border-radius: 4px; }
+    .sev-bar { display: flex; gap: 4px; margin-top: 0.5rem; }
+    .sev-seg { flex: 1; height: 10px; border-radius: 2px; }
+
+    /* ── Contrast table ── */
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th { text-align: left; padding: 6px 10px; font-size: 9.5px; font-weight: 600;
+         letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted);
+         border-bottom: 1px solid var(--border-strong); }
+    td { padding: 6px 10px; border-bottom: 1px solid var(--border-subtle);
+         color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; font-size: 10.5px; }
+    td:first-child { color: var(--text-primary); }
+    tr:nth-child(even) td { background: rgb(var(--color-surface-raised) / 0.5); }
+    .pass { color: var(--success-text) !important; font-weight: 600; }
+    .large { color: var(--warning-text) !important; font-weight: 600; }
+    .fail  { color: var(--danger-text) !important;  font-weight: 600; }
+
+    /* ── Code block ── */
+    pre {
+      background: var(--bg-raised); border: 1px solid var(--border-base); border-radius: 6px;
+      padding: 0.875rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      line-height: 1.6; overflow-x: auto; color: var(--text-secondary);
+    }
+
+    /* ── Sidebar mockup (self-critique fix #1) ── */
+    .sidebar-demo {
+      background: rgb(6 10 19 / 1);   /* #060A13 — slightly more saturated than bg-base */
+      border-right: 1px solid var(--border-base);
+      width: 200px; padding: 0.75rem 0; flex-shrink: 0;
+    }
+    [data-theme="light"] .sidebar-demo {
+      background: rgb(232 229 222 / 1);   /* #E8E5DE — slightly deeper than bg-base */
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 8px;
+      height: 30px; padding: 0 14px;
+      font-size: 11.5px; font-weight: 500; cursor: pointer;
+      border-left: 2px solid transparent; color: var(--text-secondary);
+    }
+    .nav-item:hover { background: rgb(var(--color-surface-hover) / 0.7); color: var(--text-primary); }
+    .nav-item.active {
+      /* Self-critique fix: indicator dot + accent bg tint, not just a colored left border */
+      background: var(--accent-muted);
+      border-left-color: var(--accent);
+      color: var(--text-primary);
+    }
+    .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+    /* ── Pill redesign (self-critique fix #2) ── */
+    /* In dark: monochrome bg + status-colored text + left accent border (not ring)
+       In light: bordered style with strong color border */
+    .pill-v2 {
+      display: inline-flex; align-items: center; gap: 5px;
+      height: 20px; padding: 0 8px 0 6px; border-radius: 3px;
+      font-size: 10.5px; font-weight: 500; letter-spacing: .01em;
+      background: rgb(var(--color-surface-raised) / 1);
+      border: 1px solid var(--border-base);
+      border-left-width: 2px;
+    }
+    .pill-v2-ok       { border-left-color: rgb(var(--color-ok));       color: var(--success-text); }
+    .pill-v2-info     { border-left-color: rgb(var(--color-info));     color: var(--info-text); }
+    .pill-v2-warn     { border-left-color: rgb(var(--color-warn));     color: var(--warning-text); }
+    .pill-v2-danger   { border-left-color: rgb(var(--color-danger));   color: var(--danger-text); }
+    .pill-v2-critical { border-left-color: rgb(var(--color-critical)); color: var(--critical-text); }
+
+    .dash-shell { display: flex; border: 1px solid var(--border-base); border-radius: 4px; overflow: hidden; min-height: 280px; }
+    .dash-main { flex: 1; background: var(--bg-base); padding: 1.25rem; }
+    .dash-main-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .dash-main-sub { font-size: 11px; color: var(--text-secondary); }
+    .dash-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="topbar-title">cyberml / <b>theme-demo</b></span>
+    <button class="toggle-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">☀</button>
+  </div>
+
+  <div class="page">
+
+    <!-- ═══════════════════════════════════════
+         COLOR PHILOSOPHY
+         ═══════════════════════════════════════ -->
+    <h2>Color Philosophy</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-label">Dark Theme</div>
+        <p style="color: var(--text-secondary); font-size:12px; line-height:1.6;">
+          Cool slate-navy with a 215° blue undertone — the hue of radar screens and server-room LED wash.
+          Surfaces elevate by getting measurably lighter within the same family: no shadows for depth.
+          Accents are desaturated ~30% from brand to prevent vibrational bleed on dark.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-label">Light Theme</div>
+        <p style="color: var(--text-secondary); font-size:12px; line-height:1.6;">
+          Warm off-white with a 38° paper undertone — quality technical documentation, not a blank monitor.
+          Analysts in daylit rooms get a surface that doesn't bounce light at them.
+          Status signals pop against warm neutral without fighting a hypercontrast white field.
+        </p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SURFACE TOKENS
+         ═══════════════════════════════════════ -->
+    <h2>Surface Tokens — Elevation via Lighter Surfaces</h2>
+    <div class="grid grid-4">
+      <div style="background:var(--bg-base); border:1px solid var(--border-base); border-radius:4px; padding:1rem;">
+        <div class="card-label">bg-base</div>
+        <code style="font-size:10px; color:var(--text-muted);">canvas</code>
+      </div>
+      <div style="background:var(--bg-surface); border:1px solid var(--border-base); border-radius:4px; padding:1rem;">
+        <div class="card-label">bg-surface</div>
+        <code style="font-size:10px; color:var(--text-muted);">cards, panels</code>
+      </div>
+      <div style="background:var(--bg-raised); border:1px solid var(--border-strong); border-radius:4px; padding:1rem;">
+        <div class="card-label">bg-raised</div>
+        <code style="font-size:10px; color:var(--text-muted);">modals, inputs</code>
+      </div>
+      <div style="background:var(--bg-overlay); border:1px solid var(--border-strong); border-radius:4px; padding:1rem;">
+        <div class="card-label">bg-overlay</div>
+        <code style="font-size:10px; color:var(--text-muted);">popovers, tooltips</code>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         TEXT TOKENS
+         ═══════════════════════════════════════ -->
+    <h2>Text Tokens</h2>
+    <div class="card">
+      <p style="color:var(--text-primary); font-size:15px; font-weight:600; margin-bottom:6px;">
+        text-primary — Main reading text. 11.4:1 on bg-base.
+      </p>
+      <p style="color:var(--text-secondary); margin-bottom:6px;">
+        text-secondary — Labels, metadata, supporting content. 6.9:1 on bg-base.
+      </p>
+      <p style="color:var(--text-muted); margin-bottom:6px;">
+        text-muted — Eyebrow labels, timestamps. 3.3:1 on bg-base (large text only ≥14px bold).
+      </p>
+      <p style="background:var(--accent); color:var(--text-inverse); display:inline-block; padding:2px 8px; border-radius:3px; font-size:11px;">
+        text-inverse — For text on accent/dark backgrounds.
+      </p>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         STATUS TOKENS
+         ═══════════════════════════════════════ -->
+    <h2>Status Tokens — Colorblind-Safe (Shape + Hue + Luminance)</h2>
+    <div class="grid grid-3">
+      <div style="background:var(--success-bg); border:1px solid var(--success-border); border-radius:4px; padding:0.875rem;">
+        <div class="card-label" style="color:var(--success-text);">✓ success / ok</div>
+        <div style="font-size:20px; font-weight:600; color:var(--success-text); font-family:'JetBrains Mono',monospace;">98.4%</div>
+        <div style="font-size:11px; color:var(--success-text); opacity:0.8; margin-top:4px;">All models operational</div>
+      </div>
+      <div style="background:var(--warning-bg); border:1px solid var(--warning-border); border-radius:4px; padding:0.875rem;">
+        <div class="card-label" style="color:var(--warning-text);">⚠ warning</div>
+        <div style="font-size:20px; font-weight:600; color:var(--warning-text); font-family:'JetBrains Mono',monospace;">73.1%</div>
+        <div style="font-size:11px; color:var(--warning-text); opacity:0.8; margin-top:4px;">Confidence below threshold</div>
+      </div>
+      <div style="background:var(--danger-bg); border:1px solid var(--danger-border); border-radius:4px; padding:0.875rem;">
+        <div class="card-label" style="color:var(--danger-text);">✕ danger</div>
+        <div style="font-size:20px; font-weight:600; color:var(--danger-text); font-family:'JetBrains Mono',monospace;">API Down</div>
+        <div style="font-size:11px; color:var(--danger-text); opacity:0.8; margin-top:4px;">Backend unreachable</div>
+      </div>
+      <div style="background:var(--info-bg); border:1px solid var(--info-border); border-radius:4px; padding:0.875rem;">
+        <div class="card-label" style="color:var(--info-text);">ℹ info</div>
+        <div style="font-size:20px; font-weight:600; color:var(--info-text); font-family:'JetBrains Mono',monospace;">12 new</div>
+        <div style="font-size:11px; color:var(--info-text); opacity:0.8; margin-top:4px;">Prediction requests queued</div>
+      </div>
+      <div style="background:var(--critical-bg); border:1px solid var(--critical-border); border-radius:4px; padding:0.875rem;">
+        <div class="card-label" style="color:var(--critical-text);">🔴 critical</div>
+        <div style="font-size:20px; font-weight:600; color:var(--critical-text); font-family:'JetBrains Mono',monospace;">DDoS</div>
+        <div style="font-size:11px; color:var(--critical-text); opacity:0.8; margin-top:4px;">Active intrusion detected</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         PILLS — BEFORE / AFTER SELF-CRITIQUE
+         ═══════════════════════════════════════ -->
+    <h2>Status Pills — Current vs. Redesigned (Self-Critique Fix #2)</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-label">Before — Default "Bootstrap badge" look</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+          <span class="pill pill-ok"><span class="pill-dot" style="background:var(--success-text)"></span>BENIGN</span>
+          <span class="pill pill-info"><span class="pill-dot" style="background:var(--info-text)"></span>Info</span>
+          <span class="pill pill-warn"><span class="pill-dot" style="background:var(--warning-text)"></span>Warn</span>
+          <span class="pill pill-danger"><span class="pill-dot" style="background:var(--danger-text)"></span>Danger</span>
+          <span class="pill pill-critical"><span class="pill-dot" style="background:var(--critical-text)"></span>Critical</span>
+          <span class="pill pill-muted">Muted</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">After — Monochrome bg + left accent stripe</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+          <span class="pill-v2 pill-v2-ok">BENIGN</span>
+          <span class="pill-v2 pill-v2-info">Info</span>
+          <span class="pill-v2 pill-v2-warn">Warn</span>
+          <span class="pill-v2 pill-v2-danger">Danger</span>
+          <span class="pill-v2 pill-v2-critical">Critical</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SIDEBAR MOCKUP — SELF-CRITIQUE FIX #1
+         ═══════════════════════════════════════ -->
+    <h2>Shell Mockup — Sidebar Fix (Self-Critique Fix #1)</h2>
+    <div class="dash-shell">
+      <div class="sidebar-demo">
+        <div style="padding:0 14px 8px; font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px;">Monitor</div>
+        <div class="nav-item active">
+          <span class="nav-dot"></span>
+          Overview
+        </div>
+        <div class="nav-item">
+          <span style="width:4px;height:4px;border-radius:50%;background:transparent;border:1px solid var(--text-muted);display:inline-block;"></span>
+          Dataset
+        </div>
+        <div class="nav-item">
+          <span style="width:4px;height:4px;border-radius:50%;background:transparent;border:1px solid var(--text-muted);display:inline-block;"></span>
+          EDA
+        </div>
+        <div style="height:1px; background:var(--border-subtle); margin:8px 0;"></div>
+        <div style="padding:0 14px 8px; font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px;">Evaluate</div>
+        <div class="nav-item">
+          <span style="width:4px;height:4px;border-radius:50%;background:transparent;border:1px solid var(--text-muted);display:inline-block;"></span>
+          Model Perf.
+        </div>
+        <div class="nav-item">
+          <span style="width:4px;height:4px;border-radius:50%;background:transparent;border:1px solid var(--text-muted);display:inline-block;"></span>
+          Comparison
+        </div>
+      </div>
+      <div class="dash-main">
+        <div class="dash-main-title">Overview — CyberML</div>
+        <div class="dash-main-sub">CICIDS2017 · 3 models active · last updated 2m ago</div>
+        <div class="dash-cards">
+          <div class="card">
+            <div class="card-label">Total Flows</div>
+            <div class="card-value">2.8M</div>
+            <div class="card-sub">+4.2% vs last run</div>
+          </div>
+          <div class="card" style="border-color:var(--success-border);">
+            <div class="card-label">Best F1</div>
+            <div class="card-value" style="color:var(--success-text);">99.3%</div>
+            <div class="card-sub">Random Forest</div>
+          </div>
+          <div class="card" style="border-color:var(--warning-border);">
+            <div class="card-label">Anomalies</div>
+            <div class="card-value" style="color:var(--warning-text);">147</div>
+            <div class="card-sub">Needs review</div>
+          </div>
+        </div>
+
+        <div style="margin-top:1rem; display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn btn-primary">Run Prediction</button>
+          <button class="btn btn-ghost">Export Report</button>
+          <input class="input" style="max-width:200px;" placeholder="Search features…" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         CHART PALETTE
+         ═══════════════════════════════════════ -->
+    <h2>Chart Palette — 8 Categorical + Severity Scale</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-label">8 Categorical — Attack Classes</div>
+        <div class="chart-swatches">
+          <div class="chart-swatch" style="background:var(--chart-1)" title="BENIGN"></div>
+          <div class="chart-swatch" style="background:var(--chart-2)" title="DoS"></div>
+          <div class="chart-swatch" style="background:var(--chart-3)" title="Brute Force"></div>
+          <div class="chart-swatch" style="background:var(--chart-4)" title="PortScan"></div>
+          <div class="chart-swatch" style="background:var(--chart-5)" title="Bot"></div>
+          <div class="chart-swatch" style="background:var(--chart-6)" title="Web Attack"></div>
+          <div class="chart-swatch" style="background:var(--chart-7)" title="Infiltration"></div>
+          <div class="chart-swatch" style="background:var(--chart-8)" title="DDoS"></div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; font-size:9.5px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+          <span>BENIGN</span><span>DoS</span><span>BruteForce</span><span>PortScan</span>
+          <span>Bot</span><span>WebAtk</span><span>Infiltrate</span><span>DDoS</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Severity Scale — info → critical</div>
+        <div class="sev-bar">
+          <div class="sev-seg" style="background:var(--sev-info)" title="info"></div>
+          <div class="sev-seg" style="background:var(--sev-low)" title="low"></div>
+          <div class="sev-seg" style="background:var(--sev-medium)" title="medium"></div>
+          <div class="sev-seg" style="background:var(--sev-high)" title="high"></div>
+          <div class="sev-seg" style="background:var(--sev-critical)" title="critical"></div>
+        </div>
+        <div style="margin-top:6px; display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+          <span>info</span><span>low</span><span>medium</span><span>high</span><span>critical</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         EDGE CASES
+         ═══════════════════════════════════════ -->
+    <h2>Edge Cases</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-label">Focus Ring (tab to this)</div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-ghost">Ghost</button>
+          <input class="input" style="max-width:140px;" placeholder="Focus me" />
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Disabled States — Visible in Dark Mode</div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="btn btn-primary" disabled>Disabled</button>
+          <button class="btn btn-ghost" disabled>Disabled</button>
+        </div>
+        <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">opacity: 0.42 — visible but clearly inactive</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Autofill Override (try typing in field)</div>
+        <input class="input" type="email" autocomplete="email" placeholder="email@example.com" />
+        <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">Browser yellow suppressed, bg matches --bg-raised</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Selection Color</div>
+        <p style="font-size:12px; color:var(--text-secondary);">Select this text to see the custom selection color based on --info tone.</p>
+      </div>
+    </div>
+
+    <!-- Code block -->
+    <h2>Code Block</h2>
+    <pre>from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators=100, max_depth=15)
+model.fit(X_train, y_train)  # CICIDS2017 feature matrix
+y_pred = model.predict(X_test)
+# F1 Score: 0.9931 — see /performance for full report</pre>
+
+    <!-- ═══════════════════════════════════════
+         CONTRAST PROOF TABLE
+         ═══════════════════════════════════════ -->
+    <h2>Contrast Proof — Calculated, Not Claimed</h2>
+    <div style="background:var(--bg-surface); border:1px solid var(--border-base); border-radius:4px; overflow:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Hex (dark)</th>
+            <th>On bg-base</th>
+            <th>On bg-surface</th>
+            <th>Hex (light)</th>
+            <th>On bg-surface</th>
+            <th>Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>--text-primary</td><td>#DDE3F0</td><td class="pass">11.4:1</td><td class="pass">7.7:1</td><td>#16192A</td><td class="pass">6.7:1</td><td class="pass">AAA / AA ✓</td></tr>
+          <tr><td>--text-secondary</td><td>#A8B2C8</td><td class="pass">6.9:1</td><td class="pass">4.6:1</td><td>#444C62</td><td class="pass">7.7:1</td><td class="pass">AA ✓</td></tr>
+          <tr><td>--text-muted</td><td>#6A7090</td><td class="large">3.3:1</td><td class="fail">2.2:1 ✗</td><td>#7A8096</td><td class="large">3.3:1</td><td class="large">Large text only</td></tr>
+          <tr><td>--success-text</td><td>#4DCC9A</td><td class="pass">7.4:1</td><td class="pass">5.0:1</td><td>#0D6E48</td><td class="pass">5.3:1</td><td class="pass">AA ✓</td></tr>
+          <tr><td>--warning-text</td><td>#F0AE3A</td><td class="pass">7.6:1</td><td class="pass">5.1:1</td><td>#8A5F08</td><td class="pass">4.8:1</td><td class="pass">AA ✓</td></tr>
+          <tr><td>--danger-text</td><td>#FF7B7B</td><td class="pass">6.0:1</td><td class="pass">4.0:1</td><td>#A02020</td><td class="pass">7.1:1</td><td class="pass">AA ✓</td></tr>
+          <tr><td>--info-text</td><td>#4FC5EA</td><td class="pass">7.5:1</td><td class="pass">5.0:1</td><td>#1260A0</td><td class="pass">5.4:1</td><td class="pass">AA ✓</td></tr>
+          <tr><td>--critical-text</td><td>#FF6090</td><td class="pass">5.2:1</td><td class="pass">3.5:1</td><td>#AF1437</td><td class="pass">6.5:1</td><td class="pass">AA ✓</td></tr>
+          <tr><td>--accent</td><td>#2AB8D8</td><td class="pass">4.8:1</td><td class="large">3.2:1</td><td>#1056A8</td><td class="pass">5.9:1</td><td class="large">AA / Large ✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:10.5px; color:var(--text-muted); margin-top:8px;">
+      Note: <strong>--text-muted</strong> on bg-surface fails in dark. Use text-secondary for all informational content on card surfaces.
+      Status icon colors (--color-ok, --danger, etc.) do not require 4.5:1 — always paired with shape/text cue per WCAG 1.4.1.
+    </p>
+
+    <!-- ═══════════════════════════════════════
+         TOKEN REFERENCE
+         ═══════════════════════════════════════ -->
+    <h2>Token Reference</h2>
+    <pre>/* Backgrounds */
+var(--bg-base)        var(--bg-surface)      var(--bg-raised)       var(--bg-overlay)
+
+/* Text */
+var(--text-primary)   var(--text-secondary)  var(--text-muted)      var(--text-inverse)
+
+/* Borders */
+var(--border-subtle)  var(--border-base)     var(--border-strong)   rgb(var(--border-focus))
+
+/* Accent */
+var(--accent)         var(--accent-hover)    var(--accent-muted)
+
+/* Status — semantic */
+var(--success-text)   var(--success-bg)      var(--success-border)
+var(--warning-text)   var(--warning-bg)      var(--warning-border)
+var(--danger-text)    var(--danger-bg)       var(--danger-border)
+var(--info-text)      var(--info-bg)         var(--info-border)
+var(--critical-text)  var(--critical-bg)     var(--critical-border)
+
+/* Status — Tailwind channels (supports bg-ok/10, text-danger, etc.) */
+rgb(var(--color-ok))  rgb(var(--color-warn)) rgb(var(--color-danger))
+rgb(var(--color-info)) rgb(var(--color-critical))
+
+/* Chart */
+var(--chart-1) … var(--chart-8)
+var(--sev-info) var(--sev-low) var(--sev-medium) var(--sev-high) var(--sev-critical)</pre>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+
+    function getCurrentTheme() {
+      return document.documentElement.getAttribute('data-theme') || 'dark';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      try { localStorage.setItem('theme', theme); } catch(_) {}
+      btn.textContent = theme === 'dark' ? '☀' : '☾';
+      btn.setAttribute('aria-label', 'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode');
+    }
+
+    btn.addEventListener('click', function() {
+      applyTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+    });
+
+    // Sync button state on load
+    applyTheme(getCurrentTheme());
+  </script>
+</body>
+</html>

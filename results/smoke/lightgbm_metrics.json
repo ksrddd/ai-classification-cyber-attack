@@ -1,0 +1,19 @@
+{
+  "model": "lightgbm",
+  "accuracy": 0.9955022488755623,
+  "balanced_accuracy": 0.9818051989500078,
+  "f1_macro": 0.9888067359573722,
+  "f1_weighted": 0.9954852022425554,
+  "cv_f1_macro_mean": 0.9837449522902911,
+  "cv_f1_macro_std": 0.012292357172305583,
+  "cv_f1_macro_scores": [
+    0.9970211942416317,
+    0.9868258393408753,
+    0.9673878232883665
+  ],
+  "label_shuffle_acc": 0.363,
+  "label_shuffle_f1_macro": 0.1112542412632475,
+  "majority_baseline_acc": 0.4877561219390305,
+  "best_params": {},
+  "near_perfect_flag": true
+}
