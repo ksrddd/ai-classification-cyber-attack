@@ -61,6 +61,8 @@ models/*.pkl
 !models/.gitkeep
 
 # --- Generated outputs (everything under results/ is regenerable) ---
+results/**/*.joblib
+results/**/*.pkl
 results/metrics/*
 results/figures/*
 results/shap/*
