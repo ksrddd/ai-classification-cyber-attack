@@ -6,9 +6,8 @@
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-61%20passed-brightgreen)](tests/)
-[![Dataset](https://img.shields.io/badge/dataset-CICIDS2017-orange)](https://www.unb.ca/cic/datasets/ids-2017.html)
-
+[![Tests](https://img.shields.io/badge/tests-62%20passed-brightgreen)](tests/)
+[![Dataset](https://img.shields.io/badge/dataset-CICIDS2017-orange)](https://www.unb.ca/cic/datasets/ids-2017.html)(https://www.unb.ca/cic/datasets/ids-2018.html)
 ---
 
 ## Table of Contents · สารบัญ
@@ -39,7 +38,7 @@
 
 ### English
 
-This project reads CICIDS2017 network-flow records and automatically
+This project reads combined CICIDS2017 and CSE-CIC-IDS2018 network-flow records and automatically
 classifies each flow as one of several attack types — like a doctor
 diagnosing illness from symptoms. Existing IDS/IPS tools detect *that*
 an attack happened; this system tells the operator *what kind*, so the
@@ -51,7 +50,7 @@ real ML project: config-driven, tested, reproducible, leakage-free.
 
 ### ภาษาไทย
 
-โปรเจกต์นี้รับข้อมูล Network Flow จากชุดข้อมูล CICIDS2017 มาจำแนกประเภท
+โปรเจกต์นี้รับข้อมูล Network Flow จากชุดข้อมูล CICIDS2017 และ CSE-CIC-IDS2018 มาจำแนกประเภท
 การโจมตีทางไซเบอร์โดยอัตโนมัติ — เปรียบเหมือนหมอที่วินิจฉัยโรคจากอาการ
 ระบบ IDS/IPS ทั่วไปบอกได้แค่ว่า "มีการโจมตีเกิดขึ้น" แต่ไม่บอกว่าเป็น
 ประเภทไหน ระบบนี้ระบุประเภทให้ผู้ดูแลตอบสนองได้ตรงจุด
@@ -68,14 +67,14 @@ ML จริง: ปรับด้วย config, มี test, รันซ้�
 |---------|---------|---------|
 | Dual classification | Binary (`Normal`/`Attack`) **and** 10-class multi-class | รองรับทั้งแบบ 2 คลาส และ 10 คลาส |
 | Five ML models | Random Forest · XGBoost · LightGBM · CatBoost · MLP | โมเดล 5 แบบ ครอบคลุม tree ensemble และ neural net |
-| Label normalization | Maps 15 raw CICIDS labels into a clean scheme | แปลง 15 label ดิบของ CICIDS ให้สะอาด |
+| Label normalization | Maps CICIDS2017 and CSE-CIC-IDS2018 labels into one clean scheme | แปลง label ดิบของ CICIDS/CSE-CIC ให้สะอาด |
 | Stratified 3-way split | 60% train / 20% val / 20% test, leakage-proof | แบ่งข้อมูล 60/20/20 แบบ stratified ป้องกัน data leakage |
 | Hyperparameter tuning | GridSearchCV / RandomizedSearchCV configurable | ปรับ hyperparameter ด้วย Grid/Random Search ผ่าน config |
 | Full metric set | Accuracy · P/R/F1 (weighted+macro+per-class) · ROC-AUC · MCC | ครบทุก metric ที่ใช้ใน security ML |
 | Explainability | SHAP TreeExplainer + KernelExplainer fallback | อธิบาย model ด้วย SHAP รองรับทั้ง tree และ MLP |
 | Streamlit dashboard | 6 pages: data, EDA, performance, comparison, SHAP, predict | แดชบอร์ด Streamlit 6 หน้า |
 | Schema-safe inference | Upload CSV → validate → predict + probabilities | อัปโหลด CSV ใหม่แล้วทำนายได้ พร้อมเช็ค schema |
-| Test suite | 61 pytest cases + real-data smoke test | มี test 61 รายการ + smoke test กับข้อมูลจริง |
+| Test suite | 62 pytest cases + real-data smoke test | มี test 62 รายการ + smoke test กับข้อมูลจริง |
 | Reproducible | Single `RANDOM_STATE=42` + stratified everything | รันซ้ำได้ผลเดิมเสมอ |
 | Config-driven | All knobs in `config.yaml` — no magic numbers | ค่าทั้งหมดอยู่ใน config ไม่มีฮาร์ดโค้ดในตัว module |
 
@@ -116,7 +115,7 @@ ML จริง: ปรับด้วย config, มี test, รันซ้�
 | 8 | Evaluation | metric / confusion matrix / report | done |
 | 9 | SHAP / XAI | อธิบายโมเดลด้วย SHAP | done |
 | 10 | Streamlit dashboard | แดชบอร์ด 6 หน้า | done |
-| 11 | Testing | pytest 61 tests + smoke test | done |
+| 11 | Testing | pytest 62 tests + smoke test | done |
 | 12 | Inference / MLOps prep | ระบบทำนายผลข้อมูลใหม่ | done |
 | 13 | Documentation | เอกสาร + README นี้ | done |
 
@@ -146,7 +145,7 @@ ML จริง: ปรับด้วย config, มี test, รันซ้�
 ```
 cyber_attack_classification/
 ├── data/
-│   ├── raw/                      # CICIDS2017 CSVs (download separately)
+│   ├── raw/                      # CICIDS2017 + CSE-CIC-IDS2018 CSVs (download separately)
 │   ├── interim/                  # intermediate parquet files
 │   ├── processed/                # train/val/test parquet + feature_names.json
 │   └── sample/                   # synthetic CICIDS-shaped fixture for tests
@@ -194,7 +193,7 @@ cyber_attack_classification/
 │       ├── 04_Model_Comparison.py
 │       ├── 05_SHAP.py
 │       └── 06_Predict_New_CSV.py
-├── tests/                        # pytest (61 tests)
+├── tests/                        # pytest (62 tests)
 ├── scripts/                      # generate_sample.py, etc.
 ├── logs/                         # pipeline.log
 ├── main.py                       # CLI entry point
@@ -260,6 +259,33 @@ python -c "from src.models.registry import MODEL_CLASSES; print(list(MODEL_CLASS
 
 ## 7. Dataset Preparation · การเตรียมข้อมูล
 
+เวอร์ชันนี้รองรับไฟล์ flow CSV ทั้งชุดข้อมูล CICIDS2017 และ CSE-CIC-IDS2018 จาก Canadian Institute for Cybersecurity
+ให้วางไฟล์ CSV ทั้งหมดไว้ใน `data/raw/` โดย local training cache ปัจจุบันถูกสร้างขึ้นจากไฟล์ CSV ดิบจำนวน 18 ไฟล์ และสร้างระเบียนข้อมูล flow ที่สะอาดแล้วประมาณ 13.9 ล้านแถว
+
+ลิงก์หน้าชุดข้อมูลที่มีประโยชน์:
+- CICIDS2017: <https://www.unb.ca/cic/datasets/ids-2017.html>
+- CSE-CIC-IDS2018: <https://www.unb.ca/cic/datasets/ids-2018.html>
+
+### รูปแบบโครงสร้างโฟลเดอร์ `data/raw/` ที่คาดหวัง
+
+```text
+data/raw/
+  02-14-2018.csv
+  02-15-2018.csv
+  02-16-2018.csv
+  ...
+  Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv
+  Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv
+  ...
+```
+
+`train.py` จะปรับประเภทคอลัมน์และ label ของทั้ง CICIDS2017 และ CSE-CIC-IDS2018 ให้เป็นโครงสร้างข้อมูลเดียวกันก่อนทำการฝึกฝน (training) แนะนำให้สร้างแคชข้อมูลสะอาดใหม่เฉพาะเมื่อมีการเปลี่ยนแปลงของไฟล์ CSV ดิบเท่านั้น:
+
+```bash
+python main.py --stage train --refresh-cache --force
+```
+
+
 ### Source · แหล่งข้อมูล
 
 CICIDS2017 จาก Canadian Institute for Cybersecurity — ต้องขอ access:
@@ -268,12 +294,12 @@ CICIDS2017 จาก Canadian Institute for Cybersecurity — ต้องขอ
 ไฟล์ที่ต้องการคือ `MachineLearningCSV.zip` (~225 MB compressed, ~884 MB
 extracted, 8 CSVs, ~2.8 million flow records).
 
-### Extract into `data/raw/`
+### Extract into `data/raw/` · การแตกไฟล์ลงใน `data/raw/`
 
 **Windows (PowerShell)**
 
 ```powershell
-# Replace the source path with where you put the zip
+# แทนที่พาธต้นทางด้วยตำแหน่งที่คุณเก็บไฟล์ zip
 $Zip = 'C:\path\to\MachineLearningCSV.zip'
 Expand-Archive -Path $Zip -DestinationPath 'data\raw\.tmp'
 Move-Item data\raw\.tmp\MachineLearningCVE\*.csv data\raw\
@@ -291,7 +317,7 @@ rmdir MachineLearningCVE
 ls -lh *.csv
 ```
 
-After extraction your `data/raw/` should contain:
+หลังจากการแตกไฟล์ โฟลเดอร์ `data/raw/` ควรประกอบด้วยไฟล์ต่อไปนี้:
 
 ```
 Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv         # 77 MB · DDoS
@@ -312,20 +338,9 @@ Wednesday-workingHours.pcap_ISCX.csv                     # 225 MB · DoS + Heart
 
 ```bash
 python scripts/generate_sample.py --rows 2000
-# Wrote 2,020 rows x 79 cols to data/sample/synthetic_cicids.csv
 ```
 
-ใช้แทน `data/raw/` ได้ผ่าน `--raw-dir`:
-
-```bash
-python main.py --stage eda --raw-dir data/sample
-```
-
-> NOTE: ห้ามนำผลจากข้อมูลสังเคราะห์ไปรายงานในโปรเจกต์จริง — มีไว้สำหรับ
-> ทดสอบ pipeline เท่านั้น
-
----
-
+> หมายเหตุ: ข้อมูลสังเคราะห์ (synthetic data) มีไว้เพื่อทดสอบการทำงานของไปป์ไลน์เท่านั้น ห้ามนำผลการวัดประสิทธิภาพ (metrics) ที่ได้จากข้อมูลสังเคราะห์ไปรายงานเป็นผลลัพธ์ของโครงการ
 ## 8. Configuration · การตั้งค่า
 
 ทุกค่าอยู่ในไฟล์เดียว: [`src/config/config.yaml`](src/config/config.yaml)
@@ -338,7 +353,7 @@ classification:
 
 data:
   raw_dir: "data/raw"
-  subsample_n: 300000         # null = ใช้ข้อมูลทั้งหมด (~2.8M rows)
+  subsample_n: 300000         # null = ใช้ข้อมูลทั้งหมด (~13.9M cleaned rows)
   drop_other_class: false
 
 preprocessing:
@@ -352,7 +367,7 @@ models:
   lightgbm:      { enabled: true,  ... }
   catboost:      { enabled: true,  ... }
   mlp:           { enabled: true,  ... }
-  # disable specific models by setting enabled: false
+  # ปิดการใช้งานโมเดลเฉพาะเจาะจงโดยตั้งค่าเป็น enabled: false
 
 tuning:
   enabled: true
@@ -364,30 +379,49 @@ tuning:
 
 ## 9. Quick Start · เริ่มต้นใช้งานเร็ว
 
-### One-liner: end-to-end pipeline (ทั้งระบบในคำสั่งเดียว)
+ใช้ไฟล์ `main.py` เป็นจุดเริ่มต้นหลัก (entry point) ในการทำงาน ไปป์ไลน์การเทรนล่าสุดจะเขียนไฟล์ผลลัพธ์ (artifacts) ไปยัง `results/latest/` เพื่อนำไปใช้งานกับแดชบอร์ด
 
 ```bash
-python main.py --stage all
+# เทรนโมเดลทั้งหมดและบันทึกผลลัพธ์ลงใน results/latest/
+python main.py --stage train
+
+# แสดงสรุปผลประสิทธิภาพ (metrics) ล่าสุด
+python main.py --stage evaluate
+
+# เปิดแดชบอร์ด Streamlit
+python main.py --stage dashboard
+
+# พยากรณ์ข้อมูลจากไฟล์ CSV ใหม่
+python main.py --stage predict --input path/to/my_traffic.csv --output predictions.csv --model rf
 ```
 
-จะรัน: EDA → preprocess → train (5 โมเดล) → evaluate → SHAP → ครบทุกอย่าง
-
-### Three-line minimum (สั้นที่สุดเพื่อให้ได้ผลลัพธ์)
+ตัวเลือกเสริมทั่วไปสำหรับการเทรนโมเดล:
 
 ```bash
-python main.py --stage preprocess   # เตรียมข้อมูล
-python main.py --stage train         # train โมเดลทั้งหมด
-python main.py --stage evaluate      # ประเมินผล + report
+# บังคับเทรนใหม่แม้ว่าจะมีไฟล์ผลลัพธ์อยู่แล้ว
+python main.py --stage train --force
+
+# สร้างไฟล์ parquet สะอาดใหม่จากไฟล์ CSV ดิบ
+python main.py --stage train --refresh-cache --force
+
+# เทรนเฉพาะโมเดลเดี่ยวที่กำหนด
+python main.py --stage train --model rf --force
+python main.py --stage train --model xgb --force
+python main.py --stage train --model lgbm --force
+
+# เทรนแบบรวดเร็วโดยข้ามขั้นตอนการค้นหา Hyperparameter
+python main.py --stage train --skip-tuning
+
+# RAM 16 GB: train with the larger safe preset and write dashboard artifacts to results/latest/
+python main.py --stage train --run-name latest --preset 16gb --force
+
+# Full clean-cache training: uses every row in data/processed/cicids_clean.parquet.
+# Recommended RAM: 64 GB minimum, 96-128 GB preferred for all 3 models.
+python main.py --stage train --run-name latest --preset full --force --skip-cv --skip-label-shuffle
+
+# Full training, faster but with no hyperparameter search.
+python main.py --stage train --run-name latest --preset full --force --skip-hp --skip-cv --skip-label-shuffle
 ```
-
-### Launch dashboard (เปิดแดชบอร์ดดูผล)
-
-```bash
-streamlit run dashboard/app.py
-```
-
----
-
 ## 10. Pipeline Stages · ขั้นตอนของไปป์ไลน์
 
 ทุก stage ใช้ผ่าน `python main.py --stage <name>` ครับ
@@ -420,25 +454,36 @@ python main.py --stage preprocess
 ### Stage: `train` — Train Models
 
 ```bash
-# train all 5 enabled models
+# train all latest enabled models
 python main.py --stage train
 
 # train one model only (alias)
 python main.py --stage train --model rf       # random_forest
 python main.py --stage train --model xgb      # xgboost
 python main.py --stage train --model lgbm     # lightgbm
-python main.py --stage train --model cat      # catboost
-python main.py --stage train --model nn       # mlp
+# CatBoost/MLP remain available in the legacy modular pipeline when enabled
+
 
 # skip hyperparameter tuning (faster iteration)
 python main.py --stage train --model rf --skip-tuning
+
+# RAM presets for dashboard-ready results/latest/
+python main.py --stage train --run-name latest --preset 8gb --force
+python main.py --stage train --run-name latest --preset 16gb --force
+python main.py --stage train --run-name latest --preset 32gb --force
+
+# full clean-cache training (needs high RAM; skip CV checks for practicality)
+python main.py --stage train --run-name latest --preset full --force --skip-cv --skip-label-shuffle
+
+# safer first full run on a 16 GB machine: try LightGBM only
+python main.py --stage train --model lgbm --run-name latest --preset full --force --skip-hp --skip-cv --skip-label-shuffle
 ```
 
 **Output:**
-- `models/<name>.joblib` (fitted Pipeline per model)
-- `results/metrics/<name>_val.json` (validation metrics)
-- `results/metrics/<name>_cv_results.csv` (top-10 CV rows)
-- `results/metrics/val_summary.csv` (cross-model val ranking)
+- `results/latest/<model>.joblib` (fitted Pipeline per model)
+- `results/latest/<model>_metrics.json` (latest test metrics)
+- `results/latest/<model>_per_class.csv` (per-class report)
+- `results/latest/metrics.json` and `results/latest/report.md` (cross-model summary)
 
 ### Stage: `evaluate` — Test-set Metrics + Confusion Matrix + Comparison
 
@@ -449,12 +494,11 @@ python main.py --stage evaluate --model rf
 ```
 
 **Output:**
-- `results/metrics/<name>_test.json`
-- `results/metrics/classification_report_<name>.csv`
-- `results/figures/confusion_matrix_<name>.png`
-- `results/metrics/model_comparison.csv`
-- `results/metrics/model_comparison.png`
-- `reports/model_comparison.md`
+- `results/latest/<model>_metrics.json`
+- `results/latest/<model>_per_class.csv`
+- `results/latest/<model>_confusion_matrix.png`
+- `results/latest/metrics.json`
+- `results/latest/report.md`
 
 ### Stage: `explain` — SHAP Explainability
 
@@ -490,19 +534,25 @@ python main.py --stage predict \
 python main.py --stage all
 ```
 
-Runs `eda → preprocess → train → evaluate → explain` in order.
+Runs the latest training path and writes dashboard-ready artifacts under `results/latest/`.
 
 ### CLI flags reference · พารามิเตอร์ทั้งหมด
 
 | Flag | Values | Default | Purpose |
 |---|---|---|---|
-| `--stage` | `eda`, `preprocess`, `train`, `evaluate`, `explain`, `predict`, `all` | (required) | Which stage to run |
+| `--stage` | `train`, `evaluate`, `dashboard`, `predict`, `eda`, `preprocess`, `explain`, `all` | (required) | Which stage to run |
 | `--model` | `all`, `rf`/`random_forest`, `xgb`/`xgboost`, `lgbm`/`lightgbm`, `cat`/`catboost`, `nn`/`mlp`, `lr`/`logistic_regression` | `all` | Which model(s) |
 | `--config` | path | `src/config/config.yaml` | Override config path |
 | `--input` | path | — | Input CSV for `--stage predict` |
 | `--output` | path | (auto) | Output CSV for `--stage predict` |
 | `--raw-dir` | path | (from config) | Override raw data dir (e.g. `data/sample`) |
-| `--skip-tuning` | flag | `false` | Skip GridSearch/RandomSearch in train |
+| `--preset` | `8gb`, `16gb`, `32gb`, `full` | none | Training RAM/data-size preset |
+| `--skip-tuning` | flag | `false` | Skip hyperparameter search in train |
+| `--skip-cv` | flag | `false` | Skip cross-validation trust check during training |
+| `--skip-label-shuffle` | flag | `false` | Skip shuffled-label sanity check during training |
+| `--force` | flag | `false` | Retrain existing model artifacts |
+| `--refresh-cache` | flag | `false` | Rebuild `data/processed/cicids_clean.parquet` from raw CSVs |
+| `--port` | int | `8501` | Streamlit port for `--stage dashboard` |
 | `--log-level` | `DEBUG`/`INFO`/`WARNING`/`ERROR` | `INFO` | Verbosity |
 
 ---
@@ -510,25 +560,27 @@ Runs `eda → preprocess → train → evaluate → explain` in order.
 ## 11. Dashboard · แดชบอร์ด
 
 ```bash
-streamlit run dashboard/app.py
+python main.py --stage dashboard
 ```
 
-จะเปิด browser ไปที่ `http://localhost:8501` พร้อมเมนู 6 หน้า:
+Open `http://localhost:8501`. If that port is already used:
+
+```bash
+python main.py --stage dashboard --port 8502
+```
+
+The Streamlit dashboard now reads `results/latest/` directly and falls back to those artifacts when legacy `models/` or `results/metrics/` are empty.
 
 | Page | English | ภาษาไทย |
 |---|---|---|
-| 1. Dataset Overview | Source, row counts, class balance | ภาพรวม + การกระจายของคลาส |
+| 1. Dataset Overview | Combined CICIDS/CSE-CIC row counts and class balance | ภาพรวม + การกระจายของคลาส |
 | 2. EDA | Distribution plots, correlations, missing values | กราฟ EDA |
 | 3. Model Performance | Per-model metrics + confusion matrix + report | metric รายโมเดล + confusion matrix |
 | 4. Model Comparison | Cross-model ranking + bar chart | เปรียบเทียบโมเดลทั้งหมด |
 | 5. SHAP | Feature importance + per-class explanations | อธิบาย model ด้วย SHAP |
 | 6. Predict New CSV | Upload → validate → predict + download | อัปโหลด CSV ใหม่เพื่อพยากรณ์ |
 
-> **Tip:** หน้า 6 ต้อง preprocess + train โมเดลก่อนถึงจะใช้ได้
-> เพราะต้องโหลด `feature_names.json` และไฟล์ `models/<name>.joblib`
-
----
-
+> Page 6 expects the combined CICIDS/CSE-CIC 80-feature schema and uses model artifacts from `results/latest/`.
 ## 12. Inference · การพยากรณ์ผล
 
 ### CLI
@@ -553,7 +605,7 @@ result = predict_csv(
     model_name="random_forest",
     output_csv=Path("predictions.csv"),
 )
-print(result.validation.message)        # OK -- 10000 rows, 78 columns
+print(result.validation.message)        # OK -- 10000 rows, 80 columns
 print(result.predictions.head())
 
 # จาก DataFrame ที่โหลดอยู่แล้ว
@@ -565,7 +617,7 @@ print(result.predictions["predicted_label"].value_counts())
 ### Schema requirements · ข้อกำหนดของ CSV ที่อัปโหลด
 
 - ต้องมีคอลัมน์ฟีเจอร์ครบตามที่อยู่ใน `data/processed/feature_names.json`
-  (77 คอลัมน์ หลังตัด CICIDS duplicate column)
+  (80 คอลัมน์ของ combined CICIDS/CSE-CIC schema)
 - คอลัมน์เกินอนุญาตได้ (เช่น `Label` สำหรับ QA)
 - Inf / NaN จะถูกแทนด้วย 0 ก่อนพยากรณ์
 - ระบบจะ strip whitespace นำหน้าชื่อคอลัมน์ให้อัตโนมัติ
@@ -579,7 +631,7 @@ print(result.predictions["predicted_label"].value_counts())
 ### 13.1 Unit tests (pytest) · ทดสอบหน่วยย่อย
 
 ```bash
-# Run all 61 tests
+# Run all 62 tests
 pytest
 
 # Quiet mode (less output)
@@ -608,7 +660,7 @@ pytest -vv -l
 
 ```
 ============================= test session starts =============================
-collected 61 items
+collected 62 items
 
 tests/test_config.py ........                                            [ 13%]
 tests/test_data_loader.py .........                                      [ 27%]
@@ -619,7 +671,7 @@ tests/test_models.py ............                                        [ 77%]
 tests/test_preprocessing.py ..........                                   [ 93%]
 tests/test_utils.py ....                                                 [100%]
 
-======================= 61 passed, 3 warnings in ~8s ==========================
+======================= 62 passed, 4 warnings in ~11s =========================
 ```
 
 ### 13.2 Coverage report · รายงาน code coverage
@@ -715,11 +767,11 @@ python main.py --stage all
 
 ```bash
 # Start dashboard in background
-streamlit run dashboard/app.py
+python main.py --stage dashboard
 
 # Open http://localhost:8501
 # Check that all 6 sidebar pages load without error.
-# Page 6 needs models/*.joblib to exist (run --stage train first).
+# Page 6 needs results/latest/*.joblib to exist (run --stage train first).
 ```
 
 ### 13.7 Continuous testing · ทดสอบขณะพัฒนา
@@ -734,29 +786,26 @@ ptw -- --no-cov
 
 ## 14. Results · ผลลัพธ์
 
-### Smoke-test benchmark (3 CSVs, 50K-row stratified subsample)
+### Latest combined-dataset run
 
-ทดสอบบน Windows, Python 3.13, CPU only · ผลจาก Friday-DDos + PortScan + Bot:
+ไฟล์ผลลัพธ์มาตรฐานล่าสุดอยู่ใน `results/latest/` ซึ่งได้รับการฝึกฝนบนแคชของชุดข้อมูลรวม CICIDS2017 + CSE-CIC-IDS2018
 
-| Model | Accuracy | F1 (weighted) | F1 (macro) |
-|---|---|---|---|
-| **LightGBM** | 0.9981 | **0.9981** | 0.9611 |
-| **CatBoost** | 0.9976 | 0.9977 | 0.9561 |
-| **XGBoost** | 0.9975 | 0.9973 | 0.9155 |
-| **Random Forest** | 0.9971 | 0.9969 | 0.9025 |
-| **MLP** | 0.9953 | 0.9944 | 0.8225 |
+| Model | Accuracy | F1 weighted | F1 macro |
+|---|---:|---:|---:|
+| **Random Forest** | **0.9878** | 0.9848 | 0.8979 |
+| **LightGBM** | 0.9817 | 0.9825 | 0.8906 |
+| **XGBoost** | 0.9767 | 0.9801 | 0.8917 |
 
-**Key observations:**
-- All 5 models > 99.4% accuracy (CICIDS is well-separable on this subset)
-- F1-macro spread (0.82–0.96) → minority classes still matter
-- LightGBM wins both speed and F1-weighted
-- MLP underperforms slightly — expected without SMOTE on this imbalance
+ไฟล์ผลลัพธ์หลัก:
 
-> Full-corpus results will land here once `data.subsample_n: null` runs
-> overnight on a workstation. (Note: results on synthetic data should
-> NOT be reported — that's fixture data, not science.)
+- `results/latest/metrics.json`
+- `results/latest/report.md`
+- `results/latest/<model>_metrics.json`
+- `results/latest/<model>_per_class.csv`
+- `results/latest/<model>_confusion_matrix.png`
+- `results/latest/<model>.joblib`
 
----
+ค่า Accuracy นั้นอยู่ในระดับสูงมาก แต่ชุดข้อมูลมีปัญหาความไม่สมดุลของข้อมูล (class imbalance) อย่างมาก ดังนั้น ควรวิเคราะห์ `f1_macro` รายงานรายคลาส (per-class reports) และตารางเมทริกซ์ความสับสน (confusion matrices) ควบคู่ไปกับ Accuracy เสมอ โดยเฉพาะอย่างยิ่งสำหรับคลาสที่มีขนาดเล็กมาก เช่น Heartbleed
 
 ## 15. Architecture · สถาปัตยกรรม
 
@@ -789,7 +838,7 @@ data/raw/*.csv
    → data/processed/{train,val,test}.parquet
    → Pipeline(StandardScaler + Classifier).fit
    → tuner.tune_model (CV=5, RandomizedSearchCV)
-   → models/<name>.joblib
+   → results/latest/<model>.joblib
    → evaluation.compute_metrics + confusion_matrix + comparison
    → explainability.shap_analyzer
    → results/{metrics,figures,shap}/...
@@ -859,7 +908,7 @@ data:
 ### Streamlit port already in use
 
 ```bash
-streamlit run dashboard/app.py --server.port 8502
+python main.py --stage dashboard --port 8502
 ```
 
 ---
@@ -950,7 +999,7 @@ Department of Information Technology, KMITL
 
 ```bibtex
 @misc{cyberml_kmitl_2569,
-  title  = {AI-Based Cyber Attack Classification from Network Logs using CICIDS2017},
+  title  = {AI-Based Cyber Attack Classification from Network Logs using CICIDS2017 and CSE-CIC-IDS2018},
   author = {Chotthakunanan, Sirachet and Rudeemaetakul, Sukhum},
   year   = {2569 (2026)},
   note   = {Senior Project, Faculty of Information Technology, KMITL.
@@ -975,7 +1024,7 @@ Department of Information Technology, KMITL
 
 ## Acknowledgements · กิตติกรรมประกาศ
 
-- ขอขอบคุณ **Canadian Institute for Cybersecurity (UNB)** สำหรับชุดข้อมูล CICIDS2017
+- ขอขอบคุณ **Canadian Institute for Cybersecurity (UNB)** สำหรับชุดข้อมูล CICIDS2017 และ CSE-CIC-IDS2018
 - ขอขอบคุณ open-source community: scikit-learn, XGBoost, LightGBM, CatBoost, SHAP, Streamlit
 - ขอขอบคุณ **ผศ.ดร.ประพันธ์ ปวรางกูร** สำหรับคำแนะนำตลอดโครงการ
 

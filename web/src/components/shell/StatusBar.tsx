@@ -13,7 +13,7 @@ export function StatusBar() {
           <span>API</span>
         </span>
         <span className="text-line-strong">|</span>
-        <span className="hidden md:inline tabular-nums">78 features · 7 classes · CICIDS2017</span>
+        <span className="hidden md:inline tabular-nums">80 features · 9 classes · CICIDS2017 + CSE-CIC-IDS2018</span>
         <span className="ml-auto flex items-center gap-3">
           <span className="hidden md:inline">/{routeName}</span>
           <span>v3.2.1</span>

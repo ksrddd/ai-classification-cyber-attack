@@ -1,8 +1,8 @@
-"""Streamlit dashboard -- entry point.
+﻿"""Streamlit dashboard -- entry point.
 
 Run with::
 
-    streamlit run dashboard/app.py
+    python main.py --stage dashboard
 """
 
 from __future__ import annotations
@@ -30,8 +30,10 @@ from dashboard._style import (  # noqa: E402
     sidebar_header,
 )
 
+DATASET_NAME = "CICIDS2017 + CSE-CIC-IDS2018"
+
 st.set_page_config(
-    page_title="CyberML — Cyber Attack Classification",
+    page_title="CyberML -- Cyber Attack Classification",
     page_icon=":shield:",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -44,44 +46,40 @@ st.set_page_config(
 
 apply_style()
 
-cfg_data   = cfg()
-mode       = active_mode()
-labels     = active_labels()
-saved      = cached_list_models()
+cfg_data = cfg()
+mode = active_mode()
+labels = active_labels()
+saved = cached_list_models()
 
-# --- hero ---------------------------------------------------------------
 hero(
     "AI-Based Cyber Attack Classification",
-    "CICIDS2017 · Random Forest · XGBoost · LightGBM · CatBoost · MLP",
+    f"{DATASET_NAME} · Random Forest · XGBoost · LightGBM",
 )
 
-# --- KPI strip ----------------------------------------------------------
 k1, k2, k3, k4 = st.columns(4)
 k1.metric("Classification mode", mode.upper())
-k2.metric("Target classes",      len(labels))
-k3.metric("Models trained",      f"{len(saved)} / 5")
-k4.metric("Dataset",             "CICIDS2017")
+k2.metric("Target classes", len(labels))
+k3.metric("Models trained", f"{len(saved)} / 3")
+k4.metric("Dataset", DATASET_NAME)
 
-# --- pipeline status pills ----------------------------------------------
 st.markdown("&nbsp;")
 status_html = " &nbsp; ".join([
-    pill("CICIDS2017 ready", "success"),
+    pill(f"{DATASET_NAME} ready", "success"),
     pill(f"{len(saved)} models trained" if saved else "no models yet",
          "success" if saved else "warn"),
     pill("Streamlit dashboard", "accent"),
-    pill("SHAP explainability", "accent"),
+    pill("results/latest", "accent"),
 ])
 st.markdown(status_html, unsafe_allow_html=True)
 
-# --- nav cards ----------------------------------------------------------
 st.markdown("&nbsp;")
 PAGES = [
-    ("📊 Dataset Overview",    "CICIDS2017 summary, label distribution, post-mapping audit."),
-    ("🔬 EDA",                 "Class balance, missing-value audit, correlation heatmap."),
-    ("🎯 Model Performance",   "Per-model metrics, confusion matrix, classification report."),
-    ("🏆 Model Comparison",    "Cross-model leaderboard and grouped bar chart."),
-    ("💡 SHAP Explainability", "Top features per class, beeswarm summary, per-model drill-down."),
-    ("🔮 Predict New CSV",     "Upload a CICIDS-format CSV, get predictions with probabilities."),
+    ("Dataset Overview", "Combined CICIDS2017/CSE-CIC-IDS2018 label distribution and schema summary."),
+    ("EDA", "Class balance, missing-value audit, correlation heatmap."),
+    ("Model Performance", "Per-model metrics, confusion matrix, classification report."),
+    ("Model Comparison", "Cross-model leaderboard and grouped bar chart."),
+    ("SHAP Explainability", "Top features per class, beeswarm summary, per-model drill-down."),
+    ("Predict New CSV", "Upload a CICIDS2017-format CSV, get predictions with probabilities."),
 ]
 cols = st.columns(3)
 for i, (name, desc) in enumerate(PAGES):
@@ -91,34 +89,33 @@ for i, (name, desc) in enumerate(PAGES):
             unsafe_allow_html=True,
         )
 
-# --- config expander ----------------------------------------------------
 with st.expander("Active configuration", expanded=False):
     st.json({
         "classification_mode": mode,
-        "labels":              list(labels),
-        "trained_models":      saved,
-        "raw_dir":             cfg_data["data"]["raw_dir"],
-        "subsample_n":         cfg_data["data"].get("subsample_n"),
+        "labels": list(labels),
+        "trained_models": saved,
+        "raw_dir": cfg_data["data"]["raw_dir"],
+        "subsample_n": cfg_data["data"].get("subsample_n"),
+        "dashboard_artifacts": "results/latest",
     })
 
-# --- sidebar ------------------------------------------------------------
 with st.sidebar:
     sidebar_header(n_models=len(saved), n_classes=len(labels))
     st.divider()
     st.markdown(
-        f'<div style="font-size:.75rem;text-transform:uppercase;'
-        f'letter-spacing:.12em;color:#4A5163;font-weight:600;'
-        f'margin-bottom:.5rem;">Authors</div>',
+        '<div style="font-size:.75rem;text-transform:uppercase;'
+        'letter-spacing:.12em;color:#4A5163;font-weight:600;'
+        'margin-bottom:.5rem;">Authors</div>',
         unsafe_allow_html=True,
     )
     st.caption("Sirachet Chotthakunanan  ·  66070191")
     st.caption("Sukhum Rudeemaetakul  ·  66070315")
     st.markdown(
-        f'<div style="font-size:.75rem;text-transform:uppercase;'
-        f'letter-spacing:.12em;color:#4A5163;font-weight:600;'
-        f'margin:.75rem 0 .5rem 0;">Advisor</div>',
+        '<div style="font-size:.75rem;text-transform:uppercase;'
+        'letter-spacing:.12em;color:#4A5163;font-weight:600;'
+        'margin:.75rem 0 .5rem 0;">Advisor</div>',
         unsafe_allow_html=True,
     )
     st.caption("Asst. Prof. Dr. Prapan Pavarangkoon")
 
-footer("CyberML · CICIDS2017 · KMITL IT · Senior Project 2569")
+footer(f"CyberML · {DATASET_NAME} · KMITL IT · Senior Project 2569")

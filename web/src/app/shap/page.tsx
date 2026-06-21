@@ -113,7 +113,7 @@ export default function ShapPage() {
               <span className="text-ink-1 font-medium">{modelLabel(selected)}</span>.
               Run{" "}
               <code className="font-mono text-[10.5px] py-0.5 px-[5px] rounded bg-surface-elevated ring-1 ring-line-base text-ink-1 inline-flex items-center">
-                python main.py --stage shap
+                python main.py --stage explain
               </code>{" "}
               first.
             </div>

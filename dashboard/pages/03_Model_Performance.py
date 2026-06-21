@@ -1,4 +1,4 @@
-"""Page 3 -- Model Performance."""
+﻿"""Page 3 -- Model Performance."""
 
 from __future__ import annotations
 
@@ -8,9 +8,9 @@ import streamlit as st
 
 from dashboard._shared import (
     cached_list_models,
-    figures_dir,
+    confusion_matrix_path,
     load_model_metrics,
-    metrics_dir,
+    classification_report_path,
     warn_no_models,
 )
 from dashboard._style import (
@@ -125,9 +125,9 @@ with c_left:
         config=plotly_config(f"radar_{model}"),
     )
 with c_right:
-    cm_path = figures_dir() / f"confusion_matrix_{model}.png"
+    cm_path = confusion_matrix_path(model)
     st.caption("Confusion matrix (normalised by true class)")
-    if cm_path.exists():
+    if cm_path is not None:
         st.image(str(cm_path), use_container_width=True)
     else:
         st.info("Run `--stage evaluate` to generate the confusion matrix.")
@@ -180,8 +180,8 @@ if per_class:
 
 # --- classification report ---------------------------------------------
 section("Classification report")
-report_path = metrics_dir() / f"classification_report_{model}.csv"
-if report_path.exists():
+report_path = classification_report_path(model)
+if report_path is not None:
     df = pd.read_csv(report_path, index_col=0)
     st.dataframe(df.round(4), use_container_width=True)
 else:

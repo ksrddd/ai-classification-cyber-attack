@@ -32,8 +32,8 @@ apply_style()
 
 hero(
     "Dataset Overview",
-    "CICIDS2017 (Canadian Institute for Cybersecurity) · "
-    "8 CSVs · ~2.8 M flow records · 78 features",
+    "CICIDS2017 + CSE-CIC-IDS2018 (Canadian Institute for Cybersecurity) · "
+    "18 CSVs · 13.9M cleaned flow records · 80 features",
 )
 
 labels     = active_labels()

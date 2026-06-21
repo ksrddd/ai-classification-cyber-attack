@@ -1,6 +1,6 @@
 """Batch inference on user-uploaded CSVs.
 
-Reads a CSV that follows the CICIDS2017 flow-feature schema, validates
+Reads a CSV that follows the combined CICIDS2017/CSE-CIC-IDS2018 flow-feature schema, validates
 it against the saved ``feature_names.json``, runs the saved Pipeline,
 and returns a DataFrame with predicted class labels and per-class
 probabilities.
@@ -20,10 +20,11 @@ import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from src.config.constants import LABEL_COLUMN, PROCESSED_DIR
+from src.config.constants import LABEL_COLUMN, PROCESSED_DIR, PROJECT_ROOT
 from src.data.schema import clean_column_names
 from src.features.encoder import encoder_classes, load_label_encoder
 from src.features.validator import (
+    FEATURE_NAMES_PATH,
     ValidationReport,
     load_expected_features,
     validate_inference_csv,
@@ -32,6 +33,8 @@ from src.models.base import default_model_path
 from src.utils.io import load_joblib
 
 logger = logging.getLogger(__name__)
+
+LATEST_DIR = PROJECT_ROOT / 'results' / 'latest'
 
 
 @dataclass
@@ -76,7 +79,7 @@ def predict_dataframe(
 ) -> PredictionResult:
     """Run inference on an already-loaded DataFrame."""
     df = clean_column_names(df)
-    expected = load_expected_features()
+    expected = load_expected_features(_feature_names_path())
     report = validate_inference_csv(df, expected_features=expected)
     if not report.ok:
         raise ValueError(report.message)
@@ -129,11 +132,11 @@ def clear_cache() -> None:
 
 @lru_cache(maxsize=8)
 def _load_pipeline_cached(model_name: str) -> Pipeline:
-    path = default_model_path(model_name)
+    path = _model_path(model_name)
     if not path.exists():
         raise FileNotFoundError(
-            f"No saved model for {model_name!r} at {path}. "
-            f"Run `python main.py --stage train --model {model_name}` first."
+            f'No saved model for {model_name!r} at {path}. '
+            f'Run python main.py --stage train --model {model_name} first.'
         )
     pipe = load_joblib(path)
     if not isinstance(pipe, Pipeline):
@@ -143,6 +146,9 @@ def _load_pipeline_cached(model_name: str) -> Pipeline:
 
 @lru_cache(maxsize=1)
 def _load_encoder_cached():
+    latest = LATEST_DIR / 'label_encoder.joblib'
+    if latest.exists():
+        return load_label_encoder(latest)
     return load_label_encoder()
 
 
@@ -151,10 +157,28 @@ def list_saved_models() -> list[str]:
     from src.models.registry import MODEL_CLASSES
     found: list[str] = []
     for name in MODEL_CLASSES:
-        if default_model_path(name).exists():
+        if _model_path(name).exists():
             found.append(name)
     return found
 
 
+
+
+def _model_path(model_name: str) -> Path:
+    primary = default_model_path(model_name)
+    if primary.exists():
+        return primary
+    return LATEST_DIR / f"{model_name}.joblib"
+
+
+def _feature_names_path() -> Path:
+    if FEATURE_NAMES_PATH.exists():
+        return FEATURE_NAMES_PATH
+    latest = LATEST_DIR / "feature_columns.json"
+    if latest.exists():
+        return latest
+    return FEATURE_NAMES_PATH
 def expected_schema_path() -> Path:
-    return PROCESSED_DIR / "feature_names.json"
+    return _feature_names_path()
+
+

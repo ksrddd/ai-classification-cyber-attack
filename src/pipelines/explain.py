@@ -19,8 +19,11 @@ import pandas as pd
 
 from src.config.constants import (
     PROCESSED_DIR,
+    RESULTS_DIR,
     SHAP_DIR,
 )
+
+LATEST_DIR = RESULTS_DIR / "latest"
 from src.config.loader import load_config
 from src.explainability.shap_analyzer import (
     ShapResult,
@@ -41,7 +44,14 @@ def run(config_path: Path, model: str = "all") -> dict:
     cfg = load_config(config_path)
     shap_cfg = cfg["shap"]
 
-    test_df = pd.read_parquet(PROCESSED_DIR / "test.parquet")
+    test_parquet = PROCESSED_DIR / "test.parquet"
+    if not test_parquet.exists():
+        raise FileNotFoundError(
+            f"Preprocessed test data not found at {test_parquet}. "
+            "Please run the preprocess stage first: "
+            "python main.py --stage preprocess"
+        )
+    test_df = pd.read_parquet(test_parquet)
     X_test = test_df.drop(columns=[LABEL_ENCODED_COLUMN])
     le = load_label_encoder()
     class_names = [str(c) for c in le.classes_]
@@ -85,8 +95,17 @@ def run(config_path: Path, model: str = "all") -> dict:
 
 def _select(model_arg: str) -> dict[str, Path]:
     if model_arg in ("all", None):
-        return {name: default_model_path(name) for name in MODEL_CLASSES}
+        return {name: _resolve_model_path(name) for name in MODEL_CLASSES}
     canonical = resolve_name(model_arg)
     if canonical not in MODEL_CLASSES:
         raise KeyError(f"Unknown model {model_arg!r}.")
-    return {canonical: default_model_path(canonical)}
+    return {canonical: _resolve_model_path(canonical)}
+
+
+def _resolve_model_path(name: str) -> Path:
+    """Return the path to a saved model, checking models/ then results/latest/."""
+    primary = default_model_path(name)  # models/<name>.joblib
+    if primary.exists():
+        return primary
+    fallback = LATEST_DIR / f"{name}.joblib"  # results/latest/<name>.joblib
+    return fallback

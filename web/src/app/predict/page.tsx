@@ -103,7 +103,7 @@ export default function PredictPage() {
             <p className="text-[9.5px] uppercase tracking-[.2em] text-ink-3 font-semibold mb-1">Inference</p>
             <h1 className="text-[22px] font-semibold tracking-tight text-ink-0">Predict New Traffic</h1>
             <p className="text-[11px] text-ink-3 font-mono mt-1">
-              CICIDS2017 · 77 features · 7 attack classes · per-row probabilities
+              CICIDS2017 + CSE-CIC-IDS2018 · 80 features · 9 attack classes · per-row probabilities
             </p>
           </div>
         </div>

@@ -31,7 +31,7 @@ apply_style()
 
 hero(
     "Predict New CSV",
-    "Upload a CICIDS-format flow CSV · schema validation · per-row predictions + probabilities.",
+    "Upload a combined CICIDS2017/CSE-CIC-IDS2018 flow CSV · schema validation · per-row predictions + probabilities.",
 )
 
 saved = cached_list_models()
@@ -50,14 +50,14 @@ with c2:
     uploaded = st.file_uploader(
         "Upload a network-flow CSV",
         type=["csv"],
-        help="Must follow the CICIDS2017 78-feature schema. "
+        help="Must follow the combined CICIDS2017/CSE-CIC-IDS2018 80-feature schema. "
              "Column names are auto-stripped. Need a sample? "
              "Run `python scripts/generate_sample.py`.",
     )
 
 if uploaded is None:
     st.info(
-        "Drop a CSV with the 78 CICIDS flow features.  \n"
+        "Drop a CSV with the 80 combined CICIDS2017/CSE-CIC-IDS2018 flow features.  \n"
         "Need a test file? Run `python scripts/generate_sample.py` "
         "to generate `data/sample/synthetic_cicids.csv`.",
         icon="ℹ️",
@@ -94,8 +94,8 @@ if not report.ok:
 st.markdown(pill(report.message, "success"), unsafe_allow_html=True)
 
 # --- inference ----------------------------------------------------------
-section("Predictions", f"Running {model_label(model)} on {report.n_rows:,} rows …")
-with st.spinner("Predicting …"):
+section("Predictions", f"Running {model_label(model)} on {report.n_rows:,} rows...")
+with st.spinner("Predicting..."):
     try:
         result = predict_dataframe(df, model_name=model, include_probabilities=True)
     except Exception as exc:
@@ -183,7 +183,7 @@ buf = BytesIO()
 preds.to_csv(buf, index=False)
 buf.seek(0)
 st.download_button(
-    "⬇ Download all predictions (CSV)",
+    "⬇️ Download all predictions (CSV)",
     data=buf,
     file_name=f"predictions_{model}.csv",
     mime="text/csv",

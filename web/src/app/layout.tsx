@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "CyberML — Cyber Attack Classification",
-  description: "AI-based network intrusion detection · CICIDS2017 · KMITL Senior Project",
+  description: "AI-based network intrusion detection · CICIDS2017 + CSE-CIC-IDS2018 · KMITL Senior Project",
 };
 
 /* Runs synchronously before first paint — prevents theme flash.

@@ -1,5 +1,6 @@
 [
   "Destination Port",
+  "Protocol",
   "Flow Duration",
   "Total Fwd Packets",
   "Total Backward Packets",
@@ -35,8 +36,8 @@
   "Bwd URG Flags",
   "Fwd Header Length",
   "Bwd Header Length",
-  "Fwd Packets/s",
-  "Bwd Packets/s",
+  "Fwd Pkts/s",
+  "Bwd Pkts/s",
   "Min Packet Length",
   "Max Packet Length",
   "Packet Length Mean",
@@ -75,5 +76,7 @@
   "Idle Mean",
   "Idle Std",
   "Idle Max",
-  "Idle Min"
+  "Idle Min",
+  "Fwd Packets/s",
+  "Bwd Packets/s"
 ]

@@ -27,7 +27,7 @@ export default async function DatasetPage() {
         <div>
           <h1 className="text-[26px] font-semibold tracking-tight text-ink-0">Dataset Overview</h1>
           <p className="text-[12px] text-ink-2 mt-1">
-            CICIDS2017 · Canadian Institute for Cybersecurity · 8 CSVs · ~2.8M flow records · 78 features
+            CICIDS2017 + CSE-CIC-IDS2018 · 18 CSVs · ~13.9M cleaned flow records · 80 features
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export default async function DatasetPage() {
 
         {/* Status pills */}
         <div className="flex flex-wrap gap-2">
-          <Pill tone="ok">CICIDS2017 ready</Pill>
+          <Pill tone="ok">CICIDS2017/CSE-CIC-IDS2018 ready</Pill>
           <Pill tone="ok">{overview?.n_features ?? 78} features</Pill>
           <Pill tone={overview?.missing_total ? "warn" : "ok"}>
             {overview?.missing_total ?? 0} missing cells

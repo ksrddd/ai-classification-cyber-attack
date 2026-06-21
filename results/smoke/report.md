@@ -12,15 +12,15 @@
 
 | class | n_train | n_test | granularity warning |
 |---|---|---|---|
-| BENIGN | 3904 | 976 |  |
-| Bot | 1558 | 390 |  |
-| Brute Force | 17 | 4 | very low confidence -- treat as anecdote |
-| DDoS | 238 | 60 |  |
-| DoS | 361 | 90 |  |
+| BENIGN | 4878 | 1220 |  |
+| Bot | 58 | 15 |  |
+| Brute Force | 42 | 10 |  |
+| DDoS | 362 | 91 |  |
+| DoS | 157 | 39 |  |
 | Heartbleed | 8 | 3 | very low confidence -- treat as anecdote |
-| Infiltration | 29 | 7 | indicative only -- small N |
-| PortScan | 169 | 42 |  |
-| Web Attack | 1714 | 429 |  |
+| Infiltration | 56 | 14 |  |
+| PortScan | 36 | 9 | indicative only -- small N |
+| Web Attack | 2402 | 600 |  |
 
 > Per-class recall for any class with `n_test < 10` should be read as an upper-bound estimate, not a stable metric. This is an inherent limitation of CICIDS2017 -- the dataset ships with only 11 Heartbleed and 36 Infiltration flows.
 
@@ -28,26 +28,14 @@
 
 | model | accuracy | balanced acc | f1_macro | f1_weighted | CV f1_macro (mean +/- std) | majority baseline acc | shuffled-labels f1_macro |
 |---|---|---|---|---|---|---|---|
-| random_forest | 0.9915 | 0.9597 | 0.9758 | 0.9914 | 0.9716 +/- 0.0011 | 0.4878 | 0.1132 |
-| xgboost | 0.9960 | 0.9821 | 0.9890 | 0.9960 | 0.9739 +/- 0.0091 | 0.4878 | 0.1081 |
-| lightgbm | 0.9955 | 0.9818 | 0.9888 | 0.9955 | 0.9837 +/- 0.0123 | 0.4878 | 0.1113 |
+| random_forest | 0.9870 | 0.8626 | 0.8708 | 0.9835 | 0.8739 +/- 0.0060 | 0.6097 | 0.1018 |
 
 ## Verdict on accuracy
 
-- `random_forest` reports test accuracy 0.9915 (>= 0.99). For CICIDS2017 this is plausible -- the dataset is highly separable for tree ensembles. Trust checks:
--   - majority-class baseline accuracy = 0.4878. Model lift = +0.5037. macro_f1 = 0.9758 is the load-bearing number on this imbalanced dataset.
--   - 5-fold CV f1_macro = 0.9716 +/- 0.0011 (small std confirms result is not a single-lucky-split fluke).
--   - shuffled-labels f1_macro = 0.1132 (chance level = 0.1111). Collapse to ~chance confirms the pipeline is NOT leaking labels through preprocessing.
-
-- `xgboost` reports test accuracy 0.9960 (>= 0.99). For CICIDS2017 this is plausible -- the dataset is highly separable for tree ensembles. Trust checks:
--   - majority-class baseline accuracy = 0.4878. Model lift = +0.5082. macro_f1 = 0.9890 is the load-bearing number on this imbalanced dataset.
--   - 5-fold CV f1_macro = 0.9739 +/- 0.0091 (small std confirms result is not a single-lucky-split fluke).
--   - shuffled-labels f1_macro = 0.1081 (chance level = 0.1111). Collapse to ~chance confirms the pipeline is NOT leaking labels through preprocessing.
-
-- `lightgbm` reports test accuracy 0.9955 (>= 0.99). For CICIDS2017 this is plausible -- the dataset is highly separable for tree ensembles. Trust checks:
--   - majority-class baseline accuracy = 0.4878. Model lift = +0.5077. macro_f1 = 0.9888 is the load-bearing number on this imbalanced dataset.
--   - 5-fold CV f1_macro = 0.9837 +/- 0.0123 (small std confirms result is not a single-lucky-split fluke).
--   - shuffled-labels f1_macro = 0.1113 (chance level = 0.1111). Collapse to ~chance confirms the pipeline is NOT leaking labels through preprocessing.
+- `random_forest` test accuracy 0.9870 -- in the expected range.
+-   - majority-class baseline accuracy = 0.6097. Model lift = +0.3773. macro_f1 = 0.8708 is the load-bearing number on this imbalanced dataset.
+-   - 3-fold CV f1_macro = 0.8739 +/- 0.0060 (small std confirms result is not a single-lucky-split fluke).
+-   - shuffled-labels f1_macro = 0.1018 (chance level = 0.1111). Collapse to ~chance confirms the pipeline is NOT leaking labels through preprocessing.
 
 ## Top weaknesses + concrete improvements
 

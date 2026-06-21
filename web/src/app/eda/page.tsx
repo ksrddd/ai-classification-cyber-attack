@@ -10,7 +10,7 @@ const FIGURES = [
     key: "class_distribution",
     label: "Class Distribution",
     eyebrow: "01 · BALANCE AUDIT",
-    sub: "Log-scaled class balance — 7 attack classes with severe minority imbalance",
+    sub: "Log-scaled class balance — 9 classes with severe minority imbalance",
     accent: "#F59E0B",
     col: "md:col-span-2",
     maxH: "320px",
@@ -65,7 +65,7 @@ export default async function EdaPage() {
               Exploratory Analysis
             </h1>
             <p className="text-[11px] font-mono text-ink-3 mt-1">
-              CICIDS2017 · network flow records · pre-modelling sanity check
+              CICIDS2017 + CSE-CIC-IDS2018 · network flow records · pre-modelling sanity check
             </p>
           </div>
           <div className="hidden md:flex items-center gap-1.5 flex-shrink-0 text-[9.5px] font-mono font-semibold text-ok border border-ok/25 bg-ok/5 rounded-sm px-2.5 py-1.5">

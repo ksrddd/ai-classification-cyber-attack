@@ -49,7 +49,7 @@ export function Sidebar({
         {!collapsed && (
           <div className="min-w-0 flex-1">
             <div className="text-[12.5px] font-semibold text-ink-0 tracking-tight">CyberML</div>
-            <div className="text-[9.5px] text-ink-3 font-mono uppercase tracking-[.12em]">CICIDS2017</div>
+            <div className="text-[9.5px] text-ink-3 font-mono uppercase tracking-[.12em]">CICIDS2017 + CSE-CIC-IDS2018</div>
           </div>
         )}
       </div>

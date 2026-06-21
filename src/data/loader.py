@@ -1,4 +1,4 @@
-"""CICIDS2017 CSV loader.
+"""CICIDS2017/CSE-CIC-IDS2018 CSV loader.
 
 Reads one-or-many CSV files from ``data/raw/``, normalizes column names,
 validates schema, optionally row-subsamples (stratified on label), and
@@ -31,7 +31,7 @@ def load_raw(
     subsample_n: int | None = None,
     validate_strict: bool = False,
 ) -> pd.DataFrame:
-    """Load CICIDS2017 CSVs into a single DataFrame.
+    """Load CICIDS2017/CSE-CIC-IDS2018 CSVs into a single DataFrame.
 
     Parameters
     ----------

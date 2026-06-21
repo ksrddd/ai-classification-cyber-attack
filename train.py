@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""train.py -- CICIDS2017 cyber-attack classification, single-file pipeline.
+"""train.py -- CICIDS2017 + CSE-CIC-IDS2018 cyber-attack classification pipeline.
 
 End-to-end with ZERO errors and ZERO warnings. Verifies under:
 
@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import random
 import sys
 import time
@@ -104,6 +105,7 @@ CONFIG: dict[str, Any] = {
     # -- Modeling (Layer 3) ---------------------------------------------
     "models":             ("random_forest", "xgboost", "lightgbm"),
     "primary_metric":     "f1_macro",
+    "rf_class_weight":    "balanced_subsample",
 
     # -- Trust checks (Layer 4) -----------------------------------------
     "cv_splits":          5,
@@ -159,16 +161,22 @@ RAM_PRESETS: dict[str, dict[str, Any]] = {
         "hp_search_jobs":             1,
     },
     "16gb": {
-        "subsample_n":          800_000,
+        "subsample_n":        1_500_000,    # maximum safe limit for 16GB RAM systems
         "hp_search_subsample":  150_000,
         "hp_search_n_iter":          12,
         "hp_search_jobs":             1,
     },
     "32gb": {
-        "subsample_n":             None,    # full corpus
+        "subsample_n":        3_000_000,    # safe limit for XGBoost/RF on 32GB RAM
         "hp_search_subsample":  200_000,
         "hp_search_n_iter":          20,
         "hp_search_jobs":             2,
+    },
+    "full": {
+        "subsample_n":             None,    # use every row in the cleaned cache
+        "hp_search_subsample":  300_000,
+        "hp_search_n_iter":          20,
+        "hp_search_jobs":             1,
     },
 }
 
@@ -207,49 +215,165 @@ def set_seeds(seed: int) -> None:
 # Label normalization (15 raw labels -> 10 canonical families)
 # ---------------------------------------------------------------------------
 def normalize_label(value: object) -> str:
-    """Canonicalize a raw CICIDS label.
+    """Canonicalize a raw CICIDS2017/CSE-CIC-IDS2018 label.
 
     Strips 0x96 (Windows-1252 en-dash byte embedded in Web Attack labels),
     collapses whitespace, lowercases for matching. Maps to one of:
     BENIGN, DoS, DDoS, PortScan, Bot, Web Attack, Brute Force,
     Infiltration, Heartbleed, Other.
+
+    Supports both CICIDS2017 and CIC-IDS2018 label schemes.
+    Rows where the label cell literally equals 'Label' (corrupted header
+    rows found in some 2018 CSVs) are mapped to 'Other' and later dropped.
     """
     if value is None or (isinstance(value, float) and np.isnan(value)):
         return "Other"
     s = str(value)
     cleaned = "".join(ch if 0x20 <= ord(ch) < 0x7f else " " for ch in s)
     key = " ".join(cleaned.split()).lower()
-    if key == "benign":
+
+    # ----- BENIGN / normal traffic ----------------------------------------
+    if key in {"benign", "normal"}:
         return "BENIGN"
+
+    # ----- DoS ---------------------------------------------------------------
+    # CICIDS2017
     if key in {"dos hulk", "dos goldeneye", "dos slowloris", "dos slowhttptest"}:
         return "DoS"
+    # CIC-IDS2018 (prefix "dos attacks-")
+    if key.startswith("dos attacks-"):
+        return "DoS"
+
+    # ----- DDoS --------------------------------------------------------------
+    # CICIDS2017
     if key == "ddos":
         return "DDoS"
+    # CIC-IDS2018 variants
+    if key in {
+        "ddos attacks-loic-http",
+        "ddos attack-hoic",
+        "ddos attack-loic-udp",
+        "ddos attack-loic-http",
+    }:
+        return "DDoS"
+    if key.startswith("ddos"):
+        return "DDoS"
+
+    # ----- PortScan ----------------------------------------------------------
     if key == "portscan":
         return "PortScan"
+
+    # ----- Bot ---------------------------------------------------------------
     if key == "bot":
         return "Bot"
+
+    # ----- Web Attack --------------------------------------------------------
+    # CICIDS2017
     if key.startswith("web attack"):
         return "Web Attack"
+    # CIC-IDS2018
+    if key in {
+        "brute force -web",
+        "brute force -xss",
+        "sql injection",
+    }:
+        return "Web Attack"
+
+    # ----- Brute Force -------------------------------------------------------
+    # CICIDS2017
     if key in {"ftp-patator", "ssh-patator"}:
         return "Brute Force"
-    if key == "infiltration":
+    # CIC-IDS2018
+    if key in {"ftp-bruteforce", "ssh-bruteforce"}:
+        return "Brute Force"
+    if key.startswith("brute force"):
+        return "Brute Force"
+
+    # ----- Infiltration ------------------------------------------------------
+    # CICIDS2017 + CIC-IDS2018 (typo: 'Infilteration')
+    if key in {"infiltration", "infilteration"}:
         return "Infiltration"
+
+    # ----- Heartbleed --------------------------------------------------------
     if key == "heartbleed":
         return "Heartbleed"
+
+    # ----- corrupted header rows ('label') & anything unmapped → Other ------
     return "Other"
 
 
 # ---------------------------------------------------------------------------
 # Data loading + cleaning (RAM-efficient: clean per CSV, then concat)
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# CIC-IDS2018 uses abbreviated column names that differ from CICIDS2017.
+# This mapping normalises them to the CICIDS2017 canonical names so the
+# rest of the pipeline (feature list, schema checks) needs no changes.
+# ---------------------------------------------------------------------------
+_CIC2018_COL_RENAME: dict[str, str] = {
+    "Dst Port":            "Destination Port",
+    "Tot Fwd Pkts":        "Total Fwd Packets",
+    "Tot Bwd Pkts":        "Total Backward Packets",
+    "TotLen Fwd Pkts":     "Total Length of Fwd Packets",
+    "TotLen Bwd Pkts":     "Total Length of Bwd Packets",
+    "Fwd Pkt Len Max":     "Fwd Packet Length Max",
+    "Fwd Pkt Len Min":     "Fwd Packet Length Min",
+    "Fwd Pkt Len Mean":    "Fwd Packet Length Mean",
+    "Fwd Pkt Len Std":     "Fwd Packet Length Std",
+    "Bwd Pkt Len Max":     "Bwd Packet Length Max",
+    "Bwd Pkt Len Min":     "Bwd Packet Length Min",
+    "Bwd Pkt Len Mean":    "Bwd Packet Length Mean",
+    "Bwd Pkt Len Std":     "Bwd Packet Length Std",
+    "Flow Byts/s":         "Flow Bytes/s",
+    "Flow Pkts/s":         "Flow Packets/s",
+    "Fwd IAT Tot":         "Fwd IAT Total",
+    "Bwd IAT Tot":         "Bwd IAT Total",
+    "Fwd Header Len":      "Fwd Header Length",
+    "Bwd Header Len":      "Bwd Header Length",
+    "Pkt Len Min":         "Min Packet Length",
+    "Pkt Len Max":         "Max Packet Length",
+    "Pkt Len Mean":        "Packet Length Mean",
+    "Pkt Len Std":         "Packet Length Std",
+    "Pkt Len Var":         "Packet Length Variance",
+    "FIN Flag Cnt":        "FIN Flag Count",
+    "SYN Flag Cnt":        "SYN Flag Count",
+    "RST Flag Cnt":        "RST Flag Count",
+    "PSH Flag Cnt":        "PSH Flag Count",
+    "ACK Flag Cnt":        "ACK Flag Count",
+    "URG Flag Cnt":        "URG Flag Count",
+    "ECE Flag Cnt":        "ECE Flag Count",
+    "Pkt Size Avg":        "Average Packet Size",
+    "Fwd Seg Size Avg":    "Avg Fwd Segment Size",
+    "Bwd Seg Size Avg":    "Avg Bwd Segment Size",
+    "Fwd Byts/b Avg":      "Fwd Avg Bytes/Bulk",
+    "Fwd Pkts/b Avg":      "Fwd Avg Packets/Bulk",
+    "Fwd Blk Rate Avg":    "Fwd Avg Bulk Rate",
+    "Bwd Byts/b Avg":      "Bwd Avg Bytes/Bulk",
+    "Bwd Pkts/b Avg":      "Bwd Avg Packets/Bulk",
+    "Bwd Blk Rate Avg":    "Bwd Avg Bulk Rate",
+    "Subflow Fwd Pkts":    "Subflow Fwd Packets",
+    "Subflow Fwd Byts":    "Subflow Fwd Bytes",
+    "Subflow Bwd Pkts":    "Subflow Bwd Packets",
+    "Subflow Bwd Byts":    "Subflow Bwd Bytes",
+    "Init Fwd Win Byts":   "Init_Win_bytes_forward",
+    "Init Bwd Win Byts":   "Init_Win_bytes_backward",
+    "Fwd Act Data Pkts":   "act_data_pkt_fwd",
+    "Fwd Seg Size Min":    "min_seg_size_forward",
+}
+
+
 def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
-    """Clean a single CSV: column strip, drop duplicate/leaky cols, label
-    normalize, replace Inf, drop NaN. Per-CSV cleaning keeps memory peak
-    bounded -- we never hold all 2.83M raw rows in one DataFrame plus a
-    copy of the same for cleaning.
+    """Clean a single CSV: column strip/rename, drop duplicate/leaky cols,
+    label normalize, replace Inf, drop NaN.
+
+    Supports both CICIDS2017 and CIC-IDS2018 column naming schemes.
+    Per-CSV cleaning keeps memory peak bounded.
     """
+    # Strip whitespace from column names (CICIDS2017 has leading spaces).
     df = df.rename(columns=lambda c: c.strip() if isinstance(c, str) else c)
+
+    # Normalise CIC-IDS2018 abbreviated column names → CICIDS2017 names.
+    df = df.rename(columns=_CIC2018_COL_RENAME)
 
     if "Fwd Header Length.1" in df.columns:
         df = df.drop(columns=["Fwd Header Length.1"])
@@ -266,9 +390,21 @@ def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
         )
 
     df = df.copy()
+
+    # Drop corrupted header rows (some 2018 CSVs have 'Label' as a data row).
+    df = df[df[label_col].astype(str).str.strip() != "Label"].reset_index(drop=True)
+
     df[label_col] = df[label_col].map(normalize_label).astype("string")
 
+    # Drop rows mapped to 'Other' — these are either header artifacts or
+    # unknown attack types that can't be reliably classified.
+    df = df[df[label_col] != "Other"].reset_index(drop=True)
+
     feature_cols = [c for c in df.columns if c != label_col]
+    for c in feature_cols:
+        if not pd.api.types.is_numeric_dtype(df[c]):
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+
     bad = [c for c in feature_cols if not pd.api.types.is_numeric_dtype(df[c])]
     if bad:
         raise ValueError(
@@ -277,7 +413,7 @@ def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
 
     # Inf -> NaN via numpy mask. Avoids pandas 2.x downcasting FutureWarning
     # that DataFrame.replace([inf,-inf], nan) emits.
-    arr = df[feature_cols].to_numpy(dtype=np.float64, copy=True)
+    arr = df[feature_cols].to_numpy(dtype=np.float32, copy=True)
     arr[~np.isfinite(arr)] = np.nan
     df[feature_cols] = arr
 
@@ -286,7 +422,7 @@ def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
 
 
 def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFrame:
-    """Load + clean + dedupe full CICIDS2017 corpus.
+    """Load + clean + dedupe the combined CICIDS2017/CSE-CIC-IDS2018 corpus.
 
     Caches the result as ``cicids_clean.parquet`` so subsequent runs skip
     the ~3-5 min load+clean step. Cache invalidated by ``--force``.
@@ -367,10 +503,10 @@ def composite_subsample(
              len(rare_classes), sorted(rare_classes))
     LOG.info("  rare rows kept whole: %d", len(rare_df))
 
-    if target_n >= len(df):
-        # User asked for >= corpus; just return everything shuffled.
-        out = df.sample(frac=1.0, random_state=random_state).reset_index(drop=True)
-        return out
+    if target_n is None or target_n >= len(df):
+        # User asked for >= corpus; just return everything.
+        # Shuffling is handled during train/test split.
+        return df.reset_index(drop=True)
 
     budget_for_common = max(0, target_n - len(rare_df))
     if budget_for_common == 0:
@@ -426,8 +562,14 @@ def stratified_split_min_test(
         test_n = min(test_n, n - 1) if n > 1 else 0
         test_idx.extend(idx[:test_n].tolist())
         train_idx.extend(idx[test_n:].tolist())
-    train_df = df.loc[train_idx].sample(frac=1.0, random_state=random_state).reset_index(drop=True)
-    test_df  = df.loc[test_idx ].sample(frac=1.0, random_state=random_state).reset_index(drop=True)
+
+    train_idx_arr = np.asarray(train_idx, dtype=np.int64)
+    test_idx_arr = np.asarray(test_idx, dtype=np.int64)
+    rng.shuffle(train_idx_arr)
+    rng.shuffle(test_idx_arr)
+
+    train_df = df.iloc[train_idx_arr].reset_index(drop=True)
+    test_df  = df.iloc[test_idx_arr ].reset_index(drop=True)
     return train_df, test_df
 
 
@@ -472,7 +614,13 @@ class _LGBMNoFeatureNamesCheck(LGBMClassifier):
         return self
 
 
-def build_pipeline(model_name: str, n_classes: int, random_state: int) -> Pipeline:
+def build_pipeline(
+    model_name: str,
+    n_classes: int,
+    random_state: int,
+    *,
+    rf_class_weight: str | None = "balanced_subsample",
+) -> Pipeline:
     """Return an unfitted sklearn Pipeline = StandardScaler -> classifier."""
     if model_name == "random_forest":
         clf = RandomForestClassifier(
@@ -481,7 +629,7 @@ def build_pipeline(model_name: str, n_classes: int, random_state: int) -> Pipeli
             min_samples_split=2,
             # 'balanced_subsample' recomputes weights per bootstrap sample
             # -- more accurate than 'balanced' on extreme imbalance.
-            class_weight="balanced_subsample",
+            class_weight=rf_class_weight,
             n_jobs=-1,
             random_state=random_state,
         )
@@ -592,8 +740,8 @@ class EvalResult:
     per_class:           pd.DataFrame   = field(repr=False)
     confusion:           np.ndarray     = field(repr=False)
     cv_scores:           list[float]    = field(default_factory=list)
-    cv_mean:             float          = 0.0
-    cv_std:              float          = 0.0
+    cv_mean:             float | None   = 0.0
+    cv_std:              float | None   = 0.0
     shuffle_accuracy:    float | None   = None
     shuffle_f1_macro:    float | None   = None
     majority_baseline:   float          = 0.0
@@ -658,6 +806,20 @@ def label_shuffle_sanity(estimator: Pipeline, X: pd.DataFrame, y: np.ndarray,
     or scaler state).
     """
     rng = np.random.default_rng(random_state)
+    
+    # Subsample X and y to at most 100k rows using stratified sampling to guarantee all classes survive
+    if len(y) > 100_000:
+        classes = np.unique(y)
+        budget_per_class = max(1, 100_000 // len(classes))
+        keep_idx = []
+        for cls in classes:
+            idx = np.flatnonzero(y == cls)
+            take = min(budget_per_class, len(idx))
+            keep_idx.extend(rng.choice(idx, size=take, replace=False).tolist())
+        keep_idx = np.asarray(keep_idx, dtype=np.int64)
+        X = X.iloc[keep_idx].reset_index(drop=True)
+        y = y[keep_idx]
+
     y_shuf = y.copy()
     rng.shuffle(y_shuf)
     # Use the same min-test stratified split so tiny classes survive.
@@ -687,14 +849,17 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
                  per_class_n_train: dict[str, int]) -> Path:
     chance = 1.0 / max(n_classes, 1)
     lines: list[str] = []
-    lines.append(f"# CICIDS2017 -- training run `{cfg['run_name']}`")
+    lines.append(f"# CICIDS/CIC-IDS raw corpus -- training run `{cfg['run_name']}`")
     lines.append("")
     lines.append(f"- subsample_n: {cfg['subsample_n']!r}")
     lines.append(f"- rare_threshold (keep-all-rows below this): "
                  f"{cfg['rare_threshold']}")
     lines.append(f"- test_size: {cfg['test_size']}, "
                  f"min_test_per_class: {cfg['min_test_per_class']}")
-    lines.append(f"- CV: StratifiedKFold(n_splits={cfg['cv_splits']})")
+    if cfg["cv_check"]:
+        lines.append(f"- CV: StratifiedKFold(n_splits={cfg['cv_splits']})")
+    else:
+        lines.append("- CV: skipped")
     lines.append(f"- HP search: {cfg['hp_search']} "
                  f"(n_iter={cfg['hp_search_n_iter']}, "
                  f"subsample={cfg['hp_search_subsample']})")
@@ -718,8 +883,8 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
     lines.append("")
     lines.append("> Per-class recall for any class with `n_test < 10` should "
                  "be read as an upper-bound estimate, not a stable metric. "
-                 "This is an inherent limitation of CICIDS2017 -- the dataset "
-                 "ships with only 11 Heartbleed and 36 Infiltration flows.")
+                 "This is most visible for classes with only a handful of "
+                 "rows after subsampling, especially Heartbleed.")
     lines.append("")
 
     lines.append("## Headline metrics")
@@ -731,10 +896,14 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
     for r in results:
         shuf = (f"{r.shuffle_f1_macro:.4f}"
                 if r.shuffle_f1_macro is not None else "skipped")
+        cv_text = (
+            f"{r.cv_mean:.4f} +/- {r.cv_std:.4f}"
+            if r.cv_mean is not None and r.cv_std is not None else "skipped"
+        )
         lines.append(
             f"| {r.model} | {r.accuracy:.4f} | {r.balanced_accuracy:.4f} | "
             f"{r.f1_macro:.4f} | {r.f1_weighted:.4f} | "
-            f"{r.cv_mean:.4f} +/- {r.cv_std:.4f} | "
+            f"{cv_text} | "
             f"{r.majority_baseline:.4f} | {shuf} |"
         )
     lines.append("")
@@ -746,9 +915,9 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
         if r.accuracy >= cfg["near_perfect_threshold"]:
             verdict.append(
                 f"`{r.model}` reports test accuracy {r.accuracy:.4f} "
-                f"(>= {cfg['near_perfect_threshold']}). For CICIDS2017 this is "
-                "plausible -- the dataset is highly separable for tree "
-                "ensembles. Trust checks:"
+                f"(>= {cfg['near_perfect_threshold']}). For CICIDS-style "
+                "flow features this can be plausible because the dataset is "
+                "highly separable for tree ensembles. Trust checks:"
             )
         else:
             verdict.append(f"`{r.model}` test accuracy {r.accuracy:.4f} -- "
@@ -759,27 +928,34 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
             f"Model lift = {lift:+.4f}. macro_f1 = {r.f1_macro:.4f} is the "
             "load-bearing number on this imbalanced dataset."
         )
-        n_folds = len(r.cv_scores) if r.cv_scores else cfg["cv_splits"]
-        # std interpretation: <0.02 very stable, <0.05 stable, <0.10 acceptable,
-        # >=0.10 unstable -- minority class likely missing some folds.
-        if r.cv_std < 0.02:
-            std_msg = "small std confirms result is not a single-lucky-split fluke"
-        elif r.cv_std < 0.05:
-            std_msg = "std is acceptable; result is reasonably stable"
-        elif r.cv_std < 0.10:
-            std_msg = ("std is moderate; the test score is real but CV folds "
-                       "vary -- treat the headline as best-case rather than mean")
+        if r.cv_mean is None or r.cv_std is None:
+            verdict.append(
+                "  - CV trust check was skipped for this run to keep full-corpus "
+                "training practical. Use a subsampled run with CV when you need "
+                "fold-stability evidence."
+            )
         else:
-            std_msg = (f"**UNSTABLE** (std >= 0.10). Likely cause: some CV folds "
-                       "contained too few rows of a minority class (Heartbleed "
-                       "has only 8 train rows total). The test-set number is "
-                       "still valid (verified by the shuffled-labels check) but "
-                       "this model has high variance across splits and may not "
-                       "generalise well to new minority-class instances")
-        verdict.append(
-            f"  - {n_folds}-fold CV f1_macro = {r.cv_mean:.4f} +/- {r.cv_std:.4f} "
-            f"({std_msg})."
-        )
+            n_folds = len(r.cv_scores) if r.cv_scores else cfg["cv_splits"]
+            # std interpretation: <0.02 very stable, <0.05 stable, <0.10 acceptable,
+            # >=0.10 unstable -- minority class likely missing some folds.
+            if r.cv_std < 0.02:
+                std_msg = "small std confirms result is not a single-lucky-split fluke"
+            elif r.cv_std < 0.05:
+                std_msg = "std is acceptable; result is reasonably stable"
+            elif r.cv_std < 0.10:
+                std_msg = ("std is moderate; the test score is real but CV folds "
+                           "vary -- treat the headline as best-case rather than mean")
+            else:
+                std_msg = (f"**UNSTABLE** (std >= 0.10). Likely cause: some CV folds "
+                           "contained too few rows of a minority class (Heartbleed "
+                           "has only 8 train rows total). The test-set number is "
+                           "still valid (verified by the shuffled-labels check) but "
+                           "this model has high variance across splits and may not "
+                           "generalise well to new minority-class instances")
+            verdict.append(
+                f"  - {n_folds}-fold CV f1_macro = {r.cv_mean:.4f} +/- {r.cv_std:.4f} "
+                f"({std_msg})."
+            )
         if r.shuffle_f1_macro is not None:
             verdict.append(
                 f"  - shuffled-labels f1_macro = {r.shuffle_f1_macro:.4f} "
@@ -791,9 +967,9 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
 
     lines.append("## Top weaknesses + concrete improvements")
     lines.append("")
-    lines.append("1. **Minority-class metric variance** -- Heartbleed (11 "
-                 "total rows) and Infiltration (36) cannot give stable "
-                 "per-class metrics with any pipeline. Improvement: report "
+    lines.append("1. **Minority-class metric variance** -- Heartbleed still "
+                 "has only 11 rows in the combined raw corpus, so its "
+                 "per-class metric is anecdotal. Improvement: report "
                  "per-class metrics with sample-size caveat (this report "
                  "already does this).")
     lines.append("2. **Subsample bias for the majority** -- if "
@@ -801,11 +977,11 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
                  "specific application protocols may be underrepresented. "
                  "Improvement: retrain with `subsample_n=None` on a "
                  "higher-RAM machine for the final reported numbers.")
-    lines.append("3. **CICIDS2017 labelling noise** -- labels are assigned "
+    lines.append("3. **CICIDS/CIC-IDS labelling noise** -- labels are assigned "
                  "per attack window, not per flow, so BENIGN flows during "
-                 "an attack window may be mislabelled. Improvement: "
-                 "cross-validate against CIC-IDS2018 to estimate the noise "
-                 "floor.")
+                 "an attack window may be mislabelled. Improvement: keep a "
+                 "separate cross-dataset validation run when reporting final "
+                 "research numbers.")
     lines.append("")
 
     lines.append("## Verifying the clean run")
@@ -826,19 +1002,42 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
 # Main
 # ---------------------------------------------------------------------------
 def parse_args(argv: list[str]) -> dict[str, Any]:
-    """Tiny arg-parser: --smoke, --force, --models, --run-name, --preset."""
+    """Tiny arg-parser for training experiments."""
     args = {"smoke": False, "force": False, "models": None,
-            "run_name": None, "preset": None}
+            "run_name": None, "preset": None, "refresh_cache": False,
+            "skip_hp": False, "primary_metric": None,
+            "rf_class_weight": None, "skip_cv": False,
+            "skip_label_shuffle": False}
     it = iter(argv)
     for tok in it:
         if tok == "--smoke":
             args["smoke"] = True
         elif tok == "--force":
             args["force"] = True
+        elif tok == "--refresh-cache":
+            args["refresh_cache"] = True
+        elif tok == "--skip-hp":
+            args["skip_hp"] = True
+        elif tok == "--skip-cv":
+            args["skip_cv"] = True
+        elif tok == "--skip-label-shuffle":
+            args["skip_label_shuffle"] = True
         elif tok == "--models":
             args["models"] = tuple(next(it).split(","))
         elif tok == "--run-name":
             args["run_name"] = next(it)
+        elif tok == "--primary-metric":
+            args["primary_metric"] = next(it)
+        elif tok == "--rf-class-weight":
+            value = next(it).lower()
+            choices = {"none": None, "balanced": "balanced",
+                       "balanced_subsample": "balanced_subsample"}
+            if value not in choices:
+                raise SystemExit(
+                    "--rf-class-weight must be one of: "
+                    "none, balanced, balanced_subsample"
+                )
+            args["rf_class_weight"] = choices[value]
         elif tok == "--preset":
             name = next(it).lower()
             if name not in RAM_PRESETS:
@@ -848,8 +1047,12 @@ def parse_args(argv: list[str]) -> dict[str, Any]:
                 )
             args["preset"] = name
         elif tok in ("-h", "--help"):
-            print("usage: train.py [--smoke] [--force] [--preset 8gb|16gb|32gb] "
-                  "[--models rf,xgb,lgbm] [--run-name NAME]")
+            print("usage: train.py [--smoke] [--force] [--refresh-cache] "
+                  "[--skip-hp] [--primary-metric METRIC] "
+                  "[--rf-class-weight none|balanced|balanced_subsample] "
+                  "[--preset 8gb|16gb|32gb|full] [--models rf,xgb,lgbm] "
+                  "[--skip-cv] [--skip-label-shuffle] "
+                  "[--run-name NAME]")
             sys.exit(0)
         else:
             raise SystemExit(f"unknown argument: {tok}")
@@ -878,6 +1081,15 @@ def main(argv: list[str] | None = None) -> int:
         cfg["models"] = args["models"]
     if args["run_name"]:
         cfg["run_name"] = args["run_name"]
+    if args["skip_hp"]:
+        cfg["hp_search"] = False
+    cfg["cv_check"] = not args["skip_cv"]
+    if args["skip_label_shuffle"]:
+        cfg["label_shuffle_check"] = False
+    if args["primary_metric"]:
+        cfg["primary_metric"] = args["primary_metric"]
+    if args["rf_class_weight"] is not None or "--rf-class-weight" in argv:
+        cfg["rf_class_weight"] = args["rf_class_weight"]
 
     set_seeds(cfg["random_state"])
 
@@ -887,7 +1099,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # --- Stage 1: load + clean (cached) ---------------------------------
     t0 = time.time()
-    df = load_and_clean_cached(cfg, force=args["force"])
+    df = load_and_clean_cached(cfg, force=args["refresh_cache"])
 
     # --- Stage 2: composite subsample (keep-all-rare + stratify-majority)
     df = composite_subsample(
@@ -975,7 +1187,10 @@ def main(argv: list[str] | None = None) -> int:
 
         # ----- HP search on a smaller TRAIN subset --------------------
         best_params: dict[str, Any] = {}
-        pipeline = build_pipeline(model_name, n_classes, cfg["random_state"])
+        pipeline = build_pipeline(
+            model_name, n_classes, cfg["random_state"],
+            rf_class_weight=cfg["rf_class_weight"],
+        )
 
         if cfg["hp_search"] and hp_grids(model_name):
             X_hp, y_hp = _hp_subset(
@@ -1008,7 +1223,10 @@ def main(argv: list[str] | None = None) -> int:
             LOG.info("Best CV %s on HP subset: %.4f",
                      cfg["primary_metric"], search.best_score_)
             # Refit a fresh pipeline with best params on FULL TRAIN.
-            pipeline = build_pipeline(model_name, n_classes, cfg["random_state"])
+            pipeline = build_pipeline(
+                model_name, n_classes, cfg["random_state"],
+                rf_class_weight=cfg["rf_class_weight"],
+            )
             pipeline.set_params(**best_params)
 
         t_fit = time.time()
@@ -1024,19 +1242,31 @@ def main(argv: list[str] | None = None) -> int:
                  "f1_weighted=%.4f", model_name, acc, bacc, f1m, f1w)
 
         # ----- CV trust check (TRAIN only) ---------------------------
-        cv_scores, cv_mean, cv_std = cross_validate_clean(
-            build_pipeline(model_name, n_classes, cfg["random_state"]),
-            X_train, y_train, cv,
-        )
-        LOG.info("%s %d-fold CV f1_macro: %.4f +/- %.4f",
-                 model_name, eff_splits, cv_mean, cv_std)
+        cv_scores: list[float] = []
+        cv_mean: float | None = None
+        cv_std: float | None = None
+        if cfg["cv_check"]:
+            cv_scores, cv_mean, cv_std = cross_validate_clean(
+                build_pipeline(
+                    model_name, n_classes, cfg["random_state"],
+                    rf_class_weight=cfg["rf_class_weight"],
+                ),
+                X_train, y_train, cv,
+            )
+            LOG.info("%s %d-fold CV f1_macro: %.4f +/- %.4f",
+                     model_name, eff_splits, cv_mean, cv_std)
+        else:
+            LOG.info("%s CV trust check skipped", model_name)
 
         # ----- Label-shuffle sanity ----------------------------------
         shuf_acc: float | None = None
         shuf_f1m: float | None = None
         if cfg["label_shuffle_check"]:
             shuf_acc, shuf_f1m = label_shuffle_sanity(
-                build_pipeline(model_name, n_classes, cfg["random_state"]),
+                build_pipeline(
+                    model_name, n_classes, cfg["random_state"],
+                    rf_class_weight=cfg["rf_class_weight"],
+                ),
                 X_train, y_train, cfg["random_state"],
                 min_test_per_class=cfg["min_test_per_class"],
             )
@@ -1048,12 +1278,12 @@ def main(argv: list[str] | None = None) -> int:
             )
 
         # ----- Persist ------------------------------------------------
-        joblib.dump(pipeline, model_path)
+        atomic_joblib_dump(pipeline, model_path)
         per_class_df.to_csv(outdir / f"{model_name}_per_class.csv", index=True)
         plot_confusion_matrix(
             cm, class_names,
             outdir / f"{model_name}_confusion_matrix.png",
-            title=f"{model_name} -- CICIDS2017 test set",
+            title=f"{model_name} -- CICIDS/CIC-IDS test set",
         )
 
         r = EvalResult(
@@ -1084,6 +1314,15 @@ def main(argv: list[str] | None = None) -> int:
             "best_params":            r.best_params,
             "near_perfect_flag":      r.accuracy >= cfg["near_perfect_threshold"],
         }, indent=2), encoding="utf-8")
+
+    requested_models = set(cfg["models"])
+    for model_name in CONFIG["models"]:
+        if model_name in requested_models:
+            continue
+        per_model_metrics = outdir / f"{model_name}_metrics.json"
+        if per_model_metrics.exists():
+            saved = json.loads(per_model_metrics.read_text(encoding="utf-8"))
+            results.append(_eval_result_from_saved(saved, model_name))
 
     # --- Stage 5: shared artefacts + aggregate report -------------------
     joblib.dump(label_encoder, outdir / "label_encoder.joblib")
@@ -1163,6 +1402,20 @@ def _hp_subset(X: pd.DataFrame, y: np.ndarray, target_n: int,
     keep_idx_arr = np.asarray(keep_idx, dtype=np.int64)
     rng.shuffle(keep_idx_arr)
     return X.iloc[keep_idx_arr].reset_index(drop=True), y[keep_idx_arr]
+
+
+def atomic_joblib_dump(obj: Any, path: Path) -> None:
+    """Write a joblib artifact via a same-directory temp file.
+
+    Windows can be fussy when overwriting large files that were recently
+    read by Streamlit or another Python process. Dumping to a fresh path
+    first avoids opening the old artifact for writing until the final swap.
+    """
+    tmp = path.with_name(f"{path.name}.tmp")
+    if tmp.exists():
+        tmp.unlink()
+    joblib.dump(obj, tmp)
+    os.replace(tmp, path)
 
 
 def _eval_result_from_saved(saved: dict, model_name: str) -> EvalResult:

@@ -84,7 +84,7 @@ export default async function OverviewPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Pill tone="ok">CICIDS2017 ready</Pill>
+            <Pill tone="ok">CICIDS2017/CSE-CIC-IDS2018 ready</Pill>
             <Pill tone="brand">multiclass</Pill>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default async function OverviewPage() {
             value={totalFlows > 0 ? totalFlows.toLocaleString() : "—"}
             color="#38BDF8"
             spark={SPARK_RECORDS}
-            sub="CICIDS2017 dataset"
+            sub="CICIDS2017 + CSE-CIC-IDS2018 dataset"
           />
           <KpiCard
             label="Best F1 score"
