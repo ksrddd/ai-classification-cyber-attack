@@ -7,6 +7,7 @@ so callers don't import joblib/pandas just for file plumbing.
 from __future__ import annotations
 
 import logging
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -37,4 +38,20 @@ def load_joblib(path: Path) -> Any:
             "Run the training pipeline first (`python main.py --stage train`)."
         )
     logger.debug("Loading joblib artifact <- %s", path)
+    _install_training_pickle_aliases()
     return joblib.load(path)
+
+
+def _install_training_pickle_aliases() -> None:
+    """Expose train.py estimator classes for artefacts pickled as __main__."""
+    try:
+        from train import BalancedXGBClassifier, _LGBMNoFeatureNamesCheck
+    except Exception as exc:  # pragma: no cover - best-effort compatibility shim
+        logger.debug("Could not install training pickle aliases: %s", exc)
+        return
+
+    main_mod = sys.modules.get("__main__")
+    if main_mod is None:
+        return
+    setattr(main_mod, "BalancedXGBClassifier", BalancedXGBClassifier)
+    setattr(main_mod, "_LGBMNoFeatureNamesCheck", _LGBMNoFeatureNamesCheck)
