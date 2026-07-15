@@ -39,7 +39,7 @@ impossible by construction.
 
 ## Key architectural decisions
 
-- **Dataset** = CICIDS2017 (8 CSVs, ~2.8M flow records, 78 features).
+- **Dataset** = combined CICIDS2017 + CSE-CIC-IDS2018 (18 CSVs, ~13.9M cleaned flow records, 80 features).
 - **Two classification modes** — `binary` (Normal/Attack) and
   `multiclass` (10 attack families). Selected via
   `config.yaml::classification.mode`. The label mapper handles both.

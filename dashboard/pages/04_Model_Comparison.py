@@ -5,7 +5,7 @@ from __future__ import annotations
 import plotly.graph_objects as go
 import streamlit as st
 
-from dashboard._shared import load_comparison_csv, metrics_dir, warn_no_models
+from dashboard._shared import latest_dir, load_comparison_csv, metrics_dir, warn_no_models
 from dashboard._style import (
     BG_CANVAS,
     INK_0,
@@ -36,24 +36,39 @@ if df is None:
 
 rank_metric = st.selectbox(
     "Rank by",
-    [c for c in ("f1_weighted", "f1_macro", "accuracy", "roc_auc") if c in df.columns],
+    [c for c in (
+        "target_false_negatives", "target_to_benign_fn", "target_f1", "target_f2",
+        "target_recall", "target_fpr", "f1_macro", "balanced_accuracy",
+        "accuracy", "f1_weighted", "infiltration_f1", "roc_auc",
+    ) if c in df.columns],
     index=0,
 )
-ranked    = df.sort_values(rank_metric, ascending=False)
+lower_is_better = rank_metric in {
+    "target_false_negatives", "target_to_benign_fn", "target_fpr",
+}
+ranked    = df.sort_values(rank_metric, ascending=lower_is_better)
 best_name = ranked.index[0]
 medals    = ["1st", "2nd", "3rd"] + [f"{i+1}th" for i in range(3, len(ranked))]
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Best model",             model_label(best_name))
-c2.metric(f"Best {rank_metric}",    f"{ranked.iloc[0][rank_metric]:.4f}")
+best_metric_value = ranked.iloc[0][rank_metric]
+best_metric_text = (
+    f"{int(best_metric_value)}"
+    if rank_metric in {"target_false_negatives", "target_to_benign_fn"}
+    else f"{best_metric_value:.4f}"
+)
+c2.metric(f"Best {rank_metric}", best_metric_text)
 c3.metric("Models compared",        len(ranked))
 
 # --- leaderboard --------------------------------------------------------
-section("Leaderboard", f"Sorted by **{rank_metric}** (descending)")
+direction = "ascending" if lower_is_better else "descending"
+section("Leaderboard", f"Sorted by **{rank_metric}** ({direction})")
 
 metric_cols = [c for c in (
-    "accuracy", "f1_weighted", "f1_macro",
-    "precision_weighted", "recall_weighted", "roc_auc", "matthews_corrcoef",
+    "accuracy", "balanced_accuracy", "f1_macro", "f1_weighted",
+    "target_precision", "target_recall", "target_f1", "target_f2", "target_fpr",
+    "target_false_negatives", "target_to_benign_fn", "target_false_positives",
 ) if c in ranked.columns]
 
 header_html = (
@@ -64,6 +79,18 @@ header_html = (
     + "</tr>"
 )
 body_rows = []
+
+
+def format_metric(metric_name: str, value: float) -> str:
+    if metric_name in {
+        "target_false_negatives",
+        "target_to_benign_fn",
+        "target_false_positives",
+    }:
+        return str(int(value))
+    return f"{value:.4f}"
+
+
 for i, (name, row) in enumerate(ranked.iterrows()):
     color    = model_color(name)
     is_best  = i == 0
@@ -73,17 +100,22 @@ for i, (name, row) in enumerate(ranked.iterrows()):
         f'font-family:\'JetBrains Mono\',monospace;">'
         f'{medals[i]}</span>'
     )
+    best_html = (
+        '<span style="font-size:.7rem;color:#F59E0B;margin-left:4px;">★</span>'
+        if is_best
+        else ""
+    )
     name_html = (
         f'<span style="display:inline-flex;align-items:center;gap:8px;">'
         f'<span style="width:8px;height:8px;background:{color};border-radius:50%;'
         f'flex-shrink:0;box-shadow:0 0 6px {color};"></span>'
         f'<b style="color:{INK_0};">{model_label(name)}</b>'
-        f'{"<span style=\'font-size:.7rem;color:#F59E0B;margin-left:4px;\'>★</span>" if is_best else ""}'
+        f'{best_html}'
         f'</span>'
     )
     cells = "".join(
         f"<td class='num' style='color:{'#10B981' if is_best else '#A8AFC0'};'>"
-        f"{row[c]:.4f}</td>"
+        f"{format_metric(c, row[c])}</td>"
         for c in metric_cols
     )
     body_rows.append(f"<tr><td>{rank_html}</td><td>{name_html}</td>{cells}</tr>")
@@ -99,7 +131,7 @@ st.markdown(
 # --- side-by-side bar chart --------------------------------------------
 section("Side-by-side metrics")
 metrics_to_plot = [c for c in (
-    "accuracy", "f1_weighted", "f1_macro", "roc_auc",
+    "f1_macro", "target_recall", "target_f2", "target_fpr",
 ) if c in ranked.columns]
 
 bar_colors = ["#3B82F6", "#22D3EE", "#10B981", "#F59E0B"]
@@ -134,7 +166,9 @@ st.plotly_chart(
 
 # --- narrative report ---------------------------------------------------
 section("Narrative report")
-md_path = REPORTS_DIR / "model_comparison.md"
+md_path = latest_dir() / "report.md"
+if not md_path.exists():
+    md_path = REPORTS_DIR / "model_comparison.md"
 if md_path.exists():
     with st.expander("Show full report", expanded=False):
         st.markdown(md_path.read_text(encoding="utf-8"))
@@ -151,3 +185,10 @@ if csv_path.exists():
             file_name="model_comparison.csv",
             mime="text/csv",
         )
+else:
+    st.download_button(
+        "Download comparison CSV",
+        data=df.to_csv().encode("utf-8"),
+        file_name="model_comparison.csv",
+        mime="text/csv",
+    )

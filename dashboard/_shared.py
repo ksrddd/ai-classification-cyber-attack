@@ -216,6 +216,15 @@ def _enrich_latest_metrics(model_name: str, metrics: dict) -> None:
 
 
 def active_labels() -> list[str]:
+    latest_metrics = LATEST_DIR / "metrics.json"
+    if latest_metrics.exists():
+        try:
+            payload = json.loads(latest_metrics.read_text(encoding="utf-8"))
+            trained_classes = payload.get("class_names")
+            if trained_classes:
+                return [str(name) for name in trained_classes]
+        except (OSError, json.JSONDecodeError, TypeError):
+            pass
     return list(get_active_target_labels(cfg()))
 
 

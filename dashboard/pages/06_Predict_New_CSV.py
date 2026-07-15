@@ -167,7 +167,7 @@ with c2:
     )
 
 # --- prediction table ---------------------------------------------------
-section("Prediction details", f"First 50 rows — download the full result below.")
+section("Prediction details", "First 50 rows — download the full result below.")
 
 head    = preds.head(50).copy()
 display = head.copy()

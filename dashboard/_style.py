@@ -71,6 +71,7 @@ MODEL_COLORS: dict[str, str] = {
     "catboost":            "#F59E0B",
     "mlp":                 "#EC4899",
     "logistic_regression": "#6C7488",
+    "stacking":            "#14B8A6",
 }
 
 MODEL_LABELS: dict[str, str] = {
@@ -80,6 +81,7 @@ MODEL_LABELS: dict[str, str] = {
     "catboost":            "CatBoost",
     "mlp":                 "MLP (sklearn)",
     "logistic_regression": "Logistic Regression",
+    "stacking":            "Stacking Ensemble",
 }
 
 
@@ -102,8 +104,7 @@ def model_label(name: str) -> str:
 _CSS = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
 
 <style>
   /* ── Typography ── */

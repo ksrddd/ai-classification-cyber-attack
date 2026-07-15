@@ -22,7 +22,6 @@ from dashboard._shared import (  # noqa: E402
     cfg,
 )
 from dashboard._style import (  # noqa: E402
-    ACCENT,
     apply_style,
     footer,
     hero,
@@ -53,13 +52,13 @@ saved = cached_list_models()
 
 hero(
     "AI-Based Cyber Attack Classification",
-    f"{DATASET_NAME} · Random Forest · XGBoost · LightGBM",
+    f"{DATASET_NAME} · 7-model imbalance-aware benchmark",
 )
 
 k1, k2, k3, k4 = st.columns(4)
 k1.metric("Classification mode", mode.upper())
 k2.metric("Target classes", len(labels))
-k3.metric("Models trained", f"{len(saved)} / 3")
+k3.metric("Models trained", f"{len(saved)} / 7")
 k4.metric("Dataset", DATASET_NAME)
 
 st.markdown("&nbsp;")
@@ -79,7 +78,7 @@ PAGES = [
     ("Model Performance", "Per-model metrics, confusion matrix, classification report."),
     ("Model Comparison", "Cross-model leaderboard and grouped bar chart."),
     ("SHAP Explainability", "Top features per class, beeswarm summary, per-model drill-down."),
-    ("Predict New CSV", "Upload a CICIDS2017-format CSV, get predictions with probabilities."),
+    ("Predict New CSV", "Upload a combined CICIDS2017/CSE-CIC-IDS2018-format CSV, get predictions with probabilities."),
 ]
 cols = st.columns(3)
 for i, (name, desc) in enumerate(PAGES):

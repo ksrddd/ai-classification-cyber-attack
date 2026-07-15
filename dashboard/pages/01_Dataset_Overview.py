@@ -8,7 +8,6 @@ import streamlit as st
 from dashboard._shared import (
     active_labels,
     active_mode,
-    cached_list_models,
     cfg,
     load_eda_summary,
     load_label_distribution,

@@ -1,0 +1,55 @@
+{
+  "created_at": "2026-07-06T04:34:00+07:00",
+  "source_run": "fn_aware_20260705",
+  "models": {
+    "random_forest": {
+      "source_run": "fn_aware_20260705",
+      "strategy": "targeted",
+      "target_threshold": 0.9597281616373501,
+      "model_bytes": 388461798,
+      "threshold_objective": "target_f1_balanced"
+    },
+    "xgboost": {
+      "source_run": "fn_aware_20260705",
+      "strategy": "targeted",
+      "target_threshold": 0.9055663347244263,
+      "model_bytes": 7030885,
+      "threshold_objective": "target_f1_balanced"
+    },
+    "lightgbm": {
+      "source_run": "fn_aware_20260705",
+      "strategy": "class_weight",
+      "target_threshold": 0.8936168069728858,
+      "model_bytes": 37746242,
+      "threshold_objective": "target_f1_balanced"
+    },
+    "catboost": {
+      "source_run": "fn_aware_20260705",
+      "strategy": "targeted",
+      "target_threshold": 0.9186889146595139,
+      "model_bytes": 10320961,
+      "threshold_objective": "target_f1_balanced"
+    },
+    "mlp": {
+      "source_run": "fn_aware_20260705",
+      "strategy": "targeted",
+      "target_threshold": 0.963100790977478,
+      "model_bytes": 790137,
+      "threshold_objective": "target_f1_balanced"
+    },
+    "logistic_regression": {
+      "source_run": "fn_aware_20260705",
+      "strategy": "targeted",
+      "target_threshold": 0.7384804254386058,
+      "model_bytes": 14941,
+      "threshold_objective": "target_f1_balanced"
+    },
+    "stacking": {
+      "source_run": "fn_aware_20260705",
+      "strategy": "targeted",
+      "target_threshold": 0.948476931876526,
+      "model_bytes": 1301670555,
+      "threshold_objective": "target_f1_balanced"
+    }
+  }
+}

@@ -7,7 +7,8 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-62%20passed-brightgreen)](tests/)
-[![Dataset](https://img.shields.io/badge/dataset-CICIDS2017-orange)](https://www.unb.ca/cic/datasets/ids-2017.html)(https://www.unb.ca/cic/datasets/ids-2018.html)
+[![Dataset: CICIDS2017](https://img.shields.io/badge/dataset-CICIDS2017-orange)](https://www.unb.ca/cic/datasets/ids-2017.html)
+[![Dataset: CSE-CIC-IDS2018](https://img.shields.io/badge/dataset-CSE--CIC--IDS2018-orange)](https://www.unb.ca/cic/datasets/ids-2018.html)
 ---
 
 ## Table of Contents · สารบัญ

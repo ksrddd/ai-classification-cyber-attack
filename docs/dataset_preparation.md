@@ -2,9 +2,11 @@
 
 ## Source
 
-The Canadian Institute for Cybersecurity's CICIDS2017 dataset.
-Request access here:
-<https://www.unb.ca/cic/datasets/ids-2017.html>
+The Canadian Institute for Cybersecurity's CICIDS2017 and CSE-CIC-IDS2018 datasets.
+Dataset pages:
+
+- <https://www.unb.ca/cic/datasets/ids-2017.html>
+- <https://www.unb.ca/cic/datasets/ids-2018.html>
 
 UNB CIC ships the data as PCAPs (raw packet captures) and as
 pre-extracted flow CSVs. **We consume the CSVs**; PCAP parsing is

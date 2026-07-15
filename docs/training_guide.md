@@ -1,4 +1,4 @@
-# Training Guide — CICIDS2017 Cyber Attack Classification
+# Training Guide — CICIDS2017 + CSE-CIC-IDS2018 Cyber Attack Classification
 
 คู่มือเทรนโมเดล AI สำหรับ proposal โครงงาน เป้าหมาย: เทรน 3 โมเดล (RandomForest, XGBoost, LightGBM) บน CICIDS2017 ครบ 10 classes ด้วย accuracy + correctness สูงสุดเท่าที่ RAM อนุญาต
 

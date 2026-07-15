@@ -4,7 +4,7 @@ Narrated exploration + teaching companion to the code in `src/`.
 
 | Notebook | Phase | Purpose |
 |----------|-------|---------|
-| `01_EDA.ipynb`           | 4 | Load CICIDS2017, inspect, plot class distribution |
+| `01_EDA.ipynb`           | 4 | Load combined CICIDS2017 + CSE-CIC-IDS2018, inspect, plot class distribution |
 | `02_Preprocessing.ipynb` | 4 | Clean, encode, split, scale — show why each step |
 | `03_Training.ipynb`      | 6 | Train LR / RF / MLP, run CV |
 | `04_Evaluation.ipynb`    | 8 | Metrics, confusion matrices, comparison report |

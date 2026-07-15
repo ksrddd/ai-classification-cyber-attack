@@ -47,6 +47,9 @@ MODELS = (
 )
 RAM_PRESETS = ("8gb", "16gb", "32gb", "full")
 RF_CLASS_WEIGHTS = ("none", "balanced", "balanced_subsample")
+IMBALANCE_STRATEGIES = (
+    "class_weight", "targeted", "random_over", "borderline_smote", "smoteenn",
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -75,9 +78,13 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Retrain selected model artefacts even if they already exist")
     parser.add_argument("--refresh-cache", action="store_true",
                         help="Rebuild data/processed/cicids_clean.parquet from raw CSVs")
+    parser.add_argument("--refresh-plots", action="store_true",
+                        help="Re-evaluate saved models and refresh metrics/plots")
     parser.add_argument("--skip-tuning", "--skip-hp", dest="skip_tuning",
                         action="store_true",
                         help="Skip hyperparameter search during training")
+    parser.add_argument("--reuse-best-params", action="store_true",
+                        help="Reuse saved best_params while refitting")
     parser.add_argument("--skip-cv", action="store_true",
                         help="Skip full-train cross-validation during training")
     parser.add_argument("--skip-label-shuffle", action="store_true",
@@ -86,6 +93,17 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Hyperparameter-search metric, e.g. accuracy or f1_macro")
     parser.add_argument("--rf-class-weight", choices=RF_CLASS_WEIGHTS, default=None,
                         help="RandomForest class_weight override")
+    parser.add_argument("--imbalance-strategy", choices=IMBALANCE_STRATEGIES,
+                        default="class_weight",
+                        help="Train-only class imbalance treatment")
+    parser.add_argument("--target-class", default="Infiltration",
+                        help="Minority class targeted by sampling strategies")
+    parser.add_argument("--target-ratio", type=float, default=1.00,
+                        help="Target-class / majority ratio after train sampling")
+    parser.add_argument("--target-max-fpr", type=float, default=0.02,
+                        help="Maximum validation false-positive rate for target threshold")
+    parser.add_argument("--threshold-validation-size", type=float, default=0.20,
+                        help="Train-only fraction used to calibrate the target threshold")
     parser.add_argument("--port", type=int, default=8501,
                         help="Dashboard port for --stage dashboard")
     parser.add_argument("--log-level", default="INFO",
@@ -152,8 +170,12 @@ def _run_latest_train(args: argparse.Namespace) -> int:
         train_args.append("--force")
     if args.refresh_cache:
         train_args.append("--refresh-cache")
+    if args.refresh_plots:
+        train_args.append("--refresh-plots")
     if args.skip_tuning:
         train_args.append("--skip-hp")
+    if args.reuse_best_params:
+        train_args.append("--reuse-best-params")
     if args.skip_cv:
         train_args.append("--skip-cv")
     if args.skip_label_shuffle:
@@ -162,6 +184,13 @@ def _run_latest_train(args: argparse.Namespace) -> int:
         train_args.extend(["--primary-metric", args.primary_metric])
     if args.rf_class_weight:
         train_args.extend(["--rf-class-weight", args.rf_class_weight])
+    train_args.extend(["--imbalance-strategy", args.imbalance_strategy])
+    train_args.extend(["--target-class", args.target_class])
+    train_args.extend(["--target-ratio", str(args.target_ratio)])
+    train_args.extend(["--target-max-fpr", str(args.target_max_fpr)])
+    train_args.extend([
+        "--threshold-validation-size", str(args.threshold_validation_size),
+    ])
 
     return int(train_main(train_args))
 
@@ -176,17 +205,27 @@ def _print_latest_evaluation(run_name: str) -> None:
     models = payload.get("models", [])
     if not models:
         raise SystemExit(f"No models found in {metrics_path}.")
-    best = max(models, key=lambda m: m.get("accuracy", 0.0))
+    best = min(
+        models,
+        key=lambda m: m.get("target_false_negatives", float("inf")),
+    )
     print(f"Run: {payload.get('run_name', run_name)}")
     print(f"Rows: train={payload.get('n_train')} test={payload.get('n_test')}")
-    print(f"Best accuracy: {best['model']} = {best.get('accuracy', 0.0):.4f}")
+    print(
+        f"Fewest target false negatives: {best['model']} = "
+        f"{best.get('target_false_negatives', 0)}"
+    )
     print("\nModel metrics:")
     for item in models:
         print(
             f"- {item['model']}: "
             f"acc={item.get('accuracy', 0.0):.4f}, "
             f"f1_weighted={item.get('f1_weighted', 0.0):.4f}, "
-            f"f1_macro={item.get('f1_macro', 0.0):.4f}"
+            f"f1_macro={item.get('f1_macro', 0.0):.4f}, "
+            f"target_recall={item.get('target_recall', 0.0):.4f}, "
+            f"target_f2={item.get('target_f2', 0.0):.4f}, "
+            f"target_fn={item.get('target_false_negatives', 0)}, "
+            f"target_fp={item.get('target_false_positives', 0)}"
         )
     print(f"\nDashboard report: {metrics_path.parent / 'report.md'}")
 

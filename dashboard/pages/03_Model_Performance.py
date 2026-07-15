@@ -8,15 +8,14 @@ import streamlit as st
 
 from dashboard._shared import (
     cached_list_models,
+    classification_report_path,
     confusion_matrix_path,
     load_model_metrics,
-    classification_report_path,
     warn_no_models,
 )
 from dashboard._style import (
     BG_CANVAS,
     apply_style,
-    class_color,
     hero,
     model_color,
     model_label,
@@ -52,8 +51,16 @@ if m is None:
     st.stop()
 
 # --- headline KPIs ------------------------------------------------------
-nan = float("nan")
-mc  = model_color(model)
+mc = model_color(model)
+target_class = str(m.get("target_class", "Infiltration"))
+target_report = m.get("per_class", {}).get(target_class, {})
+
+
+def score(key: str, source: dict = m) -> str:
+    value = source.get(key)
+    return f"{float(value):.4f}" if value is not None else "N/A"
+
+
 st.markdown(
     f'<div style="display:flex;gap:10px;align-items:center;margin-bottom:.4rem;">'
     f'  <span class="pill accent">{model_label(model)}</span>'
@@ -63,16 +70,43 @@ st.markdown(
     unsafe_allow_html=True,
 )
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Accuracy",      f"{m.get('accuracy', nan):.4f}")
-c2.metric("F1 (weighted)", f"{m.get('f1_weighted', nan):.4f}")
-c3.metric("F1 (macro)",    f"{m.get('f1_macro', nan):.4f}")
-c4.metric("ROC-AUC",       f"{m.get('roc_auc', nan):.4f}")
+c1.metric("Accuracy", score("accuracy"))
+c2.metric("Balanced accuracy", score("balanced_accuracy"))
+c3.metric("F1 (macro)", score("f1_macro"))
+c4.metric("F1 (weighted)", score("f1_weighted"))
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Precision (W)", f"{m.get('precision_weighted', nan):.4f}")
-c2.metric("Recall (W)",    f"{m.get('recall_weighted', nan):.4f}")
-c3.metric("Precision (M)", f"{m.get('precision_macro', nan):.4f}")
-c4.metric("MCC",           f"{m.get('matthews_corrcoef', nan):.4f}")
+c1.metric("Precision (W)", score("precision_weighted"))
+c2.metric("Recall (W)", score("recall_weighted"))
+c3.metric("Precision (M)", score("precision_macro"))
+c4.metric(f"{target_class} F1", score("f1", target_report))
+
+if m.get("target_threshold") is not None:
+    section(
+        f"{target_class} balanced decision",
+        "Threshold maximizes target F1 to balance false positives and false negatives.",
+    )
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Threshold", score("target_threshold"))
+    c2.metric("F1", score("target_f1"))
+    c3.metric("Recall", score("target_recall"))
+    c4.metric("FPR", score("target_fpr"))
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("False negatives", int(m.get("target_false_negatives", 0)))
+    c2.metric("FN → BENIGN", int(m.get("target_to_benign_fn", 0)))
+    c3.metric("False positives", int(m.get("target_false_positives", 0)))
+    c4.metric(
+        "FP + FN",
+        int(m.get("target_false_positives", 0))
+        + int(m.get("target_false_negatives", 0)),
+    )
+    if m.get("high_recall_threshold") is not None:
+        st.caption(
+            "Previous high-recall profile: "
+            f"threshold {float(m['high_recall_threshold']):.4f}, "
+            f"FP {int(m.get('high_recall_target_false_positives', 0)):,}, "
+            f"FN {int(m.get('high_recall_target_false_negatives', 0)):,}."
+        )
 
 # --- radar (metric fingerprint) -----------------------------------------
 section("Metric fingerprint", "Radar of weighted + macro scores")
@@ -83,7 +117,7 @@ radar_keys = (
     ("recall_weighted",    "Rec (W)"),
     ("f1_weighted",        "F1 (W)"),
     ("f1_macro",           "F1 (M)"),
-    ("roc_auc",            "ROC-AUC"),
+    ("balanced_accuracy",  "Bal Acc"),
 )
 radar_vals = [m.get(k, 0.0) or 0.0 for k, _ in radar_keys]
 radar_lbls = [lbl for _, lbl in radar_keys]

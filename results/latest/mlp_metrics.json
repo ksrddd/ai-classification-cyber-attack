@@ -1,0 +1,53 @@
+{
+  "model": "mlp",
+  "accuracy": 0.9807333333333333,
+  "balanced_accuracy": 0.7832650131596868,
+  "f1_macro": 0.6981488937887341,
+  "f1_weighted": 0.9804487263586878,
+  "cv_f1_macro_mean": 0.9324035766003519,
+  "cv_f1_macro_std": 0.003919297392575714,
+  "cv_f1_macro_scores": [
+    0.9348708798508647,
+    0.92811364686419,
+    0.9310275768640319,
+    0.9292434570950591,
+    0.9387623223276138
+  ],
+  "label_shuffle_acc": 0.23953142757234025,
+  "label_shuffle_f1_macro": 0.06385998451758632,
+  "majority_baseline_acc": 0.009983333333333334,
+  "best_params": {
+    "clf__learning_rate_init": 0.005,
+    "clf__hidden_layer_sizes": [
+      128,
+      64
+    ],
+    "clf__alpha": 0.0001
+  },
+  "target_threshold": 0.9616386890411377,
+  "target_precision": 0.3503480278422274,
+  "target_recall": 0.25208681135225375,
+  "target_f1": 0.29320388349514565,
+  "target_f2": 0.2670675627874072,
+  "target_fpr": 0.004713725358158953,
+  "target_false_positives": 280,
+  "target_false_negatives": 448,
+  "target_to_benign_fn": 445,
+  "calibration_recall": 0.20868113522537562,
+  "calibration_fpr": 0.004124509688389085,
+  "near_perfect_flag": false,
+  "training_protocol_version": 1,
+  "imbalance_protocol_version": 6,
+  "data_fingerprint": "96aaf4446dad781b870db6ffd639dd0a916acbcbaebd99cbfbfc2a4809fac3aa",
+  "random_state": 42,
+  "primary_metric": "target_f2",
+  "rf_class_weight": "balanced_subsample",
+  "hp_search": true,
+  "hp_search_n_iter": 8,
+  "hp_search_subsample": 80000,
+  "imbalance_strategy": "targeted",
+  "target_class": "Infiltration",
+  "target_ratio": 1.0,
+  "target_max_fpr": 0.02,
+  "threshold_validation_size": 0.2
+}
