@@ -7,8 +7,8 @@ the held-out test set. This is the artifact you'll show the panel.
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 import pandas as pd
@@ -51,6 +51,7 @@ def plot_comparison_bars(
 ) -> Path:
     """Grouped bar chart of selected metrics across all models."""
     import matplotlib.pyplot as plt  # noqa: PLC0415
+
     from src.utils.io import ensure_dir as _ensure_dir
     from src.visualization.plots import save_fig, set_style
 

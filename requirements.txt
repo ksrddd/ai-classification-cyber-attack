@@ -26,6 +26,11 @@ shap>=0.43
 # --- Dashboard ---
 streamlit>=1.28
 
+# --- Local REST demo ---
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+
 # --- Notebooks ---
 jupyterlab>=4.0
 ipykernel>=6.25

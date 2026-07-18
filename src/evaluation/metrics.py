@@ -15,7 +15,7 @@ breakdown as a DataFrame for the dashboard.
 from __future__ import annotations
 
 import logging
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
@@ -146,7 +146,7 @@ def _per_class_metrics(
     class_names: Iterable[str] | None,
 ) -> dict[str, dict[str, float]]:
     lbls = list(labels) if labels is not None else sorted(np.unique(y_true).tolist())
-    names = list(class_names) if class_names is not None else [str(l) for l in lbls]
+    names = list(class_names) if class_names is not None else [str(label) for label in lbls]
 
     p = precision_score(y_true, y_pred, average=None, labels=lbls, zero_division=0)
     r = recall_score(y_true, y_pred, average=None, labels=lbls, zero_division=0)

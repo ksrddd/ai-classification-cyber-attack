@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.config.constants import LABEL_COLUMN, MAPPED_LABEL_COLUMN
+from src.config.constants import MAPPED_LABEL_COLUMN
 from src.data.label_mapping import (
     add_mapped_column,
     map_to_binary,

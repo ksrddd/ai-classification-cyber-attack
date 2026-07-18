@@ -34,6 +34,9 @@ STAGES = (
     "preprocess",
     "explain",
     "all",
+    "audit",
+    "red-team",
+    "promote",
 )
 MODELS = (
     "all",
@@ -66,12 +69,28 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Path to YAML config for legacy/development stages")
     parser.add_argument("--input", type=Path, default=None,
                         help="CSV file for --stage predict")
+    parser.add_argument("--reference", type=Path, default=None,
+                        help="Clean local CSV reference for --stage red-team")
+    parser.add_argument("--candidate", type=Path, default=None,
+                        help="Local labelled CSV candidate for --stage red-team")
+    parser.add_argument("--label-column", default="Label",
+                        help="Ground-truth label column for --stage red-team")
+    parser.add_argument("--model-path", type=Path, default=None,
+                        help="Trusted local pipeline artifact for red-team evasion checks")
     parser.add_argument("--output", type=Path, default=None,
                         help="Optional output CSV path for --stage predict")
     parser.add_argument("--raw-dir", type=Path, default=None,
                         help="Override raw data directory for legacy eda/preprocess stages")
     parser.add_argument("--run-name", default="latest",
                         help="Training output folder under results/ (default: latest)")
+    parser.add_argument("--split-manifest", type=Path, default=None,
+                        help="Versioned source-held-out split manifest for training")
+    parser.add_argument("--profile", choices=("dev", "overnight"), default="dev",
+                        help="Training resource profile")
+    parser.add_argument("--accelerator", choices=("cpu", "gpu"), default="cpu",
+                        help="Use GPU-capable XGBoost/CatBoost backends when installed")
+    parser.add_argument("--gpu-devices", default="0",
+                        help="CatBoost GPU device selector (default: 0)")
     parser.add_argument("--preset", choices=RAM_PRESETS, default=None,
                         help="Training RAM preset for train.py")
     parser.add_argument("--force", action="store_true",
@@ -102,8 +121,8 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Target-class / majority ratio after train sampling")
     parser.add_argument("--target-max-fpr", type=float, default=0.02,
                         help="Maximum validation false-positive rate for target threshold")
-    parser.add_argument("--threshold-validation-size", type=float, default=0.20,
-                        help="Train-only fraction used to calibrate the target threshold")
+    parser.add_argument("--threshold-validation-size", type=float, default=0.0,
+                        help="Train-only calibration fraction (0 keeps the required 70/30 split)")
     parser.add_argument("--port", type=int, default=8501,
                         help="Dashboard port for --stage dashboard")
     parser.add_argument("--log-level", default="INFO",
@@ -127,6 +146,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.stage == "all":
         return _run_latest_train(args)
+
+    if args.stage == "audit":
+        return _run_audit(args)
+
+    if args.stage == "promote":
+        return _run_promote(args)
+
+    if args.stage == "red-team":
+        return _run_red_team(args)
 
     if args.stage == "eda":
         from src.pipelines.eda import run as run_eda
@@ -162,10 +190,14 @@ def _run_latest_train(args: argparse.Namespace) -> int:
     from train import main as train_main
 
     train_args: list[str] = ["--run-name", args.run_name]
+    if args.split_manifest:
+        train_args.extend(["--split-manifest", str(args.split_manifest)])
     if args.model != "all":
         train_args.extend(["--models", _canonical_model_name(args.model)])
     if args.preset:
         train_args.extend(["--preset", args.preset])
+    elif args.profile == "overnight":
+        train_args.extend(["--preset", "16gb"])
     if args.force:
         train_args.append("--force")
     if args.refresh_cache:
@@ -188,6 +220,8 @@ def _run_latest_train(args: argparse.Namespace) -> int:
     train_args.extend(["--target-class", args.target_class])
     train_args.extend(["--target-ratio", str(args.target_ratio)])
     train_args.extend(["--target-max-fpr", str(args.target_max_fpr)])
+    train_args.extend(["--accelerator", args.accelerator])
+    train_args.extend(["--gpu-devices", args.gpu_devices])
     train_args.extend([
         "--threshold-validation-size", str(args.threshold_validation_size),
     ])
@@ -241,6 +275,68 @@ def _run_dashboard(port: int) -> int:
         str(port),
     ]
     return subprocess.call(cmd, cwd=PROJECT_ROOT)
+
+
+def _run_audit(args: argparse.Namespace) -> int:
+    from src.data.deterministic_split import load_split_manifest
+
+    path = args.split_manifest or PROJECT_ROOT / "configs" / "splits" / "source_holdout_v2_70_30.json"
+    try:
+        payload = load_split_manifest(path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Invalid split manifest: {exc}") from exc
+    print(json.dumps({"manifest": str(path), "version": payload["version"], "valid": True}, indent=2))
+    return 0
+
+
+def _run_promote(args: argparse.Namespace) -> int:
+    from src.artifacts.paths import result_run_dir
+    from src.artifacts.publish import promote_run
+
+    run_id = args.run_name
+    try:
+        run_dir = result_run_dir(run_id, results_root=PROJECT_ROOT / "results")
+    except ValueError as exc:
+        raise SystemExit(f"Invalid run name: {exc}") from exc
+    champion = PROJECT_ROOT / "results" / "champion.json"
+    selected_model = None if args.model == "all" else _canonical_model_name(args.model)
+    promote_run(
+        run_dir,
+        champion,
+        champion_model=selected_model,
+        target_max_fpr=args.target_max_fpr,
+    )
+    print(f"Promoted run {run_id} -> {champion}")
+    return 0
+
+
+def _run_red_team(args: argparse.Namespace) -> int:
+    if args.reference is None or args.candidate is None:
+        raise SystemExit(
+            "--stage red-team requires --reference CLEAN.csv and --candidate LABELLED.csv"
+        )
+    import pandas as pd
+
+    from src.security.red_team import run_red_team_report, write_red_team_report
+
+    predictor = None
+    if args.model_path is not None:
+        from src.utils.io import load_joblib
+
+        trusted_model = load_joblib(args.model_path)
+        if not hasattr(trusted_model, "predict"):
+            raise SystemExit("--model-path must be a trusted local object with predict(DataFrame)")
+        predictor = trusted_model.predict
+    report = run_red_team_report(
+        pd.read_csv(args.reference, low_memory=False),
+        pd.read_csv(args.candidate, low_memory=False),
+        label_column=args.label_column,
+        predictor=predictor,
+    )
+    output = PROJECT_ROOT / "results" / args.run_name / "red_team.json"
+    write_red_team_report(report, output)
+    print(f"Offline red-team report written to: {output}")
+    return 0
 
 
 def _canonical_model_name(name: str) -> str:

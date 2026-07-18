@@ -1,0 +1,14 @@
+{
+  "run_id": "local_300k_70_30",
+  "bundle_path": "results/local_300k_70_30",
+  "schema_version": "1",
+  "champion_model": "random_forest",
+  "selection": {
+    "model": "random_forest",
+    "status": "conditional_no_model_meets_fpr",
+    "rule": "lowest target_fpr, then highest f1_macro",
+    "target_max_fpr": 0.02,
+    "target_fpr": 0.02685673096042951,
+    "f1_macro": 0.9160111377779133
+  }
+}

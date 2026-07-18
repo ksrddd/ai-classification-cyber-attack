@@ -11,6 +11,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # Force non-interactive matplotlib backend. Windows Python's bundled tcl/tk
 # is broken on some installs, and tests never need a display anyway.
 import matplotlib  # noqa: E402
+
 matplotlib.use("Agg")
 
 import pandas as pd  # noqa: E402

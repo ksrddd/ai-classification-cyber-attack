@@ -24,20 +24,19 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from reportlab.lib.colors import HexColor, lightgrey
+from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     Paragraph,
+    Preformatted,
     SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
-    Preformatted,
-    PageBreak,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

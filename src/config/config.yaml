@@ -63,8 +63,8 @@ data:
 # Preprocessing
 # ------------------------------------------------------------
 preprocessing:
-  test_size: 0.2
-  val_size: 0.2         # of (train + val); test is carved out first
+  test_size: 0.3
+  val_size: 0.0         # canonical delivery protocol: no calibration/validation split
   stratify: true
   drop_duplicates: true
   drop_inf: true
@@ -127,6 +127,7 @@ models:
       subsample: 0.9
       colsample_bytree: 0.9
       tree_method: "hist"
+      device: "cpu"       # DGX canonical CLI overrides this to CUDA
       n_jobs: -1
     grid:
       clf__n_estimators: [200, 400]
@@ -159,6 +160,7 @@ models:
       auto_class_weights: "Balanced"
       thread_count: -1
       verbose: 0
+      task_type: "CPU"    # DGX canonical CLI overrides this to GPU
     grid:
       clf__iterations: [300, 500]
       clf__depth: [6, 8, 10]

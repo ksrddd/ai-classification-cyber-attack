@@ -207,19 +207,17 @@ def test_target_threshold_calibration_does_not_spend_fpr_for_recall_alone() -> N
     assert calibrated.false_negatives == 1
 
 
-def test_target_threshold_fallback_never_selects_infinite_threshold() -> None:
+def test_target_threshold_fails_when_fpr_policy_is_unattainable() -> None:
     y_true = np.array([1, 1, 0, 0, 0, 0])
     target_probability = np.array([0.80, 0.70, 0.99, 0.98, 0.20, 0.10])
 
-    calibrated = calibrate_target_threshold(
-        y_true,
-        target_probability,
-        target_class_index=1,
-        max_false_positive_rate=0.0,
-    )
-
-    assert np.isfinite(calibrated.threshold)
-    assert calibrated.recall > 0.0
+    with pytest.raises(ValueError, match="satisfies max FPR"):
+        calibrate_target_threshold(
+            y_true,
+            target_probability,
+            target_class_index=1,
+            max_false_positive_rate=0.0,
+        )
 
 
 def test_target_threshold_pipeline_applies_saved_decision_rule(tmp_path) -> None:

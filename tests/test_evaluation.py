@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
 
 from src.evaluation import comparison, confusion_matrix, metrics
 

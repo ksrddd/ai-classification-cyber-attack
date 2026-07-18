@@ -7,6 +7,7 @@ Every entry point (``main.py``, dashboard, notebooks) calls
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import sys
 from pathlib import Path
@@ -49,10 +50,8 @@ def configure_logging(
     # ``reconfigure`` exists.
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
-            try:
+            with contextlib.suppress(Exception):
                 stream.reconfigure(encoding="utf-8", errors="replace")
-            except Exception:
-                pass
 
     root = logging.getLogger()
     root.setLevel(level)

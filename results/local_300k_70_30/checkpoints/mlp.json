@@ -1,0 +1,7 @@
+{
+  "best_params": {},
+  "checkpoint_version": 1,
+  "model": "mlp",
+  "phase": "complete",
+  "run_signature": "d17c7af3c5b0f7c93a3d12d98c7c8bafa3f14523cadbbb7985d95b00c50a8755"
+}

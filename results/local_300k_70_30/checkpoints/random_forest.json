@@ -1,0 +1,7 @@
+{
+  "best_params": {},
+  "checkpoint_version": 1,
+  "model": "random_forest",
+  "phase": "complete",
+  "run_signature": "4593cb64390f50b57d245396072e46bc28c6a14e48d4777af96e606b01f9328e"
+}

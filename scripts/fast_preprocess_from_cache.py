@@ -63,7 +63,7 @@ def subsample(df: pd.DataFrame, n: int) -> pd.DataFrame:
     log.info("Stratified subsample -> %d rows ...", n)
     rng = np.random.default_rng(RANDOM_STATE)
     pieces = []
-    for lbl, grp in df.groupby(LABEL_COL, sort=False):
+    for _lbl, grp in df.groupby(LABEL_COL, sort=False):
         quota = max(MIN_PER_CLASS, round(n * len(grp) / len(df)))
         take  = min(quota, len(grp))
         idx   = rng.choice(grp.index.to_numpy(), size=take, replace=False)

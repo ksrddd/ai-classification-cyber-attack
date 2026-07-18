@@ -1,0 +1,7 @@
+{
+  "best_params": {},
+  "checkpoint_version": 1,
+  "model": "logistic_regression",
+  "phase": "complete",
+  "run_signature": "962d6a6fb1dbc3a1fdbf4d24dff26a5f7b515f04dff5f8d1b865c18f138f48da"
+}

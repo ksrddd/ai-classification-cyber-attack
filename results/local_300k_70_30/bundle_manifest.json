@@ -1,0 +1,149 @@
+{
+  "bundle_version": "1",
+  "files": {
+    "catboost.joblib": {
+      "sha256": "1c6e9a1414d82971b69c7bba4641da620d5ce02b869e1f046dc6c50e3a0dc5a6",
+      "size": 8241073
+    },
+    "catboost_confusion_matrix.png": {
+      "sha256": "a08dff1358350f11a37cb78c3d4a73b658f8c23266d86c67d7c816a2c92a8a99",
+      "size": 87350
+    },
+    "catboost_metrics.json": {
+      "sha256": "53588663d0a80bdbaa793fb4c194aa706e5b02e0be9ab98ab8355c0f214ab2a1",
+      "size": 1527
+    },
+    "catboost_per_class.csv": {
+      "sha256": "9edbbf242381f390e2f3de1a4ce152e7df5acc577d1fc711c6ad9709a4695e8a",
+      "size": 487
+    },
+    "feature_columns.json": {
+      "sha256": "cd386e9171f470221c46cb1477b353f3cdeeaeac8d1761275eb69fb6a350444c",
+      "size": 1800
+    },
+    "label_encoder.joblib": {
+      "sha256": "cb910a0df37e51e139ca0c66d8173e8e78a4bc5c87794495b7dfc39945b5fff1",
+      "size": 567
+    },
+    "lightgbm.joblib": {
+      "sha256": "3f152d3209695b0bd14fdab3640f6307a2dcc6826381112cb9a18f46f4cc54c7",
+      "size": 44100322
+    },
+    "lightgbm_confusion_matrix.png": {
+      "sha256": "88889a4e94f28545a69243faf377132ec26af598de1d7e8aa1e8b197d12a7901",
+      "size": 85731
+    },
+    "lightgbm_metrics.json": {
+      "sha256": "2658e63a4e8c565a5ad8bb7b3962b7fbd660273e65889dc2f9f29874f88a7c02",
+      "size": 1522
+    },
+    "lightgbm_per_class.csv": {
+      "sha256": "2dc509cd243a189792ac8b29908331866a670a6e023bba28faf311a5b1fcd9d8",
+      "size": 483
+    },
+    "logistic_regression.joblib": {
+      "sha256": "ad72743579df0606811783b752036db341b87480e88f5beff13fc44362b0e214",
+      "size": 14997
+    },
+    "logistic_regression_confusion_matrix.png": {
+      "sha256": "8153f46c9f305561162d1f6338265273bf1c61c209d3998338c32bb7eeb43a2c",
+      "size": 92658
+    },
+    "logistic_regression_metrics.json": {
+      "sha256": "1efff62dc687315470c666d1c0bced3758ffac417c6cf576e322e38bdb8bf82a",
+      "size": 1533
+    },
+    "logistic_regression_per_class.csv": {
+      "sha256": "da032fb641f3e03a679ca516a487fac04171b1865e8ebfa6a0231883737b281e",
+      "size": 487
+    },
+    "metrics.json": {
+      "sha256": "85b2af189a7c8992d9f6bfe6f6d15071f3855d49f5755605327f1843cf8854fe",
+      "size": 8926
+    },
+    "mlp.joblib": {
+      "sha256": "eddae627cb723fac45cc69240ae7b4cafb4ec1e74b789305c66210d18268277f",
+      "size": 772097
+    },
+    "mlp_confusion_matrix.png": {
+      "sha256": "4f3f37b9f1591bddefb693aa64484eb0b5400fd49d7f8bb08565f9052a256d41",
+      "size": 86979
+    },
+    "mlp_metrics.json": {
+      "sha256": "ba9ef5c66363b4266d2a2d087523117264f4cc35f528afee6468354c08ad37cc",
+      "size": 1514
+    },
+    "mlp_per_class.csv": {
+      "sha256": "b94abc8ccaea361a0c0c3b655b1741bfa1b127708fb26a393fef0ff7f522ccf0",
+      "size": 483
+    },
+    "random_forest.joblib": {
+      "sha256": "50f737c42f9132f4cc9710a761cef69f4e7b202d444cb28aeb0d5e07dd2a8a64",
+      "size": 891185494
+    },
+    "random_forest_confusion_matrix.png": {
+      "sha256": "c2e2c9ca7ba9f7542e12cdad9fe8a48cd81a9c4e7f8989d1125a59eeafdd3353",
+      "size": 86483
+    },
+    "random_forest_metrics.json": {
+      "sha256": "bd15b32888f22e8174ea72a694aead8deb5684bdaeeb0601ccbb3a118abb4fe7",
+      "size": 1528
+    },
+    "random_forest_per_class.csv": {
+      "sha256": "5ad6b871e6f09cfcdf7e34794decff63245efcfed6f24207f3daeb189a50556f",
+      "size": 488
+    },
+    "report.md": {
+      "sha256": "9e7b80465dbeda216faae491f738e8d0641325cdaa67acb5bb22143d804f6d51",
+      "size": 8463
+    },
+    "stacking.joblib": {
+      "sha256": "9ae3aa1f7355b3ba708c5ebb503991f4b82d76701d8b6693840b3a894b324659",
+      "size": 472739156
+    },
+    "stacking_confusion_matrix.png": {
+      "sha256": "f433e080f29928748ad331fbdbad27cbf46cff9d236e753e39222eb83aaab634",
+      "size": 86158
+    },
+    "stacking_metrics.json": {
+      "sha256": "e70ae9260abaa0e2175dd31fcbb73d7b6bc612f74c2dc9f7106d3bcee681d2bf",
+      "size": 1376
+    },
+    "stacking_per_class.csv": {
+      "sha256": "e6f35b6253348b21202b8980013140298b6fb3a72a7cda82d7bc70f5ffb5c0b1",
+      "size": 479
+    },
+    "xgboost.joblib": {
+      "sha256": "d21c822b3502bc612ad9a10924cd6193f69bc05a3bc43256ad0b5563ad3f46ad",
+      "size": 9803303
+    },
+    "xgboost_confusion_matrix.png": {
+      "sha256": "a3ee9407d2695e9d95f65fbad056fe19647198a7a3803520b248fde1a27b9960",
+      "size": 85933
+    },
+    "xgboost_metrics.json": {
+      "sha256": "2f65defa70baedcba2903121a985a24acbe4f69c56315491d377f3610d89c026",
+      "size": 1492
+    },
+    "xgboost_per_class.csv": {
+      "sha256": "a14376b55ff44d3e02a089af2a37f2303a0a9c405db015992c15b571b89f6446",
+      "size": 487
+    }
+  },
+  "metadata": {
+    "class_names": [
+      "BENIGN",
+      "Bot",
+      "Brute Force",
+      "DDoS",
+      "DoS",
+      "Heartbleed",
+      "Infiltration",
+      "PortScan",
+      "Web Attack"
+    ],
+    "split_protocol": "source_holdout_v2_70_30"
+  },
+  "run_id": "local_300k_70_30",
+  "schema_version": "1"
+}

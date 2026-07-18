@@ -1,6 +1,6 @@
 """Cross-cutting utilities: logging, deterministic seeding, I/O helpers."""
 
-from src.utils.io import ensure_dir, save_joblib, load_joblib
+from src.utils.io import ensure_dir, load_joblib, save_joblib
 from src.utils.logging import configure_logging
 from src.utils.seeds import seed_everything
 

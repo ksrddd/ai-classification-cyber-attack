@@ -1,0 +1,7 @@
+{
+  "best_params": {},
+  "checkpoint_version": 1,
+  "model": "lightgbm",
+  "phase": "complete",
+  "run_signature": "83cb54c56549e4033bcc406ef3fd1f2b3898ed16c1178b7f58225496efef46e2"
+}

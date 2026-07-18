@@ -1,7 +1,9 @@
 """FastAPI backend — serves ML results to the Next.js dashboard."""
 from __future__ import annotations
 
+import io
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -15,11 +17,17 @@ from fastapi.staticfiles import StaticFiles
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.config.constants import FIGURES_DIR, METRICS_DIR, MODELS_DIR, PROCESSED_DIR, SHAP_DIR
-from src.config.loader import get_active_target_labels, get_classification_mode, load_config
-from src.inference.predictor import list_saved_models, predict_dataframe
+from src.config.constants import FIGURES_DIR, METRICS_DIR, PROCESSED_DIR, SHAP_DIR  # noqa: E402
+from src.config.loader import (  # noqa: E402
+    get_active_target_labels,
+    get_classification_mode,
+    load_config,
+)
+from src.inference.predictor import list_saved_models, predict_dataframe  # noqa: E402
 
 app = FastAPI(title="CyberML API", version="1.0.0")
+MAX_UPLOAD_BYTES = 50 * 1024 * 1024
+UPLOAD_CHUNK_BYTES = 1024 * 1024
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,6 +44,28 @@ def cfg():
     if _cfg is None:
         _cfg = load_config()
     return _cfg
+
+
+def _safe_component(value: str) -> str:
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+", value):
+        raise HTTPException(400, "Invalid path component")
+    return value
+
+
+async def _read_upload_limited(
+    file: UploadFile,
+    *,
+    max_bytes: int = MAX_UPLOAD_BYTES,
+) -> bytes:
+    """Read an upload in bounded chunks and stop as soon as the limit is exceeded."""
+    chunks: list[bytes] = []
+    total = 0
+    while chunk := await file.read(UPLOAD_CHUNK_BYTES):
+        total += len(chunk)
+        if total > max_bytes:
+            raise HTTPException(413, f"CSV exceeds {max_bytes // (1024 * 1024)} MB limit")
+        chunks.append(chunk)
+    return b"".join(chunks)
 
 
 # ---------------------------------------------------------------------------
@@ -83,6 +113,7 @@ def get_models():
 
 @app.get("/api/models/{name}/metrics")
 def get_model_metrics(name: str):
+    name = _safe_component(name)
     for suffix in ("_test.json", "_val.json"):
         p = METRICS_DIR / f"{name}{suffix}"
         if p.exists():
@@ -92,6 +123,7 @@ def get_model_metrics(name: str):
 
 @app.get("/api/models/{name}/report")
 def get_classification_report(name: str):
+    name = _safe_component(name)
     p = METRICS_DIR / f"classification_report_{name}.csv"
     if not p.exists():
         raise HTTPException(404, f"No report for {name}")
@@ -118,6 +150,7 @@ def get_compare():
 
 @app.get("/api/shap/{name}")
 def get_shap(name: str):
+    name = _safe_component(name)
     p = SHAP_DIR / name / "top_features.json"
     if not p.exists():
         raise HTTPException(404, f"No SHAP for {name}")
@@ -126,6 +159,8 @@ def get_shap(name: str):
 
 @app.get("/api/shap/{name}/figures/{filename}")
 def get_shap_figure(name: str, filename: str):
+    name = _safe_component(name)
+    filename = _safe_component(filename)
     p = SHAP_DIR / name / filename
     if not p.exists():
         raise HTTPException(404, f"No SHAP figure {filename} for {name}")
@@ -138,6 +173,7 @@ def get_shap_figure(name: str, filename: str):
 
 @app.get("/api/figures/{filename}")
 def get_figure(filename: str):
+    filename = _safe_component(filename)
     p = FIGURES_DIR / filename
     if not p.exists():
         raise HTTPException(404, filename)
@@ -149,16 +185,15 @@ def get_figure(filename: str):
 # ---------------------------------------------------------------------------
 
 @app.post("/api/predict")
-async def predict(model: str, file: UploadFile = File(...)):
-    import io
+async def predict(model: str, file: UploadFile = File(...)):  # noqa: B008
     from src.data.schema import clean_column_names
     from src.features.validator import load_expected_features, validate_inference_csv
 
-    content = await file.read()
+    content = await _read_upload_limited(file)
     try:
         df = pd.read_csv(io.BytesIO(content), low_memory=False, encoding="latin-1")
     except Exception as e:
-        raise HTTPException(400, f"Cannot read CSV: {e}")
+        raise HTTPException(400, f"Cannot read CSV: {e}") from e
 
     df = clean_column_names(df)
     expected = load_expected_features()
@@ -174,6 +209,8 @@ async def predict(model: str, file: UploadFile = File(...)):
     records = preds.head(200).to_dict(orient="records")
 
     return {
+        "model_run_id": result.run_id,
+        "contract_version": "feature_columns_v1",
         "n_rows": len(preds),
         "class_counts": class_counts,
         "preview": records,

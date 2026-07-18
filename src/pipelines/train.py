@@ -31,7 +31,7 @@ from src.config.constants import (
     PROCESSED_DIR,
 )
 from src.config.loader import get_classification_mode, load_config
-from src.evaluation.metrics import classification_report_df, compute_metrics
+from src.evaluation.metrics import compute_metrics
 from src.features.encoder import load_label_encoder
 from src.models.base import default_model_path
 from src.models.registry import (
@@ -216,10 +216,7 @@ def _tune_one(name, wrapper, cfg, X, y) -> dict | None:
         return None
     # Tree/ensemble models already saturate all cores per fit.
     # Non-parallel models (lr, mlp) can benefit from parallel CV folds.
-    if name in _INTERNALLY_PARALLEL:
-        cv_n_jobs = 1
-    else:
-        cv_n_jobs = cfg["tuning"].get("n_jobs", 4)
+    cv_n_jobs = 1 if name in _INTERNALLY_PARALLEL else cfg["tuning"].get("n_jobs", 4)
     result = tune_model(
         model_name=name,
         pipeline=wrapper.build(),

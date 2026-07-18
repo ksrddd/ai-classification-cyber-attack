@@ -61,7 +61,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
-    balanced_accuracy_score,
     classification_report,
     confusion_matrix,
     f1_score,
@@ -72,6 +71,7 @@ from sklearn.metrics import (
     roc_curve,
 )
 from sklearn.model_selection import (
+    GroupKFold,
     RandomizedSearchCV,
     StratifiedKFold,
     cross_val_score,
@@ -81,6 +81,16 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.utils.class_weight import compute_sample_weight
 from xgboost import XGBClassifier
+
+from src.artifacts.bundle import build_bundle_manifest, write_bundle_manifest
+from src.artifacts.paths import result_run_dir
+from src.data.deterministic_split import (
+    deterministic_source_split,
+    load_split_manifest,
+    row_hash,
+)
+from src.training.checkpoints import checkpoint_matches, load_checkpoint, write_checkpoint
+from src.utils.io import json_dumps_strict
 
 # ---------------------------------------------------------------------------
 # CONFIG -- one dict, one source of truth.
@@ -95,6 +105,8 @@ CONFIG: dict[str, Any] = {
     "csv_glob":           "*.csv",
     "csv_encoding":       "latin-1",
     "label_column":       "Label",
+    "split_manifest":     None,
+    "metadata_columns":   ("dataset_id", "source_file", "capture_window", "_row_hash"),
 
     # -- Reproducibility -------------------------------------------------
     "random_state":       42,
@@ -130,11 +142,13 @@ CONFIG: dict[str, Any] = {
     "imbalance_strategy": "targeted",
     "target_class":       "Infiltration",
     "target_ratio":       1.00,
-    # Threshold calibration minimizes target-class false negatives on a
-    # train-only validation split while keeping target false positives under
-    # a fixed ceiling. The natural test set remains untouched until reporting.
-    "threshold_validation_size": 0.20,
+    # The delivery protocol uses a 70/30 train/test split with no calibration
+    # partition. Set this explicitly above zero only for a separately approved
+    # experiment; the locked test set must never select a threshold.
+    "threshold_validation_size": 0.0,
     "target_max_fpr":      0.02,
+    "accelerator":         "cpu",  # cpu | gpu; GPU affects XGBoost/CatBoost only
+    "gpu_devices":         "0",
 
     # -- Trust checks (Layer 4) -----------------------------------------
     "cv_splits":          5,
@@ -175,7 +189,7 @@ IMBALANCE_STRATEGIES = (
     "smoteenn",
 )
 IMBALANCE_PROTOCOL_VERSION = 6  # strict row budget + verified target ratio
-TRAINING_PROTOCOL_VERSION = 1   # dataset/config fingerprinted artifact reuse
+TRAINING_PROTOCOL_VERSION = 3   # 70/30 no-calibration + resumable checkpoints
 MODEL_ALIASES = {
     "rf": "random_forest",
     "xgb": "xgboost",
@@ -238,6 +252,8 @@ def setup_logging() -> logging.Logger:
     AND is promoted to an exception by the interpreter."""
     log = logging.getLogger("train")
     log.setLevel(logging.INFO)
+    # Keep this module's handler from propagating to main.py's root handler.
+    log.propagate = False
     if log.handlers:
         return log
     handler = logging.StreamHandler(sys.stdout)
@@ -247,7 +263,9 @@ def setup_logging() -> logging.Logger:
     ))
     log.addHandler(handler)
     logging.captureWarnings(True)
-    logging.getLogger("py.warnings").addHandler(handler)
+    warning_log = logging.getLogger("py.warnings")
+    warning_log.addHandler(handler)
+    warning_log.propagate = False
     return log
 
 
@@ -479,8 +497,11 @@ def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFr
     if not force and cache.exists():
         LOG.info("Loading cleaned corpus from cache: %s", cache)
         df = pd.read_parquet(cache)
-        LOG.info("  -> %d rows x %d cols (from cache)", *df.shape)
-        return df
+        if cfg.get("split_manifest") and not {"source_file", "_row_hash"}.issubset(df.columns):
+            LOG.info("Deterministic split requested but cache lacks source metadata; rebuilding.")
+        else:
+            LOG.info("  -> %d rows x %d cols (from cache)", *df.shape)
+            return df
 
     raw_dir = Path(cfg["raw_dir"])
     paths = sorted(raw_dir.glob(cfg["csv_glob"]))
@@ -501,6 +522,13 @@ def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFr
         raw = pd.read_csv(p, low_memory=False, encoding=cfg["csv_encoding"])
         n_raw_total += len(raw)
         clean = _clean_one_frame(raw, cfg)
+        # Preserve provenance outside the model feature matrix.  The cleaned
+        # row number is stable for an unchanged source file and is sufficient
+        # to derive deterministic quotas without introducing an RNG.
+        clean["source_file"] = p.name
+        clean["dataset_id"] = "CSE-CIC-IDS2018" if "2018" in p.name else "CICIDS2017"
+        clean["capture_window"] = p.stem
+        clean["_row_hash"] = [row_hash(p.name, i) for i in range(len(clean))]
         LOG.info("  %s -> raw %d -> clean %d", p.name, len(raw), len(clean))
         del raw
         cleaned.append(clean)
@@ -510,7 +538,8 @@ def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFr
     LOG.info("Concatenated cleaned frames: %d rows", len(df))
 
     n_before = len(df)
-    df = df.drop_duplicates().reset_index(drop=True)
+    dedup_columns = [c for c in df.columns if c not in cfg.get("metadata_columns", ())]
+    df = df.drop_duplicates(subset=dedup_columns).reset_index(drop=True)
     if len(df) != n_before:
         LOG.info("Dropped %d exact-duplicate rows (cross-CSV dedup)",
                  n_before - len(df))
@@ -1141,22 +1170,14 @@ def calibrate_target_threshold(
         )
 
     if len(candidates) == 0:
-        finite = np.flatnonzero(
-            np.isfinite(thresholds)
-            & (thresholds >= 0.0)
-            & (thresholds <= 1.0)
+        # A threshold that violates the declared FPR policy is not a valid
+        # operating point.  Failing calibration keeps promotion from silently
+        # turning a security constraint into a best-effort suggestion.
+        raise ValueError(
+            f"No finite target threshold satisfies max FPR "
+            f"{max_false_positive_rate:.4f}"
         )
-        if len(finite) == 0:
-            raise ValueError("classifier produced no finite target thresholds")
-        best = max(finite, key=balanced_rank)
-        LOG.warning(
-            "No finite target threshold satisfied max FPR %.4f; "
-            "falling back to calibration-best F1 (FPR %.4f)",
-            max_false_positive_rate,
-            fpr[best],
-        )
-    else:
-        best = max(candidates, key=balanced_rank)
+    best = max(candidates, key=balanced_rank)
     threshold = float(thresholds[best])
     predicted = probabilities >= threshold
     fp = int(np.sum(predicted & ~y_binary))
@@ -1187,6 +1208,8 @@ def build_pipeline(
     imbalance_strategy: str = "class_weight",
     target_class_index: int | None = None,
     target_ratio: float = 0.20,
+    accelerator: str = "cpu",
+    gpu_devices: str = "0",
 ) -> TargetThresholdPipeline:
     """Return an unfitted, leakage-safe scaler/sampler/classifier pipeline."""
     valid_strategies = {
@@ -1198,7 +1221,10 @@ def build_pipeline(
             f"unknown imbalance_strategy={imbalance_strategy!r}; "
             f"choose from {sorted(valid_strategies)}"
         )
+    if accelerator not in {"cpu", "gpu"}:
+        raise ValueError("accelerator must be 'cpu' or 'gpu'")
     use_class_weights = imbalance_strategy == "class_weight"
+    use_gpu = accelerator == "gpu"
 
     if model_name == "random_forest":
         clf = RandomForestClassifier(
@@ -1223,6 +1249,7 @@ def build_pipeline(
             subsample=0.9,
             colsample_bytree=0.9,
             tree_method="hist",
+            device="cuda" if use_gpu else "cpu",
             objective="multi:softprob" if n_classes > 2 else "binary:logistic",
             num_class=n_classes if n_classes > 2 else None,
             eval_metric="mlogloss" if n_classes > 2 else "logloss",
@@ -1276,6 +1303,8 @@ def build_pipeline(
         }
         if use_class_weights:
             cat_params["auto_class_weights"] = "Balanced"
+        if use_gpu:
+            cat_params.update({"task_type": "GPU", "devices": gpu_devices})
         clf = FlatCatBoostClassifier(**cat_params)
     elif model_name == "mlp":
         mlp_class = BalancedMLPClassifier if use_class_weights else MLPClassifier
@@ -1324,6 +1353,7 @@ def build_pipeline(
                 subsample=0.9,
                 colsample_bytree=0.9,
                 tree_method="hist",
+                device="cuda" if use_gpu else "cpu",
                 objective="multi:softprob" if n_classes > 2 else "binary:logistic",
                 num_class=n_classes if n_classes > 2 else None,
                 eval_metric="mlogloss" if n_classes > 2 else "logloss",
@@ -1485,28 +1515,31 @@ class EvalResult:
     target_false_positives: int         = 0
     target_false_negatives: int         = 0
     target_to_benign_fn: int            = 0
-    calibration_recall:  float          = 0.0
-    calibration_fpr:     float          = 0.0
+    calibration_recall:  float | None   = None
+    calibration_fpr:     float | None   = None
 
 
 def evaluate(model: Pipeline, X_test: np.ndarray, y_test: np.ndarray,
              class_names: list[str]):
     y_pred = model.predict(X_test)
+    labels = list(range(len(class_names)))
     acc  = accuracy_score(y_test, y_pred)
-    bacc = balanced_accuracy_score(y_test, y_pred)
-    f1m  = f1_score(y_test, y_pred, average="macro",    zero_division=0)
-    f1w  = f1_score(y_test, y_pred, average="weighted", zero_division=0)
+    # Average recall over classes actually present in this locked test source.
+    # This avoids treating a prediction-only class as a malformed target set.
+    bacc = recall_score(y_test, y_pred, labels=np.unique(y_test), average="macro", zero_division=0)
+    f1m = f1_score(y_test, y_pred, labels=labels, average="macro", zero_division=0)
+    f1w = f1_score(y_test, y_pred, labels=labels, average="weighted", zero_division=0)
     # labels=range(n) ensures every class appears in the report; otherwise
     # missing classes trigger UndefinedMetricWarning.
     report_dict = classification_report(
         y_test, y_pred,
-        labels=list(range(len(class_names))),
+        labels=labels,
         target_names=class_names,
         zero_division=0,
         output_dict=True,
     )
     per_class = pd.DataFrame(report_dict).transpose().round(4)
-    cm = confusion_matrix(y_test, y_pred, labels=list(range(len(class_names))))
+    cm = confusion_matrix(y_test, y_pred, labels=labels)
     return acc, bacc, f1m, f1w, per_class, cm
 
 
@@ -1559,11 +1592,15 @@ def plot_confusion_matrix(cm: np.ndarray, class_names: list[str],
     plt.close(fig)
 
 
-def cross_validate_clean(estimator: Pipeline, X: np.ndarray, y: np.ndarray,
-                         cv: StratifiedKFold) -> tuple[list[float], float, float]:
-    """5-fold CV f1_macro on TRAIN only. Reports per-fold scores + mean + std."""
+def cross_validate_clean(
+    estimator: Pipeline, X: np.ndarray, y: np.ndarray, cv: Any,
+    *, groups: np.ndarray | None = None,
+) -> tuple[list[float], float, float]:
+    """Macro-F1 CV; source-held runs never mix one capture across folds."""
+    labels = np.unique(y)
+    scorer = make_scorer(f1_score, labels=labels, average="macro", zero_division=0)
     scores = cross_val_score(
-        clone(estimator), X, y, cv=cv, scoring="f1_macro", n_jobs=1,
+        clone(estimator), X, y, cv=cv, groups=groups, scoring=scorer, n_jobs=1,
     )
     return list(scores), float(scores.mean()), float(scores.std())
 
@@ -1817,7 +1854,7 @@ def parse_args(argv: list[str]) -> dict[str, Any]:
             "skip_label_shuffle": False,
             "imbalance_strategy": None, "target_class": None,
             "target_ratio": None, "target_max_fpr": None,
-            "threshold_validation_size": None}
+            "threshold_validation_size": None, "split_manifest": None}
     it = iter(argv)
     for tok in it:
         if tok == "--smoke":
@@ -1850,6 +1887,15 @@ def parse_args(argv: list[str]) -> dict[str, Any]:
                 args["models"] = canonical
         elif tok == "--run-name":
             args["run_name"] = next(it)
+        elif tok == "--split-manifest":
+            args["split_manifest"] = Path(next(it)).resolve()
+        elif tok == "--accelerator":
+            value = next(it).lower()
+            if value not in {"cpu", "gpu"}:
+                raise SystemExit("--accelerator must be cpu or gpu")
+            args["accelerator"] = value
+        elif tok == "--gpu-devices":
+            args["gpu_devices"] = next(it)
         elif tok == "--primary-metric":
             args["primary_metric"] = next(it)
         elif tok == "--imbalance-strategy":
@@ -1885,9 +1931,9 @@ def parse_args(argv: list[str]) -> dict[str, Any]:
                 raise SystemExit(
                     "--threshold-validation-size must be a number"
                 ) from exc
-            if not 0.0 < value < 0.5:
+            if not 0.0 <= value < 0.5:
                 raise SystemExit(
-                    "--threshold-validation-size must be in the interval (0, 0.5)"
+                    "--threshold-validation-size must be in the interval [0, 0.5)"
                 )
             args["threshold_validation_size"] = value
         elif tok == "--rf-class-weight":
@@ -1918,11 +1964,12 @@ def parse_args(argv: list[str]) -> dict[str, Any]:
                   "[--target-class CLASS] [--target-ratio RATIO] "
                   "[--target-max-fpr RATE] "
                   "[--threshold-validation-size FRACTION] "
+                  "[--accelerator cpu|gpu] [--gpu-devices DEVICES] "
                   "[--rf-class-weight none|balanced|balanced_subsample] "
                   "[--preset 8gb|16gb|32gb|full] "
                   "[--models rf,xgb,lgbm,cat,nn,lr,stack|all] "
                   "[--skip-cv] [--skip-label-shuffle] "
-                  "[--run-name NAME]")
+                  "[--run-name NAME] [--split-manifest PATH]")
             sys.exit(0)
         else:
             raise SystemExit(f"unknown argument: {tok}")
@@ -1951,6 +1998,8 @@ def main(argv: list[str] | None = None) -> int:
         cfg["models"] = args["models"]
     if args["run_name"]:
         cfg["run_name"] = args["run_name"]
+    if args["split_manifest"]:
+        cfg["split_manifest"] = args["split_manifest"]
     if args["skip_hp"]:
         cfg["hp_search"] = False
     cfg["cv_check"] = not args["skip_cv"]
@@ -1968,12 +2017,16 @@ def main(argv: list[str] | None = None) -> int:
         cfg["target_max_fpr"] = args["target_max_fpr"]
     if args["threshold_validation_size"] is not None:
         cfg["threshold_validation_size"] = args["threshold_validation_size"]
+    if args.get("accelerator") is not None:
+        cfg["accelerator"] = args["accelerator"]
+    if args.get("gpu_devices") is not None:
+        cfg["gpu_devices"] = args["gpu_devices"]
     if args["rf_class_weight"] is not None or "--rf-class-weight" in argv:
         cfg["rf_class_weight"] = args["rf_class_weight"]
 
     set_seeds(cfg["random_state"])
 
-    outdir = Path(cfg["results_root"]) / cfg["run_name"]
+    outdir = result_run_dir(str(cfg["run_name"]), results_root=Path(cfg["results_root"]))
     outdir.mkdir(parents=True, exist_ok=True)
     LOG.info("Artefacts -> %s", outdir)
 
@@ -2000,19 +2053,33 @@ def main(argv: list[str] | None = None) -> int:
     data_sampling = (
         "targeted" if cfg["imbalance_strategy"] == "targeted" else "natural"
     )
-    train_df, calibration_df, test_df = budgeted_train_test_split(
-        df,
-        label_col=cfg["label_column"],
-        total_budget=cfg["subsample_n"],
-        test_size=cfg["test_size"],
-        min_test_per_class=cfg["min_test_per_class"],
-        rare_threshold=cfg["rare_threshold"],
-        train_sampling=data_sampling,
-        target_class=cfg["target_class"],
-        target_ratio=cfg["target_ratio"],
-        random_state=cfg["random_state"],
-        calibration_size=cfg["threshold_validation_size"],
-    )
+    if cfg.get("split_manifest"):
+        manifest = load_split_manifest(Path(cfg["split_manifest"]))
+        train_df, calibration_df, test_df = deterministic_source_split(
+            df,
+            label_column=cfg["label_column"],
+            quotas=manifest["train_quotas"],
+            roles=manifest["roles"],
+        )
+        LOG.info(
+            "Using deterministic source-held-out manifest %s (%s)",
+            cfg["split_manifest"],
+            manifest["version"],
+        )
+    else:
+        train_df, calibration_df, test_df = budgeted_train_test_split(
+            df,
+            label_col=cfg["label_column"],
+            total_budget=cfg["subsample_n"],
+            test_size=cfg["test_size"],
+            min_test_per_class=cfg["min_test_per_class"],
+            rare_threshold=cfg["rare_threshold"],
+            train_sampling=data_sampling,
+            target_class=cfg["target_class"],
+            target_ratio=cfg["target_ratio"],
+            random_state=cfg["random_state"],
+            calibration_size=cfg["threshold_validation_size"],
+        )
     LOG.info(
         "Split: train=%d, calibration=%d, test=%d "
         "(imbalance_strategy=%s, target=%s, ratio=%.3f)",
@@ -2021,7 +2088,10 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     # Encode after split so the LabelEncoder sees every present class.
-    feature_cols = [c for c in df.columns if c != cfg["label_column"]]
+    feature_cols = [
+        c for c in df.columns
+        if c != cfg["label_column"] and c not in cfg["metadata_columns"]
+    ]
     y_train_str = train_df[cfg["label_column"]].to_numpy()
     y_calibration_str = calibration_df[cfg["label_column"]].to_numpy()
     y_test_str  = test_df[cfg["label_column"]].to_numpy()
@@ -2062,19 +2132,29 @@ def main(argv: list[str] | None = None) -> int:
     LOG.info("Per-class n_calibration: %s", per_class_n_calibration)
     LOG.info("Per-class n_test:  %s", per_class_n_test)
 
-    # CV n_splits: clip to smallest class size in TRAIN (StratifiedKFold
-    # rejects n_splits > min_class_count).
-    min_train_class = min(per_class_n_train.values())
-    eff_splits = max(2, min(cfg["cv_splits"], min_train_class))
-    if eff_splits != cfg["cv_splits"]:
-        LOG.warning("Clipping CV n_splits %d -> %d (smallest class has %d train rows)",
-                    cfg["cv_splits"], eff_splits, min_train_class)
-    cv = StratifiedKFold(n_splits=eff_splits, shuffle=True,
-                         random_state=cfg["random_state"])
+    groups_train: np.ndarray | None = None
+    if cfg.get("split_manifest"):
+        groups_train = train_df["source_file"].to_numpy()
+        n_groups = len(np.unique(groups_train))
+        eff_splits = max(2, min(cfg["cv_splits"], n_groups))
+        cv = GroupKFold(n_splits=eff_splits)
+        LOG.info("Using %d-fold GroupKFold by source_file (%d train captures)",
+                 eff_splits, n_groups)
+    else:
+        min_train_class = min(per_class_n_train.values())
+        eff_splits = max(2, min(cfg["cv_splits"], min_train_class))
+        if eff_splits != cfg["cv_splits"]:
+            LOG.warning("Clipping CV n_splits %d -> %d (smallest class has %d train rows)",
+                        cfg["cv_splits"], eff_splits, min_train_class)
+        cv = StratifiedKFold(n_splits=eff_splits, shuffle=True,
+                             random_state=cfg["random_state"])
 
     # Majority-class baseline (same for all models -- depends only on data).
-    train_majority_class = int(np.bincount(y_train).argmax())
-    majority_baseline = float(np.mean(y_test == train_majority_class))
+    # The baseline must describe the untouched test distribution, not the
+    # targeted/weighted training prior.  Otherwise targeted sampling can make
+    # the benchmark appear to have a near-zero majority baseline.
+    test_majority_class = int(np.bincount(y_test).argmax())
+    majority_baseline = float(np.mean(y_test == test_majority_class))
 
     def new_pipeline(model_name: str) -> Pipeline | ImbPipeline:
         return build_pipeline(
@@ -2085,6 +2165,8 @@ def main(argv: list[str] | None = None) -> int:
             imbalance_strategy=cfg["imbalance_strategy"],
             target_class_index=target_class_index,
             target_ratio=cfg["target_ratio"],
+            accelerator=cfg["accelerator"],
+            gpu_devices=cfg["gpu_devices"],
         )
 
     # --- Stage 4: per-model train + evaluate (skip-if-exists) -----------
@@ -2141,11 +2223,12 @@ def main(argv: list[str] | None = None) -> int:
                     **refreshed_target,
                     **_imbalance_metadata(cfg),
                 })
-                per_model_metrics.write_text(
-                    json.dumps(saved, indent=2), encoding="utf-8"
-                )
                 LOG.info("Refreshed %s metrics + confusion matrix", model_name)
             assert saved is not None
+            # Normalize legacy NaN values to JSON ``null`` even on a resumed run.
+            per_model_metrics.write_text(
+                json_dumps_strict(saved, indent=2), encoding="utf-8"
+            )
             results.append(_eval_result_from_saved(saved, model_name))
             continue
         if saved is not None and not args["force"]:
@@ -2154,92 +2237,105 @@ def main(argv: list[str] | None = None) -> int:
                 model_path.name,
             )
 
-        # ----- HP search on a smaller TRAIN subset --------------------
-        best_params: dict[str, Any] = (
-            dict(saved.get("best_params", {}))
-            if args["reuse_best_params"] and saved is not None
-            else {}
+        # ----- Checkpoint / HP search / final fit --------------------
+        checkpoint_path = outdir / "checkpoints" / f"{model_name}.json"
+        run_signature = _checkpoint_signature(cfg, model_name)
+        checkpoint = load_checkpoint(checkpoint_path)
+        resume_ready = (
+            not args["force"]
+            and model_path.exists()
+            and checkpoint_matches(
+                checkpoint, model_name=model_name, run_signature=run_signature,
+            )
+            and checkpoint.get("phase") == "model_ready"
         )
-        if args["reuse_best_params"] and not best_params:
-            raise ValueError(
-                f"No saved best_params are available for {model_name}"
+        threshold_calibration: ThresholdCalibration | None = None
+        if resume_ready:
+            pipeline = joblib.load(model_path)
+            best_params = dict(checkpoint.get("best_params", {}))
+            LOG.info("Resuming %s from model-ready checkpoint", model_name)
+        else:
+            best_params: dict[str, Any] = (
+                dict(saved.get("best_params", {}))
+                if args["reuse_best_params"] and saved is not None
+                else {}
             )
-        pipeline = new_pipeline(model_name)
-        if best_params:
-            pipeline.set_params(**best_params)
-            LOG.info("Reusing saved best params: %s", best_params)
-
-        if cfg["hp_search"] and hp_grids(model_name):
-            X_hp, y_hp = _hp_subset(
-                X_train, y_train,
-                target_n=cfg["hp_search_subsample"],
-                random_state=cfg["random_state"],
-            )
-            LOG.info("HP search on %d-row train subset "
-                     "(n_iter=%d, cv=%d, scoring=%s)",
-                     len(y_hp), cfg["hp_search_n_iter"],
-                     eff_splits, cfg["primary_metric"])
-            min_hp_class = min(int((y_hp == c).sum()) for c in range(n_classes))
-            hp_splits = max(2, min(eff_splits, min_hp_class))
-            search = RandomizedSearchCV(
-                pipeline,
-                param_distributions=hp_grids(model_name),
-                n_iter=cfg["hp_search_n_iter"],
-                scoring=search_scorer(
-                    cfg["primary_metric"],
-                    target_class_index,
-                ),
-                cv=StratifiedKFold(n_splits=hp_splits, shuffle=True,
-                                   random_state=cfg["random_state"]),
-                n_jobs=cfg["hp_search_jobs"],
-                refit=False,
-                random_state=cfg["random_state"],
-                verbose=0,
-                return_train_score=False,
-            )
-            search.fit(X_hp, y_hp)
-            best_params = search.best_params_
-            LOG.info("Best params on HP subset: %s", best_params)
-            LOG.info("Best CV %s on HP subset: %.4f",
-                     cfg["primary_metric"], search.best_score_)
-            # Refit a fresh pipeline with best params on FULL TRAIN.
+            if args["reuse_best_params"] and not best_params:
+                raise ValueError(
+                    f"No saved best_params are available for {model_name}"
+                )
             pipeline = new_pipeline(model_name)
-            pipeline.set_params(**best_params)
+            if best_params:
+                pipeline.set_params(**best_params)
+                LOG.info("Reusing saved best params: %s", best_params)
 
-        t_fit = time.time()
-        pipeline.fit(X_train, y_train)
-        LOG.info("%s final fit on full train (%d rows): %.1fs",
-                 model_name, len(y_train), time.time() - t_fit)
+            if cfg["hp_search"] and hp_grids(model_name):
+                X_hp, y_hp = _hp_subset(
+                    X_train, y_train,
+                    target_n=cfg["hp_search_subsample"],
+                    random_state=cfg["random_state"],
+                )
+                LOG.info("HP search on %d-row train subset "
+                         "(n_iter=%d, cv=%d, scoring=%s)",
+                         len(y_hp), cfg["hp_search_n_iter"],
+                         eff_splits, cfg["primary_metric"])
+                min_hp_class = min(int((y_hp == c).sum()) for c in range(n_classes))
+                hp_splits = max(2, min(eff_splits, min_hp_class))
+                search = RandomizedSearchCV(
+                    pipeline,
+                    param_distributions=hp_grids(model_name),
+                    n_iter=cfg["hp_search_n_iter"],
+                    scoring=search_scorer(cfg["primary_metric"], target_class_index),
+                    cv=StratifiedKFold(n_splits=hp_splits, shuffle=True,
+                                       random_state=cfg["random_state"]),
+                    n_jobs=cfg["hp_search_jobs"], refit=False,
+                    random_state=cfg["random_state"], verbose=0,
+                    return_train_score=False,
+                )
+                search.fit(X_hp, y_hp)
+                best_params = search.best_params_
+                write_checkpoint(checkpoint_path, {
+                    "model": model_name, "run_signature": run_signature,
+                    "phase": "hp_complete", "best_params": best_params,
+                })
+                LOG.info("Best params on HP subset: %s", best_params)
+                pipeline = new_pipeline(model_name)
+                pipeline.set_params(**best_params)
 
-        # Calibrate on a separate natural-distribution holdout. The model is
-        # already the final full-training fit, so the selected threshold is
-        # applied without a second fit or any test-set leakage.
-        t_calibration = time.time()
-        calibration_probabilities = np.asarray(
-            pipeline.predict_proba(X_calibration)
-        )[:, target_class_index]
-        threshold_calibration = calibrate_target_threshold(
-            y_calibration,
-            calibration_probabilities,
-            target_class_index=target_class_index,
-            max_false_positive_rate=cfg["target_max_fpr"],
-        )
-        pipeline.set_params(
-            target_threshold=threshold_calibration.threshold,
-        )
-        LOG.info(
-            "%s threshold calibration: threshold=%.6f, recall=%.4f, "
-            "FPR=%.4f, F2=%.4f, FN=%d, FP=%d (%.1fs)",
-            model_name,
-            threshold_calibration.threshold,
-            threshold_calibration.recall,
-            threshold_calibration.false_positive_rate,
-            threshold_calibration.f2,
-            threshold_calibration.false_negatives,
-            threshold_calibration.false_positives,
-            time.time() - t_calibration,
-        )
-        del calibration_probabilities
+            write_checkpoint(checkpoint_path, {
+                "model": model_name, "run_signature": run_signature,
+                "phase": "fitting", "best_params": best_params,
+            })
+            t_fit = time.time()
+            pipeline.fit(X_train, y_train)
+            LOG.info("%s final fit on full train (%d rows): %.1fs",
+                     model_name, len(y_train), time.time() - t_fit)
+
+            if len(y_calibration):
+                t_calibration = time.time()
+                calibration_probabilities = np.asarray(
+                    pipeline.predict_proba(X_calibration)
+                )[:, target_class_index]
+                threshold_calibration = calibrate_target_threshold(
+                    y_calibration, calibration_probabilities,
+                    target_class_index=target_class_index,
+                    max_false_positive_rate=cfg["target_max_fpr"],
+                )
+                pipeline.set_params(target_threshold=threshold_calibration.threshold)
+                LOG.info("%s threshold calibration: threshold=%.6f, recall=%.4f, FPR=%.4f (%.1fs)",
+                         model_name, threshold_calibration.threshold,
+                         threshold_calibration.recall,
+                         threshold_calibration.false_positive_rate,
+                         time.time() - t_calibration)
+            else:
+                LOG.info("%s: no calibration partition; retaining native argmax decision policy", model_name)
+
+            # A crash during CV/plots can now resume from this fitted artifact.
+            atomic_joblib_dump(pipeline, model_path)
+            write_checkpoint(checkpoint_path, {
+                "model": model_name, "run_signature": run_signature,
+                "phase": "model_ready", "best_params": best_params,
+            })
 
         # ----- Evaluate ----------------------------------------------
         acc, bacc, f1m, f1w, per_class_df, cm = evaluate(
@@ -2271,7 +2367,7 @@ def main(argv: list[str] | None = None) -> int:
         if cfg["cv_check"]:
             cv_scores, cv_mean, cv_std = cross_validate_clean(
                 new_pipeline(model_name),
-                X_train, y_train, cv,
+                X_train, y_train, cv, groups=groups_train,
             )
             LOG.info("%s %d-fold CV f1_macro: %.4f +/- %.4f",
                      model_name, eff_splits, cv_mean, cv_std)
@@ -2315,7 +2411,10 @@ def main(argv: list[str] | None = None) -> int:
             shuffle_accuracy=shuf_acc, shuffle_f1_macro=shuf_f1m,
             majority_baseline=majority_baseline,
             best_params=best_params,
-            target_threshold=threshold_calibration.threshold,
+            target_threshold=(
+                threshold_calibration.threshold
+                if threshold_calibration is not None else None
+            ),
             target_precision=float(target_metrics["target_precision"]),
             target_recall=float(target_metrics["target_recall"]),
             target_f1=float(target_metrics["target_f1"]),
@@ -2328,13 +2427,19 @@ def main(argv: list[str] | None = None) -> int:
                 target_metrics["target_false_negatives"]
             ),
             target_to_benign_fn=int(target_metrics["target_to_benign_fn"]),
-            calibration_recall=threshold_calibration.recall,
-            calibration_fpr=threshold_calibration.false_positive_rate,
+            calibration_recall=(
+                threshold_calibration.recall
+                if threshold_calibration is not None else None
+            ),
+            calibration_fpr=(
+                threshold_calibration.false_positive_rate
+                if threshold_calibration is not None else None
+            ),
         )
         results.append(r)
 
         # Per-model metrics JSON (used by skip-if-exists logic on rerun).
-        per_model_metrics.write_text(json.dumps({
+        per_model_metrics.write_text(json_dumps_strict({
             "model":                  r.model,
             "accuracy":               r.accuracy,
             "balanced_accuracy":      r.balanced_accuracy,
@@ -2361,6 +2466,12 @@ def main(argv: list[str] | None = None) -> int:
             "near_perfect_flag":      r.accuracy >= cfg["near_perfect_threshold"],
             **_imbalance_metadata(cfg),
         }, indent=2), encoding="utf-8")
+        write_checkpoint(checkpoint_path, {
+            "model": model_name,
+            "run_signature": run_signature,
+            "phase": "complete",
+            "best_params": best_params,
+        })
 
     requested_models = set(cfg["models"])
     for model_name in CONFIG["models"]:
@@ -2392,6 +2503,11 @@ def main(argv: list[str] | None = None) -> int:
         "per_class_n_test":  per_class_n_test,
         "majority_baseline_acc": majority_baseline,
         "duration_seconds": round(time.time() - t0, 2),
+        "split_manifest": str(cfg["split_manifest"]) if cfg.get("split_manifest") else None,
+        "split_protocol": (
+            "source_holdout_v2_70_30"
+            if cfg.get("split_manifest") else "stratified_row_holdout_70_30"
+        ),
         "models": [
             {
                 "model":              r.model,
@@ -2422,13 +2538,25 @@ def main(argv: list[str] | None = None) -> int:
         ],
     }
     (outdir / "metrics.json").write_text(
-        json.dumps(metrics_payload, indent=2), encoding="utf-8")
+        json_dumps_strict(metrics_payload, indent=2), encoding="utf-8")
 
     report_path = write_report(
         results, outdir, cfg, n_classes, class_names,
         per_class_n_test, per_class_n_train,
     )
     LOG.info("Wrote report -> %s", report_path)
+    bundle_files = [p for p in outdir.iterdir() if p.is_file() and p.name != "bundle_manifest.json"]
+    bundle_manifest = build_bundle_manifest(
+        outdir,
+        bundle_files,
+        run_id=cfg["run_name"],
+        metadata={
+            "split_protocol": metrics_payload["split_protocol"],
+            "class_names": class_names,
+        },
+    )
+    write_bundle_manifest(outdir / "bundle_manifest.json", bundle_manifest)
+    LOG.info("Wrote integrity manifest -> %s", outdir / "bundle_manifest.json")
     LOG.info("Done in %.1fs. All artefacts under %s",
              time.time() - t0, outdir)
     return 0
@@ -2453,7 +2581,20 @@ def _imbalance_metadata(cfg: dict[str, Any]) -> dict[str, Any]:
         "target_ratio": cfg["target_ratio"],
         "target_max_fpr": cfg["target_max_fpr"],
         "threshold_validation_size": cfg["threshold_validation_size"],
+        "accelerator": cfg["accelerator"],
+        "gpu_devices": cfg["gpu_devices"],
     }
+
+
+def _checkpoint_signature(cfg: dict[str, Any], model_name: str) -> str:
+    """Bind a checkpoint to one model, dataset fingerprint, and train policy."""
+    payload = {
+        "model": model_name,
+        "split_manifest": str(cfg.get("split_manifest") or ""),
+        **_imbalance_metadata(cfg),
+    }
+    encoded = json.dumps(payload, sort_keys=True, default=str).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _imbalance_config_matches(saved: dict[str, Any], cfg: dict[str, Any]) -> bool:
@@ -2478,6 +2619,8 @@ def _imbalance_config_matches(saved: dict[str, Any], cfg: dict[str, Any]) -> boo
         == float(cfg["target_max_fpr"])
         and float(saved.get("threshold_validation_size", -1.0))
         == float(cfg["threshold_validation_size"])
+        and saved.get("accelerator", "cpu") == cfg["accelerator"]
+        and saved.get("gpu_devices", "0") == cfg["gpu_devices"]
     )
 
 
@@ -2577,8 +2720,8 @@ def _eval_result_from_saved(saved: dict, model_name: str) -> EvalResult:
         target_false_positives=saved.get("target_false_positives", 0),
         target_false_negatives=saved.get("target_false_negatives", 0),
         target_to_benign_fn=saved.get("target_to_benign_fn", 0),
-        calibration_recall=saved.get("calibration_recall", 0.0),
-        calibration_fpr=saved.get("calibration_fpr", 0.0),
+        calibration_recall=saved.get("calibration_recall"),
+        calibration_fpr=saved.get("calibration_fpr"),
     )
 
 

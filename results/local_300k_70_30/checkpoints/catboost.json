@@ -1,0 +1,7 @@
+{
+  "best_params": {},
+  "checkpoint_version": 1,
+  "model": "catboost",
+  "phase": "complete",
+  "run_signature": "58b041782a309b5dcf044274d03bc93a0b068f1afed2ad1f8135fc0f742ea38f"
+}

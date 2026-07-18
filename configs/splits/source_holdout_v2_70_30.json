@@ -1,0 +1,30 @@
+{
+  "version": "source_holdout_v2_70_30",
+  "roles": {
+    "train": [
+      "02-14-2018.csv", "02-20-2018.csv", "02-22-2018.csv",
+      "02-28-2018.csv", "03-02-2018.csv",
+      "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+      "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+      "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+      "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+      "Wednesday-workingHours.pcap_ISCX.csv"
+    ],
+    "test": [
+      "02-15-2018.csv",
+      "02-16-2018.csv", "02-21-2018.csv", "02-23-2018.csv", "03-01-2018.csv",
+      "Friday-WorkingHours-Morning.pcap_ISCX.csv", "Tuesday-WorkingHours.pcap_ISCX.csv",
+      "Monday-WorkingHours.pcap_ISCX.csv"
+    ]
+  },
+  "train_quotas": {
+    "BENIGN": 100000, "Bot": 80000, "Brute Force": 80000, "DDoS": 80000,
+    "DoS": 80000, "Infiltration": 68871, "PortScan": 158930,
+    "Web Attack": 2180, "Heartbleed": 11
+  },
+  "metadata_columns": ["dataset_id", "source_file", "capture_window", "_row_hash"],
+  "final_test_locked": true,
+  "calibration_size": 0.0,
+  "intended_train_test_ratio": "70/30",
+  "random_row_split": false
+}

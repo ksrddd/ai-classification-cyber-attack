@@ -1,7 +1,13 @@
-import json, csv, random, math
+import csv
+import json
+import random
+from pathlib import Path
+
 random.seed(42)
 
-features = json.load(open('C:/Users/ks/Documents/GitHub/cyber_attack_classification/data/processed/feature_names.json'))
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+with (PROJECT_ROOT / "data/processed/feature_names.json").open(encoding="utf-8") as handle:
+    features = json.load(handle)
 
 def row(**kwargs):
     r = {f: 0 for f in features}
@@ -55,7 +61,8 @@ for _ in range(4):
         'Init_Win_bytes_backward': random.choice([64, 128, 256]),
         'act_data_pkt_fwd': random.randint(55, 115), 'min_seg_size_forward': 20,
     })
-    rows.append(r); labels.append('DoS (low-and-slow)')
+    rows.append(r)
+    labels.append('DoS (low-and-slow)')
 
 # 2. Bot C2 ที่ดูเหมือน HTTPS BENIGN (encrypted periodic callback)
 for _ in range(4):
@@ -102,7 +109,8 @@ for _ in range(4):
         'Idle Max': int(jitter(23000000, 0.2)),
         'Idle Min': int(jitter(21000000, 0.2)),
     })
-    rows.append(r); labels.append('Bot (encrypted C2)')
+    rows.append(r)
+    labels.append('Bot (encrypted C2)')
 
 # 3. Slow PortScan (ช้า หลาย connection ดูเหมือน BENIGN)
 for _ in range(4):
@@ -137,7 +145,8 @@ for _ in range(4):
         'Init_Win_bytes_backward': random.choice([0, -1, 512]),
         'act_data_pkt_fwd': random.randint(1, 4), 'min_seg_size_forward': 20,
     })
-    rows.append(r); labels.append('PortScan (slow)')
+    rows.append(r)
+    labels.append('PortScan (slow)')
 
 # 4. Web Attack ซ่อนใน HTTPS (payload ใหญ่ผิดปกติ)
 for _ in range(4):
@@ -180,7 +189,8 @@ for _ in range(4):
         'Init_Win_bytes_backward': random.choice([8192, 16384]),
         'act_data_pkt_fwd': random.randint(3, 8), 'min_seg_size_forward': 20,
     })
-    rows.append(r); labels.append('Web Attack (hidden in HTTPS)')
+    rows.append(r)
+    labels.append('Web Attack (hidden in HTTPS)')
 
 # 5. Brute Force SSH ที่ช้า (delay ระหว่าง attempt)
 for _ in range(4):
@@ -222,7 +232,8 @@ for _ in range(4):
         'Init_Win_bytes_backward': random.choice([4096, 8192]),
         'act_data_pkt_fwd': random.randint(6, 18), 'min_seg_size_forward': 20,
     })
-    rows.append(r); labels.append('Brute Force (slow SSH)')
+    rows.append(r)
+    labels.append('Brute Force (slow SSH)')
 
 # 6. DDoS amplification (DNS/NTP reflection — request เล็ก response ใหญ่)
 for _ in range(4):
@@ -262,14 +273,15 @@ for _ in range(4):
         'Init_Win_bytes_backward': 0,
         'act_data_pkt_fwd': random.randint(1, 3), 'min_seg_size_forward': 8,
     })
-    rows.append(r); labels.append('DDoS (amplification)')
+    rows.append(r)
+    labels.append('DDoS (amplification)')
 
-out_path = 'C:/Users/ks/Downloads/test_hard_cases.csv'
-with open(out_path, 'w', newline='', encoding='utf-8') as f:
+out_path = PROJECT_ROOT / "data/sample/test_hard_cases.csv"
+with out_path.open('w', newline='', encoding='utf-8') as f:
     fieldnames = features + ['true_label']
     w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
     w.writeheader()
-    for r, lbl in zip(rows, labels):
+    for r, lbl in zip(rows, labels, strict=True):
         r['true_label'] = lbl
         w.writerow(r)
 

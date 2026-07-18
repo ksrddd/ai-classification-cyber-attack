@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 import pandas as pd
@@ -63,7 +63,7 @@ def plot_confusion_matrix(
 
     cm = compute_confusion(y_true, y_pred, labels=labels, normalize=normalize)
     names = list(class_names) if class_names is not None else (
-        [str(l) for l in (labels or sorted(np.unique(y_true).tolist()))]
+        [str(label) for label in (labels or sorted(np.unique(y_true).tolist()))]
     )
     df = confusion_to_df(cm, names)
 

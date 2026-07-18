@@ -14,7 +14,6 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from src.config.constants import (
@@ -22,8 +21,6 @@ from src.config.constants import (
     RESULTS_DIR,
     SHAP_DIR,
 )
-
-LATEST_DIR = RESULTS_DIR / "latest"
 from src.config.loader import load_config
 from src.explainability.shap_analyzer import (
     ShapResult,
@@ -35,6 +32,8 @@ from src.models.base import default_model_path
 from src.models.registry import MODEL_CLASSES, resolve_name
 from src.pipelines.preprocess import LABEL_ENCODED_COLUMN
 from src.utils.io import ensure_dir, load_joblib
+
+LATEST_DIR = RESULTS_DIR / "latest"
 
 logger = logging.getLogger(__name__)
 

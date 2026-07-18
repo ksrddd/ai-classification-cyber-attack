@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 
 ROOT = Path(__file__).resolve().parents[1]

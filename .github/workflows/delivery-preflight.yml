@@ -1,0 +1,15 @@
+name: Delivery preflight
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux-slurm-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Slurm script Bash syntax
+        run: bash -n scripts/dgx_train.sbatch
+      - name: Compile delivery entry points
+        run: python -m py_compile main.py scripts/dgx_preflight.py

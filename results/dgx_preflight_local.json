@@ -1,0 +1,77 @@
+{
+  "preflight_version": "dgx-preflight-v1",
+  "mode": "static",
+  "generated_at_utc": "2026-07-18T07:11:03.747115+00:00",
+  "project_root": "D:\\Projects\\Senior Project\\ai-classification-cyber-attack",
+  "manifest": "D:\\Projects\\Senior Project\\ai-classification-cyber-attack\\configs\\splits\\source_holdout_v2_70_30.json",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "disk_free_gib": 17.59
+  },
+  "checks": {
+    "python_version": {
+      "passed": true,
+      "detail": "3.13.5"
+    },
+    "manifest": {
+      "passed": true,
+      "detail": "source_holdout_v2_70_30"
+    },
+    "raw_sources": {
+      "passed": true,
+      "detail": {
+        "expected": 18,
+        "missing": [],
+        "empty": []
+      }
+    },
+    "clean_cache_provenance": {
+      "passed": true,
+      "detail": {
+        "path": "D:\\Projects\\Senior Project\\ai-classification-cyber-attack\\data\\processed\\cicids_clean.parquet",
+        "columns": 85
+      }
+    },
+    "python_packages": {
+      "passed": true,
+      "detail": {
+        "versions": {
+          "numpy": "2.4.6",
+          "pandas": "3.0.3",
+          "scikit-learn": "1.8.0",
+          "xgboost": "3.2.0",
+          "lightgbm": "4.6.0",
+          "catboost": "1.2.10",
+          "pyarrow": "24.0.0"
+        },
+        "missing": []
+      }
+    },
+    "slurm_directives": {
+      "passed": true,
+      "detail": [
+        "#SBATCH --nodes=1",
+        "#SBATCH --ntasks=1",
+        "#SBATCH --cpus-per-task=32",
+        "#SBATCH --gres=gpu:1",
+        "#SBATCH --mem=128G",
+        "#SBATCH --time=12:00:00"
+      ]
+    },
+    "manifest_forwarding": {
+      "passed": true,
+      "detail": "audit and training receive the same manifest"
+    },
+    "gpu_pipeline_configuration": {
+      "passed": true,
+      "detail": {
+        "xgboost_device": "cuda",
+        "catboost_task_type": "GPU",
+        "catboost_devices": "0",
+        "stacking_xgboost_device": "cuda"
+      }
+    }
+  },
+  "passed": true,
+  "claim": "Configuration preflight only; this does not prove DGX hardware execution."
+}

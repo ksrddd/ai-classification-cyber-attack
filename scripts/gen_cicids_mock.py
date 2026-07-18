@@ -11,6 +11,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import sys
@@ -22,7 +23,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.features.encoder import load_label_encoder
+from src.features.encoder import load_label_encoder  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -93,9 +94,8 @@ def main() -> None:
     args = parse_args()
     rng  = np.random.default_rng(args.seed)
 
-    features: list[str] = json.load(
-        open(PROJECT_ROOT / "data/processed/feature_names.json")
-    )
+    with (PROJECT_ROOT / "data/processed/feature_names.json").open(encoding="utf-8") as handle:
+        features: list[str] = json.load(handle)
 
     print("Loading training statistics...")
     all_stats = load_training_stats(features)

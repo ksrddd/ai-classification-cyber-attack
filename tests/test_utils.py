@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.utils.io import ensure_dir, save_joblib, load_joblib
+from src.utils.io import ensure_dir, json_dumps_strict, load_joblib, save_joblib
 from src.utils.logging import configure_logging
 from src.utils.seeds import seed_everything
 
@@ -33,3 +33,8 @@ def test_save_and_load_joblib_roundtrip(tmp_path: Path) -> None:
     assert path.exists()
     loaded = load_joblib(path)
     assert loaded == obj
+
+
+def test_json_dumps_strict_replaces_non_finite_values() -> None:
+    payload = json_dumps_strict({"scores": [0.5, float("nan"), float("inf")]})
+    assert payload == '{"scores": [0.5, null, null]}'

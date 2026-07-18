@@ -11,13 +11,18 @@
 
 from __future__ import annotations
 
+import contextlib
+import importlib
+import logging
 import sys
 from pathlib import Path
+
+from lightgbm import LGBMClassifier
 
 # --- inject BalancedXGBClassifier into __main__ BEFORE any joblib.load ---
 from sklearn.utils.class_weight import compute_sample_weight
 from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
+
 import __main__
 
 
@@ -34,10 +39,8 @@ class _LGBMNoFeatureNamesCheck(LGBMClassifier):
     def fit(self, X, y, **kwargs):
         super().fit(X, y, **kwargs)
         if hasattr(self, "feature_names_in_"):
-            try:
+            with contextlib.suppress(AttributeError):
                 object.__delattr__(self, "feature_names_in_")
-            except AttributeError:
-                pass
         return self
 
 
@@ -46,15 +49,12 @@ __main__.BalancedXGBClassifier   = BalancedXGBClassifier
 __main__._LGBMNoFeatureNamesCheck = _LGBMNoFeatureNamesCheck
 
 # Also register under src.models.xgboost_model so any code using that path works
-import importlib
 xgb_mod = importlib.import_module("src.models.xgboost_model")
 xgb_mod.BalancedXGBClassifier = BalancedXGBClassifier
 
 # --- Now run the explain pipeline ---
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-
-import logging
 
 logging.basicConfig(
     level=logging.INFO,
