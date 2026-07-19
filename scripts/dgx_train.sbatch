@@ -24,7 +24,7 @@ RUN_LABEL="${RUN_LABEL:-full}"
 # Override RUN_NAME to resume an interrupted run directory. New submissions
 # receive a collision-resistant name by default.
 RUN_NAME="${RUN_NAME:-dgx_${RUN_LABEL}_${SLURM_JOB_ID:-local}_$(date -u +%Y%m%dT%H%M%SZ)}"
-MANIFEST="${SPLIT_MANIFEST:-${PROJECT_ROOT}/configs/splits/source_holdout_v2_70_30.json}"
+MANIFEST="${SPLIT_MANIFEST:-${PROJECT_ROOT}/configs/splits/source_holdout_v3_full_70_30.json}"
 LOG_DIR="${PROJECT_ROOT}/logs/dgx"
 
 mkdir -p "${LOG_DIR}"

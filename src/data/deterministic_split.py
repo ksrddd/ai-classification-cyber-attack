@@ -15,7 +15,9 @@ from typing import Any
 
 import pandas as pd
 
-SPLIT_MANIFEST_VERSION = "source_holdout_v2_70_30"
+V2_SPLIT_MANIFEST_VERSION = "source_holdout_v2_70_30"
+V3_SPLIT_MANIFEST_VERSION = "source_holdout_v3_full_70_30"
+SPLIT_MANIFEST_VERSION = V3_SPLIT_MANIFEST_VERSION
 
 SOURCE_ROLES: dict[str, tuple[str, ...]] = {
     "train": (
@@ -42,7 +44,7 @@ SOURCE_ROLES: dict[str, tuple[str, ...]] = {
     ),
 }
 
-TRAIN_QUOTAS: dict[str, int] = {
+V2_TRAIN_QUOTAS: dict[str, int] = {
     "BENIGN": 100_000,
     "Bot": 80_000,
     "Brute Force": 80_000,
@@ -54,13 +56,39 @@ TRAIN_QUOTAS: dict[str, int] = {
     "Heartbleed": 11,
 }
 
+# Full-corpus protocol for the cleaned 18-source delivery corpus.  Every
+# attack row from a TRAIN source is retained.  Only BENIGN is capped, by
+# stable row hash, so that the untouched 4,084,201-row source-held test set is
+# exactly 30% of the selected 13,614,003-row corpus (within integer rounding).
+V3_TRAIN_QUOTAS: dict[str, int] = {
+    "BENIGN": 8_239_774,
+    "Bot": 144_535,
+    "Brute Force": 94_094,
+    "DDoS": 703_026,
+    "DoS": 193_730,
+    "Heartbleed": 11,
+    "Infiltration": 61_457,
+    "PortScan": 90_694,
+    "Web Attack": 2_481,
+}
+V3_EXPECTED_TRAIN_ROWS = 9_529_802
+V3_EXPECTED_TEST_ROWS = 4_084_201
+
+TRAIN_QUOTAS = V3_TRAIN_QUOTAS
+SUPPORTED_TRAIN_QUOTAS: dict[str, dict[str, int]] = {
+    V2_SPLIT_MANIFEST_VERSION: V2_TRAIN_QUOTAS,
+    V3_SPLIT_MANIFEST_VERSION: V3_TRAIN_QUOTAS,
+}
+
 
 def load_split_manifest(path: Path) -> dict[str, Any]:
     """Load and validate the supported source-holdout manifest."""
     payload = json.loads(path.read_text(encoding="utf-8"))
-    if payload.get("version") != SPLIT_MANIFEST_VERSION:
+    version = payload.get("version")
+    expected_quotas = SUPPORTED_TRAIN_QUOTAS.get(str(version))
+    if expected_quotas is None:
         raise ValueError(
-            f"Unsupported split manifest version: {payload.get('version')!r}"
+            f"Unsupported split manifest version: {version!r}"
         )
 
     raw_roles = payload.get("roles")
@@ -81,8 +109,21 @@ def load_split_manifest(path: Path) -> dict[str, Any]:
     if not isinstance(raw_quotas, dict):
         raise ValueError("Split manifest must define train_quotas")
     quotas = {str(label): int(value) for label, value in raw_quotas.items()}
-    if quotas != TRAIN_QUOTAS:
+    if quotas != expected_quotas:
         raise ValueError("Split manifest train_quotas do not match the supported protocol")
+    if payload.get("final_test_locked") is not True:
+        raise ValueError("Split manifest must lock the final test set")
+    if float(payload.get("calibration_size", -1.0)) != 0.0:
+        raise ValueError("Source-held protocol does not permit a calibration split")
+    if payload.get("random_row_split") is not False:
+        raise ValueError("Source-held protocol cannot use a random row split")
+    if version == V3_SPLIT_MANIFEST_VERSION:
+        if int(payload.get("expected_train_rows", -1)) != V3_EXPECTED_TRAIN_ROWS:
+            raise ValueError("V3 manifest expected_train_rows is invalid")
+        if int(payload.get("expected_test_rows", -1)) != V3_EXPECTED_TEST_ROWS:
+            raise ValueError("V3 manifest expected_test_rows is invalid")
+        if sum(quotas.values()) != V3_EXPECTED_TRAIN_ROWS:
+            raise ValueError("V3 train quotas do not sum to expected_train_rows")
 
     return {
         **payload,
@@ -221,6 +262,15 @@ def split_manifest(path: Path | None = None) -> dict[str, Any]:
         "intended_train_test_ratio": "70/30",
         "random_row_split": False,
     }
+    if SPLIT_MANIFEST_VERSION == V3_SPLIT_MANIFEST_VERSION:
+        payload.update({
+            "expected_train_rows": V3_EXPECTED_TRAIN_ROWS,
+            "expected_test_rows": V3_EXPECTED_TEST_ROWS,
+            "selection_policy": (
+                "retain every available TRAIN attack row; "
+                "cap BENIGN by stable _row_hash"
+            ),
+        })
     if path is not None:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

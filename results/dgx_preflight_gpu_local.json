@@ -1,7 +1,7 @@
 {
   "preflight_version": "dgx-preflight-v1",
-  "mode": "static",
-  "generated_at_utc": "2026-07-19T04:19:31.993340+00:00",
+  "mode": "gpu",
+  "generated_at_utc": "2026-07-19T04:24:01.663105+00:00",
   "project_root": "D:\\Projects\\Senior Project\\ai-classification-cyber-attack",
   "manifest": "D:\\Projects\\Senior Project\\ai-classification-cyber-attack\\configs\\splits\\source_holdout_v3_full_70_30.json",
   "environment": {
@@ -104,5 +104,22 @@
     }
   },
   "passed": true,
-  "claim": "Configuration preflight only; this does not prove DGX hardware execution."
+  "claim": "GPU backend acceptance executed on this host; retain this report with scheduler logs.",
+  "gpu_acceptance": {
+    "checks": {
+      "nvidia_smi": {
+        "passed": true,
+        "detail": "GPU 0: NVIDIA GeForce RTX 4050 Laptop GPU (UUID: GPU-e271ffed-054f-540f-f0a9-8a2644c2d56f)"
+      },
+      "xgboost_cuda_fit": {
+        "passed": true,
+        "detail": "predictions=96"
+      },
+      "catboost_gpu_fit": {
+        "passed": true,
+        "detail": "predictions=96"
+      }
+    },
+    "passed": true
+  }
 }

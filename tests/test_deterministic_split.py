@@ -5,6 +5,10 @@ import pytest
 
 from src.data.deterministic_split import (
     SOURCE_ROLES,
+    V2_SPLIT_MANIFEST_VERSION,
+    V3_EXPECTED_TEST_ROWS,
+    V3_EXPECTED_TRAIN_ROWS,
+    V3_SPLIT_MANIFEST_VERSION,
     deterministic_source_split,
     load_split_manifest,
     row_hash,
@@ -68,10 +72,20 @@ def test_source_protocol_has_no_calibration_partition() -> None:
 
 def test_manifest_loader_returns_normalized_protocol(project_root) -> None:
     manifest = load_split_manifest(
-        project_root / "configs" / "splits" / "source_holdout_v2_70_30.json"
+        project_root / "configs" / "splits" / "source_holdout_v3_full_70_30.json"
     )
     assert manifest["roles"] == SOURCE_ROLES
     assert manifest["calibration_size"] == 0.0
+    assert manifest["version"] == V3_SPLIT_MANIFEST_VERSION
+    assert sum(manifest["train_quotas"].values()) == V3_EXPECTED_TRAIN_ROWS
+    assert manifest["expected_test_rows"] == V3_EXPECTED_TEST_ROWS
+
+
+def test_legacy_v2_manifest_remains_loadable(project_root) -> None:
+    manifest = load_split_manifest(
+        project_root / "configs" / "splits" / "source_holdout_v2_70_30.json"
+    )
+    assert manifest["version"] == V2_SPLIT_MANIFEST_VERSION
 
 
 def test_train_parser_supports_no_calibration_and_explicit_gpu() -> None:

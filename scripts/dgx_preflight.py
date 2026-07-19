@@ -9,6 +9,7 @@ import platform
 import shutil
 import subprocess
 import sys
+from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -36,6 +37,62 @@ REQUIRED_PACKAGES = (
     "catboost",
     "pyarrow",
 )
+
+
+def _source_held_ratio(cache_path: Path, manifest: dict[str, Any]) -> dict[str, Any]:
+    """Count the selected source-held rows without loading the full cache."""
+    import pyarrow.parquet as pq
+
+    role_by_source = {
+        Path(source).name: role
+        for role, sources in manifest["roles"].items()
+        for source in sources
+    }
+    available_train: Counter[str] = Counter()
+    test_by_class: Counter[str] = Counter()
+    unknown_sources: set[str] = set()
+
+    parquet = pq.ParquetFile(cache_path)
+    for batch in parquet.iter_batches(
+        columns=["Label", "source_file"],
+        batch_size=500_000,
+    ):
+        frame = batch.to_pandas()
+        source_names = frame["source_file"].astype(str).map(
+            lambda value: Path(value).name
+        )
+        roles = source_names.map(role_by_source)
+        unknown_sources.update(source_names[roles.isna()].unique().tolist())
+        for (role, label), count in (
+            frame.assign(_role=roles)
+            .dropna(subset=["_role"])
+            .groupby(["_role", "Label"], observed=True)
+            .size()
+            .items()
+        ):
+            destination = available_train if role == "train" else test_by_class
+            destination[str(label)] += int(count)
+
+    quotas = manifest["train_quotas"]
+    selected_train = {
+        label: min(count, int(quotas.get(label, count)))
+        for label, count in sorted(available_train.items())
+    }
+    train_rows = sum(selected_train.values())
+    test_rows = sum(test_by_class.values())
+    total_rows = train_rows + test_rows
+    train_fraction = train_rows / total_rows if total_rows else 0.0
+    test_fraction = test_rows / total_rows if total_rows else 0.0
+    return {
+        "train_rows": train_rows,
+        "test_rows": test_rows,
+        "total_rows": total_rows,
+        "train_fraction": train_fraction,
+        "test_fraction": test_fraction,
+        "selected_train_by_class": selected_train,
+        "test_by_class": dict(sorted(test_by_class.items())),
+        "unknown_sources": sorted(unknown_sources),
+    }
 
 
 def _check(ok: bool, detail: Any) -> dict[str, Any]:
@@ -84,12 +141,19 @@ def run_static_preflight(project_root: Path, manifest_path: Path) -> dict[str, A
     cache_path = project_root / "data" / "processed" / "cicids_clean.parquet"
     cache_columns: list[str] = []
     cache_error: str | None = None
+    ratio_detail: dict[str, Any] | None = None
+    ratio_error: str | None = None
     try:
         import pyarrow.parquet as pq
 
         cache_columns = pq.ParquetFile(cache_path).schema.names
     except Exception as exc:  # noqa: BLE001
         cache_error = str(exc)
+    if cache_error is None:
+        try:
+            ratio_detail = _source_held_ratio(cache_path, manifest)
+        except Exception as exc:  # noqa: BLE001
+            ratio_error = str(exc)
 
     disk = shutil.disk_usage(project_root)
     checks = {
@@ -102,6 +166,15 @@ def run_static_preflight(project_root: Path, manifest_path: Path) -> dict[str, A
         "clean_cache_provenance": _check(
             cache_error is None and {"source_file", "_row_hash"}.issubset(cache_columns),
             cache_error or {"path": str(cache_path), "columns": len(cache_columns)},
+        ),
+        "source_held_ratio": _check(
+            ratio_error is None
+            and ratio_detail is not None
+            and not ratio_detail["unknown_sources"]
+            and ratio_detail["train_rows"] == manifest.get("expected_train_rows")
+            and ratio_detail["test_rows"] == manifest.get("expected_test_rows")
+            and abs(ratio_detail["train_fraction"] - 0.70) <= 1e-6,
+            ratio_error or ratio_detail,
         ),
         "python_packages": _check(not missing_packages, {"versions": versions, "missing": missing_packages}),
         "slurm_directives": _check(
@@ -164,7 +237,7 @@ def run_gpu_acceptance(gpu_devices: str) -> dict[str, Any]:
         ),
         "catboost_gpu_fit": CatBoostClassifier(
             iterations=2, depth=2, task_type="GPU", devices=gpu_devices,
-            loss_function="MultiClass", verbose=False,
+            loss_function="MultiClass", verbose=False, allow_writing_files=False,
         ),
     }
     for name, model in models.items():
@@ -183,7 +256,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "configs" / "splits" / "source_holdout_v2_70_30.json",
+        default=PROJECT_ROOT / "configs" / "splits" / "source_holdout_v3_full_70_30.json",
     )
     parser.add_argument("--gpu-devices", default="0")
     parser.add_argument("--output", type=Path, default=None)

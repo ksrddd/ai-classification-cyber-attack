@@ -1,0 +1,39 @@
+{
+  "version": "source_holdout_v3_full_70_30",
+  "roles": {
+    "train": [
+      "02-14-2018.csv", "02-20-2018.csv", "02-22-2018.csv",
+      "02-28-2018.csv", "03-02-2018.csv",
+      "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+      "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+      "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+      "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+      "Wednesday-workingHours.pcap_ISCX.csv"
+    ],
+    "test": [
+      "02-15-2018.csv",
+      "02-16-2018.csv", "02-21-2018.csv", "02-23-2018.csv", "03-01-2018.csv",
+      "Friday-WorkingHours-Morning.pcap_ISCX.csv", "Tuesday-WorkingHours.pcap_ISCX.csv",
+      "Monday-WorkingHours.pcap_ISCX.csv"
+    ]
+  },
+  "train_quotas": {
+    "BENIGN": 8239774,
+    "Bot": 144535,
+    "Brute Force": 94094,
+    "DDoS": 703026,
+    "DoS": 193730,
+    "Heartbleed": 11,
+    "Infiltration": 61457,
+    "PortScan": 90694,
+    "Web Attack": 2481
+  },
+  "metadata_columns": ["dataset_id", "source_file", "capture_window", "_row_hash"],
+  "final_test_locked": true,
+  "calibration_size": 0.0,
+  "intended_train_test_ratio": "70/30",
+  "expected_train_rows": 9529802,
+  "expected_test_rows": 4084201,
+  "selection_policy": "retain every available TRAIN attack row; cap BENIGN by stable _row_hash",
+  "random_row_split": false
+}

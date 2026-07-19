@@ -61,14 +61,16 @@ def test_targeted_real_sampling_keeps_natural_test_untouched() -> None:
         target_ratio=0.20,
         random_state=42,
     )
-    natural_train, natural_test = budgeted_train_test_split(
+    natural_train, natural_calibration, natural_test = budgeted_train_test_split(
         df, train_sampling="natural", **common,
     )
-    targeted_train, targeted_test = budgeted_train_test_split(
+    targeted_train, targeted_calibration, targeted_test = budgeted_train_test_split(
         df, train_sampling="targeted", **common,
     )
 
     assert len(natural_train) == len(targeted_train) == 240
+    assert natural_calibration.empty
+    assert targeted_calibration.empty
     assert len(natural_test) == len(targeted_test) == 60
     assert natural_test["Label"].value_counts().to_dict() == (
         targeted_test["Label"].value_counts().to_dict()
@@ -80,7 +82,7 @@ def test_targeted_real_sampling_keeps_natural_test_untouched() -> None:
 
 
 def test_targeted_ratio_one_keeps_all_available_genuine_target_rows() -> None:
-    train, test = budgeted_train_test_split(
+    train, calibration, test = budgeted_train_test_split(
         _toy_flows(),
         label_col="Label",
         total_budget=300,
@@ -93,6 +95,7 @@ def test_targeted_ratio_one_keeps_all_available_genuine_target_rows() -> None:
         random_state=42,
     )
 
+    assert calibration.empty
     assert (test["Label"] == "Infiltration").sum() == 5
     assert (train["Label"] == "Infiltration").sum() == 95
 

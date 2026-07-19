@@ -742,17 +742,14 @@ def budgeted_train_test_split(
     target_ratio: float,
     random_state: int,
     calibration_size: float = 0.0,
-) -> (
-    tuple[pd.DataFrame, pd.DataFrame]
-    | tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
-):
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Select a natural test set first, then sample TRAIN without overlap.
 
     ``train_sampling='targeted'`` spends part of the fixed training budget on
     additional *real* target-class rows. Test and optional calibration quotas
     are computed before that adjustment and therefore retain the natural
-    distribution. A calibration set is returned between train and test when
-    ``calibration_size`` is positive.
+    distribution. The middle calibration frame is empty when
+    ``calibration_size`` is zero, keeping the return contract stable.
     """
     if train_sampling not in {"natural", "targeted"}:
         raise ValueError("train_sampling must be 'natural' or 'targeted'")
@@ -794,9 +791,9 @@ def budgeted_train_test_split(
             keep = np.concatenate(keep_parts)
             rng.shuffle(keep)
             train_df = train_df.iloc[keep].reset_index(drop=True)
-        if calibration_df is not None:
-            return train_df, calibration_df, test_df
-        return train_df, test_df
+        if calibration_df is None:
+            calibration_df = df.iloc[0:0].copy()
+        return train_df, calibration_df, test_df
 
     counts = df[label_col].value_counts().sort_index()
     n_classes = len(counts)
@@ -894,9 +891,7 @@ def budgeted_train_test_split(
     train_df = df.iloc[train_pos].reset_index(drop=True)
     calibration_df = df.iloc[calibration_pos].reset_index(drop=True)
     test_df = df.iloc[test_pos].reset_index(drop=True)
-    if calibration_size > 0.0:
-        return train_df, calibration_df, test_df
-    return train_df, test_df
+    return train_df, calibration_df, test_df
 
 
 # ---------------------------------------------------------------------------
@@ -2055,6 +2050,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     if cfg.get("split_manifest"):
         manifest = load_split_manifest(Path(cfg["split_manifest"]))
+        cfg["split_protocol"] = manifest["version"]
         train_df, calibration_df, test_df = deterministic_source_split(
             df,
             label_column=cfg["label_column"],
@@ -2067,6 +2063,7 @@ def main(argv: list[str] | None = None) -> int:
             manifest["version"],
         )
     else:
+        cfg["split_protocol"] = "stratified_row_holdout_70_30"
         train_df, calibration_df, test_df = budgeted_train_test_split(
             df,
             label_col=cfg["label_column"],
@@ -2504,10 +2501,7 @@ def main(argv: list[str] | None = None) -> int:
         "majority_baseline_acc": majority_baseline,
         "duration_seconds": round(time.time() - t0, 2),
         "split_manifest": str(cfg["split_manifest"]) if cfg.get("split_manifest") else None,
-        "split_protocol": (
-            "source_holdout_v2_70_30"
-            if cfg.get("split_manifest") else "stratified_row_holdout_70_30"
-        ),
+        "split_protocol": cfg["split_protocol"],
         "models": [
             {
                 "model":              r.model,

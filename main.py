@@ -280,7 +280,10 @@ def _run_dashboard(port: int) -> int:
 def _run_audit(args: argparse.Namespace) -> int:
     from src.data.deterministic_split import load_split_manifest
 
-    path = args.split_manifest or PROJECT_ROOT / "configs" / "splits" / "source_holdout_v2_70_30.json"
+    path = (
+        args.split_manifest
+        or PROJECT_ROOT / "configs" / "splits" / "source_holdout_v3_full_70_30.json"
+    )
     try:
         payload = load_split_manifest(path)
     except (OSError, ValueError, json.JSONDecodeError) as exc:

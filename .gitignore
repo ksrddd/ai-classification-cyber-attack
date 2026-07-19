@@ -9,6 +9,7 @@ __pycache__/
 *.so
 .Python
 .venv/
+catboost_info/
 venv/
 env/
 .env

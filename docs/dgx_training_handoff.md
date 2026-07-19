@@ -21,6 +21,12 @@ will be passed to XGBoost, CatBoost, and the stacking XGBoost estimator. A pass
 proves that the repository is internally consistent; it does **not** prove
 that a particular DGX driver/CUDA/library combination can execute the job.
 
+For the default V3 manifest, preflight also scans the cleaned cache in batches
+and requires exactly 9,529,802 selected training rows and 4,084,201 untouched
+test rows (70/30 over 13,614,003 rows). It retains every available attack row
+from training sources, including 61,457 genuine Infiltration rows, and caps
+only BENIGN by stable row hash.
+
 The repository also includes `.github/workflows/delivery-preflight.yml`.
 GitHub Actions runs `bash -n scripts/dgx_train.sbatch` on Ubuntu for every
 push and pull request, covering Bash syntax even when the development machine
@@ -40,6 +46,25 @@ manually:
 python scripts/dgx_preflight.py --mode gpu \
   --output results/dgx_preflight_gpu.json
 ```
+
+On Windows with an NVIDIA GPU, run the equivalent acceptance and a canonical
+10k-row training smoke test:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\dgx_preflight.py --mode gpu `
+  --output results\dgx_preflight_gpu_local.json
+
+.\.venv\Scripts\python.exe train.py --smoke --models xgb,cat `
+  --run-name dgx_local_gpu_smoke_class_weight `
+  --accelerator gpu --gpu-devices 0 `
+  --imbalance-strategy class_weight `
+  --skip-hp --skip-cv --skip-label-shuffle
+```
+
+This exercises cache loading, split construction, preprocessing, CUDA fits,
+evaluation, model persistence and bundle checksums. It does not execute Slurm,
+does not use the V3 source-held full split, and is not a reportable research
+result.
 
 For submission, provide `results/dgx_preflight_local.json` as configuration
 evidence and state explicitly that DGX execution is pending. Ask the DGX
@@ -86,7 +111,7 @@ For a clone outside the submission directory or a non-default manifest:
 
 ```bash
 PROJECT_ROOT=/workspace/ai-classification-cyber-attack \
-SPLIT_MANIFEST=/workspace/ai-classification-cyber-attack/configs/splits/source_holdout_v2_70_30.json \
+SPLIT_MANIFEST=/workspace/ai-classification-cyber-attack/configs/splits/source_holdout_v3_full_70_30.json \
 RUN_LABEL=thesis_full_v1 \
 sbatch /workspace/ai-classification-cyber-attack/scripts/dgx_train.sbatch
 ```
@@ -96,7 +121,7 @@ The submitted command is deliberately explicit:
 ```bash
 python main.py --stage train --run-name dgx_<label>_<job>_<utc> \
   --preset full --profile overnight \
-  --split-manifest configs/splits/source_holdout_v2_70_30.json \
+  --split-manifest configs/splits/source_holdout_v3_full_70_30.json \
   --model all --accelerator gpu --gpu-devices 0 \
   --imbalance-strategy class_weight --target-max-fpr 0.02
 ```
@@ -107,6 +132,10 @@ the assigned GPU visible through `CUDA_VISIBLE_DEVICES`, and the script records
 XGBoost and GPU mode for CatBoost; LightGBM/RF/MLP remain CPU unless their
 implementation is changed. Ensure installed XGBoost and CatBoost have the
 desired GPU support; their errors are intentionally not hidden as CPU fallback.
+
+The full V3 matrix is much larger than the historical 300k reference run.
+Confirm the site's wall-time policy before submission; Stacking may require a
+longer limit or a resumed job even with 128 GB RAM.
 
 ## Outputs, monitoring, and resume
 
