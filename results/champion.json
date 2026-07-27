@@ -1,14 +1,78 @@
 {
-  "run_id": "local_300k_70_30",
-  "bundle_path": "results/local_300k_70_30",
+  "run_id": "cicids2017_temporal_v1",
+  "bundle_path": "results/cicids2017_temporal_v1",
   "schema_version": "1",
-  "champion_model": "random_forest",
+  "champion_model": "catboost",
   "selection": {
-    "model": "random_forest",
-    "status": "conditional_no_model_meets_fpr",
-    "rule": "lowest target_fpr, then highest f1_macro",
+    "model": "catboost",
+    "status": "policy_pass",
+    "rule": "highest f1_macro among models with target_fpr <= target_max_fpr",
     "target_max_fpr": 0.02,
-    "target_fpr": 0.02685673096042951,
-    "f1_macro": 0.9160111377779133
+    "target_fpr": 1.3344186605105485e-06,
+    "f1_macro": 0.8872661889245583
+  },
+  "rankings": {
+    "overall": {
+      "label": "Overall Best",
+      "question": "Which model is most balanced across all attack classes?",
+      "model": "catboost",
+      "status": "policy_pass",
+      "rule": "highest f1_macro, ties broken by f1_weighted",
+      "objective": "f1_macro",
+      "objective_value": 0.8872661889245583,
+      "tie_breaker": "f1_weighted",
+      "eligible_models": [
+        "logistic_regression",
+        "random_forest",
+        "xgboost",
+        "lightgbm",
+        "catboost",
+        "mlp",
+        "stacking"
+      ],
+      "excluded": []
+    },
+    "security": {
+      "label": "Security-focused Best",
+      "question": "Which model misses the fewest attacks without drowning the analyst?",
+      "model": "catboost",
+      "status": "policy_pass",
+      "rule": "highest recall_macro among models with binary_fpr <= 0.01 and no class at zero recall",
+      "objective": "recall_macro",
+      "objective_value": 0.8970420242396528,
+      "tie_breaker": "binary_recall",
+      "eligible_models": [
+        "random_forest",
+        "xgboost",
+        "lightgbm",
+        "catboost"
+      ],
+      "excluded": [
+        "logistic_regression: binary_fpr=0.169312 fails <= 0.01",
+        "mlp: binary_fpr=0.047206 fails <= 0.01",
+        "stacking: binary_fpr=0.0407235 fails <= 0.01"
+      ]
+    },
+    "deployment": {
+      "label": "Deployment Best",
+      "question": "Which model is cheapest to run while staying competitive?",
+      "model": "catboost",
+      "status": "policy_pass",
+      "rule": "lowest predict_latency_p95_ms among models within 0.02 f1_macro of the best, ties broken by model_size_mb",
+      "objective": "predict_latency_p95_ms",
+      "objective_value": 8.38586499739904,
+      "tie_breaker": "model_size_mb",
+      "eligible_models": [
+        "xgboost",
+        "lightgbm",
+        "catboost"
+      ],
+      "excluded": [
+        "logistic_regression: f1_macro=0.557358 fails >= 0.867266",
+        "random_forest: f1_macro=0.840406 fails >= 0.867266",
+        "mlp: f1_macro=0.536863 fails >= 0.867266",
+        "stacking: f1_macro=0.682234 fails >= 0.867266"
+      ]
+    }
   }
 }

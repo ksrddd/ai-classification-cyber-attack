@@ -69,6 +69,9 @@ The dashboard's Model Performance page renders this table directly.
 
 ## Best-model selection
 
-`src.evaluation.comparison.best_model` picks the model with the highest
-F1-weighted on the test set. That model is what the dashboard's
-"Predict New CSV" page defaults to.
+`src.artifacts.publish` decides this. `select_champion_model` picks the highest
+`f1_macro` among models meeting the FPR policy, and `rank_models` publishes
+three separate winners -- Overall, Security-focused and Deployment -- under the
+rules declared in `configs/ranking_policy.json`. Both land in
+`results/champion.json`, which is the pointer the dashboard, the API and
+"Predict New CSV" all resolve through `published_run_dir()`.

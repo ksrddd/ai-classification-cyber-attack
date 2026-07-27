@@ -1,0 +1,52 @@
+{
+  "policy_version": "three_axis_v1",
+  "rationale": "A single ranking forces one trade-off on every reader. An IDS deployment weighs balanced detection, missed attacks, and inference cost differently depending on who is asking, so three rankings are published side by side and each states the rule that produced it. Thresholds are declared here, ahead of the run, so they cannot be tuned after seeing the results.",
+  "rankings": {
+    "overall": {
+      "label": "Overall Best",
+      "question": "Which model is most balanced across all attack classes?",
+      "maximize": "f1_macro",
+      "tie_breaker": "f1_weighted",
+      "constraints": [],
+      "rule": "highest f1_macro, ties broken by f1_weighted"
+    },
+    "security": {
+      "label": "Security-focused Best",
+      "question": "Which model misses the fewest attacks without drowning the analyst?",
+      "maximize": "recall_macro",
+      "tie_breaker": "binary_recall",
+      "constraints": [
+        {
+          "metric": "binary_fpr",
+          "operator": "<=",
+          "value": 0.01,
+          "reason": "A false negative is a breach, but an unbounded false positive rate causes alert fatigue and the alerts stop being read at all. Detection is maximised only inside a usable alert budget."
+        },
+        {
+          "metric": "min_per_class_recall",
+          "operator": ">",
+          "value": 0.0,
+          "reason": "A model that never once detects some attack family provides no security for it, whatever its average says."
+        }
+      ],
+      "rule": "highest recall_macro among models with binary_fpr <= 0.01 and no class at zero recall"
+    },
+    "deployment": {
+      "label": "Deployment Best",
+      "question": "Which model is cheapest to run while staying competitive?",
+      "minimize": "predict_latency_p95_ms",
+      "tie_breaker": "model_size_mb",
+      "constraints": [
+        {
+          "metric": "f1_macro",
+          "operator": ">=",
+          "value": "best_f1_macro - 0.02",
+          "reason": "Speed only counts among models that remain near the best detection quality; otherwise the fastest model is always the worst one."
+        }
+      ],
+      "rule": "lowest predict_latency_p95_ms among models within 0.02 f1_macro of the best, ties broken by model_size_mb"
+    }
+  },
+  "quality_tolerance": 0.02,
+  "max_binary_fpr": 0.01
+}

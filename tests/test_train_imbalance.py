@@ -9,10 +9,8 @@ import pytest
 
 from train import (
     CONFIG,
-    _apply_target_ratio,
     _imbalance_config_matches,
     _imbalance_metadata,
-    budgeted_train_test_split,
     build_pipeline,
     calibrate_target_threshold,
     parse_args,
@@ -35,132 +33,6 @@ ALL_STRATEGIES = (
     "smoteenn",
 )
 
-
-def _toy_flows() -> pd.DataFrame:
-    labels = (
-        ["BENIGN"] * 1_000
-        + ["Infiltration"] * 100
-        + ["Web Attack"] * 100
-    )
-    return pd.DataFrame({
-        "row_id": np.arange(len(labels)),
-        "feature": np.linspace(0.0, 1.0, len(labels)),
-        "Label": labels,
-    })
-
-
-def test_targeted_real_sampling_keeps_natural_test_untouched() -> None:
-    df = _toy_flows()
-    common = dict(
-        label_col="Label",
-        total_budget=300,
-        test_size=0.2,
-        min_test_per_class=3,
-        rare_threshold=5,
-        target_class="Infiltration",
-        target_ratio=0.20,
-        random_state=42,
-    )
-    natural_train, natural_calibration, natural_test = budgeted_train_test_split(
-        df, train_sampling="natural", **common,
-    )
-    targeted_train, targeted_calibration, targeted_test = budgeted_train_test_split(
-        df, train_sampling="targeted", **common,
-    )
-
-    assert len(natural_train) == len(targeted_train) == 240
-    assert natural_calibration.empty
-    assert targeted_calibration.empty
-    assert len(natural_test) == len(targeted_test) == 60
-    assert natural_test["Label"].value_counts().to_dict() == (
-        targeted_test["Label"].value_counts().to_dict()
-    )
-    assert set(targeted_train["row_id"]).isdisjoint(targeted_test["row_id"])
-
-    train_counts = targeted_train["Label"].value_counts()
-    assert train_counts["Infiltration"] / train_counts["BENIGN"] >= 0.20
-
-
-def test_targeted_ratio_one_keeps_all_available_genuine_target_rows() -> None:
-    train, calibration, test = budgeted_train_test_split(
-        _toy_flows(),
-        label_col="Label",
-        total_budget=300,
-        test_size=0.2,
-        min_test_per_class=3,
-        rare_threshold=5,
-        train_sampling="targeted",
-        target_class="Infiltration",
-        target_ratio=1.0,
-        random_state=42,
-    )
-
-    assert calibration.empty
-    assert (test["Label"] == "Infiltration").sum() == 5
-    assert (train["Label"] == "Infiltration").sum() == 95
-
-
-def test_threshold_calibration_holdout_stays_natural_and_disjoint() -> None:
-    common = dict(
-        label_col="Label",
-        total_budget=300,
-        test_size=0.2,
-        calibration_size=0.2,
-        min_test_per_class=3,
-        rare_threshold=5,
-        target_class="Infiltration",
-        target_ratio=1.0,
-        random_state=42,
-    )
-    natural_train, natural_calibration, natural_test = (
-        budgeted_train_test_split(
-            _toy_flows(),
-            train_sampling="natural",
-            **common,
-        )
-    )
-    targeted_train, targeted_calibration, targeted_test = (
-        budgeted_train_test_split(
-            _toy_flows(),
-            train_sampling="targeted",
-            **common,
-        )
-    )
-
-    assert natural_calibration["Label"].value_counts().to_dict() == (
-        targeted_calibration["Label"].value_counts().to_dict()
-    )
-    assert natural_test["Label"].value_counts().to_dict() == (
-        targeted_test["Label"].value_counts().to_dict()
-    )
-    selected = [
-        set(targeted_train["row_id"]),
-        set(targeted_calibration["row_id"]),
-        set(targeted_test["row_id"]),
-    ]
-    assert selected[0].isdisjoint(selected[1])
-    assert selected[0].isdisjoint(selected[2])
-    assert selected[1].isdisjoint(selected[2])
-    assert sum(map(len, (natural_train, natural_calibration, natural_test))) == 300
-    assert sum(map(len, (targeted_train, targeted_calibration, targeted_test))) == 300
-
-
-def test_target_ratio_uses_current_largest_non_target_class() -> None:
-    quotas = {"BENIGN": 100, "DoS": 90, "Infiltration": 10}
-    available = {name: 1_000 for name in quotas}
-
-    adjusted = _apply_target_ratio(
-        quotas,
-        available,
-        target_class="Infiltration",
-        target_ratio=1.0,
-    )
-
-    largest_non_target = max(
-        count for name, count in adjusted.items() if name != "Infiltration"
-    )
-    assert sum(adjusted.values()) == sum(quotas.values())
-    assert adjusted["Infiltration"] / largest_non_target >= 1.0
 
 
 def test_artifact_reuse_requires_matching_dataset_fingerprint() -> None:

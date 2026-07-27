@@ -56,28 +56,25 @@ data/processed/*
 !data/processed/.gitkeep
 # data/sample/ IS committed — small stratified subset for tests + dashboard demo
 
-# --- Trained models (regenerable, often large) ---
-models/*.joblib
-models/*.pkl
-!models/.gitkeep
-
-# --- Generated outputs (everything under results/ is regenerable) ---
+# --- Generated run bundles (everything under results/ is regenerable) ---
+# Metrics, reports and the champion pointer stay tracked so a clone can read
+# the published numbers without retraining; the heavy binaries do not.
 results/**/*.joblib
 results/**/*.pkl
-results/metrics/*
-results/figures/*
-results/shap/*
+results/**/*.png
+results/**/checkpoints/
+results/**/shap/
 results/coverage/
-!results/metrics/.gitkeep
-!results/figures/.gitkeep
-!results/shap/.gitkeep
-reports/*.md
-!reports/.gitkeep
 
 # --- Logs ---
 logs/*.log
 logs/*.jsonl
 !logs/.gitkeep
 
+# --- CatBoost training scratch ---
+catboost_info/
+
 # --- Streamlit ---
 .streamlit/secrets.toml
+
+CLAUDE.md

@@ -22,18 +22,54 @@ export type PerClassStats = {
   support?: number;
 };
 
-/** Flat metrics dict returned by /api/models/:name/metrics */
+/** Flat metrics dict returned by /api/models/:name/metrics.
+ *
+ * Mirrors what train.py writes into results/<run>/<model>_metrics.json.
+ * Keys are only ever added on the backend, never renamed, so widening this
+ * type is safe but removing a field is not. */
 export type ModelMetrics = {
+  // Dimension 1 — classification performance
   accuracy: number;
-  f1_weighted: number;
+  balanced_accuracy: number;
   f1_macro: number;
-  precision_weighted: number;
+  f1_weighted: number;
+  f1_macro_reportable: number;
   precision_macro: number;
-  recall_weighted: number;
+  precision_weighted: number;
   recall_macro: number;
-  roc_auc: number;
-  matthews_corrcoef: number;
-  per_class?: Record<string, PerClassStats>;
+  recall_weighted: number;
+  mcc: number;
+
+  // Dimension 2 — attack detection (Attack vs BENIGN view)
+  binary_precision: number;
+  binary_recall: number;
+  binary_f1: number;
+  binary_fpr: number;
+  binary_fnr: number;
+  binary_false_positives: number;
+  binary_false_negatives: number;
+
+  // Per-class one-vs-rest breakdowns
+  per_class_recall?: Record<string, number>;
+  per_class_precision?: Record<string, number>;
+  per_class_f1?: Record<string, number>;
+  per_class_fpr?: Record<string, number>;
+  per_class_fnr?: Record<string, number>;
+  per_class_support?: Record<string, number>;
+
+  // Dimension 4 — computational efficiency
+  fit_seconds: number | null;
+  model_size_mb: number;
+  predict_latency_p50_ms: number;
+  predict_latency_p95_ms: number;
+  throughput_flows_per_sec: number;
+
+  // Provenance
+  accelerator: string;
+  split_protocol: string;
+  hp_search_space_size: number;
+  hp_tuned: boolean;
+
   [key: string]: unknown; // tolerate extra keys the backend may add
 };
 

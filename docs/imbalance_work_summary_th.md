@@ -253,9 +253,9 @@ false positives ควบคู่กันเสมอ เพราะการ
 - `train_all_imbalance.ps1` — สคริปต์เทรนทุกโมเดลคืนนี้
 - `tests/test_train_imbalance.py` — regression tests ทุก model/strategy
 - `docs/imbalance_experiments.md` — วิธีใช้แต่ละ strategy
-- `scripts/promote_best_models.py` — รวมโมเดลที่ผ่านการคัดเลือกแบบ atomic
-- `results/latest/metrics.json` — ผลรวมของโมเดลที่ใช้งานจริงทั้ง 7 ตัว
-- `results/latest/report.md` — ตารางสรุปผลสำหรับ Dashboard
+- `src/artifacts/publish.py` — promote bundle แบบ atomic + ranking 3 มุม
+- `results/<run-name>/metrics.json` — ผลรวมของโมเดลที่ใช้งานจริงทั้ง 7 ตัว
+- `results/<run-name>/report.md` — ตารางสรุปผลสำหรับ Dashboard
 
 ## 11. ผลเทรนสุดท้ายที่นำขึ้น Dashboard
 

@@ -218,6 +218,15 @@ def _canonical_model_name(model_name: str) -> str:
     return canonical
 
 
+def published_run_dir() -> Path:
+    """Directory of the currently published run.
+
+    Public entry point for callers outside inference (the API, the dashboard)
+    that need to read the same bundle predictions are served from.
+    """
+    return _published_dir()
+
+
 def _published_dir() -> Path:
     """Resolve one published run; never combine artifacts from different runs."""
     if CHAMPION_PATH.exists():

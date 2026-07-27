@@ -1,4 +1,4 @@
-﻿"""Unified command-line entry point for the cyber-attack classification project.
+"""Unified command-line entry point for the cyber-attack classification project.
 
 Canonical usage
 ---------------
@@ -22,6 +22,10 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+DEFAULT_SPLIT_MANIFEST = (
+    PROJECT_ROOT / "configs" / "splits" / "cicids2017_temporal_70_30.json"
+)
 
 from src.utils.logging import configure_logging, default_log_file  # noqa: E402
 
@@ -66,7 +70,7 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Model for train/predict/explain (default: all for train)")
     parser.add_argument("--config", type=Path,
                         default=PROJECT_ROOT / "src" / "config" / "config.yaml",
-                        help="Path to YAML config for legacy/development stages")
+                        help="Path to YAML config (used by --stage eda/explain)")
     parser.add_argument("--input", type=Path, default=None,
                         help="CSV file for --stage predict")
     parser.add_argument("--reference", type=Path, default=None,
@@ -80,11 +84,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=Path, default=None,
                         help="Optional output CSV path for --stage predict")
     parser.add_argument("--raw-dir", type=Path, default=None,
-                        help="Override raw data directory for legacy eda/preprocess stages")
-    parser.add_argument("--run-name", default="latest",
-                        help="Training output folder under results/ (default: latest)")
+                        help="Override raw data directory for --stage eda")
+    parser.add_argument("--run-name", default=None,
+                        help="Run bundle under results/. Training defaults to "
+                             "'latest'; stages that read a finished run default "
+                             "to whichever run results/champion.json publishes.")
     parser.add_argument("--split-manifest", type=Path, default=None,
-                        help="Versioned source-held-out split manifest for training")
+                        help="Chronological split manifest (default: "
+                             "configs/splits/cicids2017_temporal_70_30.json)")
     parser.add_argument("--profile", choices=("dev", "overnight"), default="dev",
                         help="Training resource profile")
     parser.add_argument("--accelerator", choices=("cpu", "gpu"), default="cpu",
@@ -96,7 +103,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--force", action="store_true",
                         help="Retrain selected model artefacts even if they already exist")
     parser.add_argument("--refresh-cache", action="store_true",
-                        help="Rebuild data/processed/cicids_clean.parquet from raw CSVs")
+                        help="Rebuild data/processed/cicids2017_clean.parquet from raw CSVs")
     parser.add_argument("--refresh-plots", action="store_true",
                         help="Re-evaluate saved models and refresh metrics/plots")
     parser.add_argument("--skip-tuning", "--skip-hp", dest="skip_tuning",
@@ -123,6 +130,10 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Maximum validation false-positive rate for target threshold")
     parser.add_argument("--threshold-validation-size", type=float, default=0.0,
                         help="Train-only calibration fraction (0 keeps the required 70/30 split)")
+    parser.add_argument("--verify-data", action="store_true",
+                        help="For --stage audit: rebuild the split from the "
+                             "cache and check it against the manifest's "
+                             "expected per-class counts")
     parser.add_argument("--port", type=int, default=8501,
                         help="Dashboard port for --stage dashboard")
     parser.add_argument("--log-level", default="INFO",
@@ -138,7 +149,7 @@ def main(argv: list[str] | None = None) -> int:
         return _run_latest_train(args)
 
     if args.stage == "evaluate":
-        _print_latest_evaluation(args.run_name)
+        _print_latest_evaluation(_published_run_name(args.run_name))
         return 0
 
     if args.stage == "dashboard":
@@ -162,25 +173,40 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.stage == "preprocess":
-        from src.pipelines.preprocess import run as run_preprocess
-        run_preprocess(args.config, raw_dir_override=args.raw_dir)
+        if args.raw_dir is not None:
+            raise SystemExit(
+                "--raw-dir is not supported by canonical preprocess; "
+                "place the full corpus in data/raw."
+            )
+        from train import preprocess_cache
+
+        summary = preprocess_cache(force=args.refresh_cache)
+        print(json.dumps(summary, indent=2))
         return 0
 
     if args.stage == "explain":
         from src.pipelines.explain import run as run_explain
-        run_explain(args.config, model=args.model)
+        summary = run_explain(run_name=_published_run_name(args.run_name),
+                              model=args.model)
+        print(json.dumps(summary, indent=2))
         return 0
 
     if args.stage == "predict":
         if args.input is None:
             raise SystemExit("--stage predict requires --input PATH.csv")
-        from src.pipelines.predict import run as run_predict
-        out = run_predict(
+        from src.config.constants import PROCESSED_DIR
+        from src.inference.predictor import predict_csv
+
+        output_csv = args.output or (
+            PROCESSED_DIR / f"predictions_{args.input.stem}.csv"
+        )
+        # predict_csv writes output_csv itself and returns a PredictionResult.
+        result = predict_csv(
             input_csv=args.input,
             model_name=_canonical_model_name(args.model),
-            output_csv=args.output,
+            output_csv=output_csv,
         )
-        print(f"Predictions written to: {out}")
+        print(f"Predicted {len(result.predictions)} rows -> {output_csv}")
         return 0
 
     raise SystemExit(f"Unhandled stage: {args.stage}")
@@ -189,9 +215,9 @@ def main(argv: list[str] | None = None) -> int:
 def _run_latest_train(args: argparse.Namespace) -> int:
     from train import main as train_main
 
-    train_args: list[str] = ["--run-name", args.run_name]
-    if args.split_manifest:
-        train_args.extend(["--split-manifest", str(args.split_manifest)])
+    train_args: list[str] = ["--run-name", args.run_name or "latest"]
+    manifest = args.split_manifest or DEFAULT_SPLIT_MANIFEST
+    train_args.extend(["--split-manifest", str(manifest)])
     if args.model != "all":
         train_args.extend(["--models", _canonical_model_name(args.model)])
     if args.preset:
@@ -229,8 +255,28 @@ def _run_latest_train(args: argparse.Namespace) -> int:
     return int(train_main(train_args))
 
 
+def _published_run_name(run_name: str | None) -> str:
+    """Resolve a run name for stages that read a finished run.
+
+    Without an explicit --run-name these follow results/champion.json, the same
+    pointer the dashboard, API and predictor use, so every consumer reports on
+    one published run instead of a hardcoded directory that may not exist.
+    """
+    if run_name:
+        return run_name
+    from src.inference.predictor import published_run_dir
+
+    return published_run_dir().name
+
+
 def _print_latest_evaluation(run_name: str) -> None:
-    metrics_path = PROJECT_ROOT / "results" / run_name / "metrics.json"
+    from src.artifacts.paths import result_run_dir
+
+    try:
+        run_dir = result_run_dir(run_name, results_root=PROJECT_ROOT / "results")
+    except ValueError as exc:
+        raise SystemExit(f"Invalid run name: {exc}") from exc
+    metrics_path = run_dir / "metrics.json"
     if not metrics_path.exists():
         raise SystemExit(
             f"{metrics_path} not found. Run `python main.py --stage train` first."
@@ -278,25 +324,67 @@ def _run_dashboard(port: int) -> int:
 
 
 def _run_audit(args: argparse.Namespace) -> int:
-    from src.data.deterministic_split import load_split_manifest
+    from src.data.temporal_split import load_temporal_manifest
 
-    path = (
-        args.split_manifest
-        or PROJECT_ROOT / "configs" / "splits" / "source_holdout_v3_full_70_30.json"
-    )
+    path = args.split_manifest or DEFAULT_SPLIT_MANIFEST
     try:
-        payload = load_split_manifest(path)
+        payload = load_temporal_manifest(path)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         raise SystemExit(f"Invalid split manifest: {exc}") from exc
-    print(json.dumps({"manifest": str(path), "version": payload["version"], "valid": True}, indent=2))
-    return 0
+
+    report: dict[str, object] = {
+        "manifest": str(path),
+        "version": payload["version"],
+        "protocol": "temporal",
+        "valid": True,
+    }
+
+    if args.verify_data:
+        report["data_verification"] = _verify_temporal_split(payload)
+
+    print(json.dumps(report, indent=2))
+    return 0 if report.get("valid") else 1
+
+
+def _verify_temporal_split(manifest: dict) -> dict:
+    """Rebuild the split from the cache and compare it with its manifest.
+
+    Static validation only proves the manifest is internally consistent. This
+    proves the manifest still describes the split the data actually produces.
+    """
+    from src.data.temporal_split import (
+        temporal_source_split,
+        validate_capture_chronology,
+        verify_split_against_manifest,
+    )
+    from train import CONFIG, ROW_INDEX_COLUMN, load_and_clean_cached
+
+    cfg = dict(CONFIG)
+    cfg["dataset_filter"] = manifest["dataset_id"]
+    frame = load_and_clean_cached(cfg, force=False)
+    chronology = validate_capture_chronology(
+        frame, label_column=cfg["label_column"], order_column=ROW_INDEX_COLUMN,
+    )
+    train_df, _, test_df = temporal_source_split(
+        frame,
+        label_column=cfg["label_column"],
+        order_column=ROW_INDEX_COLUMN,
+        test_size=float(manifest["test_size"]),
+        min_test_per_class=int(manifest["min_test_per_class"]),
+    )
+    verification = verify_split_against_manifest(
+        train_df, test_df, manifest, label_column=cfg["label_column"],
+    )
+    verification["chronology_valid"] = chronology["valid"]
+    verification["chronology_pairs_checked"] = chronology["checked_pairs"]
+    return verification
 
 
 def _run_promote(args: argparse.Namespace) -> int:
     from src.artifacts.paths import result_run_dir
     from src.artifacts.publish import promote_run
 
-    run_id = args.run_name
+    run_id = args.run_name or "latest"
     try:
         run_dir = result_run_dir(run_id, results_root=PROJECT_ROOT / "results")
     except ValueError as exc:
@@ -314,6 +402,8 @@ def _run_promote(args: argparse.Namespace) -> int:
 
 
 def _run_red_team(args: argparse.Namespace) -> int:
+    from src.artifacts.paths import result_run_dir
+
     if args.reference is None or args.candidate is None:
         raise SystemExit(
             "--stage red-team requires --reference CLEAN.csv and --candidate LABELLED.csv"
@@ -336,7 +426,9 @@ def _run_red_team(args: argparse.Namespace) -> int:
         label_column=args.label_column,
         predictor=predictor,
     )
-    output = PROJECT_ROOT / "results" / args.run_name / "red_team.json"
+    output = result_run_dir(
+        _published_run_name(args.run_name), results_root=PROJECT_ROOT / "results"
+    ) / "red_team.json"
     write_red_team_report(report, output)
     print(f"Offline red-team report written to: {output}")
     return 0

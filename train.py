@@ -34,10 +34,11 @@ import hashlib
 import json
 import logging
 import os
+import platform
 import random
 import sys
 import time
-from contextlib import suppress
+from contextlib import contextmanager, nullcontext, suppress
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -84,10 +85,13 @@ from xgboost import XGBClassifier
 
 from src.artifacts.bundle import build_bundle_manifest, write_bundle_manifest
 from src.artifacts.paths import result_run_dir
-from src.data.deterministic_split import (
-    deterministic_source_split,
-    load_split_manifest,
-    row_hash,
+from src.artifacts.publish import load_ranking_policy, rank_models
+from src.data.temporal_split import (
+    is_temporal_manifest,
+    load_temporal_manifest,
+    temporal_source_split,
+    validate_capture_chronology,
+    verify_split_against_manifest,
 )
 from src.training.checkpoints import checkpoint_matches, load_checkpoint, write_checkpoint
 from src.utils.io import json_dumps_strict
@@ -101,12 +105,17 @@ CONFIG: dict[str, Any] = {
     # -- Data ------------------------------------------------------------
     "raw_dir":            ROOT / "data" / "raw",
     "processed_dir":      ROOT / "data" / "processed",
-    "clean_cache":        ROOT / "data" / "processed" / "cicids_clean.parquet",
     "csv_glob":           "*.csv",
     "csv_encoding":       "latin-1",
     "label_column":       "Label",
     "split_manifest":     None,
-    "metadata_columns":   ("dataset_id", "source_file", "capture_window", "_row_hash"),
+    # Columns carried alongside the features but never fed to a model.
+    # "_row_hash" is no longer written -- it belonged to the retired
+    # source-held-out protocol -- but stays listed so a cache built before
+    # that removal still has the column excluded from the feature matrix.
+    "metadata_columns":   ("dataset_id", "source_file", "capture_window",
+                           "_row_hash", "_row_index"),
+    "schema_drop_columns": ("Protocol",),
 
     # -- Reproducibility -------------------------------------------------
     "random_state":       42,
@@ -134,12 +143,17 @@ CONFIG: dict[str, Any] = {
         "logistic_regression",
         "stacking",
     ),
-    "primary_metric":     "target_f2",
+    # Macro-F1 weights every attack family equally, so tuning cannot buy a
+    # headline score by serving BENIGN well. Tuning against a single class's
+    # F2 is unsound on a 2017-only corpus, where Infiltration has 36 rows.
+    "primary_metric":     "f1_macro",
     "rf_class_weight":    "balanced_subsample",
-    # ``targeted`` uses additional REAL rows of target_class. The other
-    # sampler strategies run inside ImbPipeline and therefore only see each
-    # training/CV fold. target_ratio means target / majority after sampling.
-    "imbalance_strategy": "targeted",
+    # ``class_weight`` treats every model identically and is the fair default
+    # for a model comparison. ``targeted`` uses additional REAL rows of
+    # target_class; the other sampler strategies run inside ImbPipeline and
+    # therefore only see each training/CV fold. target_ratio means
+    # target / majority after sampling.
+    "imbalance_strategy": "class_weight",
     "target_class":       "Infiltration",
     "target_ratio":       1.00,
     # The delivery protocol uses a 70/30 train/test split with no calibration
@@ -149,6 +163,15 @@ CONFIG: dict[str, Any] = {
     "target_max_fpr":      0.02,
     "accelerator":         "cpu",  # cpu | gpu; GPU affects XGBoost/CatBoost only
     "gpu_devices":         "0",
+
+    # -- Reporting ------------------------------------------------------
+    # A class needs at least this many test rows before its per-class recall
+    # is treated as a stable estimate rather than an anecdote. Drives
+    # f1_macro_reportable and the granularity warnings in the report.
+    "reportable_min_test": 30,
+    # Inference-cost measurement (dimension 4 of the evaluation standard).
+    "latency_batch_size": 1_000,
+    "latency_repeats":    30,
 
     # -- Trust checks (Layer 4) -----------------------------------------
     "cv_splits":          5,
@@ -189,7 +212,53 @@ IMBALANCE_STRATEGIES = (
     "smoteenn",
 )
 IMBALANCE_PROTOCOL_VERSION = 6  # strict row budget + verified target ratio
-TRAINING_PROTOCOL_VERSION = 3   # 70/30 no-calibration + resumable checkpoints
+# 4: temporal split protocol, macro-F1 tuning objective, balanced HP grids,
+#    split identity folded into the artifact-reuse signature.
+TRAINING_PROTOCOL_VERSION = 4
+
+# Objectives the hyperparameter search may optimise. Validated rather than
+# forwarded to sklearn verbatim, so a typo fails immediately and every model
+# in a comparison is provably tuned against the same objective.
+PRIMARY_METRICS = (
+    "f1_macro",
+    "f1_weighted",
+    "balanced_accuracy",
+    "accuracy",
+    "target_f2",
+)
+
+# Ordering key for the temporal split. Holds the row's position in its source
+# CSV *before* any row is dropped by cleaning. The CICIDS2017 export stores
+# flows in capture order, so this is a chronological ordering -- an assumption
+# that ``src.data.temporal_split.validate_capture_chronology`` proves against
+# the published CIC attack schedule rather than assuming.
+ROW_INDEX_COLUMN = "_row_index"
+
+# Only these three consult ``accelerator``: XGBoost takes device="cuda",
+# CatBoost takes task_type="GPU", and stacking embeds an XGBoost base learner.
+# RandomForest / LightGBM / MLP / LogisticRegression build byte-identical
+# pipelines either way, so their artifacts must NOT be invalidated by a
+# CPU->GPU switch -- otherwise flipping the flag throws away hours of finished
+# work that would be recomputed to exactly the same result.
+GPU_CAPABLE_MODELS = frozenset({"xgboost", "catboost", "stacking"})
+
+DATASET_ID = "CICIDS2017"
+CLEAN_CACHE_NAME = "cicids2017_clean.parquet"
+
+# The eight CICIDS2017 capture files, in the order CIC recorded them. Every
+# attack class lives in exactly one of these, which is why the split has to be
+# chronological rather than source-held -- see src/data/temporal_split.py.
+CICIDS2017_CAPTURES = (
+    "Monday-WorkingHours.pcap_ISCX.csv",
+    "Tuesday-WorkingHours.pcap_ISCX.csv",
+    "Wednesday-workingHours.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+    "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+)
+
 MODEL_ALIASES = {
     "rf": "random_forest",
     "xgb": "xgboost",
@@ -371,75 +440,35 @@ def normalize_label(value: object) -> str:
 # ---------------------------------------------------------------------------
 # Data loading + cleaning (RAM-efficient: clean per CSV, then concat)
 # ---------------------------------------------------------------------------
-# ---------------------------------------------------------------------------
-# CIC-IDS2018 uses abbreviated column names that differ from CICIDS2017.
-# This mapping normalises them to the CICIDS2017 canonical names so the
-# rest of the pipeline (feature list, schema checks) needs no changes.
-# ---------------------------------------------------------------------------
-_CIC2018_COL_RENAME: dict[str, str] = {
-    "Dst Port":            "Destination Port",
-    "Tot Fwd Pkts":        "Total Fwd Packets",
-    "Tot Bwd Pkts":        "Total Backward Packets",
-    "TotLen Fwd Pkts":     "Total Length of Fwd Packets",
-    "TotLen Bwd Pkts":     "Total Length of Bwd Packets",
-    "Fwd Pkt Len Max":     "Fwd Packet Length Max",
-    "Fwd Pkt Len Min":     "Fwd Packet Length Min",
-    "Fwd Pkt Len Mean":    "Fwd Packet Length Mean",
-    "Fwd Pkt Len Std":     "Fwd Packet Length Std",
-    "Bwd Pkt Len Max":     "Bwd Packet Length Max",
-    "Bwd Pkt Len Min":     "Bwd Packet Length Min",
-    "Bwd Pkt Len Mean":    "Bwd Packet Length Mean",
-    "Bwd Pkt Len Std":     "Bwd Packet Length Std",
-    "Flow Byts/s":         "Flow Bytes/s",
-    "Flow Pkts/s":         "Flow Packets/s",
-    "Fwd IAT Tot":         "Fwd IAT Total",
-    "Bwd IAT Tot":         "Bwd IAT Total",
-    "Fwd Header Len":      "Fwd Header Length",
-    "Bwd Header Len":      "Bwd Header Length",
-    "Pkt Len Min":         "Min Packet Length",
-    "Pkt Len Max":         "Max Packet Length",
-    "Pkt Len Mean":        "Packet Length Mean",
-    "Pkt Len Std":         "Packet Length Std",
-    "Pkt Len Var":         "Packet Length Variance",
-    "FIN Flag Cnt":        "FIN Flag Count",
-    "SYN Flag Cnt":        "SYN Flag Count",
-    "RST Flag Cnt":        "RST Flag Count",
-    "PSH Flag Cnt":        "PSH Flag Count",
-    "ACK Flag Cnt":        "ACK Flag Count",
-    "URG Flag Cnt":        "URG Flag Count",
-    "ECE Flag Cnt":        "ECE Flag Count",
-    "Pkt Size Avg":        "Average Packet Size",
-    "Fwd Seg Size Avg":    "Avg Fwd Segment Size",
-    "Bwd Seg Size Avg":    "Avg Bwd Segment Size",
-    "Fwd Byts/b Avg":      "Fwd Avg Bytes/Bulk",
-    "Fwd Pkts/b Avg":      "Fwd Avg Packets/Bulk",
-    "Fwd Blk Rate Avg":    "Fwd Avg Bulk Rate",
-    "Bwd Byts/b Avg":      "Bwd Avg Bytes/Bulk",
-    "Bwd Pkts/b Avg":      "Bwd Avg Packets/Bulk",
-    "Bwd Blk Rate Avg":    "Bwd Avg Bulk Rate",
-    "Subflow Fwd Pkts":    "Subflow Fwd Packets",
-    "Subflow Fwd Byts":    "Subflow Fwd Bytes",
-    "Subflow Bwd Pkts":    "Subflow Bwd Packets",
-    "Subflow Bwd Byts":    "Subflow Bwd Bytes",
-    "Init Fwd Win Byts":   "Init_Win_bytes_forward",
-    "Init Bwd Win Byts":   "Init_Win_bytes_backward",
-    "Fwd Act Data Pkts":   "act_data_pkt_fwd",
-    "Fwd Seg Size Min":    "min_seg_size_forward",
+
+
+# Some CICIDS2017 redistributions ship the packet-rate columns under the
+# abbreviated CICFlowMeter names. Normalising them keeps the feature matrix
+# identical across distributions, so a model trained on one can score the
+# other; without it the run silently produces differently-named features.
+_RATE_COLUMN_ALIASES: dict[str, str] = {
+    "Fwd Pkts/s": "Fwd Packets/s",
+    "Bwd Pkts/s": "Bwd Packets/s",
 }
 
 
 def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
-    """Clean a single CSV: column strip/rename, drop duplicate/leaky cols,
-    label normalize, replace Inf, drop NaN.
+    """Clean one CICIDS2017 CSV: strip column names, drop leaky/duplicate
+    columns, normalise labels, replace Inf, drop NaN rows.
 
-    Supports both CICIDS2017 and CIC-IDS2018 column naming schemes.
-    Per-CSV cleaning keeps memory peak bounded.
+    Cleaning per CSV rather than on the concatenated corpus keeps the
+    memory peak bounded.
     """
     # Strip whitespace from column names (CICIDS2017 has leading spaces).
     df = df.rename(columns=lambda c: c.strip() if isinstance(c, str) else c)
 
-    # Normalise CIC-IDS2018 abbreviated column names → CICIDS2017 names.
-    df = df.rename(columns=_CIC2018_COL_RENAME)
+    # Record the raw CSV row number BEFORE any row is dropped. Every later
+    # step in this function preserves relative order, so this column keeps the
+    # capture ordering that the temporal split needs. It is metadata: excluded
+    # from feature_cols below and from CONFIG["metadata_columns"] downstream.
+    df[ROW_INDEX_COLUMN] = np.arange(len(df), dtype=np.int64)
+
+    df = df.rename(columns=_RATE_COLUMN_ALIASES)
 
     if "Fwd Header Length.1" in df.columns:
         df = df.drop(columns=["Fwd Header Length.1"])
@@ -447,6 +476,12 @@ def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
     leaky = [c for c in cfg["leaky_columns"] if c in df.columns]
     if leaky:
         df = df.drop(columns=leaky)
+
+    # Protocol exists only in the 2018 export; drop it before concat so
+    # missingness cannot become a hidden dataset-source indicator.
+    schema_only = [c for c in cfg.get("schema_drop_columns", ()) if c in df.columns]
+    if schema_only:
+        df = df.drop(columns=schema_only)
 
     label_col = cfg["label_column"]
     if label_col not in df.columns:
@@ -466,7 +501,12 @@ def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
     # unknown attack types that can't be reliably classified.
     df = df[df[label_col] != "Other"].reset_index(drop=True)
 
-    feature_cols = [c for c in df.columns if c != label_col]
+    # Metadata columns (currently _row_index) must not be coerced or cast to
+    # float32 with the features -- the row number has to stay exact int64.
+    metadata_cols = set(cfg.get("metadata_columns", ()))
+    feature_cols = [
+        c for c in df.columns if c != label_col and c not in metadata_cols
+    ]
     for c in feature_cols:
         if not pd.api.types.is_numeric_dtype(df[c]):
             df[c] = pd.to_numeric(df[c], errors="coerce")
@@ -487,18 +527,42 @@ def _clean_one_frame(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
     return df
 
 
-def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFrame:
-    """Load + clean + dedupe the combined CICIDS2017/CSE-CIC-IDS2018 corpus.
+def resolve_cache_path(cfg: dict[str, Any]) -> Path:
+    """Path of the cleaned CICIDS2017 parquet cache."""
+    return Path(cfg["processed_dir"]) / CLEAN_CACHE_NAME
 
-    Caches the result as ``cicids_clean.parquet`` so subsequent runs skip
-    the ~3-5 min load+clean step. Cache invalidated by ``--force``.
+
+def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFrame:
+    """Load, clean and cache the CICIDS2017 corpus.
+
+    Cleaning runs per CSV to bound the memory peak, then the frames are
+    concatenated and cached as parquet so later runs skip the whole step.
+    Pass ``force`` (``--refresh-cache``) to rebuild.
     """
-    cache = Path(cfg["clean_cache"])
+    cache = resolve_cache_path(cfg)
     if not force and cache.exists():
         LOG.info("Loading cleaned corpus from cache: %s", cache)
         df = pd.read_parquet(cache)
-        if cfg.get("split_manifest") and not {"source_file", "_row_hash"}.issubset(df.columns):
-            LOG.info("Deterministic split requested but cache lacks source metadata; rebuilding.")
+        cache_has_schema_only = any(
+            c in df.columns for c in cfg.get("schema_drop_columns", ())
+        )
+        # A cache holding the abbreviated names predates alias normalisation,
+        # so its feature columns no longer match what a fresh build produces.
+        cache_has_aliases = any(c in df.columns for c in _RATE_COLUMN_ALIASES)
+        cache_feature_cols = [
+            c for c in df.columns
+            if c != cfg["label_column"] and c not in cfg["metadata_columns"]
+        ]
+        cache_has_missing = bool(df[cache_feature_cols].isna().any().any())
+        if ROW_INDEX_COLUMN not in df.columns:
+            LOG.info("Cached corpus predates %s (the temporal ordering key); "
+                     "rebuilding.", ROW_INDEX_COLUMN)
+        elif cache_has_aliases:
+            LOG.info("Cached corpus uses pre-normalisation rate column names; "
+                     "rebuilding.")
+        elif cache_has_schema_only or cache_has_missing:
+            LOG.info("Cached corpus has stale schema or missing feature values; "
+                     "rebuilding.")
         else:
             LOG.info("  -> %d rows x %d cols (from cache)", *df.shape)
             return df
@@ -507,9 +571,17 @@ def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFr
     paths = sorted(raw_dir.glob(cfg["csv_glob"]))
     if not paths:
         raise FileNotFoundError(
-            f"No CSV files found under {raw_dir}. "
-            "Extract MachineLearningCSV.zip into data/raw/."
+            f"No CSV files found under {raw_dir}. Extract the CICIDS2017 "
+            "MachineLearningCSV archive into data/raw/ (see README section 7)."
         )
+    missing = sorted(set(CICIDS2017_CAPTURES) - {p.name for p in paths})
+    if missing:
+        raise FileNotFoundError(
+            f"data/raw/ is missing {len(missing)} CICIDS2017 capture file(s): "
+            f"{missing}. Every class lives in exactly one capture, so a missing "
+            "file silently removes a whole attack class from the corpus."
+        )
+    paths = [p for p in paths if p.name in set(CICIDS2017_CAPTURES)]
 
     LOG.info("Loading %d CSV file(s) from %s (cleaning per-file to bound RAM)",
              len(paths), raw_dir)
@@ -526,9 +598,8 @@ def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFr
         # row number is stable for an unchanged source file and is sufficient
         # to derive deterministic quotas without introducing an RNG.
         clean["source_file"] = p.name
-        clean["dataset_id"] = "CSE-CIC-IDS2018" if "2018" in p.name else "CICIDS2017"
+        clean["dataset_id"] = DATASET_ID
         clean["capture_window"] = p.stem
-        clean["_row_hash"] = [row_hash(p.name, i) for i in range(len(clean))]
         LOG.info("  %s -> raw %d -> clean %d", p.name, len(raw), len(clean))
         del raw
         cleaned.append(clean)
@@ -536,6 +607,18 @@ def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFr
     df = pd.concat(cleaned, axis=0, ignore_index=True)
     del cleaned
     LOG.info("Concatenated cleaned frames: %d rows", len(df))
+
+    feature_cols = [
+        c for c in df.columns
+        if c != cfg["label_column"] and c not in cfg["metadata_columns"]
+    ]
+    missing = df[feature_cols].isna().sum()
+    missing = missing[missing > 0].sort_values(ascending=False)
+    if not missing.empty:
+        raise ValueError(
+            "Schema alignment failed: feature columns still contain missing values "
+            f"after per-file cleaning: {missing.head(10).to_dict()}"
+        )
 
     n_before = len(df)
     dedup_columns = [c for c in df.columns if c not in cfg.get("metadata_columns", ())]
@@ -548,354 +631,43 @@ def load_and_clean_cached(cfg: dict[str, Any], force: bool = False) -> pd.DataFr
              n_raw_total, len(df), 100 * len(df) / max(n_raw_total, 1))
 
     cache.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(cache, index=False)
+    temp_cache = cache.with_name(f"{cache.stem}.tmp{cache.suffix}")
+    try:
+        df.to_parquet(temp_cache, index=False)
+        temp_cache.replace(cache)
+    finally:
+        if temp_cache.exists():
+            temp_cache.unlink()
     LOG.info("Cached cleaned corpus -> %s", cache)
     return df
 
 
+def preprocess_cache(*, force: bool = False) -> dict[str, Any]:
+    """Build or validate the CICIDS2017 cache that ``train.py`` consumes."""
+    cfg = dict(CONFIG)
+    set_seeds(cfg["random_state"])
+    df = load_and_clean_cached(cfg, force=force)
+    feature_cols = [
+        c for c in df.columns
+        if c != cfg["label_column"] and c not in cfg["metadata_columns"]
+    ]
+    summary = {
+        "cache_path": str(resolve_cache_path(cfg)),
+        "dataset_id": DATASET_ID,
+        "rows": int(len(df)),
+        "features": int(len(feature_cols)),
+        "sources": sorted(str(s) for s in df["source_file"].unique()),
+        "label_distribution": {
+            str(label): int(count)
+            for label, count in df[cfg["label_column"]].value_counts().items()
+        },
+    }
+    LOG.info("Canonical preprocessing complete: %s", summary)
+    return summary
+
+
 # ---------------------------------------------------------------------------
 # Composite subsampling (Layer 1)
-# ---------------------------------------------------------------------------
-def composite_subsample(
-    df: pd.DataFrame,
-    target_n: int,
-    rare_threshold: int,
-    label_col: str,
-    random_state: int,
-) -> pd.DataFrame:
-    """Keep ALL rows of rare classes; stratified-subsample the majority.
-
-    Classes with count <= ``rare_threshold`` contribute every row they have
-    (RAM cost is negligible -- combined < 20k rows). The remaining budget
-    is split proportionally among the larger classes. Output is shuffled.
-    """
-    counts = df[label_col].value_counts()
-    rare_classes = counts[counts <= rare_threshold].index.tolist()
-    common_classes = counts[counts > rare_threshold].index.tolist()
-
-    rare_df = df[df[label_col].isin(rare_classes)]
-    common_df = df[df[label_col].isin(common_classes)]
-
-    LOG.info("Composite subsample: keeping ALL of %d rare class(es): %s",
-             len(rare_classes), sorted(rare_classes))
-    LOG.info("  rare rows kept whole: %d", len(rare_df))
-
-    if target_n is None or target_n >= len(df):
-        # User asked for >= corpus; just return everything.
-        # Shuffling is handled during train/test split.
-        return df.reset_index(drop=True)
-
-    budget_for_common = max(0, target_n - len(rare_df))
-    if budget_for_common == 0:
-        LOG.warning("Rare classes alone exceed target_n=%d; using just rare",
-                    target_n)
-        return rare_df.sample(frac=1.0, random_state=random_state).reset_index(drop=True)
-
-    rng = np.random.default_rng(random_state)
-    pieces: list[pd.DataFrame] = [rare_df]
-    common_total = len(common_df)
-    for _cls, group in common_df.groupby(label_col, sort=False, observed=True):
-        quota = max(1, round(budget_for_common * len(group) / common_total))
-        take = min(quota, len(group))
-        idx = rng.choice(group.index.to_numpy(), size=take, replace=False)
-        pieces.append(df.loc[idx])
-
-    out = (pd.concat(pieces, axis=0, ignore_index=False)
-             .sample(frac=1.0, random_state=random_state)
-             .reset_index(drop=True))
-    LOG.info("  composite subsample total: %d rows (target was %d)",
-             len(out), target_n)
-    return out
-
-
-def _proportional_quotas(
-    counts: pd.Series,
-    budget: int,
-    *,
-    minimum_per_class: int,
-) -> dict[str, int]:
-    """Allocate an exact row budget proportionally, subject to class caps."""
-    counts = counts.astype(np.int64).sort_index()
-    total = int(counts.sum())
-    budget = min(int(budget), total)
-    minimums = counts.clip(upper=minimum_per_class)
-    required = int(minimums.sum())
-    if budget < required:
-        raise ValueError(
-            f"budget={budget} cannot keep minimum_per_class={minimum_per_class} "
-            f"for {len(counts)} classes (requires at least {required})"
-        )
-
-    ideal = counts.astype(float) * (budget / max(total, 1))
-    quotas = ideal.round().astype(np.int64)
-    quotas = quotas.where(quotas >= minimums, minimums)
-    quotas = quotas.where(quotas <= counts, counts)
-
-    # Rounding and minimum guarantees can move the sum away from the exact
-    # budget. Nine CICIDS classes means this loop normally changes <10 rows.
-    while int(quotas.sum()) < budget:
-        candidates = [c for c in counts.index if quotas[c] < counts[c]]
-        cls = max(candidates, key=lambda c: (ideal[c] - quotas[c], counts[c], c))
-        quotas[cls] += 1
-    while int(quotas.sum()) > budget:
-        candidates = [c for c in counts.index if quotas[c] > minimums[c]]
-        cls = max(candidates, key=lambda c: (quotas[c] - ideal[c], quotas[c], c))
-        quotas[cls] -= 1
-    return {str(cls): int(n) for cls, n in quotas.items()}
-
-
-def _keep_all_rare_training_rows(
-    quotas: dict[str, int],
-    available: dict[str, int],
-    *,
-    rare_threshold: int,
-) -> dict[str, int]:
-    """Keep genuine rare rows in TRAIN and pay for them from the majority."""
-    out = dict(quotas)
-    extra = 0
-    for cls, count in available.items():
-        if count <= rare_threshold and out[cls] < count:
-            extra += count - out[cls]
-            out[cls] = count
-
-    while extra > 0:
-        donors = [
-            cls for cls, count in out.items()
-            if available[cls] > rare_threshold and count > 1
-        ]
-        if not donors:
-            raise ValueError("training budget is too small to retain all rare classes")
-        donor = max(donors, key=lambda cls: (out[cls], cls))
-        take = min(extra, out[donor] - 1)
-        out[donor] -= take
-        extra -= take
-    return out
-
-
-def _apply_target_ratio(
-    quotas: dict[str, int],
-    available: dict[str, int],
-    *,
-    target_class: str,
-    target_ratio: float,
-) -> dict[str, int]:
-    """Move majority quota to a real target class until target/majority ratio."""
-    if target_class not in quotas:
-        raise ValueError(f"target class {target_class!r} is not present in the data")
-    if not 0.0 < target_ratio <= 1.0:
-        raise ValueError("target_ratio must be in the interval (0, 1]")
-
-    out = dict(quotas)
-    # Recompute the majority after every transfer. Reducing only the initial
-    # majority can expose the second-largest class and leave the requested
-    # target/max(non-target) ratio unmet.
-    while out[target_class] < available[target_class]:
-        majority = max(
-            (cls for cls in out if cls != target_class),
-            key=lambda cls: (out[cls], cls),
-        )
-        target_n = out[target_class]
-        majority_n = out[majority]
-        if target_n / max(majority_n, 1) >= target_ratio:
-            break
-
-        # Moving d rows from majority to target preserves the train budget:
-        # (target_n + d) / (majority_n - d) >= target_ratio.
-        needed = int(np.ceil(
-            (target_ratio * majority_n - target_n) / (1.0 + target_ratio)
-        ))
-        moved = min(
-            max(needed, 1),
-            available[target_class] - target_n,
-            majority_n - 1,
-        )
-        if moved <= 0:
-            break
-        out[target_class] += moved
-        out[majority] -= moved
-
-    achieved = out[target_class] / max(
-        max(count for cls, count in out.items() if cls != target_class),
-        1,
-    )
-    if achieved < target_ratio:
-        LOG.warning(
-            "Requested target ratio %.4f is unattainable with genuine %s rows; "
-            "achieved %.4f",
-            target_ratio,
-            target_class,
-            achieved,
-        )
-    return out
-
-
-def budgeted_train_test_split(
-    df: pd.DataFrame,
-    *,
-    label_col: str,
-    total_budget: int | None,
-    test_size: float,
-    min_test_per_class: int,
-    rare_threshold: int,
-    train_sampling: str,
-    target_class: str,
-    target_ratio: float,
-    random_state: int,
-    calibration_size: float = 0.0,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Select a natural test set first, then sample TRAIN without overlap.
-
-    ``train_sampling='targeted'`` spends part of the fixed training budget on
-    additional *real* target-class rows. Test and optional calibration quotas
-    are computed before that adjustment and therefore retain the natural
-    distribution. The middle calibration frame is empty when
-    ``calibration_size`` is zero, keeping the return contract stable.
-    """
-    if train_sampling not in {"natural", "targeted"}:
-        raise ValueError("train_sampling must be 'natural' or 'targeted'")
-    if not 0.0 <= calibration_size < 0.5:
-        raise ValueError("calibration_size must be in the interval [0, 0.5)")
-
-    if total_budget is None or total_budget >= len(df):
-        train_df, test_df = stratified_split_min_test(
-            df,
-            label_col=label_col,
-            test_size=test_size,
-            min_test_per_class=min_test_per_class,
-            random_state=random_state,
-        )
-        calibration_df: pd.DataFrame | None = None
-        if calibration_size > 0.0:
-            relative_size = calibration_size / (1.0 - test_size)
-            train_df, calibration_df = stratified_split_min_test(
-                train_df,
-                label_col=label_col,
-                test_size=relative_size,
-                min_test_per_class=min_test_per_class,
-                random_state=random_state + 1,
-            )
-        if train_sampling == "targeted":
-            counts = train_df[label_col].value_counts().to_dict()
-            if target_class not in counts:
-                raise ValueError(f"target class {target_class!r} is not present")
-            majority_cap = max(1, int(counts[target_class] / target_ratio))
-            rng = np.random.default_rng(random_state)
-            labels = train_df[label_col].to_numpy()
-            keep_parts: list[np.ndarray] = []
-            for cls, count in counts.items():
-                cls_idx = np.flatnonzero(labels == cls)
-                cap = count if cls == target_class else min(count, majority_cap)
-                if cap < count:
-                    cls_idx = rng.choice(cls_idx, size=cap, replace=False)
-                keep_parts.append(np.asarray(cls_idx, dtype=np.int64))
-            keep = np.concatenate(keep_parts)
-            rng.shuffle(keep)
-            train_df = train_df.iloc[keep].reset_index(drop=True)
-        if calibration_df is None:
-            calibration_df = df.iloc[0:0].copy()
-        return train_df, calibration_df, test_df
-
-    counts = df[label_col].value_counts().sort_index()
-    n_classes = len(counts)
-    minimum_total = n_classes * (min_test_per_class + 1)
-    if total_budget < minimum_total:
-        raise ValueError(
-            f"total_budget={total_budget} is too small; need >= {minimum_total}"
-        )
-
-    requested_test = int(round(total_budget * test_size))
-    test_caps = (counts - 1).clip(lower=0)
-    minimum_test_total = int(test_caps.clip(upper=min_test_per_class).sum())
-    test_budget = max(requested_test, minimum_test_total)
-    test_budget = min(test_budget, total_budget - n_classes)
-    test_quotas = _proportional_quotas(
-        test_caps,
-        test_budget,
-        minimum_per_class=min_test_per_class,
-    )
-
-    calibration_quotas = {str(cls): 0 for cls in counts.index}
-    if calibration_size > 0.0:
-        calibration_budget = int(round(total_budget * calibration_size))
-        calibration_caps = pd.Series({
-            str(cls): int(counts[cls]) - test_quotas[str(cls)] - 1
-            for cls in counts.index
-        }).clip(lower=0)
-        calibration_quotas = _proportional_quotas(
-            calibration_caps,
-            calibration_budget,
-            minimum_per_class=min_test_per_class,
-        )
-
-    available = {
-        str(cls): (
-            int(counts[cls])
-            - test_quotas[str(cls)]
-            - calibration_quotas[str(cls)]
-        )
-        for cls in counts.index
-    }
-    train_budget = (
-        total_budget
-        - sum(test_quotas.values())
-        - sum(calibration_quotas.values())
-    )
-    if train_budget < n_classes:
-        raise ValueError(
-            "total_budget is too small to retain one training row per class "
-            "after test and calibration holdouts"
-        )
-    train_quotas = _proportional_quotas(
-        pd.Series(available, dtype=np.int64),
-        train_budget,
-        minimum_per_class=1,
-    )
-    train_quotas = _keep_all_rare_training_rows(
-        train_quotas,
-        available,
-        rare_threshold=rare_threshold,
-    )
-    if train_sampling == "targeted":
-        train_quotas = _apply_target_ratio(
-            train_quotas,
-            available,
-            target_class=target_class,
-            target_ratio=target_ratio,
-        )
-
-    rng = np.random.default_rng(random_state)
-    train_idx: list[np.ndarray] = []
-    calibration_idx: list[np.ndarray] = []
-    test_idx: list[np.ndarray] = []
-    # ``GroupBy.indices`` returns positional indices, which are safe for iloc
-    # even when a caller provides a non-default DataFrame index.
-    grouped_positions = df.groupby(label_col, sort=True, observed=True).indices
-    for raw_cls, positions in grouped_positions.items():
-        cls = str(raw_cls)
-        idx = np.asarray(positions, dtype=np.int64).copy()
-        rng.shuffle(idx)
-        n_test = test_quotas[cls]
-        n_calibration = calibration_quotas[cls]
-        n_train = train_quotas[cls]
-        test_idx.append(idx[:n_test])
-        calibration_idx.append(idx[n_test:n_test + n_calibration])
-        train_start = n_test + n_calibration
-        train_idx.append(idx[train_start:train_start + n_train])
-
-    train_pos = np.concatenate(train_idx)
-    calibration_pos = np.concatenate(calibration_idx)
-    test_pos = np.concatenate(test_idx)
-    rng.shuffle(train_pos)
-    rng.shuffle(calibration_pos)
-    rng.shuffle(test_pos)
-    train_df = df.iloc[train_pos].reset_index(drop=True)
-    calibration_df = df.iloc[calibration_pos].reset_index(drop=True)
-    test_df = df.iloc[test_pos].reset_index(drop=True)
-    return train_df, calibration_df, test_df
-
-
-# ---------------------------------------------------------------------------
-# Stratified split with per-class minimum test guarantee (Layer 2)
 # ---------------------------------------------------------------------------
 def stratified_split_min_test(
     df: pd.DataFrame,
@@ -1091,6 +863,17 @@ def target_fbeta_score(
 
 
 def search_scorer(metric: str, target_class_index: int):
+    """Scorer for hyperparameter search.
+
+    Every model in a comparison must be tuned against the same objective, so
+    the metric name is validated here rather than forwarded verbatim into
+    sklearn, where a typo would only surface deep inside the search.
+    """
+    if metric not in PRIMARY_METRICS:
+        raise ValueError(
+            f"Unsupported primary_metric {metric!r}. "
+            f"Choices: {', '.join(sorted(PRIMARY_METRICS))}"
+        )
     if metric == "target_f2":
         return make_scorer(
             target_fbeta_score,
@@ -1379,11 +1162,8 @@ def build_pipeline(
         )
     else:
         raise ValueError(f"Unknown model_name: {model_name!r}")
-    # The combined 2017/2018 schema has a few source-specific columns
-    # (notably Protocol and duplicate packet-rate aliases), so unioned rows
-    # contain NaN even after per-file cleaning. Tree models accept NaN, but
-    # nearest-neighbour samplers do not. Median imputation makes every
-    # strategy consume the same finite feature matrix.
+    # Imputation remains inside the fitted pipeline so an uploaded/inference
+    # row with a missing value is handled using train-only statistics.
     steps: list[tuple[str, Any]] = [
         ("imputer", SimpleImputer(strategy="median", keep_empty_features=True)),
         ("scaler", StandardScaler()),
@@ -1434,8 +1214,32 @@ def build_pipeline(
     return pipe
 
 
+# Every tunable model gets a search space of exactly this size, so that a
+# shared ``hp_search_n_iter`` means the same fraction of the space is explored
+# for each one. Equal trial counts over unequal spaces is not a fair
+# comparison: the old grids ranged from 8 combinations (logistic regression,
+# fully enumerated after 8 draws) to 256 (XGBoost, 8% explored at n_iter=20).
+HP_SEARCH_SPACE_SIZE = 144
+
+# Models whose search space is deliberately empty, with the reason. Recorded
+# in the metrics JSON and the report rather than left silent.
+HP_UNTUNED_MODELS = {
+    "stacking": (
+        "StackingClassifier refits every base estimator for each candidate, so "
+        "a comparable search would cost n_iter x the whole ensemble. It is "
+        "reported as untuned rather than given a smaller, unfair budget."
+    ),
+}
+
+
 def hp_grids(model_name: str) -> dict[str, list]:
-    """Small randomized-search distributions per model."""
+    """Randomized-search distribution for one model.
+
+    All grids enumerate :data:`HP_SEARCH_SPACE_SIZE` combinations. None of them
+    touches ``class_weight``: that is owned by ``--imbalance-strategy`` and must
+    stay identical across models, or the imbalance treatment stops being a
+    controlled variable.
+    """
     if model_name == "random_forest":
         return {
             "clf__n_estimators":      [200, 300, 400, 500],
@@ -1446,41 +1250,107 @@ def hp_grids(model_name: str) -> dict[str, list]:
     if model_name == "xgboost":
         return {
             "clf__n_estimators":  [200, 400, 600, 800],
-            "clf__max_depth":     [6, 8, 10, 12],
+            "clf__max_depth":     [6, 8, 10],
             "clf__learning_rate": [0.03, 0.05, 0.1, 0.15],
-            "clf__subsample":     [0.7, 0.8, 0.9, 1.0],
+            "clf__subsample":     [0.8, 0.9, 1.0],
         }
     if model_name == "lightgbm":
         # min_child_samples grid: 1-10 only. Anything >=10 starves the
-        # Heartbleed-class leaf on per-fold CV (8 train rows -> 1-2 per
+        # Heartbleed-class leaf on per-fold CV (7 train rows -> 1-2 per
         # fold). See build_pipeline() docstring for the diagnosis.
         return {
             "clf__n_estimators":       [400, 600, 800, 1000],
             "clf__num_leaves":         [63, 127, 255],
-            "clf__learning_rate":      [0.03, 0.05, 0.1],
+            "clf__learning_rate":      [0.03, 0.05, 0.1, 0.15],
             "clf__min_child_samples":  [1, 2, 5],
         }
     if model_name == "catboost":
         return {
-            "clf__iterations": [300, 400, 500],
-            "clf__depth": [6, 8, 10],
-            "clf__learning_rate": [0.03, 0.05, 0.1],
+            "clf__iterations":    [300, 400, 500, 600],
+            "clf__depth":         [6, 8, 10],
+            "clf__learning_rate": [0.03, 0.05, 0.1, 0.15],
+            "clf__l2_leaf_reg":   [1, 3, 5],
         }
     if model_name == "mlp":
         return {
             "clf__hidden_layer_sizes": [
-                (128, 64), (256, 128, 64), (256, 128, 64, 32),
+                (128, 64), (256, 128, 64), (256, 128, 64, 32), (512, 256, 128),
             ],
             "clf__alpha": [0.00001, 0.0001, 0.001],
-            "clf__learning_rate_init": [0.0005, 0.001, 0.005],
+            "clf__learning_rate_init": [0.0005, 0.001, 0.003, 0.005],
+            "clf__batch_size": [256, 512, 1024],
         }
     if model_name == "logistic_regression":
+        # No max_iter here, deliberately. It is the optimiser's budget, not a
+        # property of the model: including values below the configured budget
+        # makes the search compare under-converged fits against converged ones,
+        # spends trials on results that would never be deployed, and emits
+        # ConvergenceWarning -- which this project promotes to an exception.
+        # The space is filled out along C instead, which is the parameter that
+        # actually governs a logistic regression.
         return {
-            "clf__C": [0.01, 0.1, 1.0, 10.0],
-            "clf__tol": [0.0001, 0.001],
+            "clf__C": [
+                0.001, 0.002, 0.003, 0.005,
+                0.01, 0.02, 0.03, 0.05,
+                0.1, 0.2, 0.3, 0.5,
+                1.0, 2.0, 3.0, 5.0,
+                10.0, 20.0, 30.0, 50.0,
+                100.0, 200.0, 300.0, 500.0,
+            ],
+            # All at or above the sklearn default (1e-4): a looser tolerance
+            # stops earlier, so none of these needs more iterations than the
+            # configured budget already allows.
+            "clf__tol": [0.0001, 0.0005, 0.001],
+            "clf__fit_intercept": [True, False],
         }
     return {}
 
+
+def hp_search_space_size(model_name: str) -> int:
+    """Number of distinct configurations in a model's search space."""
+    size = 1
+    for values in hp_grids(model_name).values():
+        size *= len(values)
+    return size if hp_grids(model_name) else 0
+
+
+def hp_grid_fingerprint(model_name: str) -> str:
+    """Content hash of a model's search space.
+
+    Part of artifact identity: the space size alone cannot detect a grid whose
+    *values* changed, so without this an edited grid would silently reuse a
+    model tuned against the old one.
+    """
+    grid = {key: list(values) for key, values in sorted(hp_grids(model_name).items())}
+    encoded = json.dumps(grid, sort_keys=True, default=str).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()[:16]
+
+
+# Keys produced by extended_metrics_from_confusion, and by
+# measure_inference_cost + the efficiency block around it. Declared explicitly
+# so the EvalResult <-> JSON round trip is exact and testable, instead of the
+# mapping being retyped at each of the three sites that persist a result.
+EXTENDED_METRIC_KEYS = (
+    "precision_macro", "recall_macro", "precision_weighted", "recall_weighted",
+    "f1_macro_reportable", "reportable_min_test", "reportable_classes",
+    "per_class_precision", "per_class_recall", "per_class_f1",
+    "per_class_fpr", "per_class_fnr", "per_class_support",
+    "per_class_false_positives", "per_class_false_negatives",
+    "binary_precision", "binary_recall", "binary_f1",
+    "binary_fpr", "binary_fnr",
+    "binary_false_positives", "binary_false_negatives",
+    "binary_benign_support", "binary_attack_support",
+    "mcc",
+)
+
+EFFICIENCY_KEYS = (
+    "fit_seconds", "model_size_mb",
+    "predict_batch_size", "predict_repeats",
+    "predict_latency_p50_ms", "predict_latency_p95_ms",
+    "throughput_flows_per_sec",
+    "predict_device", "predict_moved_from_gpu",
+    "process_rss_mb", "fit_rss_delta_mb",
+)
 
 # ---------------------------------------------------------------------------
 # Evaluation
@@ -1512,6 +1382,12 @@ class EvalResult:
     target_to_benign_fn: int            = 0
     calibration_recall:  float | None   = None
     calibration_fpr:     float | None   = None
+    # Dimensions 1-2 of the evaluation standard beyond the headline four.
+    extended:            dict[str, Any] = field(default_factory=dict, repr=False)
+    # Dimension 4: computational efficiency.
+    efficiency:          dict[str, Any] = field(default_factory=dict, repr=False)
+    hp_space_size:       int            = 0
+    hp_tuned:            bool           = False
 
 
 def evaluate(model: Pipeline, X_test: np.ndarray, y_test: np.ndarray,
@@ -1519,9 +1395,14 @@ def evaluate(model: Pipeline, X_test: np.ndarray, y_test: np.ndarray,
     y_pred = model.predict(X_test)
     labels = list(range(len(class_names)))
     acc  = accuracy_score(y_test, y_pred)
-    # Average recall over classes actually present in this locked test source.
-    # This avoids treating a prediction-only class as a malformed target set.
-    bacc = recall_score(y_test, y_pred, labels=np.unique(y_test), average="macro", zero_division=0)
+    # Average over the same label set as f1_macro. These two are compared
+    # against each other in the report, so they must share a denominator;
+    # averaging balanced accuracy over np.unique(y_test) while dividing
+    # f1_macro by n_classes made them incomparable whenever a class was
+    # missing from the test set. Under the temporal protocol every class is
+    # present on both sides, so this changes nothing there -- it removes a
+    # trap for corpora where that does not hold.
+    bacc = recall_score(y_test, y_pred, labels=labels, average="macro", zero_division=0)
     f1m = f1_score(y_test, y_pred, labels=labels, average="macro", zero_division=0)
     f1w = f1_score(y_test, y_pred, labels=labels, average="weighted", zero_division=0)
     # labels=range(n) ensures every class appears in the report; otherwise
@@ -1571,6 +1452,134 @@ def target_metrics_from_confusion(
     }
 
 
+def extended_metrics_from_confusion(
+    cm: np.ndarray,
+    class_names: list[str],
+    *,
+    benign_class_index: int,
+    reportable_min_test: int,
+) -> dict[str, Any]:
+    """Metrics the evaluation standard requires that headline numbers omit.
+
+    Everything is derived from the confusion matrix ``evaluate`` already
+    returns, so no second pass over the test set is needed and the numbers
+    cannot drift from the reported matrix.
+
+    Covers, per the evaluation standard:
+
+    * macro and weighted **Precision** and **Recall** (only per-class values
+      existed before, inside the classification report CSV);
+    * per-class one-vs-rest **FPR** and **FNR** -- previously computed for the
+      single configured target class only;
+    * an Attack-vs-BENIGN **binary view**, which is what makes the alert
+      fatigue argument concrete: one FPR over the whole BENIGN population;
+    * ``f1_macro_reportable``, macro-F1 restricted to classes with enough test
+      rows to be a stable estimate. On a 2017-only corpus Heartbleed (4 test
+      rows) and Infiltration (11) each carry 1/9 of plain macro-F1 while being
+      statistical noise, so both numbers are reported side by side rather than
+      one being quietly substituted for the other.
+    * Matthews correlation coefficient, a single imbalance-robust summary.
+    """
+    cm = np.asarray(cm, dtype=np.float64)
+    total = cm.sum()
+    support = cm.sum(axis=1)                      # true rows per class
+    predicted = cm.sum(axis=0)                    # predicted per class
+    tp = np.diag(cm)
+    fn = support - tp
+    fp = predicted - tp
+    tn = total - tp - fn - fp
+
+    with np.errstate(divide="ignore", invalid="ignore"):
+        precision = np.divide(tp, predicted, out=np.zeros_like(tp), where=predicted > 0)
+        recall = np.divide(tp, support, out=np.zeros_like(tp), where=support > 0)
+        f1 = np.divide(2 * precision * recall, precision + recall,
+                       out=np.zeros_like(tp), where=(precision + recall) > 0)
+        fpr = np.divide(fp, fp + tn, out=np.zeros_like(tp), where=(fp + tn) > 0)
+        fnr = np.divide(fn, support, out=np.zeros_like(tp), where=support > 0)
+
+    # Weighted averages use true support, matching sklearn's convention.
+    weights = support / total if total else np.zeros_like(support)
+
+    reportable = support >= reportable_min_test
+    f1_macro_reportable = float(f1[reportable].mean()) if reportable.any() else 0.0
+
+    # Attack vs BENIGN. "Positive" is Attack, so a false positive is a BENIGN
+    # flow raised as an alert and a false negative is a missed attack.
+    attack = np.ones(len(class_names), dtype=bool)
+    attack[benign_class_index] = False
+    benign_total = float(support[benign_class_index])
+    attack_total = float(support[attack].sum())
+    # BENIGN rows predicted as any attack class.
+    benign_as_attack = float(cm[benign_class_index, attack].sum())
+    # Attack rows predicted as BENIGN.
+    attack_as_benign = float(cm[np.ix_(attack, [benign_class_index])].sum())
+    attack_as_attack = float(cm[np.ix_(attack, attack)].sum())
+
+    binary_fpr = benign_as_attack / benign_total if benign_total else 0.0
+    binary_fnr = attack_as_benign / attack_total if attack_total else 0.0
+    binary_recall = attack_as_attack / attack_total if attack_total else 0.0
+    binary_predicted_attack = attack_as_attack + benign_as_attack
+    binary_precision = (
+        attack_as_attack / binary_predicted_attack if binary_predicted_attack else 0.0
+    )
+    binary_f1 = (
+        2 * binary_precision * binary_recall / (binary_precision + binary_recall)
+        if (binary_precision + binary_recall) > 0 else 0.0
+    )
+
+    # Matthews correlation coefficient, multiclass form (Gorodkin 2004).
+    correct = float(tp.sum())
+    sum_pk_tk = float((predicted * support).sum())
+    sum_tk_sq = float((support ** 2).sum())
+    sum_pk_sq = float((predicted ** 2).sum())
+    mcc_denominator = np.sqrt(
+        (total ** 2 - sum_pk_sq) * (total ** 2 - sum_tk_sq)
+    )
+    mcc = (
+        float((correct * total - sum_pk_tk) / mcc_denominator)
+        if mcc_denominator > 0 else 0.0
+    )
+
+    def by_class(values: np.ndarray) -> dict[str, float]:
+        return {name: float(value) for name, value in zip(class_names, values, strict=True)}
+
+    return {
+        "precision_macro": float(precision.mean()),
+        "recall_macro": float(recall.mean()),
+        "precision_weighted": float((precision * weights).sum()),
+        "recall_weighted": float((recall * weights).sum()),
+        "f1_macro_reportable": f1_macro_reportable,
+        "reportable_min_test": int(reportable_min_test),
+        "reportable_classes": [
+            name for name, keep in zip(class_names, reportable, strict=True) if keep
+        ],
+        "per_class_precision": by_class(precision),
+        "per_class_recall": by_class(recall),
+        "per_class_f1": by_class(f1),
+        "per_class_fpr": by_class(fpr),
+        "per_class_fnr": by_class(fnr),
+        "per_class_support": {
+            name: int(value) for name, value in zip(class_names, support, strict=True)
+        },
+        "per_class_false_positives": {
+            name: int(value) for name, value in zip(class_names, fp, strict=True)
+        },
+        "per_class_false_negatives": {
+            name: int(value) for name, value in zip(class_names, fn, strict=True)
+        },
+        "binary_precision": binary_precision,
+        "binary_recall": binary_recall,
+        "binary_f1": binary_f1,
+        "binary_fpr": binary_fpr,
+        "binary_fnr": binary_fnr,
+        "binary_false_positives": int(benign_as_attack),
+        "binary_false_negatives": int(attack_as_benign),
+        "binary_benign_support": int(benign_total),
+        "binary_attack_support": int(attack_total),
+        "mcc": mcc,
+    }
+
+
 def plot_confusion_matrix(cm: np.ndarray, class_names: list[str],
                           out_path: Path, title: str) -> None:
     fig, ax = plt.subplots(figsize=(11, 9), constrained_layout=True)
@@ -1585,6 +1594,151 @@ def plot_confusion_matrix(cm: np.ndarray, class_names: list[str],
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
     fig.savefig(out_path, dpi=120)
     plt.close(fig)
+
+
+@contextmanager
+def _inference_on_cpu(model: Pipeline):
+    """Temporarily move any CUDA-resident estimator to CPU for timing.
+
+    The Deployment ranking is decided on ``predict_latency_p95_ms``. If the two
+    GPU-capable models were timed on a GPU while the other five were timed on a
+    CPU, that ranking would be measuring hardware rather than models, and the
+    comparison would be meaningless.
+
+    Only XGBoost exposes a ``device`` parameter that survives fitting;
+    CatBoost already predicts on CPU regardless of ``task_type="GPU"``. The
+    sweep over ``get_params`` also catches the XGBoost nested inside the
+    stacking ensemble. Restored afterwards, and the artifact on disk is written
+    before this runs, so the saved model is never affected either way.
+    """
+    try:
+        params = model.get_params(deep=True)
+        cuda_params = {
+            name: value
+            for name, value in params.items()
+            if name.endswith("device") and value == "cuda"
+        }
+    except (AttributeError, TypeError):
+        params, cuda_params = {}, {}
+
+    def _set_booster_device(device: str) -> None:
+        """Move the fitted Booster too.
+
+        ``set_params`` only updates the sklearn wrapper. The fitted Booster
+        keeps its own device, and predicting across the mismatch makes
+        XGBoost fall back to a DMatrix copy *and emit a UserWarning* -- which
+        this project promotes to an exception under ``-W error::Warning``.
+        """
+        for name in cuda_params:
+            owner = params.get(name.removesuffix("device").removesuffix("__"))
+            getter = getattr(owner, "get_booster", None)
+            if getter is None:
+                continue
+            with suppress(Exception):
+                getter().set_param({"device": device})
+
+    if cuda_params:
+        model.set_params(**dict.fromkeys(cuda_params, "cpu"))
+        _set_booster_device("cpu")
+    try:
+        yield bool(cuda_params)
+    finally:
+        if cuda_params:
+            model.set_params(**cuda_params)
+            _set_booster_device("cuda")
+
+
+def measure_inference_cost(
+    model: Pipeline,
+    X_test: pd.DataFrame,
+    *,
+    batch_size: int = 1_000,
+    repeats: int = 30,
+    random_state: int = 42,
+    force_cpu: bool = True,
+) -> dict[str, float]:
+    """Per-batch prediction latency and throughput for one fitted pipeline.
+
+    Detection quality is only half of what an IDS is judged on -- a model that
+    cannot keep up with the link is not deployable regardless of its F1. This
+    reports the tail (p95) alongside the median, because an IDS that is usually
+    fast and occasionally slow still drops flows.
+
+    Batches are drawn from random offsets so the measurement is not dominated
+    by whichever class happens to sit at the head of the test set, and one
+    warm-up batch is discarded to exclude lazy allocation inside the estimator.
+
+    ``force_cpu`` keeps every model on the same hardware so the numbers stay
+    comparable across a mixed CPU/GPU run.
+    """
+    n_rows = len(X_test)
+    if n_rows == 0 or repeats < 1:
+        return {}
+    batch_size = min(batch_size, n_rows)
+    rng = np.random.default_rng(random_state)
+
+    context = _inference_on_cpu(model) if force_cpu else nullcontext(False)
+    with context as moved_from_gpu:
+        # Warm-up: the first predict pays one-off allocation costs, and after a
+        # device switch it also pays the transfer.
+        model.predict(X_test.iloc[:batch_size])
+
+        durations: list[float] = []
+        for _ in range(repeats):
+            start = int(rng.integers(0, max(n_rows - batch_size, 0) + 1))
+            batch = X_test.iloc[start:start + batch_size]
+            t_start = time.perf_counter()
+            model.predict(batch)
+            durations.append(time.perf_counter() - t_start)
+
+    seconds = np.asarray(durations, dtype=np.float64)
+    median = float(np.median(seconds))
+    return {
+        "predict_batch_size": int(batch_size),
+        "predict_repeats": int(repeats),
+        "predict_latency_p50_ms": median * 1_000.0,
+        "predict_latency_p95_ms": float(np.percentile(seconds, 95)) * 1_000.0,
+        "throughput_flows_per_sec": (batch_size / median) if median > 0 else 0.0,
+        # Recorded so the report can state where the timing was taken rather
+        # than asserting "on CPU" and hoping.
+        "predict_device": "cpu" if force_cpu else "as-trained",
+        "predict_moved_from_gpu": bool(moved_from_gpu),
+    }
+
+
+def peak_rss_mb() -> float | None:
+    """Resident set size of this process in MiB, or ``None`` if unavailable.
+
+    ``tracemalloc`` is deliberately not used: it only sees Python-level
+    allocations and would miss essentially all of the memory a tree ensemble
+    or a numpy feature matrix occupies, understating the figure badly enough
+    to be misleading.
+    """
+    try:
+        import psutil
+    except ImportError:
+        return None
+    return float(psutil.Process().memory_info().rss) / (1024.0 ** 2)
+
+
+def hardware_profile(cfg: dict[str, Any]) -> dict[str, Any]:
+    """Machine identity, so latency figures stay interpretable later."""
+    profile: dict[str, Any] = {
+        "platform": platform.platform(),
+        "processor": platform.processor() or platform.machine(),
+        "python": platform.python_version(),
+        "logical_cores": os.cpu_count(),
+        "accelerator": cfg.get("accelerator"),
+    }
+    try:
+        import psutil
+
+        profile["logical_cores"] = psutil.cpu_count(logical=True)
+        profile["physical_cores"] = psutil.cpu_count(logical=False)
+        profile["total_ram_gb"] = round(psutil.virtual_memory().total / (1024.0 ** 3), 2)
+    except ImportError:
+        profile["note"] = "psutil unavailable; core/RAM detail omitted"
+    return profile
 
 
 def cross_validate_clean(
@@ -1649,36 +1803,247 @@ def label_shuffle_sanity(estimator: Pipeline, X: pd.DataFrame, y: np.ndarray,
 # ---------------------------------------------------------------------------
 # Report
 # ---------------------------------------------------------------------------
+def _fmt(value: Any, places: int = 4) -> str:
+    """Format a metric for a markdown cell, or ``n/a`` when absent."""
+    if value is None:
+        return "n/a"
+    try:
+        return f"{float(value):.{places}f}"
+    except (TypeError, ValueError):
+        return str(value)
+
+
+def _ranking_section(results: list[EvalResult], cfg: dict[str, Any]) -> list[str]:
+    """Three rankings, each with the declared rule that produced it.
+
+    A single "best model" hides the trade-off the reader actually cares about.
+    The policy lives in ``configs/ranking_policy.json`` and is applied to the
+    same numbers reported above, so a reader can re-derive every winner.
+    """
+    lines = ["## Model rankings -- three axes", ""]
+    payload = [_eval_result_to_dict(r, cfg) for r in results]
+    try:
+        rankings = rank_models(payload, load_ranking_policy())
+    except (OSError, ValueError, KeyError) as exc:
+        lines.append(f"> Ranking policy could not be applied: {exc}")
+        lines.append("")
+        return lines
+
+    lines.append("No single ranking is authoritative. A model that detects the "
+                 "most attacks may raise too many alerts to be usable, and the "
+                 "fastest model is rarely the most accurate, so all three are "
+                 "published side by side with the rule that produced each.")
+    lines.append("")
+    lines.append("| ranking | winner | decided by | rule |")
+    lines.append("|---|---|---:|---|")
+    for entry in rankings.values():
+        winner = entry.get("model") or "none"
+        value = _fmt(entry.get("objective_value"))
+        lines.append(
+            f"| **{entry['label']}** | `{winner}` | "
+            f"{entry.get('objective', '')} = {value} | {entry.get('rule', '')} |"
+        )
+    lines.append("")
+    for entry in rankings.values():
+        if entry.get("status") == "conditional_no_model_meets_constraints":
+            lines.append(
+                f"> **{entry['label']}**: no model satisfied every constraint, "
+                "so the winner shown is the unconstrained best. Treat it as "
+                "provisional."
+            )
+        for reason in entry.get("excluded", []):
+            lines.append(f"> {entry['label']} excluded {reason}")
+    lines.append("")
+    return lines
+
+
+def _consequences_section(
+    results: list[EvalResult],
+    cfg: dict[str, Any],
+    class_names: list[str],
+    per_class_n_test: dict[str, int],
+    per_class_n_train: dict[str, int],
+) -> list[str]:
+    """The four consequences, argued from this run's own numbers.
+
+    Written from the measured confusion matrices rather than as boilerplate,
+    so the claims are checkable against the tables above.
+    """
+    lines = ["## Consequences", ""]
+    scored = [r for r in results if r.extended]
+    if not scored:
+        lines.append("> No per-class detail available in this run.")
+        lines.append("")
+        return lines
+
+    best = max(scored, key=lambda r: r.f1_macro)
+    e = best.extended
+
+    # 1. A false negative costs more than a false positive.
+    lines.append("**1. A false negative is more damaging than a false positive.**")
+    worst_fn = max(
+        scored, key=lambda r: r.extended.get("binary_false_negatives", 0)
+    )
+    lines.append(
+        f"Across this test set the models miss between "
+        f"{min(r.extended.get('binary_false_negatives', 0) for r in scored):,} and "
+        f"{worst_fn.extended.get('binary_false_negatives', 0):,} attack flows. "
+        "Every missed flow is an intrusion that reached the network with no "
+        "alert raised, whereas every false positive costs an analyst a few "
+        "minutes. That asymmetry is why the Security-focused ranking maximises "
+        "recall rather than accuracy."
+    )
+    lines.append("")
+
+    # 2. False positives cause alert fatigue.
+    lines.append("**2. False positives cause alert fatigue.**")
+    benign_support = e.get("binary_benign_support", 0) or 0
+    fp = e.get("binary_false_positives", 0)
+    rate = e.get("binary_fpr", 0.0)
+    try:
+        fpr_cap = float(load_ranking_policy()["max_binary_fpr"])
+        cap_text = (
+            f" The Security ranking therefore caps binary FPR at "
+            f"{fpr_cap:.1%} rather than leaving it free."
+        )
+    except (OSError, ValueError, KeyError):
+        cap_text = ""
+    lines.append(
+        f"`{best.model}` has a binary FPR of {rate:.5f}. That sounds "
+        f"negligible, but against {benign_support:,} benign test flows it is "
+        f"**{fp:,} false alerts**. An analyst who cannot triage that volume "
+        "starts ignoring the queue, at which point the true positives are "
+        "missed too -- so an unbounded FPR destroys detection indirectly."
+        + cap_text
+    )
+    lines.append("")
+
+    # 3. Class imbalance makes accuracy misleading.
+    lines.append("**3. Class imbalance makes accuracy misleading.**")
+    recalls = {k: v for k, v in (e.get("per_class_recall") or {}).items()
+               if k != "BENIGN"}
+    if recalls:
+        weakest = min(recalls, key=recalls.get)
+        weakest_recall = recalls[weakest]
+        missed = e.get("per_class_false_negatives", {}).get(weakest, 0)
+        support = per_class_n_test.get(weakest, 0)
+        lines.append(
+            f"`{best.model}` reports accuracy {best.accuracy:.4f} against a "
+            f"majority-class baseline of {best.majority_baseline:.4f} -- a lift "
+            f"of only {best.accuracy - best.majority_baseline:+.4f}. Its "
+            f"weakest attack class is **{weakest}**, at recall "
+            f"{weakest_recall:.4f}: {missed:,} of {support:,} test flows "
+            "missed. Accuracy hides this completely because the class is a "
+            "rounding error in the total, which is exactly why macro-F1 and "
+            "per-class recall decide this comparison."
+        )
+    lines.append("")
+
+    # 4. Speed matters in an IDS.
+    lines.append("**4. Inference speed is a deployment constraint, not a detail.**")
+    timed = [r for r in results if r.efficiency.get("predict_latency_p95_ms")]
+    if timed:
+        fastest = min(timed, key=lambda r: r.efficiency["predict_latency_p95_ms"])
+        slowest = max(timed, key=lambda r: r.efficiency["predict_latency_p95_ms"])
+        ratio = (
+            slowest.efficiency["predict_latency_p95_ms"]
+            / max(fastest.efficiency["predict_latency_p95_ms"], 1e-9)
+        )
+        lines.append(
+            f"p95 latency spans {fastest.efficiency['predict_latency_p95_ms']:.2f} ms "
+            f"(`{fastest.model}`) to {slowest.efficiency['predict_latency_p95_ms']:.2f} ms "
+            f"(`{slowest.model}`) per {cfg['latency_batch_size']:,}-flow batch -- "
+            f"a {ratio:,.1f}x spread, or "
+            f"{fastest.efficiency.get('throughput_flows_per_sec', 0):,.0f} versus "
+            f"{slowest.efficiency.get('throughput_flows_per_sec', 0):,.0f} flows/s. "
+            f"Artifact size ranges {min(r.efficiency.get('model_size_mb', 0) for r in timed):,.1f} MB "
+            f"to {max(r.efficiency.get('model_size_mb', 0) for r in timed):,.1f} MB. "
+            "A sensor that cannot keep pace with the link drops flows, and a "
+            "dropped flow is a false negative by another name."
+        )
+    else:
+        lines.append(
+            "No latency was measured in this run (all models were reused), so "
+            "this dimension cannot be argued from the current numbers."
+        )
+    lines.append("")
+    return lines
+
+
 def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
                  n_classes: int, class_names: list[str],
                  per_class_n_test: dict[str, int],
                  per_class_n_train: dict[str, int]) -> Path:
     chance = 1.0 / max(n_classes, 1)
+    corpus = DATASET_ID
+    protocol = cfg.get("split_protocol", "unknown")
     lines: list[str] = []
-    lines.append(f"# CICIDS/CIC-IDS raw corpus -- training run `{cfg['run_name']}`")
+    lines.append(f"# {corpus} -- training run `{cfg['run_name']}`")
     lines.append("")
-    lines.append(f"- subsample_n: {cfg['subsample_n']!r}")
-    lines.append(f"- rare_threshold (keep-all-rows below this): "
-                 f"{cfg['rare_threshold']}")
-    lines.append(
-        f"- imbalance_strategy: {cfg['imbalance_strategy']} "
-        f"(target={cfg['target_class']}, target/majority={cfg['target_ratio']:.3f})"
-    )
-    lines.append(
-        f"- FN-aware threshold: validation_size="
-        f"{cfg['threshold_validation_size']:.2f}, "
-        f"max target FPR={cfg['target_max_fpr']:.3f}"
-    )
-    lines.append("- resampling scope: TRAIN/CV folds only; test distribution untouched")
+    lines.append("## Protocol")
+    lines.append("")
+    lines.append(f"- Corpus: {corpus}")
+    lines.append(f"- Split protocol: `{protocol}`")
+    if str(protocol).startswith("cicids2017_temporal"):
+        lines.append(
+            "  - Chronological 70/30 inside every (capture file, class) group: "
+            "the earliest 70% of each class's flows train, the latest 30% test. "
+            "No test flow precedes the training flows of its own class."
+        )
+        lines.append(
+            "  - Ordering key: original CSV row position. The 2017 export has no "
+            "`Timestamp` column, so row order is used and is verified against "
+            "the published CIC attack schedule before every run."
+        )
+        lines.append(
+            "  - Source holdout is impossible on this corpus: each attack class "
+            "occurs in exactly one capture file, so holding out a file would "
+            "leave its class with no training rows."
+        )
+        lines.append(
+            "  - CV uses StratifiedKFold, not GroupKFold by source: with one "
+            "capture per class, source grouping would place an entire class in "
+            "a single fold."
+        )
+    else:
+        lines.append(f"- subsample_n: {cfg['subsample_n']!r}")
+        lines.append(f"- rare_threshold (keep-all-rows below this): "
+                     f"{cfg['rare_threshold']}")
     lines.append(f"- test_size: {cfg['test_size']}, "
                  f"min_test_per_class: {cfg['min_test_per_class']}")
+    lines.append(
+        f"- imbalance_strategy: {cfg['imbalance_strategy']} "
+        "(identical for every model, so imbalance handling stays a "
+        "controlled variable)"
+    )
+    lines.append("- resampling scope: TRAIN/CV folds only; test distribution untouched")
     if cfg["cv_check"]:
-        lines.append(f"- CV: StratifiedKFold(n_splits={cfg['cv_splits']})")
+        lines.append(f"- CV: {cfg['cv_splits']}-fold, scored on macro-F1")
     else:
         lines.append("- CV: skipped")
-    lines.append(f"- HP search: {cfg['hp_search']} "
-                 f"(n_iter={cfg['hp_search_n_iter']}, "
-                 f"subsample={cfg['hp_search_subsample']})")
+    lines.append("")
+    lines.append("### Tuning fairness")
+    lines.append("")
+    if cfg["hp_search"]:
+        lines.append(
+            f"Every tunable model is searched with the same method "
+            f"(RandomizedSearchCV), the same objective "
+            f"(`{cfg['primary_metric']}`), the same budget "
+            f"(n_iter={cfg['hp_search_n_iter']} on a "
+            f"{cfg['hp_search_subsample']:,}-row train subset), and a search "
+            f"space of exactly {HP_SEARCH_SPACE_SIZE} configurations -- so the "
+            f"same fraction ({cfg['hp_search_n_iter'] / HP_SEARCH_SPACE_SIZE:.1%}) "
+            "of each space is explored. Equal trial counts over unequal spaces "
+            "would not be a fair comparison."
+        )
+    else:
+        lines.append("Hyperparameter search was skipped for this run; every "
+                     "model uses its configured defaults.")
+    for name, reason in HP_UNTUNED_MODELS.items():
+        if name in cfg["models"]:
+            lines.append("")
+            lines.append(f"> `{name}` is **not** tuned. {reason}")
+    lines.append("")
     lines.append(f"- Random state: {cfg['random_state']}")
     lines.append(f"- Classes ({n_classes}): {', '.join(class_names)}")
     lines.append("")
@@ -1703,12 +2068,52 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
                  "rows after subsampling, especially Heartbleed.")
     lines.append("")
 
-    lines.append("## Headline metrics")
+    # ---- Dimension 1: Classification Performance --------------------
+    lines.append("## Dimension 1 -- Classification Performance")
     lines.append("")
-    lines.append("| model | accuracy | balanced acc | f1_macro | f1_weighted "
-                 "| CV f1_macro (mean +/- std) | majority baseline acc "
+    lines.append("Macro-F1 and per-class recall decide this comparison, not "
+                 "accuracy. With BENIGN at "
+                 f"{max(per_class_n_test.values()) / max(sum(per_class_n_test.values()), 1):.1%} "
+                 "of the test set, a model that predicted BENIGN and nothing "
+                 "else would already score that as accuracy while detecting "
+                 "no attacks at all.")
+    lines.append("")
+    lines.append("| model | accuracy | balanced acc | macro P | macro R | "
+                 "f1_macro | f1_macro (reportable) | f1_weighted | wtd P | "
+                 "wtd R | MCC |")
+    lines.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
+    for r in sorted(results, key=lambda item: -item.f1_macro):
+        e = r.extended
+        lines.append(
+            f"| {r.model} | {r.accuracy:.4f} | {r.balanced_accuracy:.4f} | "
+            f"{_fmt(e.get('precision_macro'))} | {_fmt(e.get('recall_macro'))} | "
+            f"{r.f1_macro:.4f} | {_fmt(e.get('f1_macro_reportable'))} | "
+            f"{r.f1_weighted:.4f} | {_fmt(e.get('precision_weighted'))} | "
+            f"{_fmt(e.get('recall_weighted'))} | {_fmt(e.get('mcc'))} |"
+        )
+    lines.append("")
+    reportable = next(
+        (r.extended.get("reportable_classes") for r in results
+         if r.extended.get("reportable_classes")), None,
+    )
+    if reportable is not None:
+        excluded = [c for c in class_names if c not in reportable]
+        lines.append(
+            f"> `f1_macro (reportable)` averages only the {len(reportable)} "
+            f"classes with at least {cfg['reportable_min_test']} test rows"
+            + (f", excluding {', '.join(excluded)}. " if excluded else ". ")
+            + "Both numbers are shown because plain macro-F1 gives a class "
+            "with a handful of test rows the same weight as one with "
+            "hundreds of thousands; neither number alone tells the whole "
+            "story."
+        )
+        lines.append("")
+
+    lines.append("### Trust checks")
+    lines.append("")
+    lines.append("| model | CV f1_macro (mean +/- std) | majority baseline acc "
                  "| shuffled-labels f1_macro |")
-    lines.append("|---|---|---|---|---|---|---|---|")
+    lines.append("|---|---|---:|---:|")
     for r in results:
         shuf = (f"{r.shuffle_f1_macro:.4f}"
                 if r.shuffle_f1_macro is not None else "skipped")
@@ -1717,12 +2122,142 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
             if r.cv_mean is not None and r.cv_std is not None else "skipped"
         )
         lines.append(
-            f"| {r.model} | {r.accuracy:.4f} | {r.balanced_accuracy:.4f} | "
-            f"{r.f1_macro:.4f} | {r.f1_weighted:.4f} | "
-            f"{cv_text} | "
-            f"{r.majority_baseline:.4f} | {shuf} |"
+            f"| {r.model} | {cv_text} | {r.majority_baseline:.4f} | {shuf} |"
         )
     lines.append("")
+
+    # ---- Dimension 2: Attack Detection Ability ----------------------
+    lines.append("## Dimension 2 -- Attack Detection Ability")
+    lines.append("")
+    lines.append("Attack-vs-BENIGN view. A false positive is a benign flow "
+                 "raised as an alert; a false negative is an attack that "
+                 "reached the network unnoticed.")
+    lines.append("")
+    lines.append("| model | binary recall (DR) | binary precision | binary F1 "
+                 "| FPR | FNR | false alerts | attacks missed |")
+    lines.append("|---|---:|---:|---:|---:|---:|---:|---:|")
+    for r in sorted(results, key=lambda item: -(item.extended.get("binary_recall") or 0.0)):
+        e = r.extended
+        if not e:
+            continue
+        lines.append(
+            f"| {r.model} | {_fmt(e.get('binary_recall'))} | "
+            f"{_fmt(e.get('binary_precision'))} | {_fmt(e.get('binary_f1'))} | "
+            f"{_fmt(e.get('binary_fpr'), 5)} | {_fmt(e.get('binary_fnr'), 5)} | "
+            f"{e.get('binary_false_positives', 0):,} | "
+            f"{e.get('binary_false_negatives', 0):,} |"
+        )
+    lines.append("")
+
+    lines.append("### Per-class recall (detection rate)")
+    lines.append("")
+    header = "| model | " + " | ".join(class_names) + " |"
+    lines.append(header)
+    lines.append("|---" * (len(class_names) + 1) + "|")
+    for r in results:
+        recalls = r.extended.get("per_class_recall") or {}
+        if not recalls:
+            continue
+        cells = " | ".join(_fmt(recalls.get(cls)) for cls in class_names)
+        lines.append(f"| {r.model} | {cells} |")
+    lines.append("")
+
+    lines.append("### Per-class false-negative rate")
+    lines.append("")
+    lines.append(header)
+    lines.append("|---" * (len(class_names) + 1) + "|")
+    for r in results:
+        fnrs = r.extended.get("per_class_fnr") or {}
+        if not fnrs:
+            continue
+        cells = " | ".join(_fmt(fnrs.get(cls)) for cls in class_names)
+        lines.append(f"| {r.model} | {cells} |")
+    lines.append("")
+
+    lines.append("### Per-class false-positive rate")
+    lines.append("")
+    lines.append(header)
+    lines.append("|---" * (len(class_names) + 1) + "|")
+    for r in results:
+        fprs = r.extended.get("per_class_fpr") or {}
+        if not fprs:
+            continue
+        cells = " | ".join(_fmt(fprs.get(cls), 5) for cls in class_names)
+        lines.append(f"| {r.model} | {cells} |")
+    lines.append("")
+    lines.append("Confusion matrices: `<model>_confusion_matrix.png`; "
+                 "full per-class precision/recall/F1: `<model>_per_class.csv`.")
+    lines.append("")
+
+    # ---- Dimension 3: Operational Impact ----------------------------
+    lines.append("## Dimension 3 -- Operational Impact")
+    lines.append("")
+    lines.append("What the error rates cost an analyst on this test set "
+                 f"({sum(per_class_n_test.values()):,} flows, of which "
+                 f"{per_class_n_test.get('BENIGN', 0):,} are BENIGN).")
+    lines.append("")
+    lines.append("| model | false alerts | alerts per 10k benign flows | "
+                 "attacks missed | worst-detected class | its recall |")
+    lines.append("|---|---:|---:|---:|---|---:|")
+    for r in sorted(results, key=lambda item: item.extended.get("binary_false_negatives", 0)):
+        e = r.extended
+        if not e:
+            continue
+        benign_support = e.get("binary_benign_support", 0) or 0
+        fp = e.get("binary_false_positives", 0)
+        per_10k = (fp / benign_support * 10_000) if benign_support else 0.0
+        recalls = e.get("per_class_recall") or {}
+        attack_recalls = {k: v for k, v in recalls.items() if k != "BENIGN"}
+        worst = min(attack_recalls, key=attack_recalls.get) if attack_recalls else "-"
+        lines.append(
+            f"| {r.model} | {fp:,} | {per_10k:,.1f} | "
+            f"{e.get('binary_false_negatives', 0):,} | {worst} | "
+            f"{_fmt(attack_recalls.get(worst))} |"
+        )
+    lines.append("")
+
+    # ---- Dimension 4: Computational Efficiency ----------------------
+    lines.append("## Dimension 4 -- Computational Efficiency")
+    lines.append("")
+    lines.append("Inference is measured on CPU for **every** model in batches "
+                 f"of {cfg['latency_batch_size']:,} flows, "
+                 f"{cfg['latency_repeats']} repeats from random offsets, after "
+                 "one discarded warm-up batch. p95 matters as much as the "
+                 "median: an IDS that is usually fast and occasionally slow "
+                 "still drops flows.")
+    moved = sorted(r.model for r in results
+                   if r.efficiency.get("predict_moved_from_gpu"))
+    if moved:
+        lines.append("")
+        lines.append(
+            f"> {', '.join(moved)} trained on GPU and were moved to CPU for "
+            "timing. Otherwise this table would rank hardware rather than "
+            "models -- and the Deployment ranking is decided on p95 latency."
+        )
+    lines.append("")
+    lines.append("| model | trained on | fit time | p50 latency | p95 latency "
+                 "| throughput | model size |")
+    lines.append("|---|---|---:|---:|---:|---:|---:|")
+    for r in sorted(results, key=lambda item: (
+        item.efficiency.get("predict_latency_p95_ms") or float("inf")
+    )):
+        eff = r.efficiency
+        if not eff:
+            continue
+        fit = eff.get("fit_seconds")
+        lines.append(
+            f"| {r.model} | {effective_accelerator(cfg, r.model)} | "
+            f"{f'{fit:,.1f}s' if fit is not None else 'resumed'} | "
+            f"{_fmt(eff.get('predict_latency_p50_ms'), 2)} ms | "
+            f"{_fmt(eff.get('predict_latency_p95_ms'), 2)} ms | "
+            f"{eff.get('throughput_flows_per_sec', 0):,.0f} flows/s | "
+            f"{eff.get('model_size_mb', 0):,.1f} MB |"
+        )
+    lines.append("")
+    if not any(r.efficiency for r in results):
+        lines.append("> No efficiency figures in this run -- every model was "
+                     "reused from a previous run's artifacts.")
+        lines.append("")
 
     lines.append(f"## {cfg['target_class']} false-negative metrics")
     lines.append("")
@@ -1802,23 +2337,55 @@ def write_report(results: list[EvalResult], outdir: Path, cfg: dict[str, Any],
         lines.extend("- " + v for v in verdict)
         lines.append("")
 
+    lines.extend(_ranking_section(results, cfg))
+    lines.extend(_consequences_section(results, cfg, class_names,
+                                       per_class_n_test, per_class_n_train))
+
     lines.append("## Top weaknesses + concrete improvements")
     lines.append("")
-    lines.append("1. **Minority-class metric variance** -- Heartbleed still "
-                 "has only 11 rows in the combined raw corpus, so its "
-                 "per-class metric is anecdotal. Improvement: report "
-                 "per-class metrics with sample-size caveat (this report "
-                 "already does this).")
-    lines.append("2. **Training-sample bias** -- if `subsample_n` is below "
-                 "the full corpus, some BENIGN application protocols may be "
-                 "underrepresented. The held-out test remains naturally "
-                 "distributed, but final research numbers should also include "
-                 "a larger-RAM sensitivity run.")
-    lines.append("3. **CICIDS/CIC-IDS labelling noise** -- labels are assigned "
-                 "per attack window, not per flow, so BENIGN flows during "
-                 "an attack window may be mislabelled. Improvement: keep a "
-                 "separate cross-dataset validation run when reporting final "
-                 "research numbers.")
+    rare = [c for c in class_names if per_class_n_test.get(c, 0) < cfg["reportable_min_test"]]
+    if rare:
+        detail = ", ".join(
+            f"{c} ({per_class_n_train.get(c, 0)} train / {per_class_n_test.get(c, 0)} test)"
+            for c in rare
+        )
+        lines.append(
+            f"1. **Minority-class metric variance** -- {detail}. A per-class "
+            "recall computed from single-digit test rows moves in steps of "
+            "tens of percent, so it is an anecdote, not an estimate. This "
+            "report therefore publishes `f1_macro (reportable)` alongside "
+            "plain macro-F1 and flags every affected class in the sample-size "
+            "table above."
+        )
+    else:
+        lines.append(
+            f"1. **Minority-class metric variance** -- every class has at "
+            f"least {cfg['reportable_min_test']} test rows in this run, so no "
+            "per-class metric is sample-size limited."
+        )
+    lines.append(
+        "2. **Single-capture attack families** -- in CICIDS2017 each attack "
+        "class occurs in exactly one capture file, so a model sees only one "
+        "instance of each attack campaign. The chronological split prevents "
+        "leakage within a capture but cannot show whether a model generalises "
+        "to a *different* execution of the same attack. Improvement: validate "
+        "the champion against CSE-CIC-IDS2018 as an unseen-campaign test."
+    )
+    lines.append(
+        "3. **CICIDS labelling noise** -- labels are assigned per attack "
+        "window, not per flow, so benign flows inside an attack window can "
+        "carry an attack label. This inflates every model's apparent "
+        "performance equally, so the ranking stays valid while the absolute "
+        "numbers should be read as an upper bound."
+    )
+    lines.append(
+        "4. **Flow-completion ordering** -- CICFlowMeter emits a record when a "
+        "flow terminates, so the chronological order is by completion, not by "
+        "start. Long-lived attacks (DoS GoldenEye) therefore trail past their "
+        "attack window. This is the correct ordering for an IDS -- a flow's "
+        "features only exist once it completes -- but it is not the same as "
+        "ordering by attack time."
+    )
     lines.append("")
 
     lines.append("## Verifying the clean run")
@@ -1892,7 +2459,13 @@ def parse_args(argv: list[str]) -> dict[str, Any]:
         elif tok == "--gpu-devices":
             args["gpu_devices"] = next(it)
         elif tok == "--primary-metric":
-            args["primary_metric"] = next(it)
+            value = next(it)
+            if value not in PRIMARY_METRICS:
+                raise SystemExit(
+                    f"--primary-metric must be one of: "
+                    f"{', '.join(sorted(PRIMARY_METRICS))}"
+                )
+            args["primary_metric"] = value
         elif tok == "--imbalance-strategy":
             value = next(it).lower()
             if value not in IMBALANCE_STRATEGIES:
@@ -2021,12 +2594,60 @@ def main(argv: list[str] | None = None) -> int:
 
     set_seeds(cfg["random_state"])
 
+    if cfg["accelerator"] == "gpu":
+        from src.training.gpu import run_gpu_acceptance
+
+        gpu_check = run_gpu_acceptance(str(cfg["gpu_devices"]))
+        failures = {
+            name: item["detail"]
+            for name, item in gpu_check["checks"].items()
+            if not item["passed"]
+        }
+        if failures:
+            raise SystemExit(f"GPU acceptance failed: {failures}")
+        cpu_only = set(CONFIG["models"]) - GPU_CAPABLE_MODELS
+        selected_cpu_models = sorted(set(cfg["models"]) & cpu_only)
+        if selected_cpu_models:
+            LOG.info(
+                "GPU mode accelerates %s only; these selected models stay on "
+                "CPU and keep reusing their CPU artifacts: %s",
+                ", ".join(sorted(GPU_CAPABLE_MODELS)), selected_cpu_models,
+            )
+        # Parallel CV folds each hold their own copy of the training matrix on
+        # the device. On a single consumer GPU that is the fastest way to hit
+        # an out-of-memory abort, and this project must not silently fall back
+        # to CPU, so the search is serialised instead.
+        if cfg["hp_search_jobs"] > 1:
+            LOG.info(
+                "Serialising HP search (hp_search_jobs %d -> 1): concurrent "
+                "fits would each need their own copy of the data in VRAM",
+                cfg["hp_search_jobs"],
+            )
+            cfg["hp_search_jobs"] = 1
+
     outdir = result_run_dir(str(cfg["run_name"]), results_root=Path(cfg["results_root"]))
     outdir.mkdir(parents=True, exist_ok=True)
     LOG.info("Artefacts -> %s", outdir)
 
     # --- Stage 1: load + clean (cached) ---------------------------------
     t0 = time.time()
+
+    # The manifest is read before the corpus because a temporal manifest names
+    # the dataset it applies to, which selects the cache file to load.
+    split_manifest: dict[str, Any] | None = None
+    manifest_is_temporal = False
+    if cfg.get("split_manifest"):
+        manifest_path = Path(cfg["split_manifest"])
+        peeked = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest_is_temporal = is_temporal_manifest(peeked)
+        if not manifest_is_temporal:
+            raise SystemExit(
+                f"{manifest_path} is not a CICIDS2017 temporal manifest "
+                f"(version={peeked.get('version')!r}). The source-held-out "
+                "protocol was removed with CSE-CIC-IDS2018 support."
+            )
+        split_manifest = load_temporal_manifest(manifest_path)
+
     df = load_and_clean_cached(cfg, force=args["refresh_cache"])
 
     # Drop any class unable to support a train/test split. This happens only
@@ -2045,37 +2666,42 @@ def main(argv: list[str] | None = None) -> int:
              df[cfg["label_column"]].value_counts().to_string())
 
     # --- Stage 2/3: natural holdout first; imbalance handling on TRAIN ---
-    data_sampling = (
-        "targeted" if cfg["imbalance_strategy"] == "targeted" else "natural"
-    )
-    if cfg.get("split_manifest"):
-        manifest = load_split_manifest(Path(cfg["split_manifest"]))
-        cfg["split_protocol"] = manifest["version"]
-        train_df, calibration_df, test_df = deterministic_source_split(
+    if manifest_is_temporal:
+        assert split_manifest is not None
+        cfg["split_protocol"] = split_manifest["version"]
+        # Prove the ordering column really is chronological before trusting it
+        # to define train/test. Cheap: one groupby over metadata columns.
+        chronology = validate_capture_chronology(
+            df, label_column=cfg["label_column"], order_column=ROW_INDEX_COLUMN,
+        )
+        LOG.info("Capture chronology validated against the published CIC "
+                 "schedule (%d ordered pair(s))", chronology["checked_pairs"])
+        train_df, calibration_df, test_df = temporal_source_split(
             df,
             label_column=cfg["label_column"],
-            quotas=manifest["train_quotas"],
-            roles=manifest["roles"],
+            order_column=ROW_INDEX_COLUMN,
+            test_size=float(split_manifest["test_size"]),
+            min_test_per_class=int(split_manifest["min_test_per_class"]),
         )
+        verification = verify_split_against_manifest(
+            train_df, test_df, split_manifest, label_column=cfg["label_column"],
+        )
+        if not verification["valid"]:
+            raise SystemExit(
+                "Temporal split does not match its manifest:\n  - "
+                + "\n  - ".join(verification["mismatches"])
+            )
         LOG.info(
-            "Using deterministic source-held-out manifest %s (%s)",
-            cfg["split_manifest"],
-            manifest["version"],
+            "Using temporal per-source per-class manifest %s (%s); counts "
+            "verified against the manifest",
+            cfg["split_manifest"], split_manifest["version"],
         )
     else:
-        cfg["split_protocol"] = "stratified_row_holdout_70_30"
-        train_df, calibration_df, test_df = budgeted_train_test_split(
-            df,
-            label_col=cfg["label_column"],
-            total_budget=cfg["subsample_n"],
-            test_size=cfg["test_size"],
-            min_test_per_class=cfg["min_test_per_class"],
-            rare_threshold=cfg["rare_threshold"],
-            train_sampling=data_sampling,
-            target_class=cfg["target_class"],
-            target_ratio=cfg["target_ratio"],
-            random_state=cfg["random_state"],
-            calibration_size=cfg["threshold_validation_size"],
+        raise SystemExit(
+            "--split-manifest is required. The chronological manifest defines "
+            "the delivery protocol; there is no second split path. Use "
+            "configs/splits/cicids2017_temporal_70_30.json (main.py passes it "
+            "by default)."
         )
     LOG.info(
         "Split: train=%d, calibration=%d, test=%d "
@@ -2130,7 +2756,22 @@ def main(argv: list[str] | None = None) -> int:
     LOG.info("Per-class n_test:  %s", per_class_n_test)
 
     groups_train: np.ndarray | None = None
-    if cfg.get("split_manifest"):
+    if manifest_is_temporal:
+        # GroupKFold by source_file is wrong here: every CICIDS2017 attack
+        # class lives in exactly one capture, so grouping by source would put
+        # an entire class inside a single fold and leave the others with none
+        # of it. CV feeds only HP search and the stability check -- never the
+        # headline number, which comes from the locked chronological test set.
+        min_train_class = min(per_class_n_train.values())
+        eff_splits = max(2, min(cfg["cv_splits"], min_train_class))
+        if eff_splits != cfg["cv_splits"]:
+            LOG.warning("Clipping CV n_splits %d -> %d (smallest class has %d train rows)",
+                        cfg["cv_splits"], eff_splits, min_train_class)
+        cv = StratifiedKFold(n_splits=eff_splits, shuffle=True,
+                             random_state=cfg["random_state"])
+        LOG.info("Using %d-fold StratifiedKFold (source grouping is degenerate "
+                 "for a single-capture-per-class corpus)", eff_splits)
+    elif cfg.get("split_manifest"):
         groups_train = train_df["source_file"].to_numpy()
         n_groups = len(np.unique(groups_train))
         eff_splits = max(2, min(cfg["cv_splits"], n_groups))
@@ -2167,6 +2808,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     # --- Stage 4: per-model train + evaluate (skip-if-exists) -----------
+    corpus_label = DATASET_ID
     results: list[EvalResult] = []
     for model_name in cfg["models"]:
         LOG.info("=" * 64)
@@ -2180,7 +2822,7 @@ def main(argv: list[str] | None = None) -> int:
         can_reuse = (
             saved is not None
             and not args["force"]
-            and _imbalance_config_matches(saved, cfg)
+            and _imbalance_config_matches(saved, cfg, model_name)
         )
         if can_reuse:
             LOG.info("Found matching existing %s; skipping fit (use --force to retrain)",
@@ -2199,16 +2841,18 @@ def main(argv: list[str] | None = None) -> int:
                     target_class_index=target_class_index,
                     benign_class_index=benign_class_index,
                 )
+                refreshed_extended = extended_metrics_from_confusion(
+                    cm, class_names,
+                    benign_class_index=benign_class_index,
+                    reportable_min_test=cfg["reportable_min_test"],
+                )
                 per_class_df.to_csv(
                     outdir / f"{model_name}_per_class.csv", index=True
                 )
                 plot_confusion_matrix(
                     cm, class_names,
                     outdir / f"{model_name}_confusion_matrix.png",
-                    title=(
-                        f"{model_name} -- CICIDS2017 + "
-                        "CSE-CIC-IDS2018 test set"
-                    ),
+                    title=f"{model_name} -- {corpus_label} test set",
                 )
                 saved.update({
                     "accuracy": acc,
@@ -2218,7 +2862,8 @@ def main(argv: list[str] | None = None) -> int:
                     "majority_baseline_acc": majority_baseline,
                     "near_perfect_flag": acc >= cfg["near_perfect_threshold"],
                     **refreshed_target,
-                    **_imbalance_metadata(cfg),
+                    **refreshed_extended,
+                    **_imbalance_metadata(cfg, model_name),
                 })
                 LOG.info("Refreshed %s metrics + confusion matrix", model_name)
             assert saved is not None
@@ -2247,6 +2892,10 @@ def main(argv: list[str] | None = None) -> int:
             and checkpoint.get("phase") == "model_ready"
         )
         threshold_calibration: ThresholdCalibration | None = None
+        # None on a resumed run: the fit happened in an earlier process, so
+        # reporting a fit time here would be a fabrication.
+        fit_seconds: float | None = None
+        peak_rss_before = peak_rss_mb()
         if resume_ready:
             pipeline = joblib.load(model_path)
             best_params = dict(checkpoint.get("best_params", {}))
@@ -2303,10 +2952,11 @@ def main(argv: list[str] | None = None) -> int:
                 "model": model_name, "run_signature": run_signature,
                 "phase": "fitting", "best_params": best_params,
             })
-            t_fit = time.time()
+            t_fit = time.perf_counter()
             pipeline.fit(X_train, y_train)
+            fit_seconds = time.perf_counter() - t_fit
             LOG.info("%s final fit on full train (%d rows): %.1fs",
-                     model_name, len(y_train), time.time() - t_fit)
+                     model_name, len(y_train), fit_seconds)
 
             if len(y_calibration):
                 t_calibration = time.time()
@@ -2343,8 +2993,22 @@ def main(argv: list[str] | None = None) -> int:
             target_class_index=target_class_index,
             benign_class_index=benign_class_index,
         )
+        extended = extended_metrics_from_confusion(
+            cm, class_names,
+            benign_class_index=benign_class_index,
+            reportable_min_test=cfg["reportable_min_test"],
+        )
         LOG.info("%s test: acc=%.4f, bal_acc=%.4f, f1_macro=%.4f, "
                  "f1_weighted=%.4f", model_name, acc, bacc, f1m, f1w)
+        LOG.info(
+            "%s detection: macro P=%.4f R=%.4f | binary FPR=%.5f (%d benign "
+            "alerts), FNR=%.5f (%d attacks missed) | f1_macro_reportable=%.4f",
+            model_name,
+            extended["precision_macro"], extended["recall_macro"],
+            extended["binary_fpr"], extended["binary_false_positives"],
+            extended["binary_fnr"], extended["binary_false_negatives"],
+            extended["f1_macro_reportable"],
+        )
         LOG.info(
             "%s target test: recall=%.4f, F2=%.4f, FPR=%.4f, "
             "FN=%d (to BENIGN=%d), FP=%d",
@@ -2389,14 +3053,41 @@ def main(argv: list[str] | None = None) -> int:
 
         # ----- Persist ------------------------------------------------
         atomic_joblib_dump(pipeline, model_path)
+
+        # ----- Dimension 4: computational efficiency ------------------
+        # Measured after the artifact is on disk so model_size_mb is the real
+        # deployed size, and after CV/shuffle so those refits cannot inflate
+        # the latency sample through cache pressure.
+        efficiency: dict[str, Any] = {
+            "fit_seconds": fit_seconds,
+            "model_size_mb": model_path.stat().st_size / (1024.0 ** 2),
+            **measure_inference_cost(
+                pipeline, X_test,
+                batch_size=cfg["latency_batch_size"],
+                repeats=cfg["latency_repeats"],
+                random_state=cfg["random_state"],
+            ),
+        }
+        peak_rss_after = peak_rss_mb()
+        if peak_rss_before is not None and peak_rss_after is not None:
+            efficiency["process_rss_mb"] = peak_rss_after
+            efficiency["fit_rss_delta_mb"] = peak_rss_after - peak_rss_before
+        LOG.info(
+            "%s efficiency: fit=%s, p50=%.2fms, p95=%.2fms, %.0f flows/s, "
+            "%.1f MB on disk",
+            model_name,
+            f"{fit_seconds:.1f}s" if fit_seconds is not None else "resumed",
+            efficiency.get("predict_latency_p50_ms", float("nan")),
+            efficiency.get("predict_latency_p95_ms", float("nan")),
+            efficiency.get("throughput_flows_per_sec", float("nan")),
+            efficiency["model_size_mb"],
+        )
+
         per_class_df.to_csv(outdir / f"{model_name}_per_class.csv", index=True)
         plot_confusion_matrix(
             cm, class_names,
             outdir / f"{model_name}_confusion_matrix.png",
-            title=(
-                f"{model_name} -- CICIDS2017 + "
-                "CSE-CIC-IDS2018 test set"
-            ),
+            title=f"{model_name} -- {corpus_label} test set",
         )
 
         r = EvalResult(
@@ -2424,6 +3115,10 @@ def main(argv: list[str] | None = None) -> int:
                 target_metrics["target_false_negatives"]
             ),
             target_to_benign_fn=int(target_metrics["target_to_benign_fn"]),
+            extended=extended,
+            efficiency=efficiency,
+            hp_space_size=hp_search_space_size(model_name),
+            hp_tuned=bool(cfg["hp_search"] and hp_grids(model_name)),
             calibration_recall=(
                 threshold_calibration.recall
                 if threshold_calibration is not None else None
@@ -2436,33 +3131,10 @@ def main(argv: list[str] | None = None) -> int:
         results.append(r)
 
         # Per-model metrics JSON (used by skip-if-exists logic on rerun).
-        per_model_metrics.write_text(json_dumps_strict({
-            "model":                  r.model,
-            "accuracy":               r.accuracy,
-            "balanced_accuracy":      r.balanced_accuracy,
-            "f1_macro":               r.f1_macro,
-            "f1_weighted":            r.f1_weighted,
-            "cv_f1_macro_mean":       r.cv_mean,
-            "cv_f1_macro_std":        r.cv_std,
-            "cv_f1_macro_scores":     r.cv_scores,
-            "label_shuffle_acc":      r.shuffle_accuracy,
-            "label_shuffle_f1_macro": r.shuffle_f1_macro,
-            "majority_baseline_acc":  r.majority_baseline,
-            "best_params":            r.best_params,
-            "target_threshold":       r.target_threshold,
-            "target_precision":       r.target_precision,
-            "target_recall":          r.target_recall,
-            "target_f1":              r.target_f1,
-            "target_f2":              r.target_f2,
-            "target_fpr":             r.target_fpr,
-            "target_false_positives": r.target_false_positives,
-            "target_false_negatives": r.target_false_negatives,
-            "target_to_benign_fn":    r.target_to_benign_fn,
-            "calibration_recall":     r.calibration_recall,
-            "calibration_fpr":        r.calibration_fpr,
-            "near_perfect_flag":      r.accuracy >= cfg["near_perfect_threshold"],
-            **_imbalance_metadata(cfg),
-        }, indent=2), encoding="utf-8")
+        per_model_metrics.write_text(
+            json_dumps_strict(_eval_result_to_dict(r, cfg), indent=2),
+            encoding="utf-8",
+        )
         write_checkpoint(checkpoint_path, {
             "model": model_name,
             "run_signature": run_signature,
@@ -2477,7 +3149,7 @@ def main(argv: list[str] | None = None) -> int:
         per_model_metrics = outdir / f"{model_name}_metrics.json"
         if per_model_metrics.exists():
             saved = json.loads(per_model_metrics.read_text(encoding="utf-8"))
-            if _imbalance_config_matches(saved, cfg):
+            if _imbalance_config_matches(saved, cfg, model_name):
                 results.append(_eval_result_from_saved(saved, model_name))
 
     # --- Stage 5: shared artefacts + aggregate report -------------------
@@ -2502,34 +3174,10 @@ def main(argv: list[str] | None = None) -> int:
         "duration_seconds": round(time.time() - t0, 2),
         "split_manifest": str(cfg["split_manifest"]) if cfg.get("split_manifest") else None,
         "split_protocol": cfg["split_protocol"],
-        "models": [
-            {
-                "model":              r.model,
-                "accuracy":           r.accuracy,
-                "balanced_accuracy":  r.balanced_accuracy,
-                "f1_macro":           r.f1_macro,
-                "f1_weighted":        r.f1_weighted,
-                "cv_f1_macro_mean":   r.cv_mean,
-                "cv_f1_macro_std":    r.cv_std,
-                "cv_f1_macro_scores": r.cv_scores,
-                "label_shuffle_acc":      r.shuffle_accuracy,
-                "label_shuffle_f1_macro": r.shuffle_f1_macro,
-                "best_params":        r.best_params,
-                "target_threshold":   r.target_threshold,
-                "target_precision":   r.target_precision,
-                "target_recall":      r.target_recall,
-                "target_f1":          r.target_f1,
-                "target_f2":          r.target_f2,
-                "target_fpr":         r.target_fpr,
-                "target_false_positives": r.target_false_positives,
-                "target_false_negatives": r.target_false_negatives,
-                "target_to_benign_fn": r.target_to_benign_fn,
-                "calibration_recall": r.calibration_recall,
-                "calibration_fpr":    r.calibration_fpr,
-                "near_perfect_flag":  r.accuracy >= cfg["near_perfect_threshold"],
-            }
-            for r in results
-        ],
+        "hardware": hardware_profile(cfg),
+        "hp_search_space_size": HP_SEARCH_SPACE_SIZE,
+        "hp_untuned_models": HP_UNTUNED_MODELS,
+        "models": [_eval_result_to_dict(r, cfg) for r in results],
     }
     (outdir / "metrics.json").write_text(
         json_dumps_strict(metrics_payload, indent=2), encoding="utf-8")
@@ -2559,40 +3207,111 @@ def main(argv: list[str] | None = None) -> int:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-def _imbalance_metadata(cfg: dict[str, Any]) -> dict[str, Any]:
+def effective_accelerator(cfg: dict[str, Any],
+                          model_name: str | None = None) -> str:
+    """The accelerator that actually applies to one model.
+
+    ``--accelerator gpu`` is a run-level request, but only
+    :data:`GPU_CAPABLE_MODELS` act on it. Recording the *effective* value per
+    model keeps artifact identity honest: a RandomForest trained during a GPU
+    run is the same artifact as one trained during a CPU run, and must stay
+    reusable across both.
+
+    Called with ``model_name=None`` it returns the run-level request, which is
+    what the aggregate metrics header should record.
+    """
+    requested = cfg.get("accelerator", "cpu")
+    if model_name is None or model_name in GPU_CAPABLE_MODELS:
+        return requested
+    return "cpu"
+
+
+def _imbalance_metadata(cfg: dict[str, Any],
+                        model_name: str | None = None) -> dict[str, Any]:
     return {
         "training_protocol_version": TRAINING_PROTOCOL_VERSION,
         "imbalance_protocol_version": IMBALANCE_PROTOCOL_VERSION,
         "data_fingerprint": cfg.get("data_fingerprint"),
+        # The split identity has to be part of artifact identity: the dataset
+        # fingerprint is computed on the pre-split frame, so without these two
+        # a run under a different split protocol would silently reuse models
+        # trained on a completely different train/test partition.
+        "split_protocol": cfg.get("split_protocol"),
+        "dataset_id": DATASET_ID,
         "random_state": cfg["random_state"],
         "primary_metric": cfg["primary_metric"],
         "rf_class_weight": cfg["rf_class_weight"],
         "hp_search": cfg["hp_search"],
         "hp_search_n_iter": cfg["hp_search_n_iter"],
         "hp_search_subsample": cfg["hp_search_subsample"],
+        "hp_grid_fingerprint": (
+            hp_grid_fingerprint(model_name) if model_name else None
+        ),
         "imbalance_strategy": cfg["imbalance_strategy"],
         "target_class": cfg["target_class"],
         "target_ratio": cfg["target_ratio"],
         "target_max_fpr": cfg["target_max_fpr"],
         "threshold_validation_size": cfg["threshold_validation_size"],
-        "accelerator": cfg["accelerator"],
+        # What this model actually trained on, not what the run asked for.
+        "accelerator": effective_accelerator(cfg, model_name),
+        "requested_accelerator": cfg["accelerator"],
         "gpu_devices": cfg["gpu_devices"],
     }
 
 
 def _checkpoint_signature(cfg: dict[str, Any], model_name: str) -> str:
-    """Bind a checkpoint to one model, dataset fingerprint, and train policy."""
+    """Bind a checkpoint to one model, dataset fingerprint, and train policy.
+
+    Only fields that determine the artifact take part. ``requested_accelerator``
+    is provenance -- a RandomForest is identical whether or not the run asked
+    for a GPU -- and ``gpu_devices`` is irrelevant to a model that never
+    touches the GPU. Including either would break mid-run resume for CPU-only
+    models the moment the flag changed.
+    """
+    metadata = _imbalance_metadata(cfg, model_name)
+    metadata.pop("requested_accelerator", None)
+    if metadata.get("accelerator") != "gpu":
+        metadata.pop("gpu_devices", None)
     payload = {
         "model": model_name,
         "split_manifest": str(cfg.get("split_manifest") or ""),
-        **_imbalance_metadata(cfg),
+        **metadata,
     }
     encoded = json.dumps(payload, sort_keys=True, default=str).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _imbalance_config_matches(saved: dict[str, Any], cfg: dict[str, Any]) -> bool:
+def _imbalance_config_matches(saved: dict[str, Any], cfg: dict[str, Any],
+                              model_name: str | None = None) -> bool:
+    """Whether a saved artifact was produced by an equivalent configuration.
+
+    ``model_name`` lets the accelerator be compared per model. Without it, a
+    CPU->GPU switch would discard every finished CPU-only model even though
+    GPU cannot change their output. Artifacts written before this distinction
+    existed carry no ``requested_accelerator`` key and compare on their plain
+    ``accelerator`` value, which is exactly the effective one.
+    """
     if saved.get("training_protocol_version") != TRAINING_PROTOCOL_VERSION:
+        return False
+    wanted_accelerator = effective_accelerator(cfg, model_name)
+    if saved.get("accelerator", "cpu") != wanted_accelerator:
+        return False
+    # GPU device selection only matters to a model that actually used the GPU.
+    if (
+        wanted_accelerator == "gpu"
+        and saved.get("gpu_devices", "0") != cfg["gpu_devices"]
+    ):
+        return False
+    # An edited search space means the saved model was tuned against a
+    # different set of candidates. Absent on artifacts written before this key
+    # existed, which are left alone rather than force-retrained wholesale.
+    saved_grid = saved.get("hp_grid_fingerprint")
+    if (
+        saved_grid is not None
+        and model_name is not None
+        and saved.get("hp_search", False)
+        and saved_grid != hp_grid_fingerprint(model_name)
+    ):
         return False
     if saved.get("imbalance_protocol_version") != IMBALANCE_PROTOCOL_VERSION:
         return False
@@ -2601,6 +3320,7 @@ def _imbalance_config_matches(saved: dict[str, Any], cfg: dict[str, Any]) -> boo
         return False
     return (
         saved.get("data_fingerprint") == cfg.get("data_fingerprint")
+        and saved.get("split_protocol") == cfg.get("split_protocol")
         and saved.get("random_state") == cfg["random_state"]
         and saved.get("primary_metric") == cfg["primary_metric"]
         and saved.get("rf_class_weight") == cfg["rf_class_weight"]
@@ -2613,8 +3333,6 @@ def _imbalance_config_matches(saved: dict[str, Any], cfg: dict[str, Any]) -> boo
         == float(cfg["target_max_fpr"])
         and float(saved.get("threshold_validation_size", -1.0))
         == float(cfg["threshold_validation_size"])
-        and saved.get("accelerator", "cpu") == cfg["accelerator"]
-        and saved.get("gpu_devices", "0") == cfg["gpu_devices"]
     )
 
 
@@ -2624,7 +3342,7 @@ def _dataset_fingerprint(df: pd.DataFrame, cfg: dict[str, Any]) -> str:
     The parquet stat catches cache refreshes without hashing a multi-GB file;
     schema and label counts protect against accidental cache replacement.
     """
-    cache_path = Path(cfg["clean_cache"])
+    cache_path = resolve_cache_path(cfg)
     cache_stat: dict[str, int | str] = {"path": str(cache_path.resolve())}
     if cache_path.exists():
         stat = cache_path.stat()
@@ -2686,9 +3404,61 @@ def atomic_joblib_dump(obj: Any, path: Path) -> None:
     os.replace(tmp, path)
 
 
+def _eval_result_to_dict(r: EvalResult, cfg: dict[str, Any]) -> dict[str, Any]:
+    """Serialise one EvalResult for both the per-model and aggregate JSON.
+
+    Single source of truth for the EvalResult <-> JSON mapping, whose field
+    names deliberately differ from the dataclass attribute names for backward
+    compatibility (``cv_mean`` -> ``cv_f1_macro_mean`` and friends). Keeping
+    one writer means :func:`_eval_result_from_saved` can be its exact inverse.
+
+    Keys are only ever added here, never renamed: ``f1_macro`` and
+    ``target_fpr`` drive champion promotion in ``src/artifacts/publish.py``,
+    and several readers use ``.get(key, 0.0)``, so a rename would silently
+    promote the wrong model rather than fail loudly.
+    """
+    payload: dict[str, Any] = {
+        "model":                  r.model,
+        "accuracy":               r.accuracy,
+        "balanced_accuracy":      r.balanced_accuracy,
+        "f1_macro":               r.f1_macro,
+        "f1_weighted":            r.f1_weighted,
+        "cv_f1_macro_mean":       r.cv_mean,
+        "cv_f1_macro_std":        r.cv_std,
+        "cv_f1_macro_scores":     r.cv_scores,
+        "label_shuffle_acc":      r.shuffle_accuracy,
+        "label_shuffle_f1_macro": r.shuffle_f1_macro,
+        "majority_baseline_acc":  r.majority_baseline,
+        "best_params":            r.best_params,
+        "target_threshold":       r.target_threshold,
+        "target_precision":       r.target_precision,
+        "target_recall":          r.target_recall,
+        "target_f1":              r.target_f1,
+        "target_f2":              r.target_f2,
+        "target_fpr":             r.target_fpr,
+        "target_false_positives": r.target_false_positives,
+        "target_false_negatives": r.target_false_negatives,
+        "target_to_benign_fn":    r.target_to_benign_fn,
+        "calibration_recall":     r.calibration_recall,
+        "calibration_fpr":        r.calibration_fpr,
+        "near_perfect_flag":      r.accuracy >= cfg["near_perfect_threshold"],
+        "hp_search_space_size":   r.hp_space_size,
+        "hp_tuned":               r.hp_tuned,
+    }
+    payload.update({k: v for k, v in r.extended.items() if k in EXTENDED_METRIC_KEYS})
+    payload.update({k: v for k, v in r.efficiency.items() if k in EFFICIENCY_KEYS})
+    payload.update(_imbalance_metadata(cfg, r.model))
+    return payload
+
+
 def _eval_result_from_saved(saved: dict, model_name: str) -> EvalResult:
     """Reconstruct EvalResult from a previously-saved metrics JSON so the
-    report aggregator can include it without re-evaluating."""
+    report aggregator can include it without re-evaluating.
+
+    Inverse of :func:`_eval_result_to_dict`. ``per_class`` and ``confusion``
+    cannot be recovered from the JSON, so a reused model contributes no
+    per-class table or confusion matrix -- callers must tolerate that.
+    """
     empty_df = pd.DataFrame()
     empty_cm = np.zeros((1, 1), dtype=np.int64)
     return EvalResult(
@@ -2716,6 +3486,10 @@ def _eval_result_from_saved(saved: dict, model_name: str) -> EvalResult:
         target_to_benign_fn=saved.get("target_to_benign_fn", 0),
         calibration_recall=saved.get("calibration_recall"),
         calibration_fpr=saved.get("calibration_fpr"),
+        extended={k: saved[k] for k in EXTENDED_METRIC_KEYS if k in saved},
+        efficiency={k: saved[k] for k in EFFICIENCY_KEYS if k in saved},
+        hp_space_size=saved.get("hp_search_space_size", 0),
+        hp_tuned=saved.get("hp_tuned", False),
     )
 
 

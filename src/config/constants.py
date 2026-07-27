@@ -81,6 +81,15 @@ LOGS_DIR:       Path = PROJECT_ROOT / "logs"
 
 CONFIG_PATH:    Path = PROJECT_ROOT / "src" / "config" / "config.yaml"
 
+# The cleaned CICIDS2017 corpus. Built by `main.py --stage preprocess` and
+# consumed by training, the audit stage, and SHAP explainability.
+CLEAN_CACHE_PATH: Path = PROCESSED_DIR / "cicids2017_clean.parquet"
+
+# Chronological split manifest that defines the delivery protocol.
+SPLIT_MANIFEST_PATH: Path = (
+    PROJECT_ROOT / "configs" / "splits" / "cicids2017_temporal_70_30.json"
+)
+
 # ---------------------------------------------------------------------------
 # Schema knobs (used by data/schema.py)
 # ---------------------------------------------------------------------------
@@ -91,3 +100,25 @@ LABEL_COLUMN: str = "Label"
 # After label normalization the mapped column is appended alongside the
 # raw column. Downstream code reads from this name, not from LABEL_COLUMN.
 MAPPED_LABEL_COLUMN: str = "Label_mapped"
+
+# ---------------------------------------------------------------------------
+# Metrics payload schema
+# ---------------------------------------------------------------------------
+# Keys in a per-model metrics payload whose values are dicts or lists rather
+# than scalars. Anything listed here must be dropped before the payload is
+# flattened into a comparison DataFrame, because those tables format every
+# cell as a number. Lives here rather than in train.py so the dashboard can
+# read it without importing the training stack.
+NON_SCALAR_METRIC_KEYS: tuple[str, ...] = (
+    "best_params",
+    "cv_f1_macro_scores",
+    "reportable_classes",
+    "per_class_precision",
+    "per_class_recall",
+    "per_class_f1",
+    "per_class_fpr",
+    "per_class_fnr",
+    "per_class_support",
+    "per_class_false_positives",
+    "per_class_false_negatives",
+)

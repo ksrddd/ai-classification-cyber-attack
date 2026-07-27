@@ -15,15 +15,15 @@ const METRIC_COLS = [
   { k: "f1_macro",           l: "F1 (M)"    },
   { k: "precision_weighted", l: "Precision" },
   { k: "recall_weighted",    l: "Recall"    },
-  { k: "roc_auc",            l: "ROC-AUC"   },
-  { k: "matthews_corrcoef",  l: "MCC"       },
+  { k: "binary_fpr",         l: "FPR"       },
+  { k: "mcc",                l: "MCC"       },
 ];
 
 const BAR_METRICS = [
   { k: "f1_weighted",  l: "F1 weighted", color: "#22D3EE" },
   { k: "f1_macro",     l: "F1 macro",    color: "#6366F1" },
   { k: "accuracy",     l: "Accuracy",    color: "#3B82F6" },
-  { k: "roc_auc",      l: "ROC-AUC",     color: "#10B981" },
+  { k: "recall_macro", l: "Recall macro", color: "#10B981" },
 ];
 
 const medals = ["1st", "2nd", "3rd", "4th", "5th", "6th"];
@@ -91,7 +91,7 @@ export default async function ComparePage() {
                 <Pill tone="brand" size="sm">★ champion</Pill>
               </div>
               <div className="mt-2 flex items-center gap-4 flex-wrap text-[11px] tabular-nums">
-                {(["f1_weighted", "accuracy", "precision_weighted", "recall_weighted", "roc_auc"] as const).map((k) => (
+                {(["f1_weighted", "accuracy", "precision_weighted", "recall_weighted", "mcc"] as const).map((k) => (
                   <span key={k} className="inline-flex items-center gap-1.5 text-ink-1">
                     <span className="h-1 w-1 rounded-full" style={{ background: bestColor }} />
                     <span className="text-ink-3">{k.replace(/_/g, " ")}</span>

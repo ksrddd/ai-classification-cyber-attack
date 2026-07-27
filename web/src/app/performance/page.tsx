@@ -15,7 +15,7 @@ const METRIC_DISPLAY = [
   { k: "recall_weighted",     l: "Recall",      color: "#F43F5E" },
   { k: "f1_weighted",         l: "F1 (W)",      color: "#22D3EE" },
   { k: "f1_macro",            l: "F1 (M)",      color: "#6366F1" },
-  { k: "roc_auc",             l: "ROC-AUC",     color: "#10B981" },
+  { k: "mcc",                 l: "MCC",         color: "#10B981" },
 ];
 
 export default function PerformancePage() {
@@ -135,7 +135,7 @@ export default function PerformancePage() {
                       <Pill tone="brand" size="sm">holdout test set</Pill>
                     </div>
                     <div className="text-[11px] text-ink-2 mt-0.5 tabular-nums">
-                      F1 = {(m.f1_weighted ?? 0).toFixed(4)} · Accuracy = {(m.accuracy ?? 0).toFixed(4)} · MCC = {(m.matthews_corrcoef ?? 0).toFixed(4)}
+                      F1 = {(m.f1_weighted ?? 0).toFixed(4)} · Accuracy = {(m.accuracy ?? 0).toFixed(4)} · MCC = {(m.mcc ?? 0).toFixed(4)}
                     </div>
                   </div>
                 </div>
@@ -147,13 +147,13 @@ export default function PerformancePage() {
               <KpiCard label="Accuracy"      value={(m.accuracy      ?? 0).toFixed(4)} color={color} />
               <KpiCard label="F1 (weighted)" value={(m.f1_weighted   ?? 0).toFixed(4)} color={color} />
               <KpiCard label="F1 (macro)"    value={(m.f1_macro      ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="ROC-AUC"       value={(m.roc_auc       ?? 0).toFixed(4)} color={color} />
+              <KpiCard label="Binary FPR"    value={(m.binary_fpr    ?? 0).toFixed(5)} color={color} />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <KpiCard label="Precision (W)" value={(m.precision_weighted ?? 0).toFixed(4)} color={color} />
               <KpiCard label="Recall (W)"    value={(m.recall_weighted    ?? 0).toFixed(4)} color={color} />
               <KpiCard label="Precision (M)" value={(m.precision_macro    ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="MCC"           value={(m.matthews_corrcoef  ?? 0).toFixed(4)} color={color} />
+              <KpiCard label="MCC"           value={(m.mcc           ?? 0).toFixed(4)} color={color} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

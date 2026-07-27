@@ -84,7 +84,7 @@ export default async function OverviewPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Pill tone="ok">CICIDS2017/CSE-CIC-IDS2018 ready</Pill>
+            <Pill tone="ok">CICIDS2017 ready</Pill>
             <Pill tone="brand">multiclass</Pill>
           </div>
         </div>
@@ -118,7 +118,7 @@ export default async function OverviewPage() {
                   {[
                     { k: "f1_weighted",       l: "F1 (W)" },
                     { k: "accuracy",          l: "Accuracy" },
-                    { k: "matthews_corrcoef", l: "MCC" },
+                    { k: "mcc",               l: "MCC" },
                   ].map(({ k, l }) => (
                     <div key={k}>
                       <div className="text-[9.5px] text-ink-3 font-mono uppercase">{l}</div>
@@ -170,7 +170,7 @@ export default async function OverviewPage() {
             value={totalFlows > 0 ? totalFlows.toLocaleString() : "—"}
             color="#38BDF8"
             spark={SPARK_RECORDS}
-            sub="CICIDS2017 + CSE-CIC-IDS2018 dataset"
+            sub="CICIDS2017 dataset"
           />
           <KpiCard
             label="Best F1 score"

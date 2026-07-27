@@ -1,0 +1,19 @@
+# Normalise line endings so a clone behaves the same on Windows, macOS and
+# Linux regardless of the cloner's core.autocrlf setting.
+* text=auto eol=lf
+
+# Binary assets git must never touch.
+*.png    binary
+*.pdf    binary
+*.woff   binary
+*.woff2  binary
+*.ico    binary
+*.joblib binary
+*.pkl    binary
+*.parquet binary
+
+# Generated lockfile: keep out of diffs and language stats.
+web/package-lock.json linguist-generated=true
+
+# Jupyter notebooks are stored as JSON; diffing them is noise.
+*.ipynb linguist-documentation=true

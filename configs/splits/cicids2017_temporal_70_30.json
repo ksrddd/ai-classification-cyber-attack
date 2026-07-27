@@ -1,0 +1,62 @@
+{
+  "version": "cicids2017_temporal_v1",
+  "dataset_id": "CICIDS2017",
+  "order_basis": "csv_row_index",
+  "split_strategy": "per_source_per_class_chronological",
+  "sources": [
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+    "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+    "Monday-WorkingHours.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+    "Tuesday-WorkingHours.pcap_ISCX.csv",
+    "Wednesday-workingHours.pcap_ISCX.csv"
+  ],
+  "test_size": 0.3,
+  "min_test_per_class": 3,
+  "calibration_size": 0.0,
+  "final_test_locked": true,
+  "random_row_split": false,
+  "expected_counts": {
+    "BENIGN": {
+      "train": 1450574,
+      "test": 621680
+    },
+    "Bot": {
+      "train": 1363,
+      "test": 585
+    },
+    "Brute Force": {
+      "train": 6405,
+      "test": 2745
+    },
+    "DDoS": {
+      "train": 89609,
+      "test": 38405
+    },
+    "DoS": {
+      "train": 135611,
+      "test": 58119
+    },
+    "Heartbleed": {
+      "train": 7,
+      "test": 4
+    },
+    "Infiltration": {
+      "train": 25,
+      "test": 11
+    },
+    "PortScan": {
+      "train": 63485,
+      "test": 27209
+    },
+    "Web Attack": {
+      "train": 1500,
+      "test": 643
+    }
+  },
+  "expected_train_rows": 1748579,
+  "expected_test_rows": 749401,
+  "chronology_validated": "Row order verified against the published CIC CICIDS2017 attack schedule by temporal_split.validate_raw_label_chronology"
+}

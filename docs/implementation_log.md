@@ -39,10 +39,10 @@
 
 | Proposal Phase | สิ่งที่ proposal บอกให้ทำ | ทำที่ไฟล์ไหน | ผลลัพธ์อยู่ที่ไหน |
 |---|---|---|---|
-| Phase 1 | ศึกษา + เตรียมข้อมูล | `src/data/`, `src/features/cleaning.py`, `src/pipelines/eda.py`, `src/pipelines/preprocess.py` | `results/figures/`, `results/metrics/eda_summary.json`, `data/processed/` |
-| Phase 2 | พัฒนาโมเดล LR + RF + MLP | `src/models/*.py`, `src/pipelines/train.py` | `models/*.joblib` |
-| Phase 3 | ประเมินผลด้วย Acc/P/R/F1 + Confusion matrix + เปรียบเทียบ | `src/evaluation/`, `src/pipelines/evaluate.py` | `results/metrics/*.json`, `results/figures/confusion_matrix_*.png`, `reports/model_comparison.md` |
-| Phase 4 | วิเคราะห์ด้วย Feature importance / SHAP | `src/explainability/shap_analyzer.py`, `src/pipelines/explain.py` | `results/shap/<model>/`, `results/shap/shap_report.md` |
+| Phase 1 | ศึกษา + เตรียมข้อมูล | `src/data/`, `src/features/cleaning.py`, `src/pipelines/eda.py`, `train.py` (preprocess stage) | `results/figures/`, `results/metrics/eda_summary.json`, `data/processed/cicids2017_clean.parquet` |
+| Phase 2 | พัฒนาโมเดล LR + RF + MLP | `src/models/*.py`, `train.py` | `results/<run-name>/*.joblib` |
+| Phase 3 | ประเมินผลด้วย Acc/P/R/F1 + Confusion matrix + เปรียบเทียบ | `train.py` (evaluation + report), `src/artifacts/publish.py` | `results/<run-name>/metrics.json`, `results/<run-name>/*_confusion_matrix.png`, `results/<run-name>/report.md` |
+| Phase 4 | วิเคราะห์ด้วย Feature importance / SHAP | `src/explainability/shap_analyzer.py`, `src/pipelines/explain.py` | `results/<run-name>/shap/<model>/`, `results/<run-name>/shap/shap_report.md` |
 | Phase 5 | แสดงผลในรูปแบบที่เข้าใจง่าย + อาจมี dashboard | `dashboard/`, `reports/` | Streamlit app + Markdown reports |
 
 ---

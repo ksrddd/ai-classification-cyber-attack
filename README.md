@@ -40,7 +40,7 @@
 
 ### English
 
-This project reads combined CICIDS2017 and CSE-CIC-IDS2018 network-flow records and automatically
+This project reads CICIDS2017 network-flow records and automatically
 classifies each flow as one of several attack types — like a doctor
 diagnosing illness from symptoms. Existing IDS/IPS tools detect *that*
 an attack happened; this system tells the operator *what kind*, so the
@@ -50,9 +50,16 @@ The whole pipeline — data engineering, feature engineering, training,
 evaluation, explainability, dashboard, inference — is implemented as a
 real ML project: config-driven, tested, reproducible, leakage-free.
 
+**Evaluation protocol.** Models are judged on four dimensions — classification
+performance, attack detection ability, operational impact, and computational
+efficiency — with **macro-F1 and per-class recall as the deciding metrics, not
+accuracy**. Three rankings are published side by side (Overall / Security-focused /
+Deployment) instead of a single "best" model. The train/test split is
+chronological, so no model is tested on traffic from the same moment it trained on.
+
 ### ภาษาไทย
 
-โปรเจกต์นี้รับข้อมูล Network Flow จากชุดข้อมูล CICIDS2017 และ CSE-CIC-IDS2018 มาจำแนกประเภท
+โปรเจกต์นี้รับข้อมูล Network Flow จากชุดข้อมูล CICIDS2017 มาจำแนกประเภท
 การโจมตีทางไซเบอร์โดยอัตโนมัติ — เปรียบเหมือนหมอที่วินิจฉัยโรคจากอาการ
 ระบบ IDS/IPS ทั่วไปบอกได้แค่ว่า "มีการโจมตีเกิดขึ้น" แต่ไม่บอกว่าเป็น
 ประเภทไหน ระบบนี้ระบุประเภทให้ผู้ดูแลตอบสนองได้ตรงจุด
@@ -61,26 +68,33 @@ real ML project: config-driven, tested, reproducible, leakage-free.
 Evaluation, Explainable AI, Dashboard, Inference — ถูกพัฒนาด้วยมาตรฐาน
 ML จริง: ปรับด้วย config, มี test, รันซ้ำได้, ป้องกัน data leakage
 
+**มาตรฐานการประเมินผล** วัดผล 4 มิติ ได้แก่ Classification Performance,
+Attack Detection Ability, Operational Impact และ Computational Efficiency
+โดยใช้ **Macro-F1 และ per-class Recall เป็นตัวตัดสินหลัก ไม่ใช่ Accuracy**
+และจัดอันดับ 3 มุม (Overall / Security-focused / Deployment) แทนการเลือก
+"โมเดลที่ดีที่สุด" เพียงตัวเดียว การแบ่ง train/test เป็นแบบเรียงตามเวลา
+โมเดลจึงไม่ถูกทดสอบด้วยทราฟฟิกช่วงเวลาเดียวกับที่ใช้เทรน
+
 ---
 
 ## 2. Features · ฟีเจอร์
 
 | Feature | English | ภาษาไทย |
 |---------|---------|---------|
-| Dual classification | Binary (`Normal`/`Attack`) **and** 10-class multi-class | รองรับทั้งแบบ 2 คลาส และ 10 คลาส |
+| Dual classification | Binary (`Normal`/`Attack`) **and** multi-class (9 classes on CICIDS2017) | รองรับทั้งแบบ 2 คลาส และหลายคลาส |
 | Seven ML models | Random Forest · XGBoost · LightGBM · CatBoost · MLP · Logistic Regression · Stacking | โมเดล 7 แบบ ครอบคลุม baseline, tree ensemble, neural net และ stacking |
-| Label normalization | Maps CICIDS2017 and CSE-CIC-IDS2018 labels into one clean scheme | แปลง label ดิบของ CICIDS/CSE-CIC ให้สะอาด |
-| Source-held split | Deterministic 70% train / 30% locked test by source manifest | แยกแหล่งข้อมูล 70/30 แบบกำหนดซ้ำได้ ป้องกัน source leakage |
+| Label normalization | Maps the 15 raw CICIDS2017 labels into 9 clean attack families | แปลง label ดิบ 15 แบบให้เหลือ 9 คลาส |
+| Temporal split | Chronological 70% train / 30% locked test inside every (capture, class) group, no RNG | แบ่งตามเวลาแบบเรียงลำดับ ป้องกัน leakage โดยไม่ต้องสุ่ม |
 | Hyperparameter tuning | GridSearchCV / RandomizedSearchCV configurable | ปรับ hyperparameter ด้วย Grid/Random Search ผ่าน config |
-| Full metric set | Accuracy · P/R/F1 (weighted+macro+per-class) · ROC-AUC · MCC | ครบทุก metric ที่ใช้ใน security ML |
+| Full metric set | Accuracy · P/R/F1 (weighted+macro+per-class) · FPR/FNR (per-class+binary) · MCC | ครบทุก metric ที่ใช้ใน security ML |
 | Explainability | SHAP TreeExplainer + KernelExplainer fallback | อธิบาย model ด้วย SHAP รองรับทั้ง tree และ MLP |
 | Dashboard + API | Streamlit 6 pages plus Next.js UI backed by FastAPI | มีทั้ง Streamlit และ Next.js/FastAPI สำหรับดูผลและทำนาย |
 | Schema-safe inference | Upload CSV → validate → predict + probabilities | อัปโหลด CSV ใหม่แล้วทำนายได้ พร้อมเช็ค schema |
 | Artifact lifecycle | Checksummed bundle manifest · atomic checkpoints · resume · champion promotion | ตรวจความครบถ้วนของ artifact, resume งาน และ promote champion อย่างปลอดภัย |
 | Offline red-team | Copy-only label/shift/OOD/perturbation checks | ตรวจ label conflict, distribution shift, OOD และ robustness โดยไม่แก้ locked test |
-| Test suite | 152 pytest cases + smoke/integration tests | มี test 152 รายการ ครอบคลุม pipeline, API, security และ artifact lifecycle |
+| Test suite | 228 pytest cases + smoke/integration tests | มี test 228 รายการ ครอบคลุม pipeline, API, security และ artifact lifecycle |
 | Reproducible | `RANDOM_STATE=42` + hash quotas + source-grouped CV | สุ่มซ้ำได้และรักษา source isolation ระหว่าง train/CV/test |
-| Config-driven | All knobs in `config.yaml` — no magic numbers | ค่าทั้งหมดอยู่ใน config ไม่มีฮาร์ดโค้ดในตัว module |
+| Config-driven | Training knobs live in `train.py`'s own `CONFIG` dict; `config.yaml` drives only `--stage eda` and dashboard labels | ค่าฝั่งเทรนอยู่ใน `CONFIG` dict ใน `train.py`; `config.yaml` ใช้เฉพาะ `--stage eda` และ label ของ dashboard |
 
 ### Classification Schemes · ระบบจำแนกคลาส
 
@@ -88,20 +102,23 @@ ML จริง: ปรับด้วย config, มี test, รันซ้�
 - `Normal` — BENIGN traffic (การจราจรปกติ)
 - `Attack` — ทุกประเภทที่ไม่ใช่ BENIGN
 
-**Multi-class mode** — สำหรับระบุประเภทการโจมตี (10 คลาส)
+**Multi-class mode** — สำหรับระบุประเภทการโจมตี (CICIDS2017 มี 9 คลาส)
 
-| Class | Description (EN) | คำอธิบาย (TH) | CICIDS sources |
-|---|---|---|---|
-| `BENIGN` | Normal background traffic | การจราจรปกติ | ทุกไฟล์ |
-| `DoS` | Denial of Service attacks | การโจมตีแบบ DoS | DoS Hulk, GoldenEye, slowloris, Slowhttptest |
-| `DDoS` | Distributed DoS | การโจมตีแบบกระจายจากหลายแหล่ง | DDoS |
-| `PortScan` | Network port scanning | สแกนพอร์ตเพื่อหาช่องโหว่ | PortScan |
-| `Bot` | Botnet C&C traffic | การสื่อสารของบอตเน็ต | Bot |
-| `Web Attack` | XSS, SQL Injection, web brute force | การโจมตีเว็บแอป | Web Attack (3 sub-types) |
-| `Brute Force` | Credential brute-forcing | เดารหัสผ่านบริการเครือข่าย | FTP-Patator, SSH-Patator |
-| `Infiltration` | Lateral movement / infiltration | การเจาะระบบเข้าไปใน network | Infiltration |
-| `Heartbleed` | OpenSSL Heartbleed exploit | ช่องโหว่ Heartbleed | Heartbleed |
-| `Other` | Catch-all for unknown variants | คลาสรอง สำหรับ label ที่ไม่รู้จัก | (fallback) |
+`Other` เป็นคลาสสำรองสำหรับ label ที่ map ไม่ได้ แถวที่ตกลง `Other` จะถูก drop ตอน
+cleaning จึงไม่ปรากฏใน 2017 — เหลือ 9 คลาสจริง จำนวนแถวด้านล่างมาจาก
+`data/processed/cicids2017_clean.parquet`
+
+| Class | Description (EN) | คำอธิบาย (TH) | Capture file | n_train | n_test |
+|---|---|---|---|---:|---:|
+| `BENIGN` | Normal background traffic | การจราจรปกติ | ทุกไฟล์ | 1,450,574 | 621,680 |
+| `DoS` | Denial of Service attacks | การโจมตีแบบ DoS | Wednesday | 135,611 | 58,119 |
+| `DDoS` | Distributed DoS | การโจมตีแบบกระจายจากหลายแหล่ง | Friday-Afternoon-DDos | 89,609 | 38,405 |
+| `PortScan` | Network port scanning | สแกนพอร์ตเพื่อหาช่องโหว่ | Friday-Afternoon-PortScan | 63,485 | 27,209 |
+| `Brute Force` | Credential brute-forcing | เดารหัสผ่านบริการเครือข่าย | Tuesday | 6,405 | 2,745 |
+| `Web Attack` | XSS, SQL Injection, web brute force | การโจมตีเว็บแอป | Thursday-Morning | 1,500 | 643 |
+| `Bot` | Botnet C&C traffic | การสื่อสารของบอตเน็ต | Friday-Morning | 1,363 | 585 |
+| `Infiltration` | Lateral movement / infiltration | การเจาะระบบเข้าไปใน network | Thursday-Afternoon | 25 | 11 |
+| `Heartbleed` | OpenSSL Heartbleed exploit | ช่องโหว่ Heartbleed | Wednesday | 7 | 4 |
 
 ---
 
@@ -119,7 +136,7 @@ ML จริง: ปรับด้วย config, มี test, รันซ้�
 | 8 | Evaluation | metric / confusion matrix / report | done |
 | 9 | SHAP / XAI | อธิบายโมเดลด้วย SHAP | done |
 | 10 | Dashboard + REST API | Streamlit 6 หน้า + Next.js/FastAPI | done |
-| 11 | Testing | pytest 152 tests + integration/security smoke tests | done |
+| 11 | Testing | pytest 228 tests + integration/security smoke tests | done |
 | 12 | Inference / MLOps | checksum manifest, checkpoints, resume, promotion | done |
 | 13 | Offline red-team | label/shift/OOD/perturbation checks | done |
 | 14 | Documentation | เอกสารส่งมอบ + README นี้ | done |
@@ -151,11 +168,11 @@ ML จริง: ปรับด้วย config, มี test, รันซ้�
 ```
 cyber_attack_classification/
 ├── data/
-│   ├── raw/                      # CICIDS2017 + CSE-CIC-IDS2018 CSVs (download separately)
+│   ├── raw/                      # 8 CICIDS2017 CSVs (download separately)
 │   ├── interim/                  # intermediate parquet files
 │   ├── processed/                # cleaned cache + legacy split artifacts
 │   └── sample/                   # synthetic CICIDS-shaped fixture for tests
-├── configs/splits/               # versioned source-held split manifests (70/30)
+├── configs/splits/               # temporal split manifest (70/30, chronological)
 ├── docs/
 │   ├── architecture.md           # module map + ADRs
 │   ├── ml_pipeline.md            # end-to-end ML flow
@@ -165,11 +182,10 @@ cyber_attack_classification/
 │   ├── feature_mapping.md        # raw → normalized label table
 │   ├── training_workflow.md      # how to train models
 │   ├── inference_workflow.md     # how to run prediction
-│   └── source_holdout_protocol.md# source isolation + locked-test protocol
-├── notebooks/                    # 01_EDA → 05_SHAP (interactive)
+├── notebooks/                    # exploratory notebooks (not part of the pipeline)
 ├── src/
 │   ├── config/                   # constants + YAML loader
-│   ├── data/                     # loader, schema, deterministic split, provenance
+│   ├── data/                     # loader, schema, temporal split, provenance
 │   ├── features/                 # cleaning, encoding, selection, pipeline, validator
 │   ├── models/                   # 7 models + tuner + stacking + registry
 │   │   ├── random_forest.py
@@ -179,19 +195,16 @@ cyber_attack_classification/
 │   │   ├── mlp.py
 │   │   ├── logistic_regression.py
 │   │   └── registry.py
-│   ├── evaluation/               # metrics, confusion matrix, comparison
 │   ├── explainability/           # SHAP analyzer
 │   ├── inference/                # batch prediction on user CSVs
 │   ├── artifacts/                # bundle manifest, checksum, promotion
 │   ├── security/                 # offline red-team checks
-│   ├── training/                 # atomic checkpoint + resume state
+│   ├── training/                 # checkpoint/resume + GPU acceptance gate
 │   ├── visualization/            # plot helpers
 │   ├── utils/                    # logging, I/O, seeds
-│   └── pipelines/                # train/evaluate/audit/red-team/promote/etc.
-├── models/                       # *.joblib (gitignored — generated at training)
-├── reports/                      # generated markdown reports
+│   └── pipelines/                # eda + SHAP explain stages
 ├── results/
-│   ├── <run-id>/                 # immutable run bundle + checkpoints + reports
+│   ├── <run-id>/                 # run bundle: models, metrics, report, SHAP
 │   └── champion.json             # published champion pointer + policy evidence
 ├── api/main.py                   # FastAPI backend + bounded CSV upload
 ├── web/                          # Next.js dashboard frontend
@@ -205,8 +218,8 @@ cyber_attack_classification/
 │       ├── 04_Model_Comparison.py
 │       ├── 05_SHAP.py
 │       └── 06_Predict_New_CSV.py
-├── tests/                        # pytest (152 tests)
-├── scripts/                      # sample generator + utility scripts
+├── tests/                        # pytest (228 tests)
+├── scripts/                      # sample/mock data generators
 ├── logs/                         # pipeline.log
 ├── main.py                       # CLI entry point
 ├── pyproject.toml
@@ -264,37 +277,45 @@ pip install -e .[dev]
 ```bash
 python -c "from src.models.registry import MODEL_CLASSES; print(list(MODEL_CLASSES))"
 # Expected output:
-# ['random_forest', 'xgboost', 'lightgbm', 'catboost', 'mlp', 'logistic_regression']
+# ['random_forest', 'xgboost', 'lightgbm', 'catboost', 'mlp', 'logistic_regression', 'stacking']
 ```
 
 ---
 
 ## 7. Dataset Preparation · การเตรียมข้อมูล
 
-เวอร์ชันนี้รองรับไฟล์ flow CSV ทั้งชุดข้อมูล CICIDS2017 และ CSE-CIC-IDS2018 จาก Canadian Institute for Cybersecurity
-ให้วางไฟล์ CSV ทั้งหมดไว้ใน `data/raw/` โดย local training cache ปัจจุบันถูกสร้างขึ้นจากไฟล์ CSV ดิบจำนวน 18 ไฟล์ และสร้างระเบียนข้อมูล flow ที่สะอาดแล้วประมาณ 13.9 ล้านแถว
+เวอร์ชันนี้รองรับไฟล์ flow CSV ทั้งชุดข้อมูล CICIDS2017 จาก Canadian Institute for Cybersecurity (2,497,980 แถวสะอาด จาก 8 capture files)
+ต้องมีครบทั้ง 8 ไฟล์ เพราะแต่ละคลาสโจมตีอยู่ในไฟล์เดียว ถ้าขาดไฟล์ใดไฟล์หนึ่ง
+จะหายไปทั้งคลาส — ตัว loader จะหยุดและแจ้ง error แทนที่จะสร้าง cache ที่ไม่ครบ
 
 ลิงก์หน้าชุดข้อมูลที่มีประโยชน์:
 - CICIDS2017: <https://www.unb.ca/cic/datasets/ids-2017.html>
-- CSE-CIC-IDS2018: <https://www.unb.ca/cic/datasets/ids-2018.html>
 
 ### รูปแบบโครงสร้างโฟลเดอร์ `data/raw/` ที่คาดหวัง
 
 ```text
 data/raw/
-  02-14-2018.csv
-  02-15-2018.csv
-  02-16-2018.csv
-  ...
-  Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv
-  Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv
-  ...
+  # ต้องมีครบทั้ง 8 ไฟล์
+  Monday-WorkingHours.pcap_ISCX.csv                            # BENIGN ล้วน
+  Tuesday-WorkingHours.pcap_ISCX.csv                           # Brute Force
+  Wednesday-workingHours.pcap_ISCX.csv                         # DoS, Heartbleed
+  Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv       # Web Attack
+  Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv  # Infiltration
+  Friday-WorkingHours-Morning.pcap_ISCX.csv                    # Bot
+  Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv         # PortScan
+  Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv             # DDoS
 ```
 
-`train.py` จะปรับประเภทคอลัมน์และ label ของทั้ง CICIDS2017 และ CSE-CIC-IDS2018 ให้เป็นโครงสร้างข้อมูลเดียวกันก่อนทำการฝึกฝน (training) แนะนำให้สร้างแคชข้อมูลสะอาดใหม่เฉพาะเมื่อมีการเปลี่ยนแปลงของไฟล์ CSV ดิบเท่านั้น:
+> **ต้องใช้ CICIDS2017 เวอร์ชัน *MachineLearningCVE*** (79 คอลัมน์) ซึ่งเป็นเวอร์ชันที่
+> **ไม่มีคอลัมน์ `Timestamp`** โปรเจกต์นี้จึงใช้ลำดับแถวใน CSV เป็นลำดับเวลาแทน
+> และมีการพิสูจน์ความถูกต้องอัตโนมัติทุกครั้งที่รัน
+>
+> ห้ามสลับ/เรียงลำดับแถวในไฟล์ CSV ดิบ เพราะลำดับแถวคือข้อมูลเวลาเพียงอย่างเดียวที่มี
+
+`train.py` จะทำความสะอาดคอลัมน์และ normalize label ก่อนเทรน แนะนำให้สร้างแคชใหม่เฉพาะเมื่อไฟล์ CSV ดิบเปลี่ยนเท่านั้น:
 
 ```bash
-python main.py --stage train --refresh-cache --force
+python main.py --stage preprocess --refresh-cache
 ```
 
 
@@ -355,38 +376,24 @@ python scripts/generate_sample.py --rows 2000
 > หมายเหตุ: ข้อมูลสังเคราะห์ (synthetic data) มีไว้เพื่อทดสอบการทำงานของไปป์ไลน์เท่านั้น ห้ามนำผลการวัดประสิทธิภาพ (metrics) ที่ได้จากข้อมูลสังเคราะห์ไปรายงานเป็นผลลัพธ์ของโครงการ
 ## 8. Configuration · การตั้งค่า
 
-ทุกค่าอยู่ในไฟล์เดียว: [`src/config/config.yaml`](src/config/config.yaml)
+**ค่าที่คุมการเทรนจริงอยู่ใน `train.py` เอง** ไม่ใช่ `config.yaml` — `train.py` เป็น
+training path เดียวของโปรเจกต์ (self-contained `CONFIG` dict, ไม่ import
+`config.yaml` เลย) ปรับค่าอย่าง `hp_search_n_iter`, `rf_class_weight`,
+`target_max_fpr`, RAM presets ฯลฯ ได้ 2 ทาง:
 
-ค่าสำคัญที่อาจปรับ:
+- ผ่าน CLI flag (ดูตาราง §10 CLI flags reference)
+- แก้ `CONFIG` dict ที่ต้นไฟล์ `train.py` โดยตรง สำหรับค่าที่ไม่มี flag
+
+[`src/config/config.yaml`](src/config/config.yaml) ยังมีอยู่ แต่ใช้เฉพาะ
+`--stage eda` และ label/mode ที่ dashboard กับ FastAPI ใช้แสดงผล — **แก้ไฟล์นี้
+ไม่มีผลกับ `--stage train` เลย**
 
 ```yaml
 classification:
-  mode: "multiclass"          # หรือ "binary"
+  mode: "multiclass"          # หรือ "binary" — ใช้โดย dashboard/API เท่านั้น
 
 data:
-  raw_dir: "data/raw"
-  subsample_n: 300000         # null = ใช้ข้อมูลทั้งหมด (~13.9M cleaned rows)
-  drop_other_class: false
-
-preprocessing:
-  test_size: 0.3
-  val_size: 0.0
-  scaler: "standard"          # "standard" | "minmax" | "robust"
-
-models:
-  random_forest: { enabled: true,  ... }
-  xgboost:       { enabled: true,  ... }
-  lightgbm:      { enabled: true,  ... }
-  catboost:      { enabled: true,  ... }
-  mlp:           { enabled: true,  ... }
-  logistic_regression: { enabled: true, ... }
-  stacking:      { enabled: true,  ... }
-  # ปิดการใช้งานโมเดลเฉพาะเจาะจงโดยตั้งค่าเป็น enabled: false
-
-tuning:
-  enabled: true
-  strategy: "random"          # "grid" | "random"
-  random_n_iter: 20
+  raw_dir: "data/raw"         # ใช้โดย --stage eda เท่านั้น
 ```
 
 ---
@@ -397,16 +404,22 @@ tuning:
 `results/<run-name>/` จากนั้นตรวจ integrity และ promote เฉพาะ run ที่ผ่านเกณฑ์เป็น champion
 
 ```bash
-# 1. ตรวจโครงสร้างและ version ของ source-held manifest
-python main.py --stage audit --split-manifest configs/splits/source_holdout_v3_full_70_30.json
+# 1. สร้าง cache เฉพาะ CICIDS2017 (~2.5M แถว ใช้เวลาไม่กี่นาที)
 
-# 2. Full Train แบบ source-held 70/30 (เครื่อง RAM สูงหรือ DGX)
-python main.py --stage train --run-name thesis_local \
-  --preset full --profile overnight \
-  --split-manifest configs/splits/source_holdout_v3_full_70_30.json \
-  --model all --skip-tuning
+python main.py --stage preprocess --refresh-cache
 
-# 3. อ่าน metrics จาก run เดิม และ promote ตาม selection policy
+# 2. ตรวจ manifest และเทียบกับ split ที่ข้อมูลจริงให้ออกมา
+python main.py --stage audit \
+  --split-manifest configs/splits/cicids2017_temporal_70_30.json --verify-data
+
+# 3. เทรนเต็มรูปแบบ 70/30 แบบเรียงตามเวลา
+#    --accelerator gpu เร่งเฉพาะ xgboost/catboost/stacking
+#    อีก 4 โมเดลใช้ CPU และ "reuse" artifact เดิมโดยไม่เทรนซ้ำ
+python main.py --stage train --run-name thesis_local --model all \
+  --split-manifest configs/splits/cicids2017_temporal_70_30.json \
+  --preset 32gb --accelerator gpu
+
+# 4. อ่าน metrics และ promote (เขียน champion + ranking 3 มุม)
 python main.py --stage evaluate --run-name thesis_local
 python main.py --stage promote --run-name thesis_local
 
@@ -437,8 +450,10 @@ python main.py --stage train --skip-tuning
 # RAM 16 GB: train with the larger safe preset
 python main.py --stage train --run-name latest --preset 16gb --force
 
-# Full clean-cache training: uses every row in data/processed/cicids_clean.parquet.
-# Recommended RAM: 64 GB minimum, 96-128 GB preferred for all enabled models.
+# --preset only affects the HP search budget now -- the trainer always uses
+# every row of data/processed/cicids2017_clean.parquet (2.5M rows) regardless
+# of preset, via the temporal split manifest. Measured on a 31 GB machine
+# training all 7 models with --preset 32gb; 16 GB should be enough.
 python main.py --stage train --run-name latest --preset full --force --skip-cv --skip-label-shuffle
 
 # Full training, faster but with no hyperparameter search.
@@ -461,17 +476,44 @@ python main.py --stage eda
 - `results/figures/feature_distributions.png`
 - `results/metrics/eda_summary.json`
 
-### Stage: `preprocess` — Clean + Label-map + Split
+### Stage: `preprocess` — Build the canonical clean cache
 
 ```bash
+# Rebuild from data/raw (a few minutes for 2.5M rows).
+python main.py --stage preprocess --refresh-cache
+
+# Reuse and validate an existing cache.
 python main.py --stage preprocess
 ```
 
-**Output:**
-- `data/processed/train.parquet` · `val.parquet` · `test.parquet`
-- `data/processed/feature_names.json`
-- `data/processed/label_classes.json`
-- `models/label_encoder.joblib`
+**Output:** `data/processed/cicids2017_clean.parquet` (2,497,980 rows), plus a
+console summary of row count, feature count, source files, and label
+distribution.
+
+The cache strips whitespace from column names, drops leaky and schema-only
+columns, normalizes the 15 raw labels into 9 families, rejects remaining
+missing/Inf feature values, and preserves metadata columns (`dataset_id`,
+`source_file`, `capture_window`, `_row_index`) that are excluded from the 77
+model features.
+
+`_row_index` is the row's position in its **raw** CSV, recorded before any row is
+dropped. It is the ordering key for the chronological split — see §15.
+
+### Stage: `audit` — Validate the split manifest
+
+```bash
+# Structural validation only.
+python main.py --stage audit --split-manifest configs/splits/cicids2017_temporal_70_30.json
+
+# Also rebuild the split from the cache and compare against the manifest's
+# expected per-class counts, and re-verify the capture chronology.
+python main.py --stage audit \
+  --split-manifest configs/splits/cicids2017_temporal_70_30.json --verify-data
+```
+
+`--verify-data` is what turns the manifest from a claim into a checked fact: it
+confirms the split the data actually yields still matches the counts the
+manifest advertises.
 
 ### Stage: `train` — Train Models
 
@@ -501,6 +543,11 @@ python main.py --stage train --run-name latest --preset full --force --skip-cv -
 
 # safer first full run on a 16 GB machine: try LightGBM only
 python main.py --stage train --model lgbm --run-name latest --preset full --force --skip-hp --skip-cv --skip-label-shuffle
+
+# Full GPU run. Only xgboost / catboost / stacking consult --accelerator.
+python main.py --stage train --run-name thesis_local --model all \
+  --split-manifest configs/splits/cicids2017_temporal_70_30.json \
+  --preset 32gb --accelerator gpu
 ```
 
 **Output:**
@@ -529,15 +576,22 @@ python main.py --stage evaluate --model rf
 ### Stage: `explain` — SHAP Explainability
 
 ```bash
-python main.py --stage explain          # all trained models
-python main.py --stage explain --model rf
+# All models of a run.
+python main.py --stage explain --run-name thesis_local
+
+# One model only.
+python main.py --stage explain --run-name thesis_local --model cat
 ```
 
-**Output (per model):**
-- `results/shap/<name>/summary_bar.png`
-- `results/shap/<name>/summary_<class>.png` (one per class)
-- `results/shap/<name>/top_features.json`
-- `results/shap/shap_report.md`
+อ่านโมเดลจาก run bundle แล้วสร้าง test set ขึ้นใหม่ด้วย temporal split ชุดเดิม
+จาก manifest เดียวกัน แถวที่นำมาอธิบายจึงเป็นแถวเดียวกับที่ใช้วัดผลเสมอ
+ไม่มีทางหลุดออกจากกันได้
+
+**Output (per model), inside the run bundle:**
+- `results/<run-name>/shap/<model>/summary_bar.png`
+- `results/<run-name>/shap/<model>/summary_<class>.png` (one per class — 9 classes)
+- `results/<run-name>/shap/<model>/top_features.json`
+- `results/<run-name>/shap/shap_report.md` (cross-model summary)
 
 ### Stage: `predict` — Batch Inference on a New CSV
 
@@ -566,7 +620,7 @@ Runs the training path and writes artifacts under `results/<run-name>/` (`latest
 
 ```bash
 # Validate source manifest structure and version
-python main.py --stage audit --split-manifest configs/splits/source_holdout_v3_full_70_30.json
+python main.py --stage audit --split-manifest configs/splits/cicids2017_temporal_70_30.json --verify-data
 
 # Run copy-only security checks against a trained candidate bundle
 python main.py --stage red-team --run-name thesis_local \
@@ -589,7 +643,7 @@ python main.py --stage promote --run-name thesis_local
 | `--model` | `all`, `rf`, `xgb`, `lgbm`, `cat`, `nn`, `lr`, `stacking` (or canonical names) | `all` | Which model(s) |
 | `--config` | path | `src/config/config.yaml` | Override config path |
 | `--run-name` | string | `latest` | Immutable output bundle name under `results/` |
-| `--split-manifest` | path | — | Versioned source-held split manifest |
+| `--split-manifest` | path | canonical temporal manifest | Chronological split manifest; `train.py` rejects any manifest whose `version` isn't a temporal one |
 | `--profile` | `dev`, `overnight` | `dev` | Resource/tuning profile |
 | `--accelerator` | `cpu`, `gpu` | `cpu` | Select CPU or supported NVIDIA GPU path |
 | `--gpu-devices` | string | `0` | GPU device IDs forwarded to supported models |
@@ -604,7 +658,8 @@ python main.py --stage promote --run-name thesis_local
 | `--skip-cv` | flag | `false` | Skip cross-validation trust check during training |
 | `--skip-label-shuffle` | flag | `false` | Skip shuffled-label sanity check during training |
 | `--force` | flag | `false` | Retrain existing model artifacts |
-| `--refresh-cache` | flag | `false` | Rebuild `data/processed/cicids_clean.parquet` from raw CSVs |
+| `--refresh-cache` | flag | `false` | Rebuild the dataset's parquet cache from raw CSVs |
+| `--verify-data` | flag | `false` | `--stage audit` only: rebuild the split and check it against the manifest's expected counts |
 | `--port` | int | `8501` | Streamlit port for `--stage dashboard` |
 | `--log-level` | `DEBUG`/`INFO`/`WARNING`/`ERROR` | `INFO` | Verbosity |
 
@@ -622,18 +677,18 @@ Open `http://localhost:8501`. If that port is already used:
 python main.py --stage dashboard --port 8502
 ```
 
-The Streamlit dashboard now reads `results/latest/` directly and falls back to those artifacts when legacy `models/` or `results/metrics/` are empty.
+The Streamlit dashboard, the FastAPI backend, SHAP and batch inference all read the **published run** — the one named in `results/champion.json`, resolved by `published_run_dir()`. There is no second source of metrics to drift out of sync.
 
 | Page | English | ภาษาไทย |
 |---|---|---|
-| 1. Dataset Overview | Combined CICIDS/CSE-CIC row counts and class balance | ภาพรวม + การกระจายของคลาส |
+| 1. Dataset Overview | CICIDS2017 row counts and class balance | ภาพรวม + การกระจายของคลาส |
 | 2. EDA | Distribution plots, correlations, missing values | กราฟ EDA |
 | 3. Model Performance | Per-model metrics + confusion matrix + report | metric รายโมเดล + confusion matrix |
 | 4. Model Comparison | Cross-model ranking + bar chart | เปรียบเทียบโมเดลทั้งหมด |
 | 5. SHAP | Feature importance + per-class explanations | อธิบาย model ด้วย SHAP |
 | 6. Predict New CSV | Upload → validate → predict + download | อัปโหลด CSV ใหม่เพื่อพยากรณ์ |
 
-> Page 6 expects the combined CICIDS/CSE-CIC 80-feature schema and uses model artifacts from `results/latest/`.
+> Page 6 expects the 77-feature CICIDS2017 schema and uses model artifacts from the published run (see above), not a hardcoded `results/latest/`.
 
 มี Next.js dashboard เป็นอีก frontend หนึ่ง โดยเปิด backend และ frontend คนละ terminal:
 
@@ -674,7 +729,7 @@ result = predict_csv(
     model_name="random_forest",
     output_csv=Path("predictions.csv"),
 )
-print(result.validation.message)        # OK -- 10000 rows, 80 columns
+print(result.validation.message)        # OK -- 10000 rows, 77 columns
 print(result.predictions.head())
 
 # จาก DataFrame ที่โหลดอยู่แล้ว
@@ -685,8 +740,8 @@ print(result.predictions["predicted_label"].value_counts())
 
 ### Schema requirements · ข้อกำหนดของ CSV ที่อัปโหลด
 
-- ต้องมีคอลัมน์ฟีเจอร์ครบตามที่อยู่ใน `data/processed/feature_names.json`
-  (80 คอลัมน์ของ combined CICIDS/CSE-CIC schema)
+- ต้องมีคอลัมน์ฟีเจอร์ครบตามที่อยู่ใน `feature_columns.json` ของ run bundle ที่ promote แล้ว
+  (เช่น `results/cicids2017_temporal_v1/feature_columns.json` — 77 คอลัมน์)
 - คอลัมน์เกินอนุญาตได้ (เช่น `Label` สำหรับ QA)
 - ค่า Inf จะถูกแปลงเป็น NaN แล้วส่งให้ fitted imputer ใน model pipeline จัดการ โดยรักษา missingness semantics เดิม
 - ระบบจะ strip whitespace นำหน้าชื่อคอลัมน์ให้อัตโนมัติ
@@ -701,7 +756,7 @@ print(result.predictions["predicted_label"].value_counts())
 ### 13.1 Unit tests (pytest) · ทดสอบหน่วยย่อย
 
 ```bash
-# Run all 151 tests
+# Run all 228 tests
 pytest
 
 # Quiet mode (less output)
@@ -763,66 +818,49 @@ black src tests scripts main.py
 ruff check --fix .
 ```
 
-### 13.4 Smoke test with synthetic data · ทดสอบไปป์ไลน์ด้วยข้อมูลสังเคราะห์
+### 13.4 Smoke test without the real dataset · ทดสอบโดยไม่มีข้อมูลจริง
 
-ไม่ต้องมี CICIDS จริงก็รันได้:
+การเทรนต้องใช้ CICIDS2017 ครบทั้ง 8 capture files เสมอ เพราะแต่ละคลาสโจมตี
+อยู่ในไฟล์เดียว ขาดไฟล์ใดไฟล์หนึ่งจะหายไปทั้งคลาส `--stage train` จึงหยุด
+พร้อมแจ้ง error แทนที่จะเทรนบนคอร์ปัสที่ไม่ครบ — ไม่มีเส้นทางเทรนด้วยข้อมูลสังเคราะห์
+
+สิ่งที่รันได้โดยไม่ต้องมีข้อมูลจริง:
 
 ```bash
-# 1. Generate synthetic data
+# ชุดทดสอบทั้งหมด ใช้ fixture ในตัว ไม่แตะ data/raw
+pytest -q --no-cov
+
+# EDA บนข้อมูลสังเคราะห์
 python scripts/generate_sample.py --rows 2000
+python main.py --stage eda --raw-dir data/sample
 
-# 2. Run pipeline against sample dir
-python main.py --stage eda      --raw-dir data/sample
-python main.py --stage preprocess --raw-dir data/sample
-
-# 3. Train one model (synthetic data is small, no need to tune)
-python main.py --stage train --model rf --skip-tuning
-
-# 4. Evaluate + SHAP
-python main.py --stage evaluate --model rf
-python main.py --stage explain  --model rf
+# ตรวจ manifest แบบ static (ไม่ต้องมี cache)
+python main.py --stage audit --split-manifest configs/splits/cicids2017_temporal_70_30.json
 ```
 
 ### 13.5 Real-data smoke test · ทดสอบกับข้อมูลจริง
 
-สร้างไฟล์ `scripts/smoke_test.py` หรือใช้คำสั่งต่อไปนี้ใน Python REPL:
-
-```python
-import sys
-sys.path.insert(0, ".")
-from pathlib import Path
-from src.pipelines.preprocess import run as run_preprocess
-from src.pipelines.train      import run as run_train
-from src.pipelines.evaluate   import run as run_evaluate
-from src.pipelines.explain    import run as run_explain
-
-cfg = Path("src/config/config.yaml")
-
-# Make sure data/raw/ has at least one CICIDS CSV first.
-summary = run_preprocess(cfg)
-print(summary["label_distribution"])
-
-train  = run_train(cfg,    model="rf",  skip_tuning=True)
-ev     = run_evaluate(cfg, model="rf")
-sh     = run_explain(cfg,  model="rf")
-print("Best:", ev["best_model"])
-```
-
-ทางลัด: รัน end-to-end ด้วย CSV เดียว (Friday DDos = เล็กที่สุดมี BENIGN + DDoS):
-
-```yaml
-# แก้ src/config/config.yaml ชั่วคราว
-data:
-  subsample_n: 50000
-  required_files:
-    - "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
-tuning:
-  enabled: false
-```
+รันผ่าน CLI ทีละ stage ได้เลย ไม่ต้องเขียนสคริปต์เพิ่ม:
 
 ```bash
-python main.py --stage all
+# 1. สร้าง cache (ต้องมี data/raw ครบ 8 ไฟล์)
+python main.py --stage preprocess --refresh-cache
+
+# 2. ตรวจว่า manifest ตรงกับ split ที่ข้อมูลให้ออกมาจริง
+python main.py --stage audit   --split-manifest configs/splits/cicids2017_temporal_70_30.json --verify-data
+
+# 3. เทรนโมเดลเดียวแบบเร็ว (ข้าม HP search และ trust checks)
+python main.py --stage train --run-name smoke --model rf   --skip-tuning --skip-cv --skip-label-shuffle
+
+# 4. อ่านผล + promote + SHAP
+python main.py --stage evaluate --run-name smoke
+python main.py --stage promote  --run-name smoke
+python main.py --stage explain  --run-name smoke --model rf
 ```
+
+> `--stage evaluate` และ `--stage explain` ถ้าไม่ใส่ `--run-name` จะอ่าน run ที่
+> `results/champion.json` publish ไว้ ซึ่งเป็นตัวเดียวกับที่ dashboard, API
+> และ batch inference ใช้
 
 ### 13.6 Dashboard smoke test · ทดสอบแดชบอร์ด
 
@@ -832,7 +870,7 @@ python main.py --stage dashboard
 
 # Open http://localhost:8501
 # Check that all 6 sidebar pages load without error.
-# Page 6 needs results/latest/*.joblib to exist (run --stage train first).
+# Page 6 needs a promoted run (run --stage train then --stage promote first).
 ```
 
 ### 13.7 Continuous testing · ทดสอบขณะพัฒนา
@@ -847,40 +885,83 @@ ptw -- --no-cov
 
 ## 14. Results · ผลลัพธ์
 
-### Latest verified local run: `local_300k_70_30`
+### Latest verified run: `cicids2017_temporal_v1`
 
-ผลที่ commit ไว้ล่าสุดเป็น **CPU smoke/reference run** บน combined CICIDS2017 + CSE-CIC-IDS2018 จำนวน
-300,000 แถว ใช้ manifest `source_holdout_v2_70_30`: train 210,000 / locked test 90,000,
-80 features, 9 observed classes, ไม่มี calibration split และข้าม hyperparameter search
+รันเต็มบน CICIDS2017 ทั้งชุด ด้วย manifest `cicids2017_temporal_v1`:
+train 1,748,579 / locked test 749,401 แถว (70.00 / 30.00), 77 features, 9 คลาส,
+hyperparameter search ครบทุกโมเดล (RandomizedSearchCV, n_iter=20, scoring=`f1_macro`),
+XGBoost/CatBoost/Stacking เทรนบน GPU ที่เหลือบน CPU
 
-| Model | Accuracy | Macro-F1 | Balanced accuracy | Infiltration F2 | FPR |
-|---|---:|---:|---:|---:|---:|
-| Stacking | **0.9529** | 0.8438 | 0.8491 | 0.8285 | 0.0346 |
-| **Random Forest** | 0.9507 | **0.9160** | 0.8987 | 0.7711 | **0.0269** |
-| XGBoost | 0.9523 | 0.8448 | 0.8478 | 0.8249 | 0.0347 |
-| LightGBM | 0.9507 | 0.8407 | 0.8442 | 0.7973 | 0.0316 |
-| CatBoost | 0.9467 | 0.9070 | **0.9561** | **0.8285** | 0.0416 |
-| MLP | 0.9284 | 0.8822 | 0.9440 | 0.8269 | 0.0627 |
-| Logistic Regression | 0.8994 | 0.8181 | 0.8602 | 0.7229 | 0.0720 |
+#### Dimension 1–2 · Classification & Detection
 
-Selection policy กำหนด `target_max_fpr = 0.02` แต่ไม่มีโมเดลใดผ่านเกณฑ์นี้ จึง promote
-Random Forest แบบ `conditional_no_model_meets_fpr` โดยเลือก FPR ต่ำสุดก่อน แล้วจึงพิจารณา Macro-F1
-สถานะดังกล่าวถูกบันทึกใน `results/champion.json` และต้องรายงานข้อจำกัดนี้ ไม่ควรอ้างว่าโมเดลผ่าน FPR target แล้ว
+| Model | Accuracy | **Macro-F1** | Macro-F1 (reportable) | Macro P | **Macro R** | Binary FPR | Binary FNR |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **CatBoost** | 0.9953 | **0.8873** | 0.8613 | 0.8839 | **0.8970** | 0.00065 | 0.0160 |
+| LightGBM | 0.9903 | 0.8774 | 0.8627 | **0.9403** | 0.8576 | **0.00022** | 0.0487 |
+| XGBoost | 0.9906 | 0.8773 | 0.8542 | 0.8894 | 0.8889 | 0.00038 | 0.0429 |
+| Random Forest | 0.9820 | 0.8404 | 0.8378 | 0.8846 | 0.8165 | 0.00530 | 0.0723 |
+| Stacking | 0.9581 | 0.6822 | 0.7092 | 0.6551 | 0.8852 | 0.04072 | 0.0339 |
+| Logistic Regression | 0.8428 | 0.5574 | 0.6348 | 0.5244 | 0.8338 | 0.16931 | 0.0254 |
+| MLP | 0.9331 | 0.5369 | 0.6767 | 0.5180 | 0.7112 | 0.04721 | 0.1541 |
+
+#### Per-class recall — ทำไม Accuracy ถึงหลอกตา
+
+| Model | BENIGN | **Bot** | Brute Force | DDoS | DoS | Heartbleed | Infiltration | PortScan | Web Attack |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| *n_test* | *621,680* | ***585*** | *2,745* | *38,405* | *58,119* | *4* | *11* | *27,209* | *643* |
+| CatBoost | .9994 | **.1607** | .9985 | .9990 | .9571 | 1.000 | 1.000 | .9976 | .9611 |
+| LightGBM | .9998 | **.1538** | .9960 | .9991 | .8891 | .7500 | 1.000 | .9955 | .9347 |
+| XGBoost | .9996 | **.1607** | .9989 | .9992 | .8937 | 1.000 | 1.000 | .9975 | .9502 |
+| Random Forest | .9947 | **.1504** | .9767 | .9983 | .8372 | .7500 | .7273 | .9975 | .9160 |
+| Stacking | .9593 | **.1607** | .9971 | .9980 | .9069 | 1.000 | 1.000 | .9975 | .9471 |
+| MLP | .9528 | **.1607** | .9621 | .9951 | .6583 | **0.000** | .7273 | .9962 | .9487 |
+
+> **ผลสำคัญที่สุดของงานนี้:** ทุกโมเดลจับ `Bot` ได้เพียง ~15–16% เท่ากันหมด
+> ความสม่ำเสมอนี้บ่งชี้ว่าเป็นคุณสมบัติของข้อมูล ไม่ใช่จุดอ่อนของโมเดล — Bot ทั้ง 1,948 flow
+> อยู่ใน capture เดียว การแบ่งตามเวลาจึงเทรนด้วย flow ช่วงต้นและทดสอบด้วยช่วงท้าย
+> ซึ่งโมเดลทั้งหมด generalize ข้ามไม่ได้
+>
+> **การแบ่งข้อมูลแบบสุ่มจะซ่อนผลนี้ทั้งหมด** เพราะ flow จาก burst เดียวกันจะกระจายอยู่ทั้งสองฝั่ง
+> (นี่คือสิ่งที่เปเปอร์ CICIDS2017 ส่วนใหญ่รายงาน) จึงเป็นหลักฐานสนับสนุนการเลือกใช้ temporal split
+>
+> พูดอีกแบบ: **CatBoost ได้ accuracy 99.53% ขณะที่พลาด Bot ไป 84%** — ตรงกับที่อาจารย์เตือนเรื่อง
+> class imbalance ทำให้ accuracy สูงโดยจับ attack บางชนิดไม่ได้
+
+#### Dimension 4 · Computational Efficiency
+
+วัด inference บน CPU ทุกโมเดล batch ละ 1,000 flows (30 รอบ) เพื่อให้เทียบกันได้
+
+| Model | Trained on | Fit time | p50 | **p95** | Throughput | Size |
+|---|---|---:|---:|---:|---:|---:|
+| CatBoost | gpu | 45 s | 7.58 ms | **8.39 ms** | 131,975 /s | 2.5 MB |
+| MLP | cpu | 819 s | 10.05 ms | 12.50 ms | 99,545 /s | 0.7 MB |
+| XGBoost | gpu | 155 s | 43.42 ms | 54.10 ms | 23,030 /s | 15.8 MB |
+| Random Forest | cpu | 315 s | — | 104.12 ms | — | 124.5 MB |
+| Stacking | gpu | 2,755 s | 119.79 ms | 137.95 ms | 8,348 /s | 109.3 MB |
+| LightGBM | cpu | 550 s | — | 144.02 ms | — | 54.9 MB |
+| Logistic Regression | cpu | 654 s | 4.76 ms | 5.15 ms | 232,391 /s | 0.04 MB |
+
+#### Rankings · การจัดอันดับ 3 มุม
+
+| Ranking | Winner | Decided by | Excluded |
+|---|---|---|---|
+| **Overall Best** | `catboost` | f1_macro = 0.8873 | — |
+| **Security-focused Best** | `catboost` | recall_macro = 0.8970 | MLP (FPR 4.7%), Stacking (4.1%), LogReg (16.9%) — เกินเพดาน 1% |
+| **Deployment Best** | `catboost` | p95 = 8.39 ms | RF / Stacking / MLP / LogReg — ต่ำกว่าเพดานคุณภาพ f1_macro ≥ 0.867 |
+
+CatBoost ชนะทั้งสามมุม ควรรายงานตามจริงว่า **ในข้อมูลชุดนี้ไม่มี trade-off ให้ต้องเลือก**
+ไม่ใช่แกล้งสร้างข้อขัดแย้ง กลไกการคัดออกทำงานจริง (เห็นได้จากคอลัมน์ Excluded)
+เกณฑ์ทั้งหมดประกาศไว้ล่วงหน้าใน `configs/ranking_policy.json` ก่อนรัน
 
 ไฟล์หลักที่ตรวจสอบได้:
 
-- `results/local_300k_70_30/metrics.json`, `report.md` และ per-model artifacts
-- `results/local_300k_70_30/bundle_manifest.json` — 32 core artifacts พร้อม checksums
-- `results/local_300k_70_30/red_team.json` — actual copy-only smoke กับ Random Forest
-- `results/champion.json` — champion pointer และ selection evidence
+- `results/cicids2017_temporal_v1/metrics.json`, `report.md` และ per-model artifacts
+- `results/cicids2017_temporal_v1/bundle_manifest.json` — checksums ของทุกไฟล์ใน bundle
+- `results/champion.json` — champion pointer, selection evidence และ ranking ทั้ง 3 มุม
 
-Red-team ที่ 5% perturbation ผ่าน แต่ 10% ไม่ผ่าน; รายงานนี้ใช้ processed-split smoke แบบ legacy
-จึงไม่ใช่ผล robustness สุดท้ายของ locked source-held test ส่วน Heartbleed มีเพียง 5 ตัวอย่าง
-(train 3 / test 2) และคลาส `Other` ไม่ปรากฏใน 9 observed classes ของ run นี้ การสรุปประสิทธิภาพ
-ต้องดู Macro-F1, per-class recall, FPR และ confusion matrix
-ควบคู่กับ Accuracy เสมอ
-
-> ตารางข้างบนเป็น local reference run เท่านั้น
+ข้อจำกัดที่ต้องรายงานคู่กันเสมอ: `Heartbleed` มี test เพียง 4 แถว และ `Infiltration` 11 แถว
+ค่า recall ของสองคลาสนี้จึงเป็น anecdote ไม่ใช่ค่าประมาณที่เสถียร (ดู `f1_macro_reportable`)
+และ MLP จับ Heartbleed ไม่ได้เลย (recall 0.000)
 
 ## 15. Architecture · สถาปัตยกรรม
 
@@ -893,7 +974,7 @@ data + features      ← depends on config + utils
    |
 models               ← depends on data + features + config + utils
    |
-evaluation + xai     ← depends on models + data
+explainability (xai) ← depends on models + data
    |
 inference            ← depends on models + features (validator)
    |
@@ -906,28 +987,71 @@ A lower layer never imports from a higher one — cycles impossible by construct
 
 ```
 data/raw/*.csv
-   → schema validation + cleaned parquet cache + provenance
-   → versioned source manifest + SHA-256 verification
-   → deterministic source-held split (70% train / 30% locked test)
-   → deterministic hash quotas within each source
-   → GroupKFold by source for train-only CV/tuning
+   → schema validation + per-dataset parquet cache + provenance
+     (เก็บ _row_index = ตำแหน่งแถวใน CSV ดิบ → ใช้เป็น ordering key)
+   → split manifest (configs/splits/cicids2017_temporal_70_30.json)
+   → ตรวจ chronology กับตารางเวลาโจมตีที่ CIC ประกาศ
+   → chronological 70/30 ภายในทุกกลุ่ม (capture file, class)
+   → เทียบ split ที่ได้กับ expected per-class counts ใน manifest
+   → StratifiedKFold สำหรับ CV/tuning เฉพาะฝั่ง train
    → fitted preprocessing Pipeline + 7 candidate models
    → results/<run-id>/ checkpoints + metrics + explainability
    → bundle_manifest.json (SHA-256 integrity verification)
    → offline red-team checks on a copy of candidate data
-   → policy-based promotion → results/champion.json
+   → policy-based promotion → results/champion.json (champion + 3 rankings)
    → inference.predictor / FastAPI / dashboard
 ```
+
+### ทำไมถึงเปลี่ยนวิธีแบ่งข้อมูล · Why the split protocol changed
+
+Source holdout กันข้อมูลรั่วด้วยการยกทั้ง capture file ไปฝั่ง train หรือ test ซึ่งทำได้
+เพราะต้องมี attack family เดียวกันกระจายอยู่หลายไฟล์ แต่**ใน CICIDS2017
+แต่ละคลาสโจมตีอยู่ในไฟล์เดียวเท่านั้น** (ดูตารางใน §2) การยกไฟล์ใดออกไปเป็น test
+จึงทำให้คลาสนั้นไม่มีข้อมูลเทรนเลย — source holdout เป็นไปไม่ได้บนคอร์ปัส 2017
+
+วิธีที่ใช้แทนคือแบ่ง **ตามเวลาภายในแต่ละ capture แยกทีละคลาส**: flow ช่วงต้น 70%
+ไปเทรน ช่วงท้าย 30% ไปทดสอบ ทุกคลาสจึงมีอยู่ทั้งสองฝั่ง และไม่มี test flow ใด
+เกิดก่อน train flow ของคลาสตัวเอง — เป็นโปรโตคอลที่เข้มกว่า random split ที่งานวิจัย
+CICIDS2017 ส่วนใหญ่ใช้
+
+ต้องแบ่งแยกทีละ `(ไฟล์, คลาส)` ไม่ใช่แค่ทีละไฟล์ เพราะ Heartbleed ทั้ง 11 flow
+เกิดใน burst เดียวยาว ~20 นาที ที่ตำแหน่ง ~86% ของ capture วันพุธ ถ้าตัดที่ระดับไฟล์
+มันจะไปอยู่ฝั่ง test ทั้งหมดและไม่เหลือให้เทรนเลย
+
+**ที่มาของลำดับเวลา:** ไฟล์ CICIDS2017 แบบ *MachineLearningCVE* (79 คอลัมน์)
+**ไม่มีคอลัมน์ `Timestamp`** จึงใช้ `_row_index` แทน และลำดับแถวนั้นเรียงตามเวลาจริง
+ซึ่ง `temporal_split.validate_raw_label_chronology` **พิสูจน์** ด้วยการเทียบกับตารางเวลา
+โจมตีที่ CIC ประกาศ ไม่ใช่แค่สมมติเอา — ทั้ง 7 คู่ที่เรียงลำดับได้ตรงกันหมด
+
+| capture | ลำดับที่สังเกตได้ (median position) | ตารางที่ CIC ประกาศ |
+|---|---|---|
+| Wednesday | slowloris .073 < Slowhttptest .104 < Hulk .284 < GoldenEye .856 < Heartbleed .863 | 09:47 < 10:14 < 10:43 < 11:10 < 15:12 ✓ |
+| Thursday-Web | Brute Force .241 < XSS .464 < Sql Injection .538 | 09:20 < 10:15 < 10:40 ✓ |
+| Tuesday | FTP-Patator .089 < SSH-Patator .468 | 09:20 < 14:00 ✓ |
+
+ข้อควรระวังที่ต้องเขียนในเล่ม: CICFlowMeter เขียน record ตอน flow **จบ** ลำดับนี้จึงเป็น
+ลำดับการสิ้นสุดของ flow ไม่ใช่เวลาเริ่ม (เห็นชัดที่ DoS GoldenEye ซึ่งถือ connection ไว้นาน
+record จึงลากยาวเลยหน้าต่างโจมตี 11:10–11:23 ไปมาก) ซึ่งเป็นลำดับที่ถูกต้องสำหรับ IDS อยู่แล้ว
+เพราะ feature ของ flow จะมีก็ต่อเมื่อ flow จบแล้ว
 
 ### Key architectural rules · กติกาสถาปัตยกรรม
 
 1. **Single `RANDOM_STATE = 42`** ทุก seed (numpy, sklearn, xgboost, ...) ใช้ค่าเดียวกัน
 2. **Scaler อยู่ใน sklearn Pipeline** → fit ใหม่ทุก fold ของ CV → ไม่มี data leakage
 3. **Config-driven** — paths, hyperparameters, class lists อยู่ใน `config.yaml` หมด
-4. **Source isolation first** — locked test sources ไม่เข้า train/CV; CV group ตาม source
-5. **Deterministic quotas** — hash-based sampling ทำให้ rerun ได้ชุดเดิมและตรวจ provenance ได้
+4. **Locked test ไม่เข้า train/CV** เด็ดขาด — แต่**บนโปรโตคอล 2017 ไม่ใช้ GroupKFold ตาม source**
+   เพราะแต่ละคลาสอยู่ capture เดียว การ group ตาม source จะทำให้ทั้งคลาสตกอยู่ fold เดียว
+   จึงใช้ `StratifiedKFold` แทน และ CV ใช้เพื่อ HP search + ตรวจความเสถียรเท่านั้น
+   ตัวเลขหลักมาจาก locked test set เสมอ
+5. **Deterministic split** — ไม่มี RNG เลย ผลขึ้นกับเนื้อข้อมูลอย่างเดียว สลับลำดับ input แล้วได้ split เดิม
 6. **Immutable run bundles** — checkpoint เขียนแบบ atomic, resume ได้ และ checksum ก่อน promote/load
 7. **Schema validation** at both ingestion (loader) and inference (validator)
+8. **Fair tuning** — ทุกโมเดลที่ tune ได้ ใช้ method เดียวกัน, `n_iter` เท่ากัน, objective เดียวกัน
+   (`f1_macro`) และ search space ขนาดเท่ากันพอดี (144 combinations) จึงสำรวจพื้นที่ในสัดส่วนเท่ากัน
+   ห้ามใส่ `max_iter` (งบของ optimizer) หรือ `class_weight` (เป็นของ `--imbalance-strategy`) ลงใน grid
+9. **Metric key เพิ่มได้ ห้าม rename** — `f1_macro` / `target_fpr` / `target_false_negatives`
+   ถูกอ่านโดย promotion, `main.py`, dashboard และ scripts ด้วย `.get(key, 0.0)`
+   การ rename จึงทำให้ promote ผิดตัวแบบเงียบๆ แทนที่จะ error
 
 อ่านต่อ: [`docs/architecture.md`](docs/architecture.md), [`docs/ml_pipeline.md`](docs/ml_pipeline.md)
 
@@ -961,18 +1085,25 @@ Loader อ่านเป็น `encoding="latin-1"` และ `label_mapping.no
 
 ยังไม่ extract CICIDS — ดูข้อ 7. Dataset Preparation
 
-### `LabelEncoder is missing N expected classes` (warning)
+### `LabelEncoder is missing N expected classes`
 
-เกิดเมื่อ subsample เล็กไม่ครอบคลุมทุกคลาส (เช่น Heartbleed มีแค่ 11 แถวในทั้งระบบ)
-ไม่ใช่ error — เพิ่ม `subsample_n` ถ้าต้องการครอบคลุมครบ
+ไม่ควรเกิดกับ manifest มาตรฐาน (`cicids2017_temporal_70_30.json`) เพราะ temporal
+split รับประกันว่าทุกคลาสมีทั้งฝั่ง train และ test เสมอ (Heartbleed ก็ยังได้ 7
+train / 4 test) ถ้าเจอ แปลว่า `--split-manifest` ที่ใช้อยู่ไม่ใช่ manifest ที่ถูกต้อง
+ให้รัน `python main.py --stage audit --split-manifest <path> --verify-data` เพื่อตรวจ
 
-### Memory error เมื่อโหลด full dataset
+### Memory error ระหว่างเทรน
 
-ลด subsample ใน config:
+`--preset` คุมเฉพาะขนาด HP search subset (`hp_search_subsample`,
+`hp_search_n_iter`) ไม่ได้ลดขนาด training set — corpus เต็มที่ใช้เทรนคงที่ที่
+1,748,579 แถวเสมอ (manifest-driven) ถ้า RAM ไม่พอ:
 
-```yaml
-data:
-  subsample_n: 200000   # หรือเล็กกว่า
+```bash
+# ลด parallel HP search jobs ก่อน (ตัวที่กิน RAM มากสุด)
+python main.py --stage train --preset 8gb ...
+
+# หรือข้าม HP search ไปเลยระหว่างทดลอง
+python main.py --stage train --skip-tuning --skip-cv ...
 ```
 
 ### `Glyph 150 (\x96) missing from font(s) Arial` (warning)
@@ -1074,7 +1205,7 @@ Department of Information Technology, KMITL
 
 ```bibtex
 @misc{cyberml_kmitl_2569,
-  title  = {AI-Based Cyber Attack Classification from Network Logs using CICIDS2017 and CSE-CIC-IDS2018},
+  title  = {AI-Based Cyber Attack Classification from Network Logs using CICIDS2017},
   author = {Chotthakunanan, Sirachet and Rudeemaetakul, Sukhum},
   year   = {2569 (2026)},
   note   = {Senior Project, Faculty of Information Technology, KMITL.
@@ -1099,7 +1230,7 @@ Department of Information Technology, KMITL
 
 ## Acknowledgements · กิตติกรรมประกาศ
 
-- ขอขอบคุณ **Canadian Institute for Cybersecurity (UNB)** สำหรับชุดข้อมูล CICIDS2017 และ CSE-CIC-IDS2018
+- ขอขอบคุณ **Canadian Institute for Cybersecurity (UNB)** สำหรับชุดข้อมูล CICIDS2017
 - ขอขอบคุณ open-source community: scikit-learn, XGBoost, LightGBM, CatBoost, SHAP, Streamlit
 - ขอขอบคุณ **ผศ.ดร.ประพันธ์ ปวรางกูร** สำหรับคำแนะนำตลอดโครงการ
 
