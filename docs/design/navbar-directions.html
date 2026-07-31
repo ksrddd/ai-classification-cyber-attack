@@ -1,0 +1,452 @@
+<title>Navbar — three directions</title>
+
+<style>
+:root {
+  --ground:#EDEFEC; --surface:#F8F9F7; --raised:#FFFFFF; --sunken:#E4E7E3;
+  --ink:#171A19; --ink-2:#4C5452; --ink-3:#6B7370;
+  --rule:rgba(23,26,25,.13); --rule-2:rgba(23,26,25,.07);
+  --accent:#14504E; --accent-w:rgba(20,80,78,.10); --on-accent:#F6F8F5;
+  --good:#1D6B3F; --warn:#A87200; --bad:#A8281C;
+  --good-w:rgba(29,107,63,.10); --warn-w:rgba(168,114,0,.11); --bad-w:rgba(168,40,28,.09);
+  --bar:rgba(23,26,25,.34); --bar-bg:rgba(23,26,25,.08);
+  --sans:"Segoe UI Variable Display","Segoe UI",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mono:"Cascadia Mono","Cascadia Code",ui-monospace,Consolas,"SF Mono",monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:#141715; --surface:#1C201E; --raised:#232825; --sunken:#101312;
+    --ink:#E4E8E5; --ink-2:#A9B3AE; --ink-3:#838D89;
+    --rule:rgba(228,232,229,.14); --rule-2:rgba(228,232,229,.07);
+    --accent:#4FB3AC; --accent-w:rgba(79,179,172,.13); --on-accent:#0E1211;
+    --good:#26A981; --warn:#B58A00; --bad:#E85A6E;
+    --good-w:rgba(38,169,129,.13); --warn-w:rgba(181,138,0,.15); --bad-w:rgba(232,90,110,.13);
+    --bar:rgba(228,232,229,.36); --bar-bg:rgba(228,232,229,.09);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:#141715; --surface:#1C201E; --raised:#232825; --sunken:#101312;
+  --ink:#E4E8E5; --ink-2:#A9B3AE; --ink-3:#838D89;
+  --rule:rgba(228,232,229,.14); --rule-2:rgba(228,232,229,.07);
+  --accent:#4FB3AC; --accent-w:rgba(79,179,172,.13); --on-accent:#0E1211;
+  --good:#26A981; --warn:#B58A00; --bad:#E85A6E;
+  --good-w:rgba(38,169,129,.13); --warn-w:rgba(181,138,0,.15); --bad-w:rgba(232,90,110,.13);
+  --bar:rgba(228,232,229,.36); --bar-bg:rgba(228,232,229,.09);
+}
+:root[data-theme="light"] {
+  --ground:#EDEFEC; --surface:#F8F9F7; --raised:#FFFFFF; --sunken:#E4E7E3;
+  --ink:#171A19; --ink-2:#4C5452; --ink-3:#6B7370;
+  --rule:rgba(23,26,25,.13); --rule-2:rgba(23,26,25,.07);
+  --accent:#14504E; --accent-w:rgba(20,80,78,.10); --on-accent:#F6F8F5;
+  --good:#1D6B3F; --warn:#A87200; --bad:#A8281C;
+  --good-w:rgba(29,107,63,.10); --warn-w:rgba(168,114,0,.11); --bad-w:rgba(168,40,28,.09);
+  --bar:rgba(23,26,25,.34); --bar-bg:rgba(23,26,25,.08);
+}
+
+* { box-sizing:border-box; }
+.page { background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+.page :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+
+.wrap { max-width:1180px; margin:0 auto; padding:28px 20px 72px; }
+
+.head { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between; padding-bottom:18px; margin-bottom:24px; border-bottom:1px solid var(--rule); }
+.head h1 { margin:0; font-size:21px; font-weight:650; letter-spacing:-.015em; text-wrap:balance; }
+.head p { margin:5px 0 0; font-size:13px; color:var(--ink-2); max-width:64ch; }
+.tbtn { font:inherit; font-size:12px; color:var(--ink-2); background:var(--surface); border:1px solid var(--rule); border-radius:5px; padding:6px 11px; cursor:pointer; }
+.tbtn:hover { color:var(--ink); background:var(--raised); }
+
+section { margin-bottom:34px; }
+h2 { font-size:16px; font-weight:640; letter-spacing:-.012em; margin:0 0 4px; }
+.lede { margin:0 0 16px; font-size:13px; color:var(--ink-2); max-width:74ch; }
+
+/* ── diagnosis ── */
+.diag { background:var(--raised); border:1px solid var(--rule); border-radius:6px; overflow:hidden; }
+.scroll { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:12.5px; }
+thead th { text-align:left; font-weight:600; font-size:11px; color:var(--ink-3); padding:9px 12px; border-bottom:1px solid var(--rule); white-space:nowrap; }
+tbody td { padding:9px 12px; border-bottom:1px solid var(--rule-2); vertical-align:top; }
+tbody tr:last-child td { border-bottom:0; }
+td code, .num-s { font-family:var(--mono); font-size:11.5px; background:var(--rule-2); padding:.08em .34em; border-radius:3px; }
+.tell { font-weight:560; white-space:nowrap; }
+
+/* ── direction cards ── */
+.dirs { display:grid; gap:22px; }
+.dir { background:var(--raised); border:1px solid var(--rule); border-radius:7px; overflow:hidden; }
+.dir-head { padding:13px 16px; border-bottom:1px solid var(--rule); display:flex; flex-wrap:wrap; gap:6px 12px; align-items:baseline; }
+.dir-head h3 { margin:0; font-size:14px; font-weight:640; letter-spacing:-.01em; }
+.dir-head .tag { font-size:11px; color:var(--ink-3); }
+.dir-head .pick { margin-left:auto; }
+.dir-body { display:grid; grid-template-columns:auto minmax(0,1fr); gap:0; }
+@media (max-width:840px) { .dir-body { grid-template-columns:minmax(0,1fr); } }
+.demo { background:var(--surface); border-right:1px solid var(--rule); padding:18px; display:flex; justify-content:center; }
+@media (max-width:840px) { .demo { border-right:0; border-bottom:1px solid var(--rule); } }
+.rationale { padding:16px; display:grid; gap:11px; align-content:start; }
+.rationale p { margin:0; font-size:12.5px; color:var(--ink-2); max-width:64ch; }
+.rationale h4 { margin:0; font-size:12px; font-weight:620; color:var(--ink); }
+.rationale ul { margin:0; padding-left:17px; font-size:12.5px; color:var(--ink-2); display:grid; gap:4px; }
+.cost { font-size:12.5px; color:var(--ink-2); border-left:2px solid var(--warn); padding:2px 0 2px 11px; }
+
+.chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:550; padding:2px 7px; border-radius:4px; border:1px solid transparent; white-space:nowrap; }
+.chip svg { width:11px; height:11px; flex:none; }
+.chip.is-good { color:var(--good); background:var(--good-w); border-color:color-mix(in srgb,var(--good) 26%,transparent); }
+.chip.is-warn { color:var(--warn); background:var(--warn-w); border-color:color-mix(in srgb,var(--warn) 26%,transparent); }
+.chip.is-bad  { color:var(--bad);  background:var(--bad-w);  border-color:color-mix(in srgb,var(--bad) 26%,transparent); }
+.chip.is-mute { color:var(--ink-3); background:var(--rule-2); border-color:var(--rule); }
+
+/* ══════════════════════════════════════════
+   SHARED RAIL CHROME
+   ══════════════════════════════════════════ */
+.rail { width:236px; background:var(--sunken); border:1px solid var(--rule); border-radius:5px; display:flex; flex-direction:column; min-height:428px; }
+.rail-nav { padding:6px 0; flex:1; }
+
+/* ── A: run manifest ── */
+.a-head { padding:14px 15px 13px; border-bottom:1px solid var(--rule); }
+.a-run { display:flex; align-items:baseline; gap:7px; }
+.a-run b { font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:-.01em; }
+.a-meta { margin-top:8px; display:grid; gap:3px; font-family:var(--mono); font-size:10.5px; color:var(--ink-3); line-height:1.5; }
+.a-meta span b { color:var(--ink-2); font-weight:500; }
+.a-link { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:baseline; padding:7px 15px; width:100%; background:none; border:0; font:inherit; font-size:13px; text-align:left; cursor:pointer; color:var(--ink-2); }
+.a-link:hover { color:var(--ink); background:var(--rule-2); }
+.a-link[aria-current] { color:var(--ink); font-weight:600; background:var(--accent-w); box-shadow:inset 2px 0 0 var(--accent); }
+.a-link em { display:block; font-style:normal; font-size:10.5px; color:var(--ink-3); font-weight:400; margin-top:1px; }
+.a-link .st { font-family:var(--mono); font-size:10px; color:var(--ink-3); }
+.a-sep { font-size:10.5px; color:var(--ink-3); padding:11px 15px 4px; border-top:1px solid var(--rule-2); margin-top:5px; }
+.a-sep:first-child { border-top:0; margin-top:0; }
+
+/* ── B: numbered pipeline index ── */
+.b-head { padding:15px; border-bottom:1px solid var(--rule); }
+.b-head b { display:block; font-size:15px; font-weight:600; letter-spacing:-.018em; }
+.b-head span { display:block; font-size:11.5px; color:var(--ink-3); margin-top:2px; }
+.b-link { display:grid; grid-template-columns:19px minmax(0,1fr) auto; gap:9px; align-items:baseline; padding:7px 15px; width:100%; background:none; border:0; font:inherit; font-size:13px; text-align:left; cursor:pointer; color:var(--ink-2); }
+.b-link:hover { color:var(--ink); background:var(--rule-2); }
+.b-link[aria-current] { color:var(--ink); font-weight:600; background:var(--accent-w); }
+.b-n { font-family:var(--mono); font-size:11px; color:var(--ink-3); }
+.b-link[aria-current] .b-n { color:var(--accent); font-weight:600; }
+.b-dot { width:6px; height:6px; border-radius:50%; background:var(--bar-bg); }
+.b-dot.done { background:var(--good); }
+.b-dot.skip { background:none; border:1px solid var(--rule); }
+
+/* ── C: top bar ── */
+.c-wrap { width:100%; max-width:660px; border:1px solid var(--rule); border-radius:5px; overflow:hidden; background:var(--surface); }
+.c-bar { display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; padding:10px 14px; background:var(--sunken); border-bottom:1px solid var(--rule); }
+.c-mark { font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:-.02em; padding-right:14px; border-right:1px solid var(--rule); }
+.c-mark span { color:var(--ink-3); font-weight:400; }
+.c-tabs { display:flex; gap:2px; flex-wrap:wrap; }
+.c-tab { font:inherit; font-size:12.5px; background:none; border:0; padding:5px 9px; border-radius:4px; cursor:pointer; color:var(--ink-2); }
+.c-tab:hover { color:var(--ink); background:var(--rule-2); }
+.c-tab[aria-current] { color:var(--ink); font-weight:600; background:var(--raised); box-shadow:inset 0 -2px 0 var(--accent); }
+.c-meta { margin-left:auto; display:flex; gap:12px; font-family:var(--mono); font-size:10.5px; color:var(--ink-3); }
+.c-meta b { color:var(--ink-2); font-weight:500; }
+.c-body { padding:16px 14px; display:grid; gap:9px; }
+.c-body .skel { height:9px; border-radius:3px; background:var(--bar-bg); }
+.c-note { font-size:11.5px; color:var(--ink-3); }
+
+/* ── name options ── */
+.names { display:grid; grid-template-columns:repeat(auto-fit,minmax(228px,1fr)); gap:14px; }
+.name { background:var(--raised); border:1px solid var(--rule); border-radius:6px; padding:14px 15px; display:grid; gap:7px; align-content:start; }
+.name b { font-size:15px; font-weight:620; letter-spacing:-.015em; }
+.name .mono-set { font-family:var(--mono); font-size:15px; font-weight:600; letter-spacing:-.02em; }
+.name p { margin:0; font-size:12px; color:var(--ink-2); }
+
+.foot { border-top:1px solid var(--rule); padding-top:16px; font-size:12.5px; color:var(--ink-2); max-width:74ch; }
+</style>
+
+<div class="page">
+<div class="wrap">
+
+  <header class="head">
+    <div>
+      <h1>Navbar — what reads as AI, and three ways out</h1>
+      <p>
+        Diagnosis of the current <span class="num-s">Sidebar.tsx</span>, then three directions
+        rendered at real size. Toggle the theme to check both grounds.
+      </p>
+    </div>
+    <button class="tbtn" id="tbtn" type="button">Toggle theme</button>
+  </header>
+
+  <!-- ══════════ DIAGNOSIS ══════════ -->
+  <section>
+    <h2>Eight tells in the current rail</h2>
+    <p class="lede">
+      Your instinct was right, and it isn't one thing — it's a stack of defaults that each
+      individually look reasonable.
+    </p>
+    <div class="diag scroll">
+      <table>
+        <thead>
+          <tr><th>In the code</th><th>Why it reads as generated</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tell">"CyberML"</span></td>
+            <td>Category + technology compound. The exact shape of every generated product name — DataFlow, NeuralGuard, CloudSync. Says nothing your README doesn't already say better.</td>
+          </tr>
+          <tr>
+            <td><span class="tell">Shield icon</span> <code>lucide Shield</code></td>
+            <td>The first glyph anything reaches for when the word "security" appears. Zero information — every tool in the category has one.</td>
+          </tr>
+          <tr>
+            <td><span class="tell">Letter in a rounded square</span></td>
+            <td>The universal generated-logo move. I used it too in the first mockup, with a "C" tile — same reflex, my mistake.</td>
+          </tr>
+          <tr>
+            <td><span class="tell">"CICIDS2017 + CSE-CIC-IDS2018"</span><br><code>9.5px uppercase tracking-[.12em]</code></td>
+            <td>The tiny tracked uppercase eyebrow. It's the single most saturated tell in generated UI right now, and it appears here three more times as group labels.</td>
+          </tr>
+          <tr>
+            <td><span class="tell">Monitor / Evaluate / Inference</span></td>
+            <td>Abstract verb-nouns that would fit any ML tool ever built. They describe a category, not this pipeline.</td>
+          </tr>
+          <tr>
+            <td><span class="tell">Session block</span><br><code>Sukhum R. · KMITL · 2569</code> + pulsing dot</td>
+            <td>A single-user local tool dressed as multi-tenant SaaS. The green pulse implies live connection status for something with no server presence. A reviewer notices this instantly.</td>
+          </tr>
+          <tr>
+            <td><span class="tell">Active state</span> <code>border-l-2 border-info</code></td>
+            <td>Coloured side-stripe. Fine at 2px on a nav item, but it's the same gesture as the 3px stripe on the champion card — decoration standing in for hierarchy.</td>
+          </tr>
+          <tr>
+            <td><span class="tell">Settings button</span></td>
+            <td>Goes nowhere. Chrome that exists because dashboards have it.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ REFRAME ══════════ -->
+  <section>
+    <h2>The reframe all three directions share</h2>
+    <p class="lede">
+      This is not a product with users and sessions. It is <strong>the report of one training run</strong>.
+      Once you accept that, the rail's job changes: carry the run's identity — the thing that decides
+      whether the numbers can be trusted — and lay the nav out as the pipeline that produced it.
+      That alone removes the logo, the shield, the session block and the abstract verb groups,
+      because none of them survive the question "what does a reviewer need here?"
+    </p>
+  </section>
+
+  <!-- ══════════ DIRECTIONS ══════════ -->
+  <section>
+    <h2>Three directions</h2>
+    <div class="dirs">
+
+      <!-- ─── A ─── -->
+      <article class="dir">
+        <div class="dir-head">
+          <h3>A · Run manifest</h3>
+          <span class="tag">no wordmark, no icons — the run is the identity</span>
+          <span class="pick"><span class="chip is-good"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="m4.6 10.4 3.4 3.4 7.4-8" stroke-linecap="round" stroke-linejoin="round"/></svg>my pick</span></span>
+        </div>
+        <div class="dir-body">
+          <div class="demo">
+            <nav class="rail" aria-label="Direction A">
+              <div class="a-head">
+                <div class="a-run">
+                  <b>latest</b>
+                  <span class="chip is-warn" style="font-size:10px">conditional</span>
+                </div>
+                <div class="a-meta">
+                  <span>fingerprint <b>96aaf444</b></span>
+                  <span>seed <b>42</b> · 80 features · 9 classes</span>
+                  <span>31 Jul 2026 · 4h 04m</span>
+                </div>
+              </div>
+              <div class="rail-nav">
+                <div class="a-sep">Data</div>
+                <button class="a-link" aria-current="page" type="button"><span>Overview</span><span class="st"></span></button>
+                <button class="a-link" type="button"><span>Dataset<em>9 classes · 300k rows</em></span><span class="st"></span></button>
+                <button class="a-link" type="button"><span>Distributions<em>train vs test</em></span><span class="st"></span></button>
+                <div class="a-sep">Results</div>
+                <button class="a-link" type="button"><span>Model detail<em>random_forest</em></span><span class="st"></span></button>
+                <button class="a-link" type="button"><span>Comparison<em>7 models</em></span><span class="st"></span></button>
+                <button class="a-link" type="button"><span>Explainability<em>not computed</em></span><span class="st">—</span></button>
+                <div class="a-sep">Use</div>
+                <button class="a-link" type="button"><span>Batch predict</span><span class="st"></span></button>
+              </div>
+            </nav>
+          </div>
+          <div class="rationale">
+            <h4>What it does</h4>
+            <p>
+              The head is a typeset run record, not a logo lockup. A reviewer's first three questions —
+              which run, which data, was it seeded — are answered before they click anything.
+              The <span class="num-s">conditional</span> chip sits next to the run name, so the caveat
+              travels with every page rather than living only on Overview.
+            </p>
+            <h4>What it removes</h4>
+            <ul>
+              <li>Wordmark, shield, letter tile, session block, Settings — all of it</li>
+              <li>Group labels drop to sentence case at normal tracking: no eyebrows</li>
+              <li>Nav items carry what they contain, so the counts do work instead of decorating</li>
+            </ul>
+            <p class="cost">
+              Cost: no product identity at all. If you want the project to have a name on screen
+              for the poster or the slide deck, this direction won't give you one.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─── B ─── -->
+      <article class="dir">
+        <div class="dir-head">
+          <h3>B · Numbered pipeline index</h3>
+          <span class="tag">the stages really are a sequence, so the numbers mean something</span>
+        </div>
+        <div class="dir-body">
+          <div class="demo">
+            <nav class="rail" aria-label="Direction B">
+              <div class="b-head">
+                <b>Triage</b>
+                <span>CICIDS2017 · run <span class="num" style="font-size:11px">latest</span></span>
+              </div>
+              <div class="rail-nav">
+                <button class="b-link" aria-current="page" type="button"><span class="b-n">01</span><span>Overview</span><span class="b-dot done"></span></button>
+                <button class="b-link" type="button"><span class="b-n">02</span><span>Dataset</span><span class="b-dot done"></span></button>
+                <button class="b-link" type="button"><span class="b-n">03</span><span>Distributions</span><span class="b-dot done"></span></button>
+                <button class="b-link" type="button"><span class="b-n">04</span><span>Model detail</span><span class="b-dot done"></span></button>
+                <button class="b-link" type="button"><span class="b-n">05</span><span>Comparison</span><span class="b-dot done"></span></button>
+                <button class="b-link" type="button"><span class="b-n">06</span><span>Explainability</span><span class="b-dot skip"></span></button>
+                <button class="b-link" type="button"><span class="b-n">07</span><span>Batch predict</span><span class="b-dot"></span></button>
+              </div>
+              <div style="border-top:1px solid var(--rule);padding:10px 15px;font-size:11.5px;color:var(--ink-3)">
+                6 of 7 stages produced output
+              </div>
+            </nav>
+          </div>
+          <div class="rationale">
+            <h4>What it does</h4>
+            <p>
+              Numbered markers are usually a generated-design tell, but the ban has an exception and this
+              hits it: your stages genuinely run in order, and the order is information a reviewer needs.
+              The dot on the right is completion state — filled means this stage produced output,
+              hollow means it was skipped. Explainability reads hollow, which is true.
+            </p>
+            <h4>What it removes</h4>
+            <ul>
+              <li>Icons entirely — the number is the anchor</li>
+              <li>Verb-noun groups; the sequence replaces the grouping</li>
+              <li>Session chrome, replaced by a real completion count</li>
+            </ul>
+            <p class="cost">
+              Cost: numbering only stays honest while the order is real. If you later add a page that
+              doesn't belong to the pipeline, the whole device breaks and you're back to decoration.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─── C ─── -->
+      <article class="dir">
+        <div class="dir-head">
+          <h3>C · Top bar, no rail</h3>
+          <span class="tag">gives the wide metric tables the full viewport</span>
+        </div>
+        <div class="dir-body">
+          <div class="demo">
+            <div class="c-wrap">
+              <div class="c-bar">
+                <span class="c-mark">triage<span>/latest</span></span>
+                <div class="c-tabs">
+                  <button class="c-tab" aria-current="page" type="button">Overview</button>
+                  <button class="c-tab" type="button">Dataset</button>
+                  <button class="c-tab" type="button">Distributions</button>
+                  <button class="c-tab" type="button">Models</button>
+                  <button class="c-tab" type="button">Predict</button>
+                </div>
+                <div class="c-meta"><span>seed <b>42</b></span><span><b>96aaf444</b></span></div>
+              </div>
+              <div class="c-body">
+                <div class="c-note">Content gets the full width — the comparison table is 6 columns wide.</div>
+                <div class="skel" style="width:92%"></div>
+                <div class="skel" style="width:100%"></div>
+                <div class="skel" style="width:78%"></div>
+                <div class="skel" style="width:96%"></div>
+                <div class="skel" style="width:64%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="rationale">
+            <h4>What it does</h4>
+            <p>
+              Drops the 216px rail. Your actual content is wide numeric tables — the comparison view is
+              six columns and the per-class view is six more — so the rail was spending a fifth of the
+              screen on seven links. The wordmark is set lowercase in mono as a path,
+              <span class="num-s">triage/latest</span>, so identity and run are one lockup and no logo
+              is needed.
+            </p>
+            <h4>What it removes</h4>
+            <ul>
+              <li>The rail, and with it the collapse toggle and its state</li>
+              <li>Groups — five tabs don't need grouping</li>
+              <li>The icon set entirely</li>
+            </ul>
+            <p class="cost">
+              Cost: seven items is near the ceiling for tabs. You'd merge Model detail and Comparison
+              into one "Models" view with a selector, which is a real content change, not just chrome.
+            </p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══════════ NAME ══════════ -->
+  <section>
+    <h2>On the name</h2>
+    <p class="lede">
+      Your call, not mine — but "CyberML" is the weakest part and it's cheap to change.
+      Your README already has the better idea in it: <em>"like a doctor diagnosing illness from
+      symptoms&nbsp;… IDS tools detect that an attack happened; this system tells the operator what kind."</em>
+      That's triage. Three options, ordered by how much I'd argue for them:
+    </p>
+    <div class="names">
+      <div class="name">
+        <b>Triage</b>
+        <span class="chip is-good" style="justify-self:start"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="m4.6 10.4 3.4 3.4 7.4-8" stroke-linecap="round" stroke-linejoin="round"/></svg>recommended</span>
+        <p>A real word for exactly what the system does: sort incoming cases by kind and urgency. Carries your own README metaphor. Not a compound, not a category label, and it survives being said out loud in a defence.</p>
+      </div>
+      <div class="name">
+        <div class="mono-set">ids-9</div>
+        <span class="chip is-mute" style="justify-self:start">descriptive</span>
+        <p>Nine-class intrusion detection, stated flatly. Reads as a lab designation rather than a product. Honest, forgettable, and impossible to accuse of marketing.</p>
+      </div>
+      <div class="name">
+        <b>No name</b>
+        <span class="chip is-mute" style="justify-self:start">direction A</span>
+        <p>A thesis artefact doesn't need a startup name. The rail carries the run instead. This is the strongest anti-AI move available, and it costs you a title slide.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">
+    Nothing here touches <span class="num-s">web/src</span>. Pick a direction and I'll fold it into the
+    main mockup, or straight into <span class="num-s">Sidebar.tsx</span> if you'd rather go to code.
+  </p>
+
+</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  document.getElementById("tbtn").addEventListener("click", function () {
+    var r = document.documentElement, now = r.getAttribute("data-theme");
+    if (!now) { now = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
+    r.setAttribute("data-theme", now === "dark" ? "light" : "dark");
+  });
+  /* let the demo rails behave like real nav */
+  Array.prototype.forEach.call(document.querySelectorAll('nav[aria-label], .c-bar'), function (scope) {
+    var items = scope.querySelectorAll("button");
+    Array.prototype.forEach.call(items, function (b) {
+      b.addEventListener("click", function () {
+        Array.prototype.forEach.call(items, function (x) { x.removeAttribute("aria-current"); });
+        b.setAttribute("aria-current", "page");
+      });
+    });
+  });
+})();
+</script>

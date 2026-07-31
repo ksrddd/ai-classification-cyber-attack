@@ -9,7 +9,6 @@
 [![Tests](https://img.shields.io/badge/tests-152%20passed-brightgreen)](tests/)
 [![Delivery preflight](https://github.com/ksrddd/ai-classification-cyber-attack/actions/workflows/delivery-preflight.yml/badge.svg)](https://github.com/ksrddd/ai-classification-cyber-attack/actions/workflows/delivery-preflight.yml)
 [![Dataset](https://img.shields.io/badge/dataset-CICIDS2017-orange)](https://www.unb.ca/cic/datasets/ids-2017.html)
-[![Dataset](https://img.shields.io/badge/dataset-CICIDS2018-blue)](https://www.unb.ca/cic/datasets/ids-2018.html)
 ---
 
 ## Table of Contents · สารบัญ

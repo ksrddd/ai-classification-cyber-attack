@@ -1,6 +1,6 @@
 """Batch inference on user-uploaded CSVs.
 
-Reads a CSV that follows the combined CICIDS2017/CSE-CIC-IDS2018 flow-feature schema, validates
+Reads a CSV that follows the CICIDS2017 flow-feature schema, validates
 it against the saved ``feature_names.json``, runs the saved Pipeline,
 and returns a DataFrame with predicted class labels and per-class
 probabilities.

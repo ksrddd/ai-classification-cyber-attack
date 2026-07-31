@@ -1,0 +1,1098 @@
+<title>Attack classification dashboard — redesign mockup</title>
+
+<style>
+/* ============================================================
+   TOKENS — light-first: this is read in a daylit room next to
+   a projector. Dark is for the author at 1am.
+   ============================================================ */
+:root {
+  --ground:#EDEFEC; --surface:#F8F9F7; --raised:#FFFFFF; --sunken:#E4E7E3;
+  --ink:#171A19; --ink-2:#4C5452; --ink-3:#6B7370;
+  --rule:rgba(23,26,25,.13); --rule-2:rgba(23,26,25,.07);
+  --accent:#14504E; --accent-w:rgba(20,80,78,.10); --on-accent:#F6F8F5;
+  --good:#1D6B3F; --warn:#A87200; --bad:#A8281C;
+  --good-w:rgba(29,107,63,.10); --warn-w:rgba(168,114,0,.11); --bad-w:rgba(168,40,28,.09);
+  --bar:rgba(23,26,25,.34); --bar-bg:rgba(23,26,25,.08);
+  --sans:"Segoe UI Variable Display","Segoe UI",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mono:"Cascadia Mono","Cascadia Code",ui-monospace,Consolas,"SF Mono",monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:#141715; --surface:#1C201E; --raised:#232825; --sunken:#101312;
+    --ink:#E4E8E5; --ink-2:#A9B3AE; --ink-3:#838D89;
+    --rule:rgba(228,232,229,.14); --rule-2:rgba(228,232,229,.07);
+    --accent:#4FB3AC; --accent-w:rgba(79,179,172,.13); --on-accent:#0E1211;
+    --good:#26A981; --warn:#B58A00; --bad:#E85A6E;
+    --good-w:rgba(38,169,129,.13); --warn-w:rgba(181,138,0,.15); --bad-w:rgba(232,90,110,.13);
+    --bar:rgba(228,232,229,.36); --bar-bg:rgba(228,232,229,.09);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:#141715; --surface:#1C201E; --raised:#232825; --sunken:#101312;
+  --ink:#E4E8E5; --ink-2:#A9B3AE; --ink-3:#838D89;
+  --rule:rgba(228,232,229,.14); --rule-2:rgba(228,232,229,.07);
+  --accent:#4FB3AC; --accent-w:rgba(79,179,172,.13); --on-accent:#0E1211;
+  --good:#26A981; --warn:#B58A00; --bad:#E85A6E;
+  --good-w:rgba(38,169,129,.13); --warn-w:rgba(181,138,0,.15); --bad-w:rgba(232,90,110,.13);
+  --bar:rgba(228,232,229,.36); --bar-bg:rgba(228,232,229,.09);
+}
+:root[data-theme="light"] {
+  --ground:#EDEFEC; --surface:#F8F9F7; --raised:#FFFFFF; --sunken:#E4E7E3;
+  --ink:#171A19; --ink-2:#4C5452; --ink-3:#6B7370;
+  --rule:rgba(23,26,25,.13); --rule-2:rgba(23,26,25,.07);
+  --accent:#14504E; --accent-w:rgba(20,80,78,.10); --on-accent:#F6F8F5;
+  --good:#1D6B3F; --warn:#A87200; --bad:#A8281C;
+  --good-w:rgba(29,107,63,.10); --warn-w:rgba(168,114,0,.11); --bad-w:rgba(168,40,28,.09);
+  --bar:rgba(23,26,25,.34); --bar-bg:rgba(23,26,25,.08);
+}
+
+* { box-sizing:border-box; }
+.page { background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+.page :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+/* absent value — never render 0 or NaN for a field the bundle didn't record */
+.nil { color:var(--ink-3); font-family:var(--mono); font-size:.92em; }
+
+.frame { max-width:1240px; margin:0 auto; padding:28px 20px 64px; }
+.frame-head { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between; padding-bottom:18px; margin-bottom:22px; border-bottom:1px solid var(--rule); }
+.frame-head h1 { margin:0; font-size:21px; font-weight:650; letter-spacing:-.015em; text-wrap:balance; }
+.frame-head p { margin:5px 0 0; font-size:13px; color:var(--ink-2); max-width:66ch; }
+.theme-btn { font:inherit; font-size:12px; color:var(--ink-2); background:var(--surface); border:1px solid var(--rule); border-radius:5px; padding:6px 11px; cursor:pointer; }
+.theme-btn:hover { color:var(--ink); background:var(--raised); }
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app { display:grid; grid-template-columns:236px minmax(0,1fr); background:var(--surface); border:1px solid var(--rule); border-radius:8px; overflow:hidden; }
+.rail { background:var(--sunken); border-right:1px solid var(--rule); display:flex; flex-direction:column; min-height:700px; }
+
+/* run selector — the bundle on screen is a choice, and it is visible */
+.rail-run { padding:12px 14px 13px; border-bottom:1px solid var(--rule); }
+.rail-run label { display:block; font-size:10.5px; color:var(--ink-3); margin-bottom:5px; }
+.rail-run select {
+  font:inherit; font-family:var(--mono); font-size:12.5px; font-weight:600;
+  width:100%; padding:6px 8px; cursor:pointer;
+  color:var(--ink); background:var(--raised);
+  border:1px solid var(--rule); border-radius:4px;
+}
+.rail-meta { margin-top:9px; display:grid; gap:3px; font-family:var(--mono); font-size:10.5px; color:var(--ink-3); line-height:1.5; }
+.rail-meta b { color:var(--ink-2); font-weight:500; }
+.rail-badge { margin-top:8px; }
+
+.rail-nav { padding:4px 0 10px; flex:1; }
+.rail-stage { font-size:10.5px; color:var(--ink-3); padding:11px 15px 4px; border-top:1px solid var(--rule-2); margin-top:5px; }
+.rail-stage:first-child { border-top:0; margin-top:0; }
+.rail-link {
+  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:baseline;
+  padding:7px 15px; font:inherit; font-size:13px; text-align:left;
+  width:100%; background:none; border:0; cursor:pointer; color:var(--ink-2);
+  transition:color .12s, background .12s;
+}
+.rail-link:hover { color:var(--ink); background:var(--rule-2); }
+.rail-link[aria-current="page"] { color:var(--ink); font-weight:600; background:var(--accent-w); box-shadow:inset 2px 0 0 var(--accent); }
+.rail-link em { display:block; font-style:normal; font-size:10.5px; color:var(--ink-3); font-weight:400; margin-top:1px; }
+.rail-link .st { font-family:var(--mono); font-size:10px; color:var(--ink-3); }
+
+.content { min-width:0; display:flex; flex-direction:column; }
+.topbar { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; padding:11px 20px; border-bottom:1px solid var(--rule); background:var(--surface); }
+.topbar h2 { margin:0; font-size:14px; font-weight:620; letter-spacing:-.01em; }
+.run-meta { display:flex; flex-wrap:wrap; gap:14px; margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--ink-3); }
+.run-meta b { color:var(--ink-2); font-weight:500; }
+
+.view { padding:20px; display:none; }
+.view[data-active] { display:block; animation:enter .16s ease-out; }
+@keyframes enter { from { opacity:0; } to { opacity:1; } }
+@media (prefers-reduced-motion: reduce) { .view[data-active] { animation:none; } * { transition:none !important; } }
+.stack { display:flex; flex-direction:column; gap:16px; }
+
+/* ============================================================
+   FINDING
+   ============================================================ */
+.finding { display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; align-items:start; padding:13px 15px; border:1px solid var(--rule); border-radius:6px; background:var(--raised); }
+.finding.is-bad  { background:var(--bad-w);  border-color:color-mix(in srgb,var(--bad) 34%,transparent); }
+.finding.is-warn { background:var(--warn-w); border-color:color-mix(in srgb,var(--warn) 34%,transparent); }
+.finding.is-good { background:var(--good-w); border-color:color-mix(in srgb,var(--good) 34%,transparent); }
+.finding-icon { width:17px; height:17px; margin-top:1px; flex:none; }
+.finding.is-bad .finding-icon { color:var(--bad); }
+.finding.is-warn .finding-icon { color:var(--warn); }
+.finding.is-good .finding-icon { color:var(--good); }
+.finding h3 { margin:0 0 3px; font-size:13.5px; font-weight:640; letter-spacing:-.008em; text-wrap:balance; }
+.finding p { margin:0; font-size:12.5px; color:var(--ink-2); max-width:80ch; }
+.finding code { font-family:var(--mono); font-size:.92em; background:var(--rule-2); padding:.05em .3em; border-radius:3px; }
+
+/* ============================================================
+   PANEL
+   ============================================================ */
+.panel { background:var(--raised); border:1px solid var(--rule); border-radius:6px; overflow:hidden; }
+.panel-head { display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; padding:11px 15px; border-bottom:1px solid var(--rule); }
+.panel-head h3 { margin:0; font-size:13px; font-weight:620; letter-spacing:-.008em; }
+.panel-head p { margin:0; font-size:11.5px; color:var(--ink-3); }
+.panel-head .right { margin-left:auto; font-size:11px; color:var(--ink-3); }
+.panel-body { padding:15px; }
+.panel-note { padding:9px 15px; border-top:1px solid var(--rule-2); font-size:11.5px; color:var(--ink-3); }
+.grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:16px; align-items:start; }
+.grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; align-items:start; }
+
+/* reading: a number never appears without what qualifies it */
+.reading-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+.reading { padding:13px 15px; border-right:1px solid var(--rule); }
+.reading:last-child { border-right:0; }
+.reading dt { font-size:11.5px; color:var(--ink-3); margin:0 0 5px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.reading dd { margin:0; }
+.reading .v { font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:23px; font-weight:600; letter-spacing:-.02em; line-height:1.1; display:block; }
+.reading .v.is-bad { color:var(--bad); } .reading .v.is-warn { color:var(--warn); } .reading .v.is-good { color:var(--good); }
+.reading .v.nil { font-size:17px; font-weight:500; }
+.reading .qual { display:block; font-size:11.5px; color:var(--ink-2); margin-top:5px; max-width:36ch; }
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.scroll { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:12.5px; }
+thead th { text-align:left; font-weight:600; font-size:11px; color:var(--ink-3); padding:8px 10px; border-bottom:1px solid var(--rule); white-space:nowrap; }
+th.n, td.n { text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; }
+tbody td { padding:8px 10px; border-bottom:1px solid var(--rule-2); vertical-align:middle; }
+tbody tr:last-child td { border-bottom:0; }
+tbody tr.is-flagged { background:var(--warn-w); }
+tbody tr.is-champ { background:var(--accent-w); }
+tbody tr.is-void td { opacity:.62; }
+.model-name { font-weight:560; white-space:nowrap; }
+
+.meter { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; min-width:150px; }
+.meter-track { height:6px; border-radius:3px; background:var(--bar-bg); overflow:hidden; }
+.meter-fill { height:100%; border-radius:3px; background:var(--bar); }
+.meter-fill.is-bad { background:var(--bad); } .meter-fill.is-warn { background:var(--warn); } .meter-fill.is-good { background:var(--good); }
+.meter .num { font-size:11.5px; }
+
+/* chip: colour + icon + word, never colour alone */
+.chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:550; white-space:nowrap; padding:2px 7px; border-radius:4px; border:1px solid transparent; }
+.chip svg { width:11px; height:11px; flex:none; }
+.chip.is-good { color:var(--good); background:var(--good-w); border-color:color-mix(in srgb,var(--good) 26%,transparent); }
+.chip.is-warn { color:var(--warn); background:var(--warn-w); border-color:color-mix(in srgb,var(--warn) 26%,transparent); }
+.chip.is-bad  { color:var(--bad);  background:var(--bad-w);  border-color:color-mix(in srgb,var(--bad) 26%,transparent); }
+.chip.is-mute { color:var(--ink-3); background:var(--rule-2); border-color:var(--rule); }
+
+/* fold strip — must survive nulls and empty arrays */
+.folds { display:flex; flex-direction:column; gap:2px; }
+.fold-row { display:grid; grid-template-columns:136px minmax(0,1fr) 118px; gap:12px; align-items:center; padding:5px 0; }
+.fold-row + .fold-row { border-top:1px solid var(--rule-2); }
+.fold-label { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fold-plot { position:relative; height:22px; }
+.fold-axis { position:absolute; inset:50% 0 auto; height:1px; background:var(--rule); transform:translateY(-50%); }
+.fold-dot { position:absolute; top:50%; width:9px; height:9px; border-radius:50%; background:var(--bar); border:2px solid var(--raised); transform:translate(-50%,-50%); }
+.fold-dot.is-warn { background:var(--warn); }
+.fold-span { position:absolute; top:50%; height:3px; border-radius:2px; background:var(--bar); opacity:.3; transform:translateY(-50%); }
+.fold-span.is-warn { background:var(--warn); opacity:.5; }
+.fold-none { font-size:11.5px; color:var(--ink-3); line-height:22px; }
+.fold-sd { font-size:11.5px; text-align:right; }
+.axis-ticks { display:grid; grid-template-columns:136px minmax(0,1fr) 118px; gap:12px; margin-top:6px; }
+.axis-ticks div:nth-child(2) { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--ink-3); }
+
+/* empty states teach the interface */
+.empty { padding:26px 20px; display:grid; gap:12px; max-width:70ch; }
+.empty h4 { margin:0; font-size:13.5px; font-weight:620; }
+.empty p { margin:0; font-size:12.5px; color:var(--ink-2); }
+.empty ol, .empty ul { margin:0; padding-left:18px; font-size:12.5px; color:var(--ink-2); display:grid; gap:5px; }
+pre.cmd { margin:0; padding:10px 12px; background:var(--sunken); border:1px solid var(--rule); border-radius:5px; font-family:var(--mono); font-size:11.5px; color:var(--ink); overflow-x:auto; }
+
+.states { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+.state-cell { display:grid; gap:7px; }
+.state-cap { font-size:11px; color:var(--ink-3); font-weight:550; }
+.state-box { border:1px solid var(--rule); border-radius:6px; background:var(--surface); padding:14px; min-height:132px; display:flex; flex-direction:column; gap:9px; justify-content:center; }
+.drop { border:1.5px dashed var(--rule); border-radius:6px; padding:16px 12px; text-align:center; font-size:12px; color:var(--ink-3); }
+.drop.is-active { border-color:var(--accent); border-style:solid; background:var(--accent-w); color:var(--ink-2); }
+.btn { font:inherit; font-size:12.5px; font-weight:550; padding:7px 13px; border-radius:5px; cursor:pointer; border:1px solid var(--accent); background:var(--accent); color:var(--on-accent); transition:opacity .15s; }
+.btn:hover { opacity:.88; }
+.btn[disabled] { opacity:.45; cursor:not-allowed; }
+.btn.ghost { background:none; color:var(--ink-2); border-color:var(--rule); }
+.btn.ghost:hover { color:var(--ink); background:var(--rule-2); }
+.skel { border-radius:3px; background:var(--bar-bg); height:9px; }
+.field-err { font-size:11.5px; color:var(--bad); display:flex; align-items:flex-start; gap:5px; }
+.field-err svg { width:12px; height:12px; flex:none; margin-top:2px; }
+.feat-list { display:flex; flex-wrap:wrap; gap:5px; font-family:var(--mono); font-size:10.5px; }
+.feat-list span { padding:2px 6px; border:1px solid var(--rule); border-radius:3px; color:var(--ink-2); background:var(--surface); }
+.note { margin:0; font-size:12px; color:var(--ink-2); border-left:2px solid var(--accent); padding:2px 0 2px 11px; max-width:76ch; }
+.legend { display:flex; flex-wrap:wrap; gap:12px; font-size:11.5px; color:var(--ink-3); align-items:center; }
+.legend i { display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+
+@media (max-width:720px) {
+  .app { grid-template-columns:minmax(0,1fr); }
+  .rail { min-height:0; border-right:0; border-bottom:1px solid var(--rule); }
+  .rail-nav { display:flex; overflow-x:auto; padding:6px; }
+  .rail-stage, .rail-link em, .rail-link .st { display:none; }
+  .rail-link { width:auto; white-space:nowrap; display:block; box-shadow:none; border-bottom:2px solid transparent; }
+  .rail-link[aria-current="page"] { box-shadow:none; border-bottom-color:var(--accent); }
+  .reading { border-right:0; border-bottom:1px solid var(--rule); }
+}
+</style>
+
+<div class="page">
+<div class="frame">
+
+  <header class="frame-head">
+    <div>
+      <h1>Attack classification dashboard — redesign mockup</h1>
+      <p>
+        Built to survive a results bundle it has not seen before. Switch runs in the rail:
+        both are real bundles already in <span class="num">results/</span>, and they disagree
+        about almost everything. The third option is the state the dashboard is in right now.
+      </p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Toggle theme</button>
+  </header>
+
+  <div class="app">
+
+    <nav class="rail" aria-label="Sections">
+      <div class="rail-run">
+        <label for="runSel">Active run</label>
+        <select id="runSel">
+          <option value="latest">latest</option>
+          <option value="local_300k_70_30">local_300k_70_30</option>
+          <option value="none">— no bundle found —</option>
+        </select>
+        <div class="rail-meta" id="railMeta"></div>
+        <div class="rail-badge" id="railBadge"></div>
+      </div>
+
+      <div class="rail-nav">
+        <div class="rail-stage">Data</div>
+        <button class="rail-link" data-go="overview" aria-current="page" type="button"><span>Overview</span><span class="st"></span></button>
+        <button class="rail-link" data-go="dataset" type="button"><span>Dataset<em id="navDataset"></em></span><span class="st"></span></button>
+        <button class="rail-link" data-go="dist" type="button"><span>Distributions<em>train vs test</em></span><span class="st"></span></button>
+
+        <div class="rail-stage">Results</div>
+        <button class="rail-link" data-go="model" type="button"><span>Model detail<em>random_forest</em></span><span class="st"></span></button>
+        <button class="rail-link" data-go="compare" type="button"><span>Comparison<em id="navCompare"></em></span><span class="st"></span></button>
+        <button class="rail-link" data-go="xai" type="button"><span>Explainability<em>not computed</em></span><span class="st">—</span></button>
+
+        <div class="rail-stage">Use</div>
+        <button class="rail-link" data-go="predict" type="button"><span>Batch predict</span><span class="st"></span></button>
+        <button class="rail-link" data-go="contract" type="button"><span>Bundle contract<em>what the UI reads</em></span><span class="st"></span></button>
+      </div>
+    </nav>
+
+    <div class="content">
+      <div class="topbar">
+        <h2 id="viewTitle">Overview</h2>
+        <div class="run-meta" id="topMeta"></div>
+      </div>
+
+      <!-- OVERVIEW -->
+      <section class="view" data-view="overview" data-active>
+        <div class="stack" id="overviewBody"></div>
+      </section>
+
+      <!-- DATASET -->
+      <section class="view" data-view="dataset">
+        <div class="stack" id="datasetBody"></div>
+      </section>
+
+      <!-- DISTRIBUTIONS -->
+      <section class="view" data-view="dist">
+        <div class="stack" id="distBody"></div>
+      </section>
+
+      <!-- MODEL DETAIL -->
+      <section class="view" data-view="model">
+        <div class="stack" id="modelBody"></div>
+      </section>
+
+      <!-- COMPARISON -->
+      <section class="view" data-view="compare">
+        <div class="stack" id="compareBody"></div>
+      </section>
+
+      <!-- EXPLAINABILITY -->
+      <section class="view" data-view="xai">
+        <div class="stack">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>SHAP attributions</h3>
+              <p>Not computed for either bundle</p>
+              <span class="right"><span class="chip is-mute">no data</span></span>
+            </div>
+            <div class="empty">
+              <h4>Neither run wrote SHAP output.</h4>
+              <p>
+                The explain stage produces the files this view reads. Until it runs there is nothing
+                to show, so the view names what will appear and how to produce it rather than drawing
+                a placeholder chart.
+              </p>
+              <ol>
+                <li>Global attribution ranking over the 80 feature columns</li>
+                <li>Per-class attribution for each of the 9 classes, Infiltration first</li>
+                <li>Beeswarm plots per model, served from the figures endpoint</li>
+              </ol>
+              <pre class="cmd">python main.py --stage explain --model random_forest</pre>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Feature columns available to the explainer</h3><p>First 24 of 80 · <span class="num">feature_columns.json</span></p></div>
+            <div class="panel-body">
+              <div class="feat-list">
+                <span>Destination Port</span><span>Protocol</span><span>Flow Duration</span><span>Total Fwd Packets</span>
+                <span>Total Backward Packets</span><span>Total Length of Fwd Packets</span><span>Total Length of Bwd Packets</span>
+                <span>Fwd Packet Length Max</span><span>Fwd Packet Length Min</span><span>Fwd Packet Length Mean</span>
+                <span>Fwd Packet Length Std</span><span>Bwd Packet Length Max</span><span>Bwd Packet Length Min</span>
+                <span>Bwd Packet Length Mean</span><span>Bwd Packet Length Std</span><span>Flow Bytes/s</span>
+                <span>Flow Packets/s</span><span>Flow IAT Mean</span><span>Flow IAT Std</span><span>Flow IAT Max</span>
+                <span>Flow IAT Min</span><span>Fwd IAT Total</span><span>Fwd IAT Mean</span><span>Fwd IAT Std</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREDICT -->
+      <section class="view" data-view="predict">
+        <div class="stack">
+          <p class="note">
+            One interactive surface with all of its states designed together. The old page had a
+            working happy path; empty, loading and rejected are what a live demo actually hits.
+          </p>
+          <div class="panel">
+            <div class="panel-head"><h3>Batch predict — states</h3><p>Upload a flow CSV, get per-row classifications</p></div>
+            <div class="panel-body">
+              <div class="states">
+                <div class="state-cell">
+                  <div class="state-cap">Empty — teaches the format</div>
+                  <div class="state-box">
+                    <div class="drop">Drop a CSV, or choose a file<br><span class="num" style="font-size:10.5px">80 columns · header row required</span></div>
+                    <button class="btn" disabled type="button">Classify</button>
+                  </div>
+                </div>
+                <div class="state-cell">
+                  <div class="state-cap">File accepted</div>
+                  <div class="state-box">
+                    <div class="drop is-active"><b class="num" style="font-size:11.5px">capture_0731.csv</b><br><span class="num" style="font-size:10.5px">4,182 rows · 80 / 80 columns matched</span></div>
+                    <button class="btn" type="button">Classify 4,182 rows</button>
+                  </div>
+                </div>
+                <div class="state-cell">
+                  <div class="state-cap">Running — skeleton, not a spinner</div>
+                  <div class="state-box">
+                    <div class="skel" style="width:45%"></div><div class="skel" style="width:90%"></div>
+                    <div class="skel" style="width:70%"></div><div class="skel" style="width:90%"></div>
+                    <div style="font-size:11.5px;color:var(--ink-3)">Classifying 4,182 rows…</div>
+                  </div>
+                </div>
+                <div class="state-cell">
+                  <div class="state-cap">Rejected — says how to fix it</div>
+                  <div class="state-box">
+                    <div class="drop"><b class="num" style="font-size:11.5px">netflow_export.csv</b><br><span class="num" style="font-size:10.5px">4,182 rows · 74 / 80 columns matched</span></div>
+                    <div class="field-err">
+                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="7.4"/><path d="M10 6.2v4.6M10 13.6v.1" stroke-linecap="round"/></svg>
+                      <span>6 columns missing, starting with <span class="num">Flow IAT Std</span>. Export from CICFlowMeter with the full feature set, or map the columns below.</span>
+                    </div>
+                    <button class="btn ghost" type="button">Map columns</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel" id="predictResult"></div>
+        </div>
+      </section>
+
+      <!-- CONTRACT -->
+      <section class="view" data-view="contract">
+        <div class="stack">
+          <div class="finding is-good">
+            <svg class="finding-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.4"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <h3>Send this page to whoever produces the next run.</h3>
+              <p>
+                Every field the dashboard reads, whether it is required, and exactly what renders when
+                it is missing. Nothing here is aspirational — each &ldquo;absent&rdquo; behaviour is
+                demonstrable by switching the active run in the rail.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h3>metrics.json — run level</h3><p>Read once per bundle</p></div>
+            <div class="scroll">
+              <table>
+                <thead><tr><th>Field</th><th>Need</th><th>If absent, the UI shows</th></tr></thead>
+                <tbody>
+                  <tr><td class="num">run_name</td><td><span class="chip is-bad">required</span></td><td>Bundle is rejected; the no-bundle state is shown</td></tr>
+                  <tr><td class="num">class_names</td><td><span class="chip is-bad">required</span></td><td>Bundle is rejected</td></tr>
+                  <tr><td class="num">models[]</td><td><span class="chip is-bad">required</span></td><td>Bundle is rejected</td></tr>
+                  <tr><td class="num">per_class_n_test</td><td><span class="chip is-bad">required</span></td><td>Reliability flags cannot be computed</td></tr>
+                  <tr><td class="num">split_protocol</td><td><span class="chip is-warn">optional</span></td><td><span class="nil">not recorded</span> in the rail, and the split caveat is suppressed rather than guessed</td></tr>
+                  <tr><td class="num">n_calibration</td><td><span class="chip is-warn">optional</span></td><td>Calibration row disappears; a note says the threshold was not tuned on a held-out split</td></tr>
+                  <tr><td class="num">data_fingerprint</td><td><span class="chip is-warn">optional</span></td><td><span class="nil">not recorded</span> — and a warning that this run cannot be tied to an input</td></tr>
+                  <tr><td class="num">duration_seconds</td><td><span class="chip is-mute">nice to have</span></td><td>Omitted from the rail</td></tr>
+                  <tr><td class="num">majority_baseline_acc</td><td><span class="chip is-mute">nice to have</span></td><td>Lift comparison is hidden, not shown as zero</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h3>metrics.json — per model</h3><p>Every one of these is <span class="num">null</span> in at least one existing bundle</p></div>
+            <div class="scroll">
+              <table>
+                <thead><tr><th>Field</th><th>Need</th><th>If absent, the UI shows</th></tr></thead>
+                <tbody>
+                  <tr><td class="num">f1_macro</td><td><span class="chip is-bad">required</span></td><td>Model is listed but unranked, with a reason</td></tr>
+                  <tr><td class="num">cv_f1_macro_std</td><td><span class="chip is-warn">optional</span></td><td><span class="nil">not recorded</span> — never 0.0000, which would read as perfect stability</td></tr>
+                  <tr><td class="num">cv_f1_macro_scores</td><td><span class="chip is-warn">optional</span></td><td>Fold strip is replaced by a count of how many folds were recorded</td></tr>
+                  <tr><td class="num">label_shuffle_acc</td><td><span class="chip is-warn">optional</span></td><td>Leakage panel says the check did not run for this model</td></tr>
+                  <tr><td class="num">target_threshold</td><td><span class="chip is-warn">optional</span></td><td>Threshold row omitted; metrics are labelled as argmax rather than tuned</td></tr>
+                  <tr><td class="num">target_fpr</td><td><span class="chip is-warn">optional</span></td><td>Budget column shows <span class="nil">not measured</span>, and the model is excluded from champion selection</td></tr>
+                  <tr><td class="num">best_params</td><td><span class="chip is-mute">nice to have</span></td><td>Hyperparameter panel says defaults were used</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="panel-note">
+              The rule throughout: a missing measurement is rendered as missing. It is never
+              substituted with zero, and never silently dropped from a ranking.
+            </p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h3>Files the API needs</h3><p>Per bundle directory</p></div>
+            <div class="panel-body">
+              <pre class="cmd">results/&lt;run_id&gt;/
+  metrics.json              required
+  bundle_manifest.json      recommended — carries split_protocol
+  &lt;model&gt;_per_class.csv     required for the per-class view
+  &lt;model&gt;_metrics.json      optional
+  &lt;model&gt;_confusion_matrix.png   optional
+  report.md                 optional</pre>
+            </div>
+            <p class="panel-note">
+              Today the API reads <span class="num">results/metrics/</span>, <span class="num">results/figures/</span>
+              and <span class="num">results/shap/</span> — all three contain only a <span class="num">.gitkeep</span>.
+              That is why the live dashboard is empty regardless of which bundle exists.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ══════════════════════════════════════════════════════════
+     Two real bundles, transcribed from results/. They disagree
+     about the split, the strategy, the winner, and which
+     fields exist at all — which is the point.
+     ══════════════════════════════════════════════════════════ */
+  var BUNDLES = {
+    latest: {
+      id: "latest",
+      dataset: "CICIDS2017",
+      fingerprint: "96aaf444",
+      protocolVersion: 1,
+      splitProtocol: null,                 /* absent in this bundle */
+      strategy: "targeted",
+      seed: 42, features: 80, classes: 9,
+      nTrain: 180000, nCalib: 60000, nTest: 60000,
+      durationSec: 14652.53,
+      baseline: 0.009983,
+      fprBudget: 0.02,
+      hpSearch: true,
+      models: [
+        { id:"xgboost",             name:"XGBoost",             macro:0.8651, weighted:0.9860, rec:0.2554, prec:0.3276, f2:0.2672, fpr:0.005286, fp:314,   cv:[0.9598,0.9608,0.9604,0.9603,0.9615], sd:0.0006, shuffle:0.2295, thr:0.9099 },
+        { id:"random_forest",       name:"Random Forest",       macro:0.8519, weighted:0.9854, rec:0.3072, prec:0.3433, f2:0.3138, fpr:0.005926, fp:352,   cv:[0.9555,0.9559,0.9557,0.9571,0.9559], sd:0.0006, shuffle:0.2174, thr:0.9526 },
+        { id:"catboost",            name:"CatBoost",            macro:0.8272, weighted:0.9838, rec:0.3389, prec:0.2819, f2:0.3257, fpr:0.008704, fp:517,   cv:[0.9538,0.9540,0.9517,0.9527,0.9546], sd:0.0010, shuffle:0.2395, thr:0.9058 },
+        { id:"stacking",            name:"Stacking",            macro:0.7509, weighted:0.9844, rec:0.3840, prec:0.2745, f2:0.3556, fpr:0.010236, fp:608,   cv:[0.8485,0.8490,0.8485,0.8496,0.8496], sd:0.0005, shuffle:0.2401, thr:0.9423 },
+        { id:"logistic_regression", name:"Logistic Regression", macro:0.7081, weighted:0.9464, rec:0.1369, prec:0.0750, f2:0.1175, fpr:0.017020, fp:1011,  cv:[0.8569,0.8481,0.8463,0.8500,0.8485], sd:0.0037, shuffle:0.2429, thr:0.7548 },
+        { id:"mlp",                 name:"MLP",                 macro:0.6981, weighted:0.9804, rec:0.2521, prec:0.3503, f2:0.2671, fpr:0.004714, fp:280,   cv:[0.9349,0.9281,0.9310,0.9292,0.9388], sd:0.0039, shuffle:0.2395, thr:0.9616 },
+        { id:"lightgbm",            name:"LightGBM",            macro:0.6174, weighted:0.8455, rec:0.6845, prec:0.0315, f2:0.1329, fpr:0.212454, fp:12620, cv:[0.6882,0.4622,0.4126,0.3445,0.1268], sd:0.1814, shuffle:0.2041, thr:0.7518, unstable:true }
+      ],
+      champion: "random_forest",
+      championFrom: "local_300k_70_30",   /* champion.json points at the OTHER bundle */
+      classesData: [
+        { name:"BENIGN",       tr:77962, te:52355, p:0.9917, r:0.9919, f1:0.9918 },
+        { name:"Infiltration", tr:77963, te:599,   p:0.3433, r:0.3072, f1:0.3242, target:true },
+        { name:"DDoS",         tr:11664, te:3888,  p:0.9921, r:0.9982, f1:0.9951 },
+        { name:"DoS",          tr:5035,  te:1678,  p:0.9964, r:0.9970, f1:0.9967 },
+        { name:"Web Attack",   tr:2976,  te:13,    p:0.2353, r:0.9231, f1:0.3750 },
+        { name:"Bot",          tr:1891,  te:630,   p:1.0000, r:0.9905, f1:0.9952 },
+        { name:"Brute Force",  tr:1333,  te:444,   p:1.0000, r:0.9910, f1:0.9955 },
+        { name:"PortScan",     tr:1171,  te:390,   p:0.9949, r:0.9923, f1:0.9936 },
+        { name:"Heartbleed",   tr:5,     te:3,     p:1.0000, r:1.0000, f1:1.0000 }
+      ]
+    },
+
+    local_300k_70_30: {
+      id: "local_300k_70_30",
+      dataset: "CICIDS2017",
+      fingerprint: "db269c9f",
+      protocolVersion: 3,
+      splitProtocol: "source_holdout_v2_70_30",
+      strategy: "class_weight",
+      seed: 42, features: 80, classes: 9,
+      nTrain: 210000, nCalib: 0, nTest: 90000,
+      durationSec: 101.62,
+      baseline: 0.244511,
+      fprBudget: 0.02,
+      hpSearch: false,
+      models: [
+        { id:"random_forest",       name:"Random Forest",       macro:0.9160, weighted:0.9507, rec:0.7707, prec:0.7728, f2:0.7711, fpr:0.026857, fp:2161, cv:[0.0013,0.2101,null,0.1643,0.0998], sd:null, shuffle:0.1444, thr:null, cvSuspect:true },
+        { id:"catboost",            name:"CatBoost",            macro:0.9070, weighted:0.9471, rec:0.8642, prec:null,   f2:null,   fpr:0.041600, fp:null, cv:[null,null,null,null,null],         sd:null, shuffle:0.1171, thr:null },
+        { id:"mlp",                 name:"MLP",                 macro:0.8822, weighted:0.9281, rec:0.8975, prec:null,   f2:null,   fpr:0.062700, fp:null, cv:[null,null,null,null,null],         sd:null, shuffle:0.0989, thr:null },
+        { id:"xgboost",             name:"XGBoost",             macro:0.8448, weighted:0.9526, rec:0.8482, prec:null,   f2:null,   fpr:0.034700, fp:null, cv:[null,0.2069,null,0.3484,null],     sd:null, shuffle:0.1354, thr:null, cvSuspect:true },
+        { id:"stacking",            name:"Stacking",            macro:0.8438, weighted:0.9532, rec:0.8525, prec:0.7448, f2:0.8285, fpr:0.034612, fp:2785, cv:[],                                 sd:null, shuffle:null,   thr:null },
+        { id:"lightgbm",            name:"LightGBM",            macro:0.8407, weighted:0.9509, rec:0.8095, prec:null,   f2:null,   fpr:0.031600, fp:null, cv:[null,null,null,null,null],         sd:null, shuffle:0.1411, thr:null },
+        { id:"logistic_regression", name:"Logistic Regression", macro:0.8181, weighted:0.8991, rec:0.7787, prec:null,   f2:null,   fpr:0.072000, fp:null, cv:[null,null,null,null,null],         sd:null, shuffle:0.0893, thr:null }
+      ],
+      champion: "random_forest",
+      championFrom: "local_300k_70_30",
+      classesData: [
+        { name:"PortScan",     tr:51347, te:22006, p:0.9998, r:0.9997, f1:0.9997 },
+        { name:"BENIGN",       tr:32308, te:13846, p:0.8413, r:0.8415, f1:0.8414 },
+        { name:"Bot",          tr:25847, te:11077, p:0.9988, r:0.9987, f1:0.9988 },
+        { name:"Brute Force",  tr:25847, te:11077, p:0.9996, r:0.9991, f1:0.9994 },
+        { name:"DDoS",         tr:25847, te:11077, p:0.9981, r:0.9999, f1:0.9990 },
+        { name:"DoS",          tr:25846, te:11077, p:0.9983, r:0.9988, f1:0.9986 },
+        { name:"Infiltration", tr:22251, te:9536,  p:0.7728, r:0.7707, f1:0.7717, target:true },
+        { name:"Web Attack",   tr:704,   te:302,   p:0.9579, r:0.9801, f1:0.9689 },
+        { name:"Heartbleed",   tr:3,     te:2,     p:1.0000, r:0.5000, f1:0.6667 }
+      ]
+    },
+
+    none: null
+  };
+
+  /* ── helpers ───────────────────────────────────────────── */
+  var ICON = {
+    ok:   '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="m4.6 10.4 3.4 3.4 7.4-8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    warn: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M10 3.2 17.4 16H2.6L10 3.2Z" stroke-linejoin="round"/><path d="M10 8.4v3.1M10 13.9v.1" stroke-linecap="round"/></svg>',
+    bad:  '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="10" cy="10" r="7.4"/><path d="M10 6.2v4.6M10 13.6v.1" stroke-linecap="round"/></svg>'
+  };
+  function chip(tone, text) {
+    var k = tone === "is-good" ? "ok" : tone === "is-warn" ? "warn" : tone === "is-bad" ? "bad" : null;
+    return '<span class="chip ' + tone + '">' + (k ? ICON[k] : "") + text + "</span>";
+  }
+  function findIcon(tone) { return '<svg class="finding-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7">' + (tone === "is-good" ? '<circle cx="10" cy="10" r="7.4"/><path d="m6.8 10.2 2.2 2.2 4.2-4.6" stroke-linecap="round" stroke-linejoin="round"/>' : tone === "is-warn" ? '<path d="M10 3.2 17.4 16H2.6L10 3.2Z" stroke-linejoin="round"/><path d="M10 8.4v3.1M10 13.9v.1" stroke-linecap="round"/>' : '<circle cx="10" cy="10" r="7.4"/><path d="M10 6.2v4.6M10 13.6v.1" stroke-linecap="round"/>') + "</svg>"; }
+  function finding(tone, title, body) {
+    return '<div class="finding ' + tone + '">' + findIcon(tone) + "<div><h3>" + title + "</h3><p>" + body + "</p></div></div>";
+  }
+  /* THE rule: absent is rendered as absent, never as zero */
+  function n(v, d) { return v == null ? '<span class="nil">not recorded</span>' : v.toFixed(d == null ? 4 : d); }
+  function fmt(v) { return v == null ? '<span class="nil">—</span>' : v.toLocaleString("en-US"); }
+  function meter(v, max, tone) {
+    if (v == null) return '<span class="nil">not recorded</span>';
+    var pct = Math.max(0, Math.min(100, (v / max) * 100));
+    return '<div class="meter"><div class="meter-track"><div class="meter-fill ' + (tone || "") + '" style="width:' + pct.toFixed(1) + '%"></div></div><span class="num">' + v.toFixed(4) + "</span></div>";
+  }
+  function hhmm(s) {
+    if (s == null) return null;
+    if (s < 90) return s.toFixed(0) + "s";
+    var h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60);
+    return h > 0 ? h + "h " + String(m).padStart(2, "0") + "m" : m + "m";
+  }
+  function el(id) { return document.getElementById(id); }
+
+  /* ══════════════════════════════════════════════════════════
+     RENDER
+     ══════════════════════════════════════════════════════════ */
+  function render(key) {
+    var b = BUNDLES[key];
+
+    /* ---- rail ---- */
+    if (!b) {
+      el("railMeta").innerHTML = '<span class="nil">no bundle loaded</span>';
+      el("railBadge").innerHTML = chip("is-bad", "API returned nothing");
+      el("topMeta").innerHTML = "";
+      el("navDataset").textContent = "—";
+      el("navCompare").textContent = "—";
+    } else {
+      el("railMeta").innerHTML =
+        "<span>" + b.dataset + "</span>" +
+        "<span>fingerprint <b>" + b.fingerprint + "</b></span>" +
+        "<span>split " + (b.splitProtocol ? "<b>" + b.splitProtocol.replace("source_holdout_", "src-holdout ") + "</b>" : '<span class="nil">not recorded</span>') + "</span>" +
+        "<span>seed <b>" + b.seed + "</b> · " + b.features + " features · " + b.classes + " classes</span>" +
+        (hhmm(b.durationSec) ? "<span>protocol v" + b.protocolVersion + " · " + hhmm(b.durationSec) + "</span>" : "");
+      el("railBadge").innerHTML = b.championFrom !== b.id
+        ? chip("is-bad", "champion is from another run")
+        : chip("is-warn", "champion conditional");
+      el("topMeta").innerHTML =
+        "<span>train <b>" + b.nTrain.toLocaleString() + "</b></span>" +
+        (b.nCalib > 0 ? "<span>calib <b>" + b.nCalib.toLocaleString() + "</b></span>" : '<span>calib <span class="nil">none</span></span>') +
+        "<span>test <b>" + b.nTest.toLocaleString() + "</b></span>";
+      el("navDataset").textContent = b.classes + " classes";
+      el("navCompare").textContent = b.models.length + " models";
+    }
+
+    renderOverview(b);
+    renderDataset(b);
+    renderDist(b);
+    renderModel(b);
+    renderCompare(b);
+    renderPredict(b);
+  }
+
+  function noBundle(what) {
+    return '<div class="panel">' +
+      '<div class="panel-head"><h3>' + what + '</h3><p>No results bundle is loaded</p>' +
+      '<span class="right">' + chip("is-bad", "disconnected") + "</span></div>" +
+      '<div class="empty">' +
+        "<h4>The API answered, but there is no bundle behind it.</h4>" +
+        "<p>This is not a network error and not an empty dataset — the server is running and the " +
+        "directories it reads exist. They are empty.</p>" +
+        "<p>Checked, in order:</p>" +
+        '<pre class="cmd">results/metrics/   → .gitkeep only\nresults/figures/   → .gitkeep only\nresults/shap/      → .gitkeep only</pre>' +
+        "<p>Bundles that <em>do</em> exist on disk but are not on this path:</p>" +
+        '<pre class="cmd">results/latest/\nresults/local_300k_70_30/</pre>' +
+        "<p>Point <span class=\"num\">METRICS_DIR</span> in <span class=\"num\">src/config/constants.py</span> " +
+        "at a bundle directory, or pick one in the rail to preview it.</p>" +
+      "</div></div>";
+  }
+
+  /* ---- overview ---- */
+  function renderOverview(b) {
+    if (!b) { el("overviewBody").innerHTML = noBundle("Overview"); return; }
+
+    var ranked = b.models.slice().sort(function (x, y) { return (y.macro || 0) - (x.macro || 0); });
+    var champ = b.models.filter(function (m) { return m.id === b.champion; })[0];
+    var overBudget = b.models.filter(function (m) { return m.fpr != null && m.fpr > b.fprBudget; }).length;
+    var measured = b.models.filter(function (m) { return m.fpr != null; }).length;
+
+    var head = b.championFrom !== b.id
+      ? finding("is-bad",
+          "The champion on file was selected from a different run.",
+          "<code>champion.json</code> names <code>" + b.championFrom + "</code>, but the metrics on screen come from <code>" + b.id + "</code>. " +
+          "The two bundles used different split protocols and report different numbers for the same model, so the champion badge cannot be trusted until they are reconciled.")
+      : finding("is-bad",
+          "No model met the false-positive target. The champion was selected conditionally.",
+          "The rule required <code>target_fpr ≤ " + b.fprBudget.toFixed(2) + "</code> on Infiltration. " +
+          overBudget + " of " + measured + " measured models exceed it, and the fallback rule (lowest FPR, then highest macro F1) chose " +
+          (champ ? champ.name : "—") + " at <code>" + n(champ && champ.fpr) + "</code>.");
+
+    /* readings — each number carries its qualifier */
+    var benign = b.classesData.filter(function (c) { return c.name === "BENIGN"; })[0];
+    var target = b.classesData.filter(function (c) { return c.target; })[0];
+    var benignShare = benign ? (benign.te / b.nTest) * 100 : null;
+    var top = ranked[0];
+
+    var readings = '<div class="panel">' +
+      '<div class="panel-head"><h3>Headline accuracy and what it conceals</h3>' +
+      "<p>" + (champ ? champ.name : "—") + ", held-out test set, n = " + b.nTest.toLocaleString() + "</p></div>" +
+      '<dl class="reading-row">' +
+        '<div class="reading"><dt>Weighted F1</dt><dd><span class="v">' + n(champ && champ.weighted) + "</span>" +
+          '<span class="qual">' + (benignShare != null
+            ? "BENIGN is " + benignShare.toFixed(1) + "% of the test set. Weighting by support rewards the easy majority."
+            : "Weighted by class support.") + "</span></dd></div>" +
+        '<div class="reading"><dt>Macro F1 ' + chip("is-mute", "honest") + "</dt><dd><span class=\"v\">" + n(champ && champ.macro) + "</span>" +
+          '<span class="qual">Every class counts once. The gap from weighted F1 is the class-imbalance problem, stated as a number.</span></dd></div>' +
+        '<div class="reading"><dt>' + (target ? target.name : "Target") + " F1 " + chip("is-mute", "target class") + "</dt><dd>" +
+          '<span class="v ' + (target && target.f1 < 0.5 ? "is-bad" : target && target.f1 < 0.85 ? "is-warn" : "is-good") + '">' + n(target && target.f1) + "</span>" +
+          '<span class="qual">' + (target ? "Recall " + n(target.r) + ", precision " + n(target.p) + " on " + target.te.toLocaleString() + " test rows." : "") + "</span></dd></div>" +
+      "</dl></div>";
+
+    /* leaderboard */
+    var rows = ranked.map(function (m) {
+      var tone = m.unstable ? "is-bad" : m.macro >= 0.88 ? "is-good" : "";
+      var verdict = m.unstable ? chip("is-bad", "unstable across folds")
+        : m.cvSuspect ? chip("is-warn", "CV disagrees with test")
+        : m.id === b.champion ? chip("is-good", "champion, conditional")
+        : m.macro >= 0.88 ? chip("is-mute", "sound")
+        : chip("is-warn", "weak macro F1");
+      return "<tr" + (m.id === b.champion ? ' class="is-champ"' : "") + ">" +
+        '<td class="model-name">' + m.name + "</td>" +
+        "<td>" + meter(m.macro, 1, tone) + "</td>" +
+        '<td class="n">' + n(m.weighted) + "</td>" +
+        '<td class="n">' + n(m.rec) + "</td>" +
+        '<td class="n">' + n(m.fpr) + "</td>" +
+        "<td>" + verdict + "</td></tr>";
+    }).join("");
+
+    var board = '<div class="panel"><div class="panel-head"><h3>Model ranking by macro F1</h3>' +
+      "<p>Weighted F1 is shown for reference, never as the ranking key</p>" +
+      '<span class="right">' + b.models.length + " models</span></div>" +
+      '<div class="scroll"><table><thead><tr><th>Model</th><th>Macro F1</th><th class="n">Weighted F1</th>' +
+      '<th class="n">Target recall</th><th class="n">Target FPR</th><th>Assessment</th></tr></thead><tbody>' +
+      rows + "</tbody></table></div>" +
+      '<p class="panel-note">FPR budget is ' + b.fprBudget.toFixed(2) + ". " +
+      (measured < b.models.length ? (b.models.length - measured) + " model(s) did not record an FPR and are excluded from champion selection rather than defaulted to zero." : "All models recorded an FPR.") +
+      "</p></div>";
+
+    /* leakage + integrity */
+    var shuffled = b.models.filter(function (m) { return m.shuffle != null; });
+    var leak = '<div class="panel"><div class="panel-head"><h3>Leakage check</h3><p>Labels shuffled, model retrained</p></div><div class="panel-body">';
+    if (champ && champ.shuffle != null) {
+      leak += '<div class="stack" style="gap:11px">' +
+        '<div class="meter"><div><div style="font-size:12px;margin-bottom:5px">Real labels — macro F1</div>' +
+        '<div class="meter-track"><div class="meter-fill is-good" style="width:' + (champ.macro * 100).toFixed(1) + '%"></div></div></div><span class="num">' + n(champ.macro) + "</span></div>" +
+        '<div class="meter"><div><div style="font-size:12px;margin-bottom:5px">Shuffled labels — accuracy</div>' +
+        '<div class="meter-track"><div class="meter-fill" style="width:' + (champ.shuffle * 100).toFixed(1) + '%"></div></div></div><span class="num">' + n(champ.shuffle) + "</span></div></div>";
+    } else {
+      leak += '<p style="margin:0;font-size:12.5px;color:var(--ink-2)">The shuffled-label check did not run for this model in this bundle.</p>';
+    }
+    leak += "</div>" +
+      '<p class="panel-note">' + shuffled.length + " of " + b.models.length + " models recorded the check. " +
+      "Shuffled-label accuracy collapsing to near the majority baseline (" + n(b.baseline) + ") is the evidence that the model learns signal rather than leaked structure.</p></div>";
+
+    var tiny = b.classesData.filter(function (c) { return c.te < 30; }).length;
+    var integ = '<div class="panel"><div class="panel-head"><h3>Run integrity</h3><p>Conditions a reviewer will ask about</p></div>' +
+      '<div class="panel-body"><div class="stack" style="gap:9px;font-size:12.5px">' +
+      row("Fixed random seed", chip("is-good", String(b.seed))) +
+      row("Split protocol recorded", b.splitProtocol ? chip("is-good", b.splitProtocol) : chip("is-bad", "not recorded")) +
+      row("Separate calibration split", b.nCalib > 0 ? chip("is-good", b.nCalib.toLocaleString() + " rows") : chip("is-warn", "none")) +
+      row("Hyperparameter search", b.hpSearch ? chip("is-good", "ran") : chip("is-mute", "defaults")) +
+      row("Cross-validation recorded", cvCoverageChip(b)) +
+      row("Classes with test n &lt; 30", tiny ? chip("is-warn", tiny + " class" + (tiny > 1 ? "es" : "")) : chip("is-good", "none")) +
+      row("FPR target met", chip("is-bad", "no model")) +
+      "</div></div></div>";
+
+    el("overviewBody").innerHTML = head + readings + board + '<div class="grid-2">' + leak + integ + "</div>";
+  }
+  function row(label, right) {
+    return '<div style="display:flex;gap:9px;align-items:center;justify-content:space-between"><span>' + label + "</span>" + right + "</div>";
+  }
+  function cvCoverageChip(b) {
+    var tot = 0, got = 0;
+    b.models.forEach(function (m) { (m.cv || []).forEach(function (v) { tot++; if (v != null) got++; }); });
+    if (tot === 0) return chip("is-bad", "no folds recorded");
+    if (got === tot) return chip("is-good", got + " / " + tot + " folds");
+    return chip("is-warn", got + " / " + tot + " folds");
+  }
+
+  /* ---- dataset ---- */
+  function renderDataset(b) {
+    if (!b) { el("datasetBody").innerHTML = noBundle("Dataset"); return; }
+    var tiny = b.classesData.filter(function (c) { return c.te < 30; });
+
+    var head = tiny.length
+      ? finding("is-warn", tiny.length + " class" + (tiny.length > 1 ? "es have" : " has") + " too few test rows to support a metric.",
+          tiny.map(function (c) { return c.name + " has " + c.te + " test row" + (c.te > 1 ? "s" : ""); }).join(" and ") +
+          ". Precision and recall on those rows move in steps of " + tiny.map(function (c) { return (100 / c.te).toFixed(0) + "%"; }).join(" and ") +
+          ". The cells are marked, not hidden.")
+      : finding("is-good", "Every class has enough test rows to support a metric.", "The smallest class has " +
+          Math.min.apply(null, b.classesData.map(function (c) { return c.te; })) + " test rows.");
+
+    var rows = b.classesData.map(function (c) {
+      var share = (c.te / b.nTest) * 100;
+      var rel = c.te === 0 ? chip("is-bad", "not evaluated")
+        : c.te < 30 ? chip("is-bad", "n = " + c.te + ", not reportable")
+        : c.te < 100 ? chip("is-warn", "small sample")
+        : chip("is-good", "sufficient");
+      return "<tr" + (c.te < 30 ? ' class="is-flagged"' : "") + ">" +
+        "<td>" + c.name + (c.target ? " " + chip("is-mute", "target") : "") + "</td>" +
+        '<td class="n">' + fmt(c.tr) + "</td>" +
+        '<td class="n">' + fmt(c.te) + "</td>" +
+        '<td><div class="meter"><div class="meter-track"><div class="meter-fill" style="width:' + share.toFixed(2) + '%"></div></div><span class="num">' + share.toFixed(2) + "%</span></div></td>" +
+        "<td>" + rel + "</td></tr>";
+    }).join("");
+
+    var table = '<div class="panel"><div class="panel-head"><h3>Class support across splits</h3><p>Rows per class, from <span class="num">metrics.json</span></p></div>' +
+      '<div class="scroll"><table><thead><tr><th>Class</th><th class="n">Train</th><th class="n">Test</th><th>Share of test set</th><th>Metric reliability</th></tr></thead><tbody>' +
+      rows + "</tbody></table></div>" +
+      '<p class="panel-note">Reliability comes from test support alone: 0 rows means the class was never evaluated and shows no metric at all; under 30 is flagged; under 100 is usable with caution.</p></div>';
+
+    var prov = '<div class="panel"><div class="panel-head"><h3>Provenance</h3></div><div class="panel-body"><table><tbody>' +
+      "<tr><td>Source</td><td class=\"n\">" + b.dataset + "</td></tr>" +
+      '<tr><td>Data fingerprint</td><td class="n">' + b.fingerprint + "…</td></tr>" +
+      '<tr><td>Split protocol</td><td class="n">' + (b.splitProtocol || '<span class="nil">not recorded</span>') + "</td></tr>" +
+      '<tr><td>Imbalance strategy</td><td class="n">' + b.strategy + "</td></tr>" +
+      '<tr><td>Training protocol</td><td class="n">v' + b.protocolVersion + "</td></tr>" +
+      '<tr><td>Feature columns</td><td class="n">' + b.features + "</td></tr>" +
+      '<tr><td>Wall-clock</td><td class="n">' + (hhmm(b.durationSec) || '<span class="nil">not recorded</span>') + "</td></tr>" +
+      "</tbody></table></div>" +
+      '<p class="panel-note">' + (b.splitProtocol
+        ? "The protocol is recorded, so the split caveat below is derived rather than assumed."
+        : "This bundle does not record a split protocol. The dashboard states that rather than assuming one, because the two are not interchangeable.") + "</p></div>";
+
+    var splits = '<div class="panel"><div class="panel-head"><h3>Split sizes</h3><p>' +
+      (b.nCalib > 0 ? "Train / calibration / test, disjoint" : "Train / test — no calibration split in this run") + '</p></div><div class="panel-body">' +
+      '<div class="stack" style="gap:12px">' +
+      splitBar("Train", b.nTrain, b.nTrain) +
+      (b.nCalib > 0 ? splitBar("Calibration", b.nCalib, b.nTrain) : "") +
+      splitBar("Test", b.nTest, b.nTrain) +
+      "</div></div>" +
+      '<p class="panel-note">' + (b.nCalib > 0
+        ? "A calibration split separate from test is what lets the decision threshold be tuned without touching the reported numbers."
+        : "With no calibration split, any decision threshold was chosen on data that also produced the reported numbers. The threshold row is therefore omitted rather than shown as tuned.") + "</p></div>";
+
+    el("datasetBody").innerHTML = head + table + '<div class="grid-2">' + prov + splits + "</div>";
+  }
+  function splitBar(label, v, max) {
+    return '<div class="meter"><div><div style="font-size:12px;margin-bottom:5px">' + label + "</div>" +
+      '<div class="meter-track"><div class="meter-fill" style="width:' + ((v / max) * 100).toFixed(1) + '%"></div></div></div><span class="num">' + v.toLocaleString() + "</span></div>";
+  }
+
+  /* ---- distributions ---- */
+  function renderDist(b) {
+    if (!b) { el("distBody").innerHTML = noBundle("Distributions"); return; }
+    var gaps = b.classesData.map(function (c) {
+      return { name: c.name, tr: (c.tr / b.nTrain) * 100, te: (c.te / b.nTest) * 100 };
+    });
+    var worst = gaps.slice().sort(function (x, y) { return Math.abs(y.tr - y.te) - Math.abs(x.tr - x.te); })[0];
+
+    var head = Math.abs(worst.tr - worst.te) > 15
+      ? finding("is-warn", "Train and test distributions differ by design, and the gap is large.",
+          worst.name + " is " + worst.tr.toFixed(1) + "% of the training set but " + worst.te.toFixed(1) +
+          "% of the test set — a gap of " + Math.abs(worst.tr - worst.te).toFixed(0) + " points. This follows from " +
+          "<code>imbalance_strategy: " + b.strategy + "</code>, but it is the first thing a reviewer notices, so the dashboard says it first.")
+      : finding("is-good", "Train and test distributions track each other closely.",
+          "The largest gap is " + worst.name + " at " + Math.abs(worst.tr - worst.te).toFixed(1) + " points.");
+
+    var bars = gaps.map(function (g) {
+      var gap = Math.abs(g.tr - g.te);
+      return '<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">' +
+        "<span>" + g.name + "</span>" +
+        '<span class="num" style="font-size:11px;color:var(--ink-3)">train ' + g.tr.toFixed(1) + "% · test " + g.te.toFixed(1) + "%" +
+        (gap > 15 ? '  <span style="color:var(--warn)">gap ' + gap.toFixed(0) + "pp</span>" : "") + "</span></div>" +
+        '<div class="meter-track" style="height:7px;margin-bottom:2px"><div class="meter-fill" style="width:' + g.tr.toFixed(2) + '%"></div></div>' +
+        '<div class="meter-track" style="height:7px"><div class="meter-fill" style="width:' + g.te.toFixed(2) + '%;background:var(--accent)"></div></div></div>';
+    }).join("");
+
+    var champ = b.models.filter(function (m) { return m.id === b.champion; })[0];
+    var target = b.classesData.filter(function (c) { return c.target; })[0];
+
+    el("distBody").innerHTML = head +
+      '<div class="panel"><div class="panel-head"><h3>Class share, train against test</h3><p>Same scale, so the resampling gap is visible directly</p></div>' +
+      '<div class="panel-body"><div class="stack" style="gap:13px">' + bars + "</div></div>" +
+      '<p class="panel-note"><span class="legend"><span><i style="background:var(--bar)"></i>Train share</span><span><i style="background:var(--accent)"></i>Test share</span></span></p></div>' +
+      '<div class="panel"><div class="panel-head"><h3>What the imbalance strategy bought</h3><p>' +
+      (target ? target.name : "Target class") + ", " + (champ ? champ.name : "—") + '</p></div><div class="panel-body"><div class="grid-3">' +
+      stat("Recall", champ && champ.rec, champ && champ.rec != null && champ.rec < 0.5 ? "var(--bad)" : "var(--ink)",
+           target ? Math.round((champ && champ.rec || 0) * target.te).toLocaleString() + " of " + target.te.toLocaleString() + " caught" : "") +
+      stat("False negatives", null, "var(--ink)", target && champ && champ.rec != null ? Math.round((1 - champ.rec) * target.te).toLocaleString() + " reached the analyst as benign" : "", target && champ && champ.rec != null ? Math.round((1 - champ.rec) * target.te) : null) +
+      stat("False positives", null, "var(--ink)", champ && champ.fpr != null ? "FPR " + n(champ.fpr) : "", champ && champ.fp) +
+      "</div></div>" +
+      '<p class="panel-note">Counts, not just rates. &ldquo;' +
+      (target && champ && champ.rec != null ? Math.round((1 - champ.rec) * target.te).toLocaleString() : "N") +
+      " flows of the target class reached the analyst labelled benign&rdquo; is a sentence a committee can reason about; a recall figure on its own is not.</p></div>";
+  }
+  function stat(label, val, color, sub, rawInt) {
+    var shown = rawInt != null ? rawInt.toLocaleString() : (val == null ? '<span class="nil">not recorded</span>' : val.toFixed(4));
+    return '<div><div style="font-size:11.5px;color:var(--ink-3);margin-bottom:4px">' + label + "</div>" +
+      '<div class="num" style="font-size:20px;font-weight:600;color:' + color + '">' + shown + "</div>" +
+      '<div style="font-size:11.5px;color:var(--ink-2);margin-top:4px">' + (sub || "") + "</div></div>";
+  }
+
+  /* ---- model detail ---- */
+  function renderModel(b) {
+    if (!b) { el("modelBody").innerHTML = noBundle("Model detail"); return; }
+    var m = b.models.filter(function (x) { return x.id === "random_forest"; })[0] || b.models[0];
+    var got = (m.cv || []).filter(function (v) { return v != null; });
+
+    var head;
+    if (m.cvSuspect && got.length) {
+      var cvMax = Math.max.apply(null, got);
+      head = finding("is-bad", "Cross-validation and the held-out score disagree by a wide margin.",
+        m.name + " reports macro F1 <code>" + n(m.macro) + "</code> on the test set, but its recorded CV folds top out at <code>" +
+        cvMax.toFixed(4) + "</code>. Only " + got.length + " of " + m.cv.length + " folds were recorded. " +
+        "Either the CV run and the test run used different data, or the folds failed — both need explaining before this number is defended.");
+    } else if (!got.length) {
+      head = finding("is-warn", "No cross-validation folds were recorded for this model.",
+        "The held-out score stands alone, with nothing to show whether it generalises. The dashboard reports the absence rather than presenting the single test score as if it were corroborated.");
+    } else {
+      head = finding("is-good", m.name + " is stable: " + got.length + " folds within ±" + n(m.sd) + " of the mean.",
+        "Cross-validation spread is the evidence that the held-out score is not luck.");
+    }
+
+    var rows = b.classesData.map(function (c) {
+      if (c.te === 0) {
+        return '<tr class="is-void"><td>' + c.name + "</td>" +
+          '<td class="n" colspan="3"><span class="nil">no test rows — not evaluated</span></td>' +
+          '<td class="n">0</td><td>' + chip("is-bad", "not evaluated") + "</td></tr>";
+      }
+      var note = c.te < 30 ? chip("is-bad", "only " + c.te + " test row" + (c.te > 1 ? "s" : ""))
+        : c.f1 < 0.5 ? chip("is-bad", "weakest result")
+        : c.f1 < 0.9 ? chip("is-warn", "below the pack")
+        : chip("is-mute", "—");
+      var tone = c.f1 < 0.5 ? "is-bad" : c.te < 30 ? "is-warn" : c.f1 < 0.9 ? "is-warn" : "is-good";
+      return "<tr" + (c.te < 30 || c.f1 < 0.5 ? ' class="is-flagged"' : "") + ">" +
+        "<td>" + c.name + "</td>" +
+        '<td class="n">' + n(c.p) + "</td>" +
+        '<td class="n">' + n(c.r) + "</td>" +
+        "<td>" + meter(c.f1, 1, tone) + "</td>" +
+        '<td class="n">' + fmt(c.te) + "</td>" +
+        "<td>" + note + "</td></tr>";
+    }).join("");
+
+    var perClass = '<div class="panel"><div class="panel-head"><h3>Per-class results</h3><p>' + m.name +
+      ' · <span class="num">' + m.id + '_per_class.csv</span></p><span class="right">test n = ' + b.nTest.toLocaleString() + "</span></div>" +
+      '<div class="scroll"><table><thead><tr><th>Class</th><th class="n">Precision</th><th class="n">Recall</th><th>F1</th><th class="n">Support</th><th>Note</th></tr></thead><tbody>' +
+      rows + "</tbody></table></div>" +
+      '<p class="panel-note">A perfect score on a handful of rows is not a result, so small-support rows are flagged in place rather than being quietly averaged into the macro figure.</p></div>';
+
+    var thr = '<div class="panel"><div class="panel-head"><h3>Decision threshold</h3><p>Target class</p></div><div class="panel-body"><table><tbody>' +
+      "<tr><td>Tuned threshold</td><td class=\"n\">" + (m.thr != null ? m.thr.toFixed(4) : '<span class="nil">not recorded</span>') + "</td></tr>" +
+      '<tr><td>Calibration split</td><td class="n">' + (b.nCalib > 0 ? b.nCalib.toLocaleString() + " rows" : '<span class="nil">none</span>') + "</td></tr>" +
+      '<tr><td>Imbalance strategy</td><td class="n">' + b.strategy + "</td></tr>" +
+      "</tbody></table></div>" +
+      '<p class="panel-note">' + (m.thr != null && b.nCalib > 0
+        ? "Threshold tuned on a split the reported metrics never touched."
+        : "No tuned threshold on a held-out split, so these metrics are argmax over the class probabilities. The dashboard labels them that way instead of implying tuning that did not happen.") + "</p></div>";
+
+    var errs = '<div class="panel"><div class="panel-head"><h3>Error budget on the target class</h3></div><div class="panel-body">';
+    var target = b.classesData.filter(function (c) { return c.target; })[0];
+    if (target && m.rec != null) {
+      var tp = Math.round(m.rec * target.te), fn = target.te - tp;
+      errs += '<div class="stack" style="gap:11px">' +
+        '<div class="meter"><div><div style="font-size:12px;margin-bottom:5px">Caught</div><div class="meter-track"><div class="meter-fill is-good" style="width:' + (m.rec * 100).toFixed(1) + '%"></div></div></div><span class="num">' + tp.toLocaleString() + "</span></div>" +
+        '<div class="meter"><div><div style="font-size:12px;margin-bottom:5px">Missed</div><div class="meter-track"><div class="meter-fill is-bad" style="width:' + ((1 - m.rec) * 100).toFixed(1) + '%"></div></div></div><span class="num">' + fn.toLocaleString() + "</span></div>" +
+        '<div class="meter"><div><div style="font-size:12px;margin-bottom:5px">False alarms</div><div class="meter-track"><div class="meter-fill is-warn" style="width:' + (m.fpr != null ? Math.min(100, m.fpr * 900).toFixed(1) : 0) + '%"></div></div></div><span class="num">' + (m.fp != null ? m.fp.toLocaleString() : '<span class="nil">—</span>') + "</span></div></div>";
+    } else {
+      errs += '<p style="margin:0;font-size:12.5px;color:var(--ink-2)">This bundle did not record target-class error counts for this model.</p>';
+    }
+    errs += "</div></div>";
+
+    el("modelBody").innerHTML = head + perClass + '<div class="grid-2">' + thr + errs + "</div>";
+  }
+
+  /* ---- comparison ---- */
+  function renderCompare(b) {
+    if (!b) { el("compareBody").innerHTML = noBundle("Comparison"); return; }
+
+    var unstable = b.models.filter(function (m) { return m.unstable; });
+    var noCv = b.models.filter(function (m) { return !(m.cv || []).filter(function (v) { return v != null; }).length; });
+
+    var head;
+    if (unstable.length) {
+      var u = unstable[0];
+      head = finding("is-bad", u.name + " is not a mid-table model — it is unstable and should be reported as failed.",
+        "Its five folds run " + u.cv.map(function (v) { return v.toFixed(4); }).join(", ") + " — a standard deviation of <code>" + n(u.sd) +
+        "</code>, roughly 300&times; every other model. A held-out score from a run that unstable carries no information.");
+    } else if (noCv.length) {
+      head = finding("is-warn", noCv.length + " of " + b.models.length + " models have no usable cross-validation folds.",
+        "Their held-out scores cannot be checked for stability. The strip below shows what was recorded and leaves the rest blank, " +
+        "because a blank row is an honest statement and a zero is not.");
+    } else {
+      head = finding("is-good", "Every model recorded a full set of folds.", "Stability can be read directly off the strip below.");
+    }
+
+    var LO = 0, HI = 1;
+    function pos(v) { return ((v - LO) / (HI - LO)) * 100; }
+    var strip = b.models.map(function (m) {
+      var got = (m.cv || []).filter(function (v) { return v != null; });
+      var t = m.unstable ? " is-warn" : "";
+      var plot;
+      if (!got.length) {
+        plot = '<span class="fold-none">no folds recorded</span>';
+      } else {
+        var lo = Math.min.apply(null, got), hi = Math.max.apply(null, got);
+        plot = '<span class="fold-axis"></span><span class="fold-span' + t + '" style="left:' + pos(lo).toFixed(2) + "%;width:" + (pos(hi) - pos(lo)).toFixed(2) + '%"></span>' +
+          got.map(function (v) { return '<span class="fold-dot' + t + '" style="left:' + pos(v).toFixed(2) + '%"></span>'; }).join("");
+      }
+      var right = m.sd != null ? "sd " + m.sd.toFixed(4)
+        : got.length ? '<span class="nil">' + got.length + " / " + (m.cv || []).length + " folds</span>"
+        : '<span class="nil">none</span>';
+      return '<div class="fold-row"><span class="fold-label">' + m.name + "</span>" +
+        '<span class="fold-plot">' + plot + "</span>" +
+        '<span class="fold-sd num">' + right + "</span></div>";
+    }).join("");
+
+    var stripPanel = '<div class="panel"><div class="panel-head"><h3>Cross-validation stability</h3><p>Recorded fold scores on a shared axis · macro F1</p></div>' +
+      '<div class="panel-body"><div class="folds">' + strip + "</div>" +
+      '<div class="axis-ticks"><div></div><div><span>0.00</span><span>0.33</span><span>0.66</span><span>1.00</span></div><div style="font-size:10.5px;color:var(--ink-3);text-align:right">spread</div></div></div>' +
+      '<p class="panel-note">Spread is the point of this chart. Missing folds leave a gap rather than collapsing to the origin, which would draw a tight, reassuring, and completely false cluster at zero.</p></div>';
+
+    var fprRows = b.models.slice().sort(function (x, y) {
+      if (x.fpr == null) return 1; if (y.fpr == null) return -1; return x.fpr - y.fpr;
+    }).map(function (m) {
+      if (m.fpr == null) {
+        return '<tr class="is-void"><td class="model-name">' + m.name + "</td>" +
+          '<td class="n">' + n(m.rec) + '</td><td class="n">' + n(m.prec) + '</td><td class="n">' + n(m.f2) + "</td>" +
+          '<td><span class="nil">not measured</span></td><td>' + chip("is-mute", "excluded from selection") + "</td></tr>";
+      }
+      var over = m.fpr / b.fprBudget;
+      var tone = over > 5 ? "is-bad" : over > 1 ? "is-warn" : "is-good";
+      return "<tr" + (m.unstable ? ' class="is-flagged"' : "") + ">" +
+        '<td class="model-name">' + m.name + "</td>" +
+        '<td class="n">' + n(m.rec) + '</td><td class="n">' + n(m.prec) + '</td><td class="n">' + n(m.f2) + "</td>" +
+        '<td><div class="meter"><div class="meter-track"><div class="meter-fill ' + tone + '" style="width:' + Math.min(100, (m.fpr / 0.22) * 100).toFixed(2) + '%"></div></div><span class="num">' + m.fpr.toFixed(4) + "</span></div></td>" +
+        "<td>" + chip(tone, over >= 1 ? over.toFixed(1) + "× over budget" : "within budget") + "</td></tr>";
+    }).join("");
+
+    var fprPanel = '<div class="panel"><div class="panel-head"><h3>Target-class detection against the FPR budget</h3>' +
+      '<p>Budget is <span class="num">FPR ≤ ' + b.fprBudget.toFixed(2) + "</span></p></div>" +
+      '<div class="scroll"><table><thead><tr><th>Model</th><th class="n">Recall</th><th class="n">Precision</th><th class="n">F2</th><th>FPR against budget</th><th>Verdict</th></tr></thead><tbody>' +
+      fprRows + "</tbody></table></div>" +
+      '<p class="panel-note">Recall is never shown without its false-positive rate beside it. A model can reach the best recall on this class by flagging most of the traffic, and that has to be visible in the same row.</p></div>';
+
+    el("compareBody").innerHTML = head + stripPanel + fprPanel;
+  }
+
+  /* ---- predict result ---- */
+  function renderPredict(b) {
+    var host = el("predictResult");
+    if (!b) {
+      host.innerHTML = '<div class="panel-head"><h3>Result</h3><p>Unavailable</p></div>' +
+        '<div class="empty"><h4>Batch predict is disabled without a loaded bundle.</h4>' +
+        "<p>Classification needs a saved model and a label encoder from a results bundle. The upload " +
+        "control above stays visible but inert, so the page does not look broken — it looks unconfigured, which is what it is.</p></div>";
+      return;
+    }
+    var target = b.classesData.filter(function (c) { return c.target; })[0];
+    var byName = {};
+    b.classesData.forEach(function (c) { byName[c.name] = c; });
+    var demo = [
+      { cls: "BENIGN",       rows: 3904, pct: 93.4 },
+      { cls: "DDoS",         rows: 141,  pct: 3.4 },
+      { cls: "PortScan",     rows: 78,   pct: 1.9 },
+      { cls: "Infiltration", rows: 44,   pct: 1.1 },
+      { cls: "Web Attack",   rows: 15,   pct: 0.4 }
+    ];
+    var rows = demo.map(function (d) {
+      var c = byName[d.cls];
+      var conf = !c ? chip("is-mute", "class not in this run")
+        : c.te < 30 ? chip("is-warn", c.te + " test rows")
+        : c.f1 < 0.5 ? chip("is-bad", "F1 " + c.f1.toFixed(4))
+        : c.f1 < 0.9 ? chip("is-warn", "F1 " + c.f1.toFixed(4))
+        : chip("is-good", "F1 " + c.f1.toFixed(4));
+      var flag = c && (c.te < 30 || c.f1 < 0.9);
+      return "<tr" + (flag ? ' class="is-flagged"' : "") + "><td>" + d.cls + '</td><td class="n">' + d.rows.toLocaleString() +
+        '</td><td class="n">' + d.pct.toFixed(1) + "%</td><td>" + conf + "</td></tr>";
+    }).join("");
+
+    var warn = target && target.f1 < 0.9
+      ? finding("is-warn", target.name + " F1 on this run is " + target.f1.toFixed(4) + ". Treat a benign verdict on this class as unconfirmed.",
+          "The result table carries the model's measured weakness so it travels with the output instead of living on a different page.")
+      : finding("is-good", "Every class in this result is above F1 0.90 on the active run.",
+          "Confidence chips are still shown per row so the claim is checkable rather than assumed.");
+
+    host.innerHTML = '<div class="panel-head"><h3>Result — with the caveat attached</h3>' +
+      '<p>Row counts are illustrative; every confidence figure is read from the active run</p></div>' +
+      '<div class="panel-body">' + warn +
+      '<div class="scroll" style="margin-top:14px"><table><thead><tr><th>Predicted class</th><th class="n">Rows</th><th class="n">Share</th><th>Confidence in this class</th></tr></thead><tbody>' +
+      rows + "</tbody></table></div></div>" +
+      '<p class="panel-note">Switch the active run in the rail and every chip in this table changes, because it is bound to that run’s per-class results rather than hard-coded.</p>';
+  }
+
+  /* ── wiring ───────────────────────────────────────────── */
+  var TITLES = {
+    overview:"Overview", dataset:"Dataset", dist:"Distributions",
+    model:"Model detail — Random Forest", compare:"Comparison",
+    xai:"Explainability", predict:"Batch predict", contract:"Bundle contract"
+  };
+  var links = document.querySelectorAll(".rail-link");
+  Array.prototype.forEach.call(links, function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-go");
+      Array.prototype.forEach.call(links, function (x) { x.removeAttribute("aria-current"); });
+      btn.setAttribute("aria-current", "page");
+      Array.prototype.forEach.call(document.querySelectorAll(".view"), function (v) {
+        if (v.getAttribute("data-view") === id) { v.setAttribute("data-active", ""); }
+        else { v.removeAttribute("data-active"); }
+      });
+      el("viewTitle").textContent = TITLES[id];
+    });
+  });
+
+  el("runSel").addEventListener("change", function () { render(this.value); });
+
+  el("themeBtn").addEventListener("click", function () {
+    var r = document.documentElement, now = r.getAttribute("data-theme");
+    if (!now) { now = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
+    r.setAttribute("data-theme", now === "dark" ? "light" : "dark");
+  });
+
+  render("latest");
+})();
+</script>
