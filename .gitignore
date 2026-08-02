@@ -66,6 +66,20 @@ results/**/checkpoints/
 results/**/shap/
 results/coverage/
 
+# --- Trained model binaries (CSE-CIC-IDS2018 pipeline writes here) ---
+# 197 MB across the two 300k bundles, largest single file 44 MB. All of it is
+# regenerable from the cached sample in ~2 min. metadata.json is kept because
+# it records the feature order, dropped columns, class list and seed -- the
+# only part a clone needs to interpret the tracked metrics.
+models/**
+!models/**/
+!models/**/metadata.json
+
+# --- CSE-CIC-IDS2018 sample cache ---
+# sample_<size>.parquet is the extracted stratified sample (35 MB at 300k);
+# corpus_label_index.npz is the pass-1 scan. Both rebuild from the raw CSVs.
+data/ids2018/
+
 # --- Logs ---
 logs/*.log
 logs/*.jsonl

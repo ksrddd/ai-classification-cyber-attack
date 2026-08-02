@@ -1,0 +1,13 @@
+{
+  "model": "random_forest",
+  "accuracy": 0.9662444444444445,
+  "balanced_accuracy": 0.7047432153587411,
+  "precision_macro": 0.6952955137295992,
+  "recall_macro": 0.7047432153587411,
+  "f1_macro": 0.6858264434775712,
+  "precision_weighted": 0.9777073163748257,
+  "recall_weighted": 0.9662444444444445,
+  "f1_weighted": 0.9696889076379388,
+  "train_seconds": 20.212169400001585,
+  "predict_seconds": 0.8763003999993089
+}

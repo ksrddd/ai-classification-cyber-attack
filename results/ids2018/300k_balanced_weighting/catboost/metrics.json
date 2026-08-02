@@ -1,0 +1,13 @@
+{
+  "model": "catboost",
+  "accuracy": 0.8570222222222222,
+  "balanced_accuracy": 0.7393752160905438,
+  "precision_macro": 0.6571831046893255,
+  "recall_macro": 0.7393752160905438,
+  "f1_macro": 0.668623456626793,
+  "precision_weighted": 0.976179493316138,
+  "recall_weighted": 0.8570222222222222,
+  "f1_weighted": 0.9086534674112462,
+  "train_seconds": 13.437103199998091,
+  "predict_seconds": 0.07982930000071065
+}

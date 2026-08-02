@@ -1,0 +1,456 @@
+18:05:19 | INFO    | ======================================================================
+18:05:19 | INFO    | CSE-CIC-IDS2018 — stratified sampling + 7-model benchmark
+18:05:19 | INFO    | sample=300,000 rows | sampling=nested | seed=42 | split=70/30 | weighting=none | accelerator=gpu
+18:05:19 | INFO    | results -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k | models -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+18:05:19 | INFO    | ======================================================================
+18:05:19 | INFO    | Verifying CUDA on device(s) 0 ...
+18:05:20 | INFO    |   nvidia_smi         PASS | GPU 0: NVIDIA GeForce RTX 4060 Laptop GPU (UUID: GPU-c4684497-9c90-aba3-9c13-e1187835b90b)
+18:05:20 | INFO    |   xgboost_cuda_fit   PASS | CUDA fit completed
+18:05:20 | INFO    |   catboost_gpu_fit   PASS | CUDA fit completed
+18:05:20 | INFO    | Reusing cached sample: C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\sample_300k.parquet (300,000 rows)
+18:05:20 | INFO    | Dropping non-generalisable columns: Flow ID, Src IP, Src Port, Dst IP, Timestamp, Dst Port
+18:05:20 | INFO    | Feature matrix before cleaning: 300,000 x 77
+18:05:21 | INFO    | Stratified split -> train 210,000 rows / test 90,000 rows (70/30)
+18:05:21 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Blk Rate Avg, Bwd Byts/b Avg, Bwd PSH Flags, Bwd Pkts/b Avg, Bwd URG Flags, Fwd Blk Rate Avg, Fwd Byts/b Avg, Fwd Pkts/b Avg
+18:05:21 | INFO    | Preprocessor fitted: 69 features, scaler=standard
+18:05:21 | INFO    | Encoded 15 classes: ['Benign', 'Bot', 'Brute Force -Web', 'Brute Force -XSS', 'DDOS attack-HOIC', 'DDOS attack-LOIC-UDP', 'DDoS attacks-LOIC-HTTP', 'DoS attacks-GoldenEye', 'DoS attacks-Hulk', 'DoS attacks-SlowHTTPTest', 'DoS attacks-Slowloris', 'FTP-BruteForce', 'Infilteration', 'SQL Injection', 'SSH-Bruteforce']
+18:05:21 | INFO    | Ready: X_train (210000, 69), X_test (90000, 69) (float32, 82.8 MB total)
+18:05:22 | INFO    | Preprocessor, encoder and metadata saved to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+18:05:22 | INFO    | ----------------------------------------------------------------------
+18:05:22 | INFO    | [1/7] xgboost
+18:05:52 | INFO    |   xgboost              acc=0.9837  f1_macro=0.6854  f1_weighted=0.9795
+18:05:53 | INFO    |   saved -> xgboost.joblib, xgboost.json
+18:05:53 | INFO    | ----------------------------------------------------------------------
+18:05:53 | INFO    | [2/7] lightgbm
+18:05:53 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+18:05:53 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+18:06:11 | INFO    |   lightgbm             acc=0.6777  f1_macro=0.0543  f1_weighted=0.6726
+18:06:12 | INFO    |   saved -> lightgbm.joblib, lightgbm.txt
+18:06:12 | INFO    | ----------------------------------------------------------------------
+18:06:12 | INFO    | [3/7] catboost
+18:06:25 | INFO    |   catboost             acc=0.9836  f1_macro=0.6763  f1_weighted=0.9785
+18:06:25 | INFO    |   saved -> catboost.joblib, catboost.cbm
+18:06:25 | INFO    | ----------------------------------------------------------------------
+18:06:25 | INFO    | [4/7] random_forest
+18:06:25 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+18:06:46 | INFO    |   random_forest        acc=0.9828  f1_macro=0.6869  f1_weighted=0.9786
+18:06:48 | INFO    |   saved -> random_forest.joblib
+18:06:48 | INFO    | ----------------------------------------------------------------------
+18:06:48 | INFO    | [5/7] mlp
+18:06:48 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+18:07:39 | INFO    |   mlp                  acc=0.9816  f1_macro=0.6698  f1_weighted=0.9764
+18:07:40 | INFO    |   saved -> mlp.joblib
+18:07:40 | INFO    | ----------------------------------------------------------------------
+18:07:40 | INFO    | [6/7] logistic_regression
+18:07:40 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+18:08:47 | INFO    |   logistic_regression  acc=0.9651  f1_macro=0.6296  f1_weighted=0.9592
+18:08:47 | INFO    |   saved -> logistic_regression.joblib
+18:08:47 | INFO    | ----------------------------------------------------------------------
+18:08:47 | INFO    | [7/7] stacking
+18:09:20 | ERROR   | stacking failed -- continuing with the remaining models
+Traceback (most recent call last):
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\train_ids2018.py", line 385, in run_training
+    model = fit_model(name, model, X_train, y_train)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\models.py", line 244, in fit_model
+    model.fit(X, y)
+    ~~~~~~~~~^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\ensemble\_stacking.py", line 706, in fit
+    return super().fit(X, y_encoded, **fit_params)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\ensemble\_stacking.py", line 211, in fit
+    self.estimators_ = Parallel(n_jobs=self.n_jobs)(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        delayed(_fit_single_estimator)(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        if est != "drop"
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 91, in __call__
+    return super().__call__(iterable_with_config_and_warning_filters)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\parallel.py", line 1986, in __call__
+    return output if self.return_generator else list(output)
+                                                ~~~~^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\parallel.py", line 1914, in _get_sequential_output
+    res = func(*args, **kwargs)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 184, in __call__
+    return self.function(*args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\ensemble\_base.py", line 45, in _fit_single_estimator
+    estimator.fit(X, y, **fit_params)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\models.py", line 155, in fit
+    self.classes_ = present
+    ^^^^^^^^^^^^^
+AttributeError: property 'classes_' of '_label_safe_xgb_class.<locals>.LabelSafeXGBClassifier' object has no setter
+18:09:20 | INFO    | ======================================================================
+18:09:20 | INFO    | 
+              model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+            xgboost    0.9837             0.6796           0.7150        0.6796    0.6854              0.9788           0.9837       0.9795           29.2              0.8
+           catboost    0.9836             0.6712           0.7132        0.6712    0.6763              0.9780           0.9836       0.9785           12.9              0.1
+      random_forest    0.9828             0.6850           0.7171        0.6850    0.6869              0.9786           0.9828       0.9786           20.4              0.8
+                mlp    0.9816             0.6727           0.6742        0.6727    0.6698              0.9718           0.9816       0.9764           51.0              0.1
+logistic_regression    0.9651             0.6220           0.6599        0.6220    0.6296              0.9569           0.9651       0.9592           66.6              0.0
+           lightgbm    0.6777             0.0546           0.0606        0.0546    0.0543              0.6686           0.6777       0.6726           17.7              0.5
+18:09:20 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k\model_comparison.csv
+18:09:20 | INFO    | Total wall time: 4.0 min
+18:56:40 | INFO    | ======================================================================
+18:56:40 | INFO    | CSE-CIC-IDS2018 — stratified sampling + 7-model benchmark
+18:56:40 | INFO    | sample=300,000 rows | sampling=nested | seed=42 | split=70/30 | weighting=none | accelerator=gpu
+18:56:40 | INFO    | results -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k | models -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+18:56:40 | INFO    | ======================================================================
+18:56:40 | INFO    | Verifying CUDA on device(s) 0 ...
+18:56:41 | INFO    |   nvidia_smi         PASS | GPU 0: NVIDIA GeForce RTX 4060 Laptop GPU (UUID: GPU-c4684497-9c90-aba3-9c13-e1187835b90b)
+18:56:41 | INFO    |   xgboost_cuda_fit   PASS | CUDA fit completed
+18:56:41 | INFO    |   catboost_gpu_fit   PASS | CUDA fit completed
+18:56:41 | INFO    | Reusing cached sample: C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\sample_300k.parquet (300,000 rows)
+18:56:41 | INFO    | Dropping non-generalisable columns: Flow ID, Src IP, Src Port, Dst IP, Timestamp, Dst Port
+18:56:41 | INFO    | Feature matrix before cleaning: 300,000 x 77
+18:56:41 | INFO    | Stratified split -> train 210,000 rows / test 90,000 rows (70/30)
+18:56:42 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Blk Rate Avg, Bwd Byts/b Avg, Bwd PSH Flags, Bwd Pkts/b Avg, Bwd URG Flags, Fwd Blk Rate Avg, Fwd Byts/b Avg, Fwd Pkts/b Avg
+18:56:42 | INFO    | Preprocessor fitted: 69 features, scaler=standard
+18:56:42 | INFO    | Encoded 15 classes: ['Benign', 'Bot', 'Brute Force -Web', 'Brute Force -XSS', 'DDOS attack-HOIC', 'DDOS attack-LOIC-UDP', 'DDoS attacks-LOIC-HTTP', 'DoS attacks-GoldenEye', 'DoS attacks-Hulk', 'DoS attacks-SlowHTTPTest', 'DoS attacks-Slowloris', 'FTP-BruteForce', 'Infilteration', 'SQL Injection', 'SSH-Bruteforce']
+18:56:42 | INFO    | Ready: X_train (210000, 69), X_test (90000, 69) (float32, 82.8 MB total)
+18:56:42 | INFO    | Preprocessor, encoder and metadata saved to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+18:56:42 | INFO    | ----------------------------------------------------------------------
+18:56:42 | INFO    | [1/2] lightgbm
+18:56:42 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+18:56:42 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+18:57:08 | INFO    |   lightgbm             acc=0.9837  f1_macro=0.6870  f1_weighted=0.9799
+18:57:10 | INFO    |   saved -> lightgbm.joblib, lightgbm.txt
+18:57:10 | INFO    | ----------------------------------------------------------------------
+18:57:10 | INFO    | [2/2] stacking
+18:58:58 | ERROR   | stacking failed -- continuing with the remaining models
+Traceback (most recent call last):
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\train_ids2018.py", line 385, in run_training
+    model = fit_model(name, model, X_train, y_train)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\models.py", line 248, in fit_model
+    model.fit(X, y)
+    ~~~~~~~~~^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\ensemble\_stacking.py", line 706, in fit
+    return super().fit(X, y_encoded, **fit_params)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\ensemble\_stacking.py", line 253, in fit
+    predictions = Parallel(n_jobs=self.n_jobs)(
+        delayed(cross_val_predict)(
+    ...<10 lines>...
+        if est != "drop"
+    )
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 91, in __call__
+    return super().__call__(iterable_with_config_and_warning_filters)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\parallel.py", line 1986, in __call__
+    return output if self.return_generator else list(output)
+                                                ~~~~^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\parallel.py", line 1914, in _get_sequential_output
+    res = func(*args, **kwargs)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 184, in __call__
+    return self.function(*args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\model_selection\_validation.py", line 1240, in cross_val_predict
+    predictions = parallel(
+        delayed(_fit_and_predict)(
+    ...<8 lines>...
+        for train, test in splits
+    )
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 91, in __call__
+    return super().__call__(iterable_with_config_and_warning_filters)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\parallel.py", line 1986, in __call__
+    return output if self.return_generator else list(output)
+                                                ~~~~^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\parallel.py", line 1914, in _get_sequential_output
+    res = func(*args, **kwargs)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 184, in __call__
+    return self.function(*args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\sklearn\model_selection\_validation.py", line 1328, in _fit_and_predict
+    estimator.fit(X_train, y_train, **fit_params)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\models.py", line 160, in fit
+    return super().fit(X, np.searchsorted(self._present_classes, y), **kwargs)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\xgboost\core.py", line 553, in inner_f
+    return func(**kwargs)
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\xgboost\sklearn.py", line 1762, in fit
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Invalid classes inferred from unique values of `y`.  Expected: [ 0  1  2  3  4  5  6  7  8  9 10 11 12 14], got [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13]
+18:58:58 | INFO    | ======================================================================
+18:58:58 | INFO    | 
+              model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+            xgboost    0.9837             0.6796           0.7150        0.6796    0.6854              0.9788           0.9837       0.9795           29.2              0.8
+           lightgbm    0.9837             0.6797           0.7174        0.6797    0.6870              0.9794           0.9837       0.9799           23.1              2.6
+           catboost    0.9836             0.6712           0.7132        0.6712    0.6763              0.9780           0.9836       0.9785           12.9              0.1
+      random_forest    0.9828             0.6850           0.7171        0.6850    0.6869              0.9786           0.9828       0.9786           20.4              0.8
+                mlp    0.9816             0.6727           0.6742        0.6727    0.6698              0.9718           0.9816       0.9764           51.0              0.1
+logistic_regression    0.9651             0.6220           0.6599        0.6220    0.6296              0.9569           0.9651       0.9592           66.6              0.0
+18:58:58 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k\model_comparison.csv
+18:58:58 | INFO    | Total wall time: 2.3 min
+19:07:49 | INFO    | ======================================================================
+19:07:49 | INFO    | CSE-CIC-IDS2018 — stratified sampling + 7-model benchmark
+19:07:49 | INFO    | sample=300,000 rows | sampling=nested | seed=42 | split=70/30 | weighting=none | accelerator=gpu
+19:07:49 | INFO    | results -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k | models -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+19:07:49 | INFO    | ======================================================================
+19:07:49 | INFO    | Verifying CUDA on device(s) 0 ...
+19:07:50 | INFO    |   nvidia_smi         PASS | GPU 0: NVIDIA GeForce RTX 4060 Laptop GPU (UUID: GPU-c4684497-9c90-aba3-9c13-e1187835b90b)
+19:07:50 | INFO    |   xgboost_cuda_fit   PASS | CUDA fit completed
+19:07:50 | INFO    |   catboost_gpu_fit   PASS | CUDA fit completed
+19:07:50 | INFO    | Reusing cached sample: C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\sample_300k.parquet (300,000 rows)
+19:07:50 | INFO    | Dropping non-generalisable columns: Flow ID, Src IP, Src Port, Dst IP, Timestamp, Dst Port
+19:07:50 | INFO    | Feature matrix before cleaning: 300,000 x 77
+19:07:50 | INFO    | Stratified split -> train 210,000 rows / test 90,000 rows (70/30)
+19:07:50 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Blk Rate Avg, Bwd Byts/b Avg, Bwd PSH Flags, Bwd Pkts/b Avg, Bwd URG Flags, Fwd Blk Rate Avg, Fwd Byts/b Avg, Fwd Pkts/b Avg
+19:07:51 | INFO    | Preprocessor fitted: 69 features, scaler=standard
+19:07:51 | INFO    | Encoded 15 classes: ['Benign', 'Bot', 'Brute Force -Web', 'Brute Force -XSS', 'DDOS attack-HOIC', 'DDOS attack-LOIC-UDP', 'DDoS attacks-LOIC-HTTP', 'DoS attacks-GoldenEye', 'DoS attacks-Hulk', 'DoS attacks-SlowHTTPTest', 'DoS attacks-Slowloris', 'FTP-BruteForce', 'Infilteration', 'SQL Injection', 'SSH-Bruteforce']
+19:07:51 | INFO    | Ready: X_train (210000, 69), X_test (90000, 69) (float32, 82.8 MB total)
+19:07:51 | INFO    | Preprocessor, encoder and metadata saved to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+19:07:51 | INFO    | ----------------------------------------------------------------------
+19:07:51 | INFO    | [1/1] stacking
+19:09:54 | INFO    |   stacking             acc=0.9839  f1_macro=0.6886  f1_weighted=0.9801
+19:09:55 | ERROR   | stacking failed -- continuing with the remaining models
+Traceback (most recent call last):
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\train_ids2018.py", line 408, in run_training
+    save_model(name, model, args.models_dir)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\src\ids2018\models.py", line 275, in save_model
+    joblib.dump(model, joblib_path, compress=3)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\numpy_pickle.py", line 597, in dump
+    NumpyPickler(f, protocol=protocol).dump(value)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 484, in dump
+    self.save(obj)
+    ~~~~~~~~~^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 601, in save
+    self.save_reduce(obj=obj, *rv)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 715, in save_reduce
+    save(state)
+    ~~~~^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 990, in save_dict
+    self._batch_setitems(obj.items())
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 1014, in _batch_setitems
+    save(v)
+    ~~~~^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 950, in save_list
+    self._batch_appends(obj)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 974, in _batch_appends
+    save(x)
+    ~~~~^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 905, in save_tuple
+    save(element)
+    ~~~~^^^^^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 601, in save
+    self.save_reduce(obj=obj, *rv)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 685, in save_reduce
+    save(cls)
+    ~~~~^^^^^
+  File "C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\.venv\Lib\site-packages\joblib\numpy_pickle.py", line 395, in save
+    return Pickler.save(self, obj)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+    ~^^^^^^^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 1172, in save_type
+    return self.save_global(obj)
+           ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ks\AppData\Local\Programs\Python\Python313\Lib\pickle.py", line 1087, in save_global
+    raise PicklingError(
+        "Can't pickle %r: it's not found as %s.%s" %
+        (obj, module_name, name)) from None
+_pickle.PicklingError: Can't pickle <class 'src.ids2018.models._label_safe_xgb_class.<locals>.LabelSafeXGBClassifier'>: it's not found as src.ids2018.models._label_safe_xgb_class.<locals>.LabelSafeXGBClassifier
+19:09:55 | ERROR   | Every model failed -- no comparison table to write
+19:11:58 | INFO    | ======================================================================
+19:11:58 | INFO    | CSE-CIC-IDS2018 — stratified sampling + 7-model benchmark
+19:11:58 | INFO    | sample=300,000 rows | sampling=nested | seed=42 | split=70/30 | weighting=none | accelerator=gpu
+19:11:58 | INFO    | results -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k | models -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+19:11:58 | INFO    | ======================================================================
+19:11:58 | INFO    | Verifying CUDA on device(s) 0 ...
+19:11:59 | INFO    |   nvidia_smi         PASS | GPU 0: NVIDIA GeForce RTX 4060 Laptop GPU (UUID: GPU-c4684497-9c90-aba3-9c13-e1187835b90b)
+19:11:59 | INFO    |   xgboost_cuda_fit   PASS | CUDA fit completed
+19:11:59 | INFO    |   catboost_gpu_fit   PASS | CUDA fit completed
+19:11:59 | INFO    | Reusing cached sample: C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\sample_300k.parquet (300,000 rows)
+19:11:59 | INFO    | Dropping non-generalisable columns: Flow ID, Src IP, Src Port, Dst IP, Timestamp, Dst Port
+19:11:59 | INFO    | Feature matrix before cleaning: 300,000 x 77
+19:11:59 | INFO    | Stratified split -> train 210,000 rows / test 90,000 rows (70/30)
+19:11:59 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Blk Rate Avg, Bwd Byts/b Avg, Bwd PSH Flags, Bwd Pkts/b Avg, Bwd URG Flags, Fwd Blk Rate Avg, Fwd Byts/b Avg, Fwd Pkts/b Avg
+19:12:00 | INFO    | Preprocessor fitted: 69 features, scaler=standard
+19:12:00 | INFO    | Encoded 15 classes: ['Benign', 'Bot', 'Brute Force -Web', 'Brute Force -XSS', 'DDOS attack-HOIC', 'DDOS attack-LOIC-UDP', 'DDoS attacks-LOIC-HTTP', 'DoS attacks-GoldenEye', 'DoS attacks-Hulk', 'DoS attacks-SlowHTTPTest', 'DoS attacks-Slowloris', 'FTP-BruteForce', 'Infilteration', 'SQL Injection', 'SSH-Bruteforce']
+19:12:00 | INFO    | Ready: X_train (210000, 69), X_test (90000, 69) (float32, 82.8 MB total)
+19:12:00 | INFO    | Preprocessor, encoder and metadata saved to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+19:12:00 | INFO    | ----------------------------------------------------------------------
+19:12:00 | INFO    | [1/1] stacking
+19:14:01 | INFO    |   stacking             acc=0.9839  f1_macro=0.6886  f1_weighted=0.9801
+19:14:03 | INFO    |   saved -> stacking.joblib
+19:14:03 | INFO    | ======================================================================
+19:14:03 | INFO    | 
+              model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+           stacking    0.9839             0.6806           0.7203        0.6806    0.6886              0.9799           0.9839       0.9801          118.2              2.9
+            xgboost    0.9837             0.6796           0.7150        0.6796    0.6854              0.9788           0.9837       0.9795           29.2              0.8
+           lightgbm    0.9837             0.6797           0.7174        0.6797    0.6870              0.9794           0.9837       0.9799           23.1              2.6
+           catboost    0.9836             0.6712           0.7132        0.6712    0.6763              0.9780           0.9836       0.9785           12.9              0.1
+      random_forest    0.9828             0.6850           0.7171        0.6850    0.6869              0.9786           0.9828       0.9786           20.4              0.8
+                mlp    0.9816             0.6727           0.6742        0.6727    0.6698              0.9718           0.9816       0.9764           51.0              0.1
+logistic_regression    0.9651             0.6220           0.6599        0.6220    0.6296              0.9569           0.9651       0.9592           66.6              0.0
+19:14:03 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k\model_comparison.csv
+19:14:03 | INFO    | Total wall time: 2.1 min
+20:06:49 | INFO    | ======================================================================
+20:06:49 | INFO    | CSE-CIC-IDS2018 — stratified sampling + 7-model benchmark
+20:06:49 | INFO    | sample=300,000 rows | sampling=nested | seed=42 | split=70/30 | weighting=none | accelerator=cpu
+20:06:49 | INFO    | results -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k | models -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+20:06:49 | INFO    | ======================================================================
+20:06:49 | INFO    | Found 10 CSV file(s) in D:\CSE-CIC-IDS2018
+20:06:49 | INFO    | Pass 1/2: scanning labels in 10 file(s)
+20:06:50 | INFO    |   02-14-2018.csv      1,048,575 rows
+20:06:53 | INFO    |   02-15-2018.csv      1,048,575 rows
+20:06:55 | INFO    |   02-16-2018.csv      1,048,575 rows
+20:07:16 | INFO    |   02-20-2018.csv      7,948,748 rows
+20:07:19 | INFO    |   02-21-2018.csv      1,048,575 rows
+20:07:21 | INFO    |   02-22-2018.csv      1,048,575 rows
+20:07:23 | INFO    |   02-23-2018.csv      1,048,575 rows
+20:07:24 | INFO    |   02-28-2018.csv        613,104 rows
+20:07:25 | INFO    |   03-01-2018.csv        331,125 rows
+20:07:27 | INFO    |   03-02-2018.csv      1,048,575 rows
+20:07:27 | WARNING | Marked 59 unusable row(s) (embedded headers / empty labels); they keep their position so the two passes stay aligned, but are never sampled
+20:07:27 | INFO    | Pass 1 complete: 16,233,002 rows, 15 classes, 16,232,943 usable
+20:07:28 | INFO    | Label index cached to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\corpus_label_index.npz (0.4 MB)
+20:07:28 | WARNING | Class SQL Injection            would get 1 row(s) proportionally; raised to the floor of 2
+20:07:29 | INFO    | Stratified sample of 300,000 rows:
+20:07:29 | INFO    |   class                         sampled        %     corpus        %
+20:07:29 | INFO    |   Benign                        249,215  83.072% 13,484,708  83.070%
+20:07:29 | INFO    |   Bot                             5,289   1.763%    286,191   1.763%
+20:07:29 | INFO    |   Brute Force -Web                   11   0.004%        611   0.004%
+20:07:29 | INFO    |   Brute Force -XSS                    4   0.001%        230   0.001%
+20:07:29 | INFO    |   DDOS attack-HOIC               12,678   4.226%    686,012   4.226%
+20:07:29 | INFO    |   DDOS attack-LOIC-UDP               31   0.010%      1,730   0.011%
+20:07:29 | INFO    |   DDoS attacks-LOIC-HTTP         10,648   3.549%    576,191   3.550%
+20:07:29 | INFO    |   DoS attacks-GoldenEye             767   0.256%     41,508   0.256%
+20:07:29 | INFO    |   DoS attacks-Hulk                8,536   2.845%    461,912   2.846%
+20:07:29 | INFO    |   DoS attacks-SlowHTTPTest        2,585   0.862%    139,890   0.862%
+20:07:29 | INFO    |   DoS attacks-Slowloris             203   0.068%     10,990   0.068%
+20:07:29 | INFO    |   FTP-BruteForce                  3,573   1.191%    193,360   1.191%
+20:07:29 | INFO    |   Infilteration                   2,992   0.997%    161,934   0.998%
+20:07:29 | INFO    |   SQL Injection                       2   0.001%         87   0.001%
+20:07:29 | INFO    |   SSH-Bruteforce                  3,466   1.155%    187,589   1.156%
+20:07:29 | INFO    | Pass 2/2: extracting 300,000 selected rows
+20:07:36 | INFO    |   02-14-2018.csv        19363 rows extracted
+20:07:45 | INFO    |   02-15-2018.csv        19133 rows extracted
+20:07:54 | INFO    |   02-16-2018.csv        19394 rows extracted
+20:09:21 | INFO    |   02-20-2018.csv       146983 rows extracted
+20:09:29 | INFO    |   02-21-2018.csv        19315 rows extracted
+20:09:38 | INFO    |   02-22-2018.csv        19669 rows extracted
+20:09:48 | INFO    |   02-23-2018.csv        19468 rows extracted
+20:09:57 | INFO    |   02-28-2018.csv        11203 rows extracted
+20:10:02 | INFO    |   03-01-2018.csv         6148 rows extracted
+20:10:11 | INFO    |   03-02-2018.csv        19324 rows extracted
+20:10:17 | INFO    | Pass 2 complete: 300,000 x 84 columns
+20:10:18 | INFO    | Sample cached to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\sample_300k.parquet
+20:10:18 | INFO    | Dropping non-generalisable columns: Flow ID, Src IP, Src Port, Dst IP, Timestamp, Dst Port
+20:10:18 | INFO    | Feature matrix before cleaning: 300,000 x 77
+20:10:19 | INFO    | Stratified split -> train 210,000 rows / test 90,000 rows (70/30)
+20:10:19 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Blk Rate Avg, Bwd Byts/b Avg, Bwd PSH Flags, Bwd Pkts/b Avg, Bwd URG Flags, Fwd Blk Rate Avg, Fwd Byts/b Avg, Fwd Pkts/b Avg
+20:10:19 | INFO    | Preprocessor fitted: 69 features, scaler=standard
+20:10:20 | INFO    | Encoded 15 classes: ['Benign', 'Bot', 'Brute Force -Web', 'Brute Force -XSS', 'DDOS attack-HOIC', 'DDOS attack-LOIC-UDP', 'DDoS attacks-LOIC-HTTP', 'DoS attacks-GoldenEye', 'DoS attacks-Hulk', 'DoS attacks-SlowHTTPTest', 'DoS attacks-Slowloris', 'FTP-BruteForce', 'Infilteration', 'SQL Injection', 'SSH-Bruteforce']
+20:10:20 | INFO    | Ready: X_train (210000, 69), X_test (90000, 69) (float32, 82.8 MB total)
+20:10:20 | INFO    | Preprocessor, encoder and metadata saved to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+20:10:20 | INFO    | --dry-run set: data prepared, stopping before training
+20:11:30 | INFO    | ======================================================================
+20:11:30 | INFO    | CSE-CIC-IDS2018 — stratified sampling + 7-model benchmark
+20:11:30 | INFO    | sample=300,000 rows | sampling=nested | seed=42 | split=70/30 | weighting=none | accelerator=gpu
+20:11:30 | INFO    | results -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k | models -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+20:11:30 | INFO    | ======================================================================
+20:11:30 | INFO    | Verifying CUDA on device(s) 0 ...
+20:11:32 | INFO    |   nvidia_smi         PASS | GPU 0: NVIDIA GeForce RTX 4060 Laptop GPU (UUID: GPU-c4684497-9c90-aba3-9c13-e1187835b90b)
+20:11:32 | INFO    |   xgboost_cuda_fit   PASS | CUDA fit completed
+20:11:32 | INFO    |   catboost_gpu_fit   PASS | CUDA fit completed
+20:11:32 | INFO    | Reusing cached sample: C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\sample_300k.parquet (300,000 rows)
+20:11:32 | INFO    | Dropping non-generalisable columns: Flow ID, Src IP, Src Port, Dst IP, Timestamp, Dst Port
+20:11:32 | INFO    | Feature matrix before cleaning: 300,000 x 77
+20:11:33 | INFO    | Stratified split -> train 210,000 rows / test 90,000 rows (70/30)
+20:11:33 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Blk Rate Avg, Bwd Byts/b Avg, Bwd PSH Flags, Bwd Pkts/b Avg, Bwd URG Flags, Fwd Blk Rate Avg, Fwd Byts/b Avg, Fwd Pkts/b Avg
+20:11:33 | INFO    | Preprocessor fitted: 69 features, scaler=standard
+20:11:34 | INFO    | Encoded 15 classes: ['Benign', 'Bot', 'Brute Force -Web', 'Brute Force -XSS', 'DDOS attack-HOIC', 'DDOS attack-LOIC-UDP', 'DDoS attacks-LOIC-HTTP', 'DoS attacks-GoldenEye', 'DoS attacks-Hulk', 'DoS attacks-SlowHTTPTest', 'DoS attacks-Slowloris', 'FTP-BruteForce', 'Infilteration', 'SQL Injection', 'SSH-Bruteforce']
+20:11:34 | INFO    | Ready: X_train (210000, 69), X_test (90000, 69) (float32, 82.8 MB total)
+20:11:34 | INFO    | Preprocessor, encoder and metadata saved to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k
+20:11:34 | INFO    | ----------------------------------------------------------------------
+20:11:34 | INFO    | [1/7] xgboost
+20:12:22 | INFO    |   xgboost              acc=0.9837  f1_macro=0.6854  f1_weighted=0.9795
+20:12:24 | INFO    |   saved -> xgboost.joblib, xgboost.json
+20:12:24 | INFO    | ----------------------------------------------------------------------
+20:12:24 | INFO    | [2/7] lightgbm
+20:12:24 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+20:12:24 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+20:13:21 | INFO    |   lightgbm             acc=0.9837  f1_macro=0.6870  f1_weighted=0.9799
+20:13:22 | INFO    |   saved -> lightgbm.joblib, lightgbm.txt
+20:13:22 | INFO    | ----------------------------------------------------------------------
+20:13:22 | INFO    | [3/7] catboost
+20:13:46 | INFO    |   catboost             acc=0.9836  f1_macro=0.6763  f1_weighted=0.9785
+20:13:47 | INFO    |   saved -> catboost.joblib, catboost.cbm
+20:13:47 | INFO    | ----------------------------------------------------------------------
+20:13:47 | INFO    | [4/7] random_forest
+20:13:47 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+20:14:20 | INFO    |   random_forest        acc=0.9828  f1_macro=0.6869  f1_weighted=0.9786
+20:14:23 | INFO    |   saved -> random_forest.joblib
+20:14:23 | INFO    | ----------------------------------------------------------------------
+20:14:23 | INFO    | [5/7] mlp
+20:14:23 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+20:16:15 | INFO    |   mlp                  acc=0.9816  f1_macro=0.6698  f1_weighted=0.9764
+20:16:16 | INFO    |   saved -> mlp.joblib
+20:16:16 | INFO    | ----------------------------------------------------------------------
+20:16:16 | INFO    | [6/7] logistic_regression
+20:16:16 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+20:17:07 | INFO    |   logistic_regression  acc=0.9651  f1_macro=0.6296  f1_weighted=0.9592
+20:17:07 | INFO    |   saved -> logistic_regression.joblib
+20:17:07 | INFO    | ----------------------------------------------------------------------
+20:17:07 | INFO    | [7/7] stacking
+20:20:20 | INFO    |   stacking             acc=0.9839  f1_macro=0.6886  f1_weighted=0.9801
+20:20:21 | INFO    |   saved -> stacking.joblib
+20:20:21 | INFO    | ======================================================================
+20:20:22 | INFO    | 
+              model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+           stacking    0.9839             0.6806           0.7203        0.6806    0.6886              0.9799           0.9839       0.9801          189.9              3.0
+            xgboost    0.9837             0.6796           0.7150        0.6796    0.6854              0.9788           0.9837       0.9795           46.7              1.1
+           lightgbm    0.9837             0.6797           0.7174        0.6797    0.6870              0.9794           0.9837       0.9799           53.4              3.5
+           catboost    0.9836             0.6712           0.7132        0.6712    0.6763              0.9780           0.9836       0.9785           23.3              0.1
+      random_forest    0.9828             0.6850           0.7171        0.6850    0.6869              0.9786           0.9828       0.9786           32.5              0.9
+                mlp    0.9816             0.6727           0.6742        0.6727    0.6698              0.9718           0.9816       0.9764          112.1              0.1
+logistic_regression    0.9651             0.6220           0.6599        0.6220    0.6296              0.9569           0.9651       0.9592           50.9              0.0
+20:20:22 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k\model_comparison.csv
+20:20:22 | INFO    | Total wall time: 8.8 min
