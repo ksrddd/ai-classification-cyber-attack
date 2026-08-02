@@ -8,6 +8,6 @@
   "precision_weighted": 0.9793770077103049,
   "recall_weighted": 0.9837222222222223,
   "f1_weighted": 0.979853916527008,
-  "train_seconds": 23.12029370000164,
-  "predict_seconds": 2.606665700001031
+  "train_seconds": 53.39442830000189,
+  "predict_seconds": 3.527119099999254
 }
