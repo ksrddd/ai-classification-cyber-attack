@@ -38,6 +38,7 @@ from src.ids2018.config import (
     INDEX_CACHE,
     MIN_PER_CLASS,
     MODEL_NAMES,
+    MODEL_PARAMS,
     MODELS_DIR,
     OUTPUT_DIR,
     RANDOM_STATE,
@@ -45,6 +46,7 @@ from src.ids2018.config import (
     SAMPLE_SIZE,
     SAMPLING_MODE,
     TEST_SIZE,
+    TIMESTAMP_COL,
     sample_cache_path,
     size_tag,
 )
@@ -70,6 +72,13 @@ from src.ids2018.preprocessing import (
     split_features_labels,
     stratified_train_test_split,
 )
+from src.ids2018.temporal_split import (
+    SPLIT_PROTOCOL,
+    assert_timestamp_absent,
+    build_temporal_manifest,
+    temporal_train_test_split,
+)
+from src.ids2018.tuning import DEFAULT_TUNE_SUBSAMPLE, tune_model
 
 logger = logging.getLogger("ids2018")
 
@@ -161,6 +170,47 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     train.add_argument(
         "--gpu-devices", default="0", help="CUDA device ids, e.g. '0' or '0,1'"
     )
+    train.add_argument(
+        "--split",
+        choices=["stratified", "temporal"],
+        default="stratified",
+        help="'stratified' is the random 70/30 the published 2018 runs use; "
+        "'temporal' splits chronologically inside every (capture day, class) "
+        "group, so no test flow precedes the training flows of its own class",
+    )
+    train.add_argument(
+        "--min-test-per-class",
+        type=int,
+        default=1,
+        help="temporal split only: fail if any class lands below this many test "
+        "rows. 1 keeps all 15 classes; raising it drops the rarest ones",
+    )
+    train.add_argument(
+        "--tune",
+        action="store_true",
+        help="run a randomised hyper-parameter search per model before the "
+        "final fit (stacking inherits its tuned base learners instead)",
+    )
+    train.add_argument(
+        "--tune-iter", type=int, default=20, help="search candidates per model"
+    )
+    train.add_argument(
+        "--tune-folds", type=int, default=3, help="cross-validation folds in the search"
+    )
+    train.add_argument(
+        "--resume",
+        action="store_true",
+        help="skip models that already have artefacts in the output directory, "
+        "and reuse any search result already recorded in tuning.json instead "
+        "of repeating it",
+    )
+    train.add_argument(
+        "--tune-rows",
+        type=int,
+        default=DEFAULT_TUNE_SUBSAMPLE,
+        help="cap on training rows used *during the search*; the winning "
+        "configuration is always refit on the full training split",
+    )
     train.add_argument("--seed", type=int, default=RANDOM_STATE, help="random seed")
     train.add_argument(
         "--dry-run", action="store_true", help="prepare the data then exit without training"
@@ -183,8 +233,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
 
     # Every default path is namespaced by sample size, so a 500k run never
-    # overwrites the 300k results sitting next to it.
+    # overwrites the 300k results sitting next to it. Protocol changes are
+    # namespaced too: a temporal+tuned run is a different experiment from the
+    # random+untuned one, not a newer version of it, and the two have to be
+    # readable side by side for the comparison this dashboard exists for.
     tag = size_tag(args.sample_size)
+    if args.split == "temporal":
+        tag += "_temporal"
+    if args.tune:
+        tag += "_tuned"
     if args.sample_cache is None:
         args.sample_cache = sample_cache_path(args.sample_size)
     if args.output_dir is None:
@@ -279,12 +336,42 @@ def prepare_data(sample: pd.DataFrame, args: argparse.Namespace):
         sample = sample.drop_duplicates().reset_index(drop=True)
         logger.info("Dropped %s duplicate flow(s)", f"{before - len(sample):,}")
 
-    X_df, y_series = split_features_labels(sample, keep_dst_port=args.keep_dst_port)
+    temporal = args.split == "temporal"
+    X_df, y_series = split_features_labels(
+        sample, keep_dst_port=args.keep_dst_port, keep_timestamp=temporal
+    )
     logger.info("Feature matrix before cleaning: %s x %d", f"{len(X_df):,}", X_df.shape[1])
 
-    X_train_df, X_test_df, y_train_s, y_test_s = stratified_train_test_split(
-        X_df, y_series, test_size=args.test_size, random_state=args.seed
-    )
+    if temporal:
+        timestamps = X_df[TIMESTAMP_COL]
+        X_train_df, X_test_df, y_train_s, y_test_s = temporal_train_test_split(
+            X_df,
+            y_series,
+            timestamps,
+            test_size=args.test_size,
+            min_test_per_class=args.min_test_per_class,
+        )
+        # Timestamp was an ordering key, never a feature. Dropping it here and
+        # asserting immediately is the guard behind that claim -- leaking it
+        # would inflate every score in the bundle, and the resulting table
+        # would look like an unusually strong result rather than a broken one.
+        X_train_df = X_train_df.drop(columns=[TIMESTAMP_COL])
+        X_test_df = X_test_df.drop(columns=[TIMESTAMP_COL])
+        assert_timestamp_absent(X_train_df, TIMESTAMP_COL)
+        assert_timestamp_absent(X_test_df, TIMESTAMP_COL)
+
+        build_temporal_manifest(
+            y_train_s,
+            y_test_s,
+            test_size=args.test_size,
+            min_test_per_class=args.min_test_per_class,
+            sample_size=args.sample_size,
+            path=args.output_dir / "split_manifest.json",
+        )
+    else:
+        X_train_df, X_test_df, y_train_s, y_test_s = stratified_train_test_split(
+            X_df, y_series, test_size=args.test_size, random_state=args.seed
+        )
     del X_df, y_series
     gc.collect()
 
@@ -322,6 +409,24 @@ def save_preprocessing_artifacts(
         "sampling_mode": args.sampling,
         "min_per_class": args.min_per_class,
         "test_size": args.test_size,
+        # Read by src/bundles/registry.py. These two fields are what let the
+        # dashboard say how a score may be read, so they are recorded from the
+        # actual run rather than assumed per layout.
+        "split_protocol": (
+            SPLIT_PROTOCOL if args.split == "temporal" else "random_stratified_70_30"
+        ),
+        "hp_tuned": bool(args.tune),
+        "hp_search": (
+            {
+                "strategy": "randomized",
+                "n_iter": args.tune_iter,
+                "cv_folds": args.tune_folds,
+                "search_rows_cap": args.tune_rows,
+                "scoring": "f1_macro",
+            }
+            if args.tune
+            else None
+        ),
         "random_state": args.seed,
         "scaler": args.scaler,
         "class_weighting": args.class_weighting,
@@ -368,18 +473,71 @@ def verify_accelerator(args: argparse.Namespace) -> None:
         )
 
 
-def run_training(X_train, X_test, y_train, y_test, class_names, args) -> list[dict]:
-    """Train, evaluate and persist each requested model."""
+def run_training(X_train, X_test, y_train, y_test, class_names, args):
+    """Train, evaluate and persist each requested model.
+
+    Returns ``(metrics, tuning)``. When ``--tune`` is set each model is searched
+    immediately before its final fit, and the winning parameters are written
+    back into ``MODEL_PARAMS`` so that ``stacking`` -- which is built last and
+    reads that dict at build time -- inherits tuned base learners rather than
+    the untuned defaults. ``build_stacking`` still applies its own deliberate
+    lightening of ``n_estimators``/``max_depth`` on top, because it refits each
+    base learner ``cv + 1`` times.
+    """
     set_class_weighting(args.class_weighting)
     all_metrics: list[dict] = []
+
+    # Search results are keyed by model and flushed after every model, not at
+    # the end of the run. The first attempt at this bundle wrote tuning.json
+    # only on success and was killed after CatBoost's 160-minute search, so a
+    # completed result that existed in memory was lost with the process.
+    tuning_by_model = _load_tuning(args.output_dir)
 
     for i, name in enumerate(args.models, start=1):
         logger.info("-" * 70)
         logger.info("[%d/%d] %s", i, len(args.models), name)
 
+        if args.resume:
+            done = _completed_metrics(name, args)
+            if done is not None:
+                logger.info("  already trained -- reusing saved artefacts")
+                all_metrics.append(done)
+                # Its tuned parameters still have to reach MODEL_PARAMS, or the
+                # stacking ensemble built later would silently inherit untuned
+                # base learners on a resumed run but tuned ones on a fresh run.
+                cached = tuning_by_model.get(name)
+                if cached and cached.get("tuned"):
+                    MODEL_PARAMS[name].update(_restore_params(cached["best_params"]))
+                continue
+
         model = None
         try:
             model = build_model(name, accelerator=args.accelerator, gpu_devices=args.gpu_devices)
+
+            if args.tune:
+                cached = tuning_by_model.get(name) if args.resume else None
+                if cached and cached.get("tuned"):
+                    best = _restore_params(cached["best_params"])
+                    logger.info("  reusing recorded search result: %s", best)
+                    model.set_params(**best)
+                    MODEL_PARAMS[name].update(best)
+                else:
+                    result = tune_model(
+                        name,
+                        model,
+                        X_train,
+                        y_train,
+                        n_iter=args.tune_iter,
+                        n_splits=args.tune_folds,
+                        max_rows=args.tune_rows,
+                        random_state=args.seed,
+                        class_names=class_names,
+                    )
+                    tuning_by_model[name] = result.to_json()
+                    _save_tuning(tuning_by_model, args.output_dir)
+                    if result.tuned:
+                        model.set_params(**result.best_params)
+                        MODEL_PARAMS[name].update(result.best_params)
 
             t0 = time.perf_counter()
             model = fit_model(name, model, X_train, y_train)
@@ -408,6 +566,17 @@ def run_training(X_train, X_test, y_train, y_test, class_names, args) -> list[di
             save_model(name, model, args.models_dir)
             all_metrics.append(metrics)
 
+            # Rewritten after every model, not once at the end. Two reasons:
+            # a run killed at model 5 of 7 keeps the four it finished, and
+            # registry._is_2018_bundle uses this file as its existence test --
+            # without it a partially trained bundle is invisible to the
+            # dashboard, so there is no way to watch a long run progress.
+            # The comparison table carries its own model count, so a bundle
+            # with four rows reads as four models rather than as a short seven.
+            save_comparison_table(
+                build_comparison_table(all_metrics, args.output_dir), args.output_dir
+            )
+
         except Exception:
             # One failing model should not discard the other six results.
             logger.exception("%s failed -- continuing with the remaining models", name)
@@ -416,7 +585,66 @@ def run_training(X_train, X_test, y_train, y_test, class_names, args) -> list[di
             model = None
             gc.collect()
 
-    return all_metrics
+    return all_metrics, list(tuning_by_model.values())
+
+
+# ----------------------------------------------------------------------
+# Resume helpers
+# ----------------------------------------------------------------------
+def _tuning_path(output_dir: Path) -> Path:
+    return output_dir / "tuning.json"
+
+
+def _load_tuning(output_dir: Path) -> dict[str, dict]:
+    """Search results already on disk, keyed by model name."""
+    path = _tuning_path(output_dir)
+    if not path.is_file():
+        return {}
+    try:
+        entries = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        logger.warning("%s is unreadable -- starting a fresh search record", path)
+        return {}
+    return {entry["model"]: entry for entry in entries if "model" in entry}
+
+
+def _save_tuning(by_model: dict[str, dict], output_dir: Path) -> None:
+    """Flush after every model, so a kill never costs a completed search."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    _tuning_path(output_dir).write_text(
+        json.dumps(list(by_model.values()), indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def _restore_params(params: dict) -> dict:
+    """Undo the JSON round trip for parameters that must not be lists.
+
+    ``MLPClassifier`` accepts ``hidden_layer_sizes`` as a tuple; JSON has no
+    tuple, so a reused search result would hand it a list and scikit-learn
+    would reject it on a resumed run only.
+    """
+    restored = dict(params)
+    if isinstance(restored.get("hidden_layer_sizes"), list):
+        restored["hidden_layer_sizes"] = tuple(restored["hidden_layer_sizes"])
+    return restored
+
+
+def _completed_metrics(name: str, args: argparse.Namespace) -> dict | None:
+    """Metrics of an already-trained model, or None if it must still be run.
+
+    Both halves are required: ``metrics.json`` without the serialised model
+    cannot be re-scored by ``analyze.py``, and the model without metrics has
+    nothing to put in the comparison table.
+    """
+    metrics_file = args.output_dir / name / "metrics.json"
+    artifact = args.models_dir / f"{name}.joblib"
+    if not (metrics_file.is_file() and artifact.is_file()):
+        return None
+    try:
+        return json.loads(metrics_file.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
 
 
 # ----------------------------------------------------------------------
@@ -459,7 +687,13 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     class_names = [str(c) for c in encoder.classes_]
-    all_metrics = run_training(X_train, X_test, y_train, y_test, class_names, args)
+    all_metrics, tuning = run_training(X_train, X_test, y_train, y_test, class_names, args)
+
+    if tuning:
+        (args.output_dir / "tuning.json").write_text(
+            json.dumps(tuning, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        logger.info("Search provenance written to %s", args.output_dir / "tuning.json")
 
     if not all_metrics:
         logger.error("Every model failed -- no comparison table to write")

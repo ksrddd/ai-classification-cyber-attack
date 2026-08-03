@@ -1,210 +1,204 @@
+"use client";
+
+/**
+ * Model comparison for whichever bundle is selected.
+ *
+ * Rewritten against the bundle API so it renders CICIDS2017 and
+ * CSE-CIC-IDS2018 with the same code. Two rules from the redesign mockup are
+ * load-bearing here:
+ *
+ *   1. A metric the bundle never recorded shows as absent, never as 0. The
+ *      two pipelines record different subsets, so any column can be empty.
+ *   2. Models missing the sort metric are listed separately rather than sunk
+ *      to the bottom -- "not measured" is not "worst".
+ */
+
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/shell/AppShell";
 import { Panel, PanelHeader } from "@/components/ui/Panel";
-import { KpiCard } from "@/components/ui/KpiCard";
-import { Pill } from "@/components/ui/Pill";
-import { getCompare, FORCE_OPTS } from "@/lib/api";
-import { modelColor, modelLabel, modelShort } from "@/lib/colors";
+import { Nil } from "@/components/ui/Nil";
+import { useBundle } from "@/components/bundle/BundleProvider";
+import {
+  type BundleDetail,
+  type BundleMetrics,
+  count,
+  duration,
+  getBundle,
+  isAbsent,
+  percent,
+  rankBy,
+  score,
+} from "@/lib/bundles";
 
-// force-dynamic means this page always SSRs; pairing it with FORCE_OPTS on the
-// underlying fetch ensures the data is also fresh (no 5-min stale fetch cache).
-export const dynamic = "force-dynamic";
-
-const METRIC_COLS = [
-  { k: "accuracy",           l: "Accuracy"  },
-  { k: "f1_weighted",        l: "F1 (W)"    },
-  { k: "f1_macro",           l: "F1 (M)"    },
-  { k: "precision_weighted", l: "Precision" },
-  { k: "recall_weighted",    l: "Recall"    },
-  { k: "binary_fpr",         l: "FPR"       },
-  { k: "mcc",                l: "MCC"       },
+const COLUMNS: {
+  key: keyof BundleMetrics;
+  label: string;
+  fmt: (v: never) => string;
+}[] = [
+  { key: "accuracy", label: "Accuracy", fmt: (v) => score(v, 4) },
+  { key: "f1_macro", label: "F1 macro", fmt: (v) => score(v, 4) },
+  { key: "f1_weighted", label: "F1 weighted", fmt: (v) => score(v, 4) },
+  { key: "recall_macro", label: "Recall macro", fmt: (v) => score(v, 4) },
+  { key: "mcc", label: "MCC", fmt: (v) => score(v, 4) },
+  { key: "binary_fpr", label: "Binary FPR", fmt: (v) => percent(v, 3) },
+  { key: "false_alarms_fp", label: "False alarms", fmt: (v) => count(v) },
+  { key: "missed_attacks_fn", label: "Missed attacks", fmt: (v) => count(v) },
+  { key: "train_seconds", label: "Train", fmt: (v) => duration(v) },
 ];
 
-const BAR_METRICS = [
-  { k: "f1_weighted",  l: "F1 weighted", color: "#22D3EE" },
-  { k: "f1_macro",     l: "F1 macro",    color: "#6366F1" },
-  { k: "accuracy",     l: "Accuracy",    color: "#3B82F6" },
-  { k: "recall_macro", l: "Recall macro", color: "#10B981" },
-];
+export default function ComparePage() {
+  const { activeId, active } = useBundle();
+  const [data, setData] = useState<BundleDetail | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-const medals = ["1st", "2nd", "3rd", "4th", "5th", "6th"];
-
-export default async function ComparePage() {
-  // FORCE_OPTS bypasses fetch cache — consistent with force-dynamic intent
-  const compare = await getCompare(FORCE_OPTS).catch(() => null);
-
-  if (!compare) {
-    return (
-      <AppShell title="Model Comparison">
-        <div className="py-16 text-center text-ink-2 text-[13px]">
-          No comparison data. Run{" "}
-          <code className="font-mono text-[10.5px] py-0.5 px-[5px] rounded bg-surface-elevated ring-1 ring-line-base text-ink-1 inline-flex items-center">
-            python main.py --stage evaluate
-          </code>
-        </div>
-      </AppShell>
-    );
-  }
-
-  const ranked = Object.entries(compare).sort(
-    ([, a], [, b]) => (b.f1_weighted ?? 0) - (a.f1_weighted ?? 0),
-  );
-
-  const [bestName, bestMetrics] = ranked[0];
-  const bestColor = modelColor(bestName);
+  useEffect(() => {
+    if (!activeId) return;
+    let cancelled = false;
+    setData(null);
+    setError(null);
+    getBundle(activeId)
+      .then((d) => !cancelled && setData(d))
+      .catch((e: Error) => !cancelled && setError(e.message));
+    return () => {
+      cancelled = true;
+    };
+  }, [activeId]);
 
   return (
-    <AppShell title="Model Comparison">
-      <div className="space-y-5 animate-fadeIn">
-        <div>
-          <h1 className="text-[26px] font-semibold tracking-tight text-ink-0">Model Comparison</h1>
-          <p className="text-[12px] text-ink-2 mt-1">
-            Cross-model leaderboard · holdout test set · sorted by F1 weighted
-          </p>
-        </div>
+    <AppShell title="Comparison">
+      {!activeId && !error && <Empty title="No results bundle is loaded" />}
+      {error && <Empty title="Could not read this bundle" detail={error} />}
+      {activeId && !data && !error && <Skeleton />}
+      {data && <CompareBody data={data} datasetLabel={active?.dataset ?? data.dataset} />}
+    </AppShell>
+  );
+}
 
-        {/* KPI row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <KpiCard label="Best model"      value={modelLabel(bestName)}              color={bestColor} />
-          <KpiCard label="Best F1 (W)"     value={bestMetrics.f1_weighted?.toFixed(4) ?? "—"} color={bestColor} />
-          <KpiCard label="Models compared" value={ranked.length}                     color="#6366F1" />
-        </div>
+function CompareBody({
+  data,
+  datasetLabel,
+}: {
+  data: BundleDetail;
+  datasetLabel: string;
+}) {
+  const { ranked, unmeasured } = rankBy(data.models, "f1_macro");
+  const baseline = data.run.majority_baseline_acc;
 
-        {/* Hero best-model strip */}
-        <div
-          className="relative overflow-hidden rounded-xl p-5 ring-1"
-          style={{ background: `${bestColor}08`, borderColor: `${bestColor}30` }}
-        >
-          <div
-            className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl opacity-20 pointer-events-none"
-            style={{ background: bestColor }}
-          />
-          <div className="relative flex items-center gap-4 flex-wrap">
-            <div
-              className="h-12 w-12 rounded-xl grid place-items-center font-semibold text-[14px] flex-shrink-0"
-              style={{ background: `${bestColor}1F`, color: bestColor, boxShadow: `inset 0 0 0 1px ${bestColor}55` }}
-            >
-              {modelShort(bestName)}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[18px] font-semibold text-ink-0">{modelLabel(bestName)}</span>
-                <Pill tone="brand" size="sm">★ champion</Pill>
-              </div>
-              <div className="mt-2 flex items-center gap-4 flex-wrap text-[11px] tabular-nums">
-                {(["f1_weighted", "accuracy", "precision_weighted", "recall_weighted", "mcc"] as const).map((k) => (
-                  <span key={k} className="inline-flex items-center gap-1.5 text-ink-1">
-                    <span className="h-1 w-1 rounded-full" style={{ background: bestColor }} />
-                    <span className="text-ink-3">{k.replace(/_/g, " ")}</span>
-                    <span className="text-ink-0 font-medium">
-                      {(bestMetrics[k] ?? 0).toFixed(4)}
-                    </span>
-                  </span>
+  // Columns this bundle has nothing for at all -- worth saying once at the
+  // top instead of leaving the reader to infer it from a wall of dashes.
+  const emptyColumns = COLUMNS.filter(({ key }) =>
+    Object.values(data.models).every((m) => isAbsent(m[key])),
+  );
+
+  return (
+    <div className="space-y-4">
+      <Panel>
+        <PanelHeader
+          eyebrow={datasetLabel}
+          title={`${ranked.length + unmeasured.length} models · ${
+            data.run.n_classes ?? "?"
+          } classes`}
+          sub={
+            <>
+              {data.run.split_protocol ?? "split protocol not recorded"} ·{" "}
+              {count(data.run.n_test)} test flows
+              {!isAbsent(baseline) && <> · majority baseline {score(baseline, 4)}</>}
+            </>
+          }
+        />
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-[11.5px]">
+            <thead>
+              <tr className="text-ink-3 border-b border-line-base">
+                <th className="text-left font-medium px-3 py-2">Model</th>
+                {COLUMNS.map((c) => (
+                  <th
+                    key={String(c.key)}
+                    className="text-right font-medium px-3 py-2 whitespace-nowrap"
+                  >
+                    {c.label}
+                  </th>
                 ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Leaderboard table */}
-        <Panel>
-          <PanelHeader eyebrow="Leaderboard" title="All models ranked" right={<Pill tone="muted" size="sm">holdout test set</Pill>} />
-          <div className="overflow-x-auto">
-            <table className="w-full text-[12px]">
-              <thead>
-                <tr className="text-left border-b border-line-subtle">
-                  <th className="px-4 py-3 text-[10px] uppercase tracking-[.14em] text-ink-2 font-medium w-16">Rank</th>
-                  <th className="px-4 py-3 text-[10px] uppercase tracking-[.14em] text-ink-2 font-medium">Model</th>
-                  {METRIC_COLS.map((c) => (
-                    <th key={c.k} className="px-4 py-3 text-[10px] uppercase tracking-[.14em] text-ink-2 font-medium text-right">
-                      {c.l}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ranked.map(([name, m], i) => {
-                  const color = modelColor(name);
-                  const isFirst = i === 0;
-                  return (
-                    <tr
-                      key={name}
-                      className={`border-b border-line-subtle last:border-0 hover:bg-surface-hover transition ${isFirst ? "bg-brand-blue/[.03]" : ""}`}
-                    >
-                      <td className="px-4 py-3">
-                        <span
-                          className="text-[10.5px] font-semibold px-2 py-0.5 rounded font-mono"
-                          style={{ background: `${color}22`, color }}
-                        >
-                          {medals[i] ?? `${i + 1}th`}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="flex items-center gap-2">
-                          <span
-                            className="h-7 w-7 rounded grid place-items-center font-mono text-[10.5px] font-semibold flex-shrink-0"
-                            style={{ background: `${color}1F`, color }}
-                          >
-                            {modelShort(name)}
-                          </span>
-                          <span className="font-medium text-ink-0">{modelLabel(name)}</span>
-                          {isFirst && <Pill tone="brand" size="sm">★ best</Pill>}
-                        </span>
-                      </td>
-                      {METRIC_COLS.map((col) => (
-                        <td
-                          key={col.k}
-                          className="px-4 py-3 text-right tabular-nums"
-                          /* Use theme tokens instead of hardcoded hex —
-                             old #10B981 / #A8AFC0 both failed in light mode */
-                          style={{ color: isFirst ? "var(--success-text)" : "var(--text-secondary)" }}
-                        >
-                          {((m[col.k] as number | undefined) ?? 0).toFixed(4)}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </Panel>
-
-        {/* Visual comparison */}
-        <Panel>
-          <PanelHeader eyebrow="Visual" title="Side-by-side metric comparison" />
-          <div className="px-5 py-4 space-y-6">
-            {BAR_METRICS.map(({ k, l, color: barColor }) => (
-              <div key={k}>
-                <div className="text-[10px] uppercase tracking-[.14em] text-ink-2 mb-2 flex items-center gap-1.5">
-                  <span className="h-1 w-1 rounded-full" style={{ background: barColor }} />
-                  {l}
-                </div>
-                <div className="space-y-2">
-                  {ranked.map(([name, m]) => {
-                    const val = (m[k] as number | undefined) ?? 0;
-                    const color = modelColor(name);
+              </tr>
+            </thead>
+            <tbody>
+              {ranked.map(([name, m], i) => (
+                <tr key={name} className="border-b border-line-subtle hover:bg-surface-hover">
+                  <td className="px-3 py-2 text-ink-0 font-medium whitespace-nowrap">
+                    <span className="text-ink-3 font-mono mr-2">{i + 1}</span>
+                    {name}
+                  </td>
+                  {COLUMNS.map((c) => {
+                    const raw = m[c.key];
                     return (
-                      <div key={name} className="grid grid-cols-[140px_1fr_64px] gap-3 items-center">
-                        <span className="text-[11.5px] text-ink-1 truncate">{modelLabel(name)}</span>
-                        {/* bg-surface-elevated replaces dark-only bg-white/[.04] */}
-                        <div className="h-1.5 rounded-full bg-surface-elevated overflow-hidden">
-                          <div
-                            className="h-full rounded-full"
-                            style={{ width: `${val * 100}%`, background: color }}
-                          />
-                        </div>
-                        <span className="tabular-nums text-[11.5px] text-right" style={{ color }}>
-                          {val.toFixed(4)}
-                        </span>
-                      </div>
+                      <td
+                        key={String(c.key)}
+                        className="px-3 py-2 text-right font-mono tabular-nums text-ink-1"
+                      >
+                        {isAbsent(raw) ? (
+                          <Nil reason={`${data.id} does not record ${String(c.key)}`} />
+                        ) : (
+                          (c.fmt as (v: unknown) => string)(raw)
+                        )}
+                      </td>
                     );
                   })}
-                </div>
-              </div>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {unmeasured.length > 0 && (
+          <div className="px-3 py-2.5 border-t border-line-base text-[11px] text-ink-2 leading-relaxed">
+            Not ranked — this bundle records no F1 macro for{" "}
+            <span className="font-mono text-ink-1">{unmeasured.join(", ")}</span>. They are
+            excluded rather than placed last, because an unmeasured model is not a bad one.
+          </div>
+        )}
+      </Panel>
+
+      {emptyColumns.length > 0 && (
+        <Panel>
+          <PanelHeader
+            title="Columns this bundle cannot fill"
+            sub="Recorded by the other pipeline, absent here. Shown as dashes, never as zeros."
+          />
+          <div className="px-3 pb-3 flex flex-wrap gap-1.5">
+            {emptyColumns.map((c) => (
+              <span
+                key={String(c.key)}
+                className="px-2 py-1 rounded-sm text-[10.5px] font-mono border border-line-base bg-surface text-ink-2"
+              >
+                {c.label}
+              </span>
             ))}
           </div>
         </Panel>
-      </div>
-    </AppShell>
+      )}
+    </div>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="space-y-2">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="h-8 rounded-sm bg-surface-raised animate-pulse" />
+      ))}
+    </div>
+  );
+}
+
+function Empty({ title, detail }: { title: string; detail?: string }) {
+  return (
+    <Panel className="p-6">
+      <h3 className="text-[13px] font-semibold text-ink-0">{title}</h3>
+      <p className="mt-1.5 text-[11.5px] text-ink-2 leading-relaxed max-w-prose">
+        {detail ??
+          "Train a run, or pick a different bundle in the rail. The dashboard reads whatever is under results/."}
+      </p>
+    </Panel>
   );
 }

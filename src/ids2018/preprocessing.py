@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 # Column surgery
 # ----------------------------------------------------------------------
 def split_features_labels(
-    df: pd.DataFrame, keep_dst_port: bool = False
+    df: pd.DataFrame, keep_dst_port: bool = False, keep_timestamp: bool = False
 ) -> tuple[pd.DataFrame, pd.Series]:
     """Drop junk columns and separate the target.
 
@@ -49,8 +49,15 @@ def split_features_labels(
       timestamp is a near-perfect label proxy (target leakage).
     * ``Dst Port`` -- unless ``keep_dst_port``. High-cardinality and tied
       to the lab setup (HOIC always targeted port 80).
+
+    ``keep_timestamp`` retains ``Timestamp`` *as an ordering key only*, for the
+    chronological split in :mod:`src.ids2018.temporal_split`. The caller must
+    drop it before the preprocessor sees it; the leakage argument above is
+    unchanged, and ``temporal_split.assert_timestamp_absent`` enforces it.
     """
-    drop = [c for c in [*IDENTITY_COLS, TIMESTAMP_COL] if c in df.columns]
+    drop = [c for c in IDENTITY_COLS if c in df.columns]
+    if not keep_timestamp and TIMESTAMP_COL in df.columns:
+        drop.append(TIMESTAMP_COL)
     if not keep_dst_port and DST_PORT_COL in df.columns:
         drop.append(DST_PORT_COL)
 

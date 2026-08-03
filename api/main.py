@@ -24,6 +24,13 @@ from src.config.loader import (  # noqa: E402
     get_classification_mode,
     load_config,
 )
+from src.bundles import (  # noqa: E402
+    BundleNotFound,
+    describe_bundle,
+    list_bundles,
+    load_bundle,
+    resolve_bundle_id,
+)
 from src.inference.predictor import (  # noqa: E402
     CHAMPION_PATH,  # noqa: E402
     list_saved_models,
@@ -88,6 +95,84 @@ async def _read_upload_limited(
             raise HTTPException(413, f"CSV exceeds {max_bytes // (1024 * 1024)} MB limit")
         chunks.append(chunk)
     return b"".join(chunks)
+
+
+# ---------------------------------------------------------------------------
+# Bundles
+#
+# The dashboard is bundle-aware: it renders whichever results directory the
+# user picks, across two incompatible on-disk layouts. Bundle ids can contain
+# a slash ("ids2018/300k"), so they travel as a query parameter rather than a
+# path segment.
+# ---------------------------------------------------------------------------
+
+def _resolve(bundle: str | None) -> str:
+    try:
+        return resolve_bundle_id(bundle)
+    except BundleNotFound as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+
+@app.get("/api/bundles")
+def get_bundles():
+    """Every results bundle on disk, for the sidebar picker.
+
+    Returns an empty list rather than 404 when nothing has been trained --
+    the no-bundle state is a screen the dashboard renders, not an error.
+    """
+    bundles = list_bundles()
+    return {"bundles": bundles, "default": bundles[0]["id"] if bundles else None}
+
+
+@app.get("/api/bundle")
+def get_bundle(bundle: str | None = None):
+    """One normalised bundle: run provenance, class list, per-model metrics.
+
+    Fields the bundle does not record come back as null. The UI must render
+    those as absent; substituting 0 would turn "we never measured the
+    false-positive rate" into "the false-positive rate is zero".
+    """
+    return describe_bundle(_resolve(bundle))
+
+
+@app.get("/api/bundle/report")
+def get_bundle_report(model: str, bundle: str | None = None):
+    """Per-class precision/recall/F1/support for one model in one bundle."""
+    model = _safe_component(model)
+    loaded = load_bundle(_resolve(bundle))
+    if model not in loaded.models:
+        raise HTTPException(404, f"{model} is not in bundle {loaded.id}")
+
+    candidates = [
+        loaded.path / model / "per_class_report.csv",   # ids2018 layout
+        loaded.path / f"{model}_per_class.csv",         # cicids2017 layout
+    ]
+    for path in candidates:
+        if path.is_file():
+            df = pd.read_csv(path)
+            df = df.rename(columns={df.columns[0]: "class"})
+            df = df[~df["class"].isin(["accuracy", "macro avg", "weighted avg"])]
+            return {"model": model, "rows": df.round(4).to_dict(orient="records")}
+    raise HTTPException(404, f"No per-class report for {model} in {loaded.id}")
+
+
+@app.get("/api/bundle/confusion")
+def get_bundle_confusion(model: str, bundle: str | None = None):
+    """Confusion matrix as {labels, rows}. Only the 2018 layout stores one."""
+    model = _safe_component(model)
+    loaded = load_bundle(_resolve(bundle))
+    path = loaded.path / model / "confusion_matrix.csv"
+    if not path.is_file():
+        raise HTTPException(
+            404,
+            f"Bundle {loaded.id} does not store a confusion matrix for {model}",
+        )
+    df = pd.read_csv(path, index_col=0)
+    return {
+        "model": model,
+        "labels": [str(c) for c in df.columns],
+        "rows": df.astype(int).values.tolist(),
+    }
 
 
 # ---------------------------------------------------------------------------

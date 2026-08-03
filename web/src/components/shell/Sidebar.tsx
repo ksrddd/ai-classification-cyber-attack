@@ -5,20 +5,24 @@ import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import {
   LayoutDashboard, Database, BarChart2, Trophy, Lightbulb,
-  Upload, TrendingUp, Settings, ChevronLeft, ChevronRight, Shield,
+  Upload, TrendingUp, Settings, ChevronLeft, ChevronRight, Shield, FileJson,
 } from "lucide-react";
+import { RunSelector } from "@/components/bundle/RunSelector";
 
+// Grouped by what the user is doing, per the redesign mockup: look at the
+// data, then at the results, then use the model.
 const NAV = [
-  { href: "/",            label: "Overview",    icon: LayoutDashboard, group: "Monitor"   },
-  { href: "/dataset",     label: "Dataset",     icon: Database,        group: "Monitor"   },
-  { href: "/eda",         label: "EDA",         icon: TrendingUp,      group: "Monitor"   },
-  { href: "/performance", label: "Model Perf.", icon: BarChart2,       group: "Evaluate"  },
-  { href: "/compare",     label: "Comparison",  icon: Trophy,          group: "Evaluate"  },
-  { href: "/shap",        label: "SHAP / XAI",  icon: Lightbulb,       group: "Evaluate"  },
-  { href: "/predict",     label: "Predict CSV", icon: Upload,          group: "Inference" },
+  { href: "/",            label: "Overview",    icon: LayoutDashboard, group: "Data"    },
+  { href: "/dataset",     label: "Dataset",     icon: Database,        group: "Data"    },
+  { href: "/eda",         label: "Distributions", icon: TrendingUp,    group: "Data"    },
+  { href: "/performance", label: "Model detail", icon: BarChart2,      group: "Results" },
+  { href: "/compare",     label: "Comparison",  icon: Trophy,          group: "Results" },
+  { href: "/shap",        label: "Explainability", icon: Lightbulb,    group: "Results" },
+  { href: "/predict",     label: "Batch predict", icon: Upload,        group: "Use"     },
+  { href: "/contract",    label: "Bundle contract", icon: FileJson,    group: "Use"     },
 ];
 
-const GROUPS = ["Monitor", "Evaluate", "Inference"];
+const GROUPS = ["Data", "Results", "Use"];
 
 export function Sidebar({
   collapsed,
@@ -49,10 +53,13 @@ export function Sidebar({
         {!collapsed && (
           <div className="min-w-0 flex-1">
             <div className="text-[12.5px] font-semibold text-ink-0 tracking-tight">CyberML</div>
-            <div className="text-[9.5px] text-ink-3 font-mono uppercase tracking-[.12em]">CICIDS2017</div>
+            <div className="text-[9.5px] text-ink-3 font-mono uppercase tracking-[.12em]">NIDS</div>
           </div>
         )}
       </div>
+
+      {/* Which bundle is on screen — a choice, kept visible */}
+      <RunSelector collapsed={collapsed} />
 
       {/* Session */}
       {!collapsed && (

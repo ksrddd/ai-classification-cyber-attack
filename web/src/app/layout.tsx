@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
+import { BundleProvider } from "@/components/bundle/BundleProvider";
 
 export const metadata: Metadata = {
   title: "CyberML — Cyber Attack Classification",
-  description: "AI-based network intrusion detection · CICIDS2017 · KMITL Senior Project",
+  description:
+    "AI-based network intrusion detection · CICIDS2017 + CSE-CIC-IDS2018 · KMITL Senior Project",
 };
 
 /* Runs synchronously before first paint — prevents theme flash.
@@ -24,7 +27,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
         />
       </head>
-      <body className="antialiased bg-canvas text-ink-0">{children}</body>
+      <body className="antialiased bg-canvas text-ink-0">
+        {/* BundleProvider reads ?bundle= via useSearchParams, which Next
+            requires to sit inside a Suspense boundary during prerender. */}
+        <Suspense fallback={null}>
+          <BundleProvider>{children}</BundleProvider>
+        </Suspense>
+      </body>
     </html>
   );
 }
