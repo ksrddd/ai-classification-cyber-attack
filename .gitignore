@@ -92,3 +92,6 @@ catboost_info/
 .streamlit/secrets.toml
 
 CLAUDE.md
+
+# --- Local tooling scratch (design skill's live-preview config) ---
+.impeccable/

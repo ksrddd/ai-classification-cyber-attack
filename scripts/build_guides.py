@@ -316,14 +316,45 @@ def render_pdf(md_path: Path, pdf_path: Path) -> None:
     doc.build(flow)
 
 
-def main() -> int:
-    guides = sorted(DOCS_DIR.glob("*_guide.md"))
-    if not guides:
+def main(argv: list[str] | None = None) -> int:
+    """Render guides, or specific Markdown files named on the command line.
+
+    With no arguments the original behaviour is unchanged: every
+    ``docs/*_guide.md`` is rendered next to its source. Named files are
+    accepted so that documents outside the ``_guide`` naming convention -- the
+    bilingual model-comparison reports, for instance -- can be rendered
+    without being renamed. ``--out-dir`` writes the PDFs somewhere else, which
+    is how the reports reach the folder they are handed over from.
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        prog="build_guides",
+        description="Render Markdown to PDF with Thai-capable fonts",
+    )
+    parser.add_argument("sources", nargs="*", type=Path,
+                        help="Markdown files to render (default: docs/*_guide.md)")
+    parser.add_argument("--out-dir", type=Path, default=None,
+                        help="write PDFs here instead of beside the source")
+    args = parser.parse_args(argv)
+
+    sources = args.sources or sorted(DOCS_DIR.glob("*_guide.md"))
+    if not sources:
         print(f"No *_guide.md found under {DOCS_DIR}")
         return 1
-    for md in guides:
-        pdf = md.with_suffix(".pdf")
-        print(f"Rendering {md.name} -> {pdf.name}")
+
+    missing = [p for p in sources if not p.is_file()]
+    if missing:
+        for p in missing:
+            print(f"Not found: {p}")
+        return 1
+
+    if args.out_dir:
+        args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    for md in sources:
+        pdf = (args.out_dir / f"{md.stem}.pdf") if args.out_dir else md.with_suffix(".pdf")
+        print(f"Rendering {md.name} -> {pdf}")
         render_pdf(md, pdf)
         print(f"  written {pdf.stat().st_size / 1024:.1f} KB")
     return 0
