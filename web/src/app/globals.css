@@ -376,6 +376,17 @@
     border-right: none;
   }
 
+  /* ── Reduced motion also stops keyframe animations ──
+     The wildcard rule above only zeroes transition-duration; an infinite
+     `animation` keeps running through it. Anything that loops or slides has to
+     be named here, not just faded. */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fadeIn,
+    .animate-pulseDot {
+      animation: none !important;
+    }
+  }
+
   /* ── Disabled states — never invisible in dark mode ── */
   [disabled], [aria-disabled="true"] {
     opacity: 0.42;

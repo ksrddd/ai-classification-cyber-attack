@@ -87,6 +87,23 @@ export type BundleRun = {
   dropped_columns?: string[];
 };
 
+/** One paired comparison against the bundle's leading model. */
+export type BundleSignificance = {
+  delta_f1_macro: number | null;
+  delta_ci_low: number | null;
+  delta_ci_high: number | null;
+  mcnemar_p: number | null;
+  disagreeing_flows: number | null;
+  leader_only_right: number | null;
+  rival_only_right: number | null;
+  /**
+   * True only when the paired interval excludes zero AND McNemar rejects.
+   * Null when the bundle ran no significance tests at all -- which is not the
+   * same as "no difference found".
+   */
+  separable_from_leader: boolean | null;
+};
+
 export type BundleDetail = {
   id: string;
   dataset: string;
@@ -94,6 +111,8 @@ export type BundleDetail = {
   run: BundleRun;
   classes: string[];
   models: Record<string, BundleMetrics>;
+  /** Empty when the bundle never ran paired tests. */
+  significance: Record<string, BundleSignificance>;
 };
 
 export type PerClassRow = {

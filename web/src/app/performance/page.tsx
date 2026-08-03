@@ -1,271 +1,254 @@
 "use client";
 
-import { useState, useEffect } from "react";
+/**
+ * Model detail — one model from the selected bundle.
+ *
+ * Shows the per-class table and, where the bundle stores one, the confusion
+ * matrix. The matrix is row-normalised because raw counts make every row
+ * except the majority class invisible: on CSE-CIC-IDS2018 the benign class is
+ * 83% of the test split.
+ */
+
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/shell/AppShell";
 import { Panel, PanelHeader } from "@/components/ui/Panel";
 import { KpiCard } from "@/components/ui/KpiCard";
-import { BarRow } from "@/components/ui/BarRow";
-import { Pill } from "@/components/ui/Pill";
-import { getModels, getModelMetrics, figureUrl, type ModelMetrics } from "@/lib/api";
-import { modelColor, modelLabel, modelShort } from "@/lib/colors";
+import { Nil } from "@/components/ui/Nil";
+import { BundleGate, Empty } from "@/components/bundle/BundleGate";
+import { useBundle } from "@/components/bundle/BundleProvider";
+import {
+  type BundleDetail,
+  type PerClassRow,
+  count,
+  duration,
+  getBundleConfusion,
+  getBundleReport,
+  isAbsent,
+  percent,
+  score,
+} from "@/lib/bundles";
 
-const METRIC_DISPLAY = [
-  { k: "accuracy",            l: "Accuracy",    color: "#38BDF8" },
-  { k: "precision_weighted",  l: "Precision",   color: "#3B82F6" },
-  { k: "recall_weighted",     l: "Recall",      color: "#F43F5E" },
-  { k: "f1_weighted",         l: "F1 (W)",      color: "#22D3EE" },
-  { k: "f1_macro",            l: "F1 (M)",      color: "#6366F1" },
-  { k: "mcc",                 l: "MCC",         color: "#10B981" },
-];
+/** Below this many test flows, a per-class score carries no information. */
+const UNRELIABLE_SUPPORT = 30;
 
 export default function PerformancePage() {
-  const [models, setModels] = useState<string[]>([]);
-  const [selected, setSelected] = useState("");
-  const [metrics, setMetrics] = useState<ModelMetrics | null>(null);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
+  return (
+    <AppShell title="Model detail">
+      <BundleGate what="model detail">{(data) => <Body data={data} />}</BundleGate>
+    </AppShell>
+  );
+}
+
+function Body({ data }: { data: BundleDetail }) {
+  const { activeId } = useBundle();
+  const names = Object.keys(data.models).sort();
+  const [selected, setSelected] = useState(names[0] ?? "");
+  const [report, setReport] = useState<PerClassRow[] | null>(null);
+  const [confusion, setConfusion] = useState<{ labels: string[]; rows: number[][] } | null>(
+    null,
+  );
+  const [noConfusion, setNoConfusion] = useState(false);
+
+  // Reset when the bundle changes — the previously selected model may not
+  // exist in the new one.
+  useEffect(() => {
+    if (!names.includes(selected)) setSelected(names[0] ?? "");
+  }, [names, selected]);
 
   useEffect(() => {
+    if (!selected || !activeId) return;
     let cancelled = false;
-    getModels().catch(() => ({ models: [] as string[] })).then((d) => {
-      if (cancelled) return;
-      setModels(d.models);
-      if (d.models[0]) setSelected(d.models[0]);
-    });
-    return () => { cancelled = true; };
-  }, []);
+    setReport(null);
+    setConfusion(null);
+    setNoConfusion(false);
+    getBundleReport(selected, activeId)
+      .then((r) => !cancelled && setReport(r.rows))
+      .catch(() => !cancelled && setReport([]));
+    getBundleConfusion(selected, activeId)
+      .then((c) => !cancelled && setConfusion({ labels: c.labels, rows: c.rows }))
+      .catch(() => !cancelled && setNoConfusion(true));
+    return () => {
+      cancelled = true;
+    };
+  }, [selected, activeId]);
 
-  useEffect(() => {
-    if (!selected) return;
-    const controller = new AbortController();
-    setLoading(true);
-    setError(false);
-    getModelMetrics(selected, controller.signal)
-      .then((m) => {
-        if (controller.signal.aborted) return;
-        setMetrics(m);
-        setLoading(false);
-      })
-      .catch(() => {
-        if (controller.signal.aborted) return;
-        setError(true);
-        setLoading(false);
-      });
-    return () => controller.abort();
-  }, [selected]);
+  if (!names.length) {
+    return <Empty title="This bundle contains no models">Nothing to show yet.</Empty>;
+  }
 
-  const color = modelColor(selected);
-  const m = metrics ?? ({} as ModelMetrics);
-  const perClass = metrics?.per_class;
+  const m = data.models[selected];
 
   return (
-    <AppShell title="Model Performance">
-      <div className="space-y-5 animate-fadeIn">
-
-        {/* Header */}
-        <div className="flex items-end justify-between flex-wrap gap-3">
-          <div>
-            <h1 className="text-[26px] font-semibold tracking-tight text-ink-0">Model Performance</h1>
-            <p className="text-[12px] text-ink-2 mt-1">
-              Per-model metrics · confusion matrix · per-class breakdown
-            </p>
-          </div>
-          {/* Model selector */}
-          <div className="flex flex-wrap gap-1.5">
-            {models.map((name) => {
-              const c = modelColor(name);
-              const isActive = name === selected;
-              return (
-                <button
-                  key={name}
-                  onClick={() => setSelected(name)}
-                  className="px-3 h-8 rounded-lg text-[12px] font-medium transition ring-1"
-                  style={{
-                    background: isActive ? `${c}22` : "transparent",
-                    color: isActive ? c : "var(--text-secondary)",
-                    borderColor: isActive ? `${c}55` : "var(--border-base)",
-                    boxShadow: isActive ? `0 0 12px ${c}33` : "none",
-                  }}
-                >
-                  {modelLabel(name)}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-16 text-ink-2 text-[12px]">
-            <span className="inline-flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-info animate-pulseDot" />
-              Loading metrics…
-            </span>
-          </div>
-        ) : error ? (
-          <div className="text-center py-16 text-ink-2 text-[12px]">
-            Failed to load metrics for{" "}
-            <span className="text-ink-1 font-medium">{modelLabel(selected)}</span>.
-            Ensure the backend is running and the model has been evaluated.
-          </div>
-        ) : (
-          <>
-            {/* Champion banner */}
-            {selected && (
-              <div
-                className="relative overflow-hidden rounded-xl p-4 ring-1"
-                style={{
-                  background: `${color}0A`,
-                  borderColor: `${color}30`,
-                }}
-              >
-                <div
-                  className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl opacity-20 pointer-events-none"
-                  style={{ background: color }}
-                />
-                <div className="relative flex items-center gap-4 flex-wrap">
-                  <div
-                    className="h-12 w-12 rounded-xl grid place-items-center font-semibold text-[14px] flex-shrink-0"
-                    style={{ background: `${color}1F`, color, boxShadow: `inset 0 0 0 1px ${color}55` }}
-                  >
-                    {modelShort(selected)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[16px] font-semibold text-ink-0">{modelLabel(selected)}</span>
-                      <Pill tone="brand" size="sm">holdout test set</Pill>
-                    </div>
-                    <div className="text-[11px] text-ink-2 mt-0.5 tabular-nums">
-                      F1 = {(m.f1_weighted ?? 0).toFixed(4)} · Accuracy = {(m.accuracy ?? 0).toFixed(4)} · MCC = {(m.mcc ?? 0).toFixed(4)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* KPI tiles */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <KpiCard label="Accuracy"      value={(m.accuracy      ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="F1 (weighted)" value={(m.f1_weighted   ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="F1 (macro)"    value={(m.f1_macro      ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="Binary FPR"    value={(m.binary_fpr    ?? 0).toFixed(5)} color={color} />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <KpiCard label="Precision (W)" value={(m.precision_weighted ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="Recall (W)"    value={(m.recall_weighted    ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="Precision (M)" value={(m.precision_macro    ?? 0).toFixed(4)} color={color} />
-              <KpiCard label="MCC"           value={(m.mcc           ?? 0).toFixed(4)} color={color} />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Metric fingerprint */}
-              <Panel>
-                <PanelHeader eyebrow="Radar" title="Metric fingerprint" sub="Weighted + macro scores" />
-                <div className="px-5 py-4 space-y-3">
-                  {METRIC_DISPLAY.map(({ k, l, color: c }) => (
-                    <BarRow key={k} label={l} value={((m[k] as number | undefined) ?? 0) * 100} max={100} color={c} suffix="%" />
-                  ))}
-                </div>
-              </Panel>
-
-              {/* Confusion matrix */}
-              <Panel>
-                <PanelHeader
-                  eyebrow="Evaluation"
-                  title="Confusion matrix"
-                  sub="Normalised by true class"
-                />
-                <div className="p-4">
-                  <img
-                    src={figureUrl(`confusion_matrix_${selected}.png`)}
-                    alt="Confusion matrix"
-                    className="w-full rounded-lg"
-                    width={640}
-                    height={520}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      const el = e.target as HTMLImageElement;
-                      if (el.parentElement) el.parentElement.style.display = "none";
-                    }}
-                  />
-                </div>
-              </Panel>
-            </div>
-
-            {/* Per-class breakdown */}
-            {perClass && Object.keys(perClass).length > 0 && (
-              <Panel>
-                <PanelHeader
-                  eyebrow="Per-class"
-                  title="Precision / Recall / F1 by attack family"
-                  right={<Pill tone="muted" size="sm">holdout fold</Pill>}
-                />
-                <div className="overflow-x-auto">
-                  <table className="w-full text-[12px]">
-                    <thead>
-                      <tr className="text-left border-b border-line-subtle">
-                        {["Class", "Precision", "Recall", "F1-score", "Support"].map((h) => (
-                          <th
-                            key={h}
-                            className="px-4 py-2.5 text-[10px] uppercase tracking-[.14em] text-ink-2 font-medium"
-                          >
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(perClass).map(([cls, vals]) => {
-                        const f1 = vals.f1 ?? 0;
-                        const textColor =
-                          f1 >= 0.95
-                            ? "var(--success-text)"
-                            : f1 >= 0.85
-                            ? "var(--text-primary)"
-                            : "var(--warning-text)";
-                        return (
-                          <tr
-                            key={cls}
-                            className="border-b border-line-subtle last:border-0 hover:bg-surface-hover transition"
-                          >
-                            <td className="px-4 py-2.5 text-ink-0 font-medium">{cls}</td>
-                            {(["precision", "recall", "f1"] as const).map((k) => (
-                              <td key={k} className="px-4 py-2.5">
-                                <div className="flex items-center gap-2">
-                                  <span
-                                    className="tabular-nums"
-                                    style={{ color: textColor }}
-                                  >
-                                    {(vals[k] ?? 0).toFixed(4)}
-                                  </span>
-                                  <div className="hidden sm:block flex-1 h-0.5 rounded-full bg-surface-elevated overflow-hidden max-w-[60px]">
-                                    <div
-                                      className="h-full rounded-full"
-                                      style={{
-                                        width: `${(vals[k] ?? 0) * 100}%`,
-                                        background: textColor,
-                                      }}
-                                    />
-                                  </div>
-                                </div>
-                              </td>
-                            ))}
-                            <td className="px-4 py-2.5 tabular-nums text-ink-2">
-                              {vals.support != null
-                                ? Math.round(vals.support).toLocaleString()
-                                : "—"}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </Panel>
-            )}
-          </>
-        )}
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-1.5">
+        {names.map((n) => (
+          <button
+            key={n}
+            onClick={() => setSelected(n)}
+            className={
+              "px-2.5 py-1 rounded-sm text-[11px] font-mono border transition-colors " +
+              (n === selected
+                ? "bg-surface-elevated text-ink-0 border-info"
+                : "bg-surface text-ink-2 border-line-base hover:text-ink-1")
+            }
+          >
+            {n}
+          </button>
+        ))}
       </div>
-    </AppShell>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KpiCard label="Accuracy" value={score(m?.accuracy, 4)} />
+        <KpiCard label="F1 macro" value={score(m?.f1_macro, 4)} />
+        <KpiCard
+          label="Binary FPR"
+          value={isAbsent(m?.binary_fpr) ? <Nil /> : percent(m.binary_fpr, 3)}
+          sub={
+            isAbsent(m?.false_alarms_fp)
+              ? undefined
+              : `${count(m.false_alarms_fp)} false alarms`
+          }
+        />
+        <KpiCard
+          label="Train time"
+          value={isAbsent(m?.train_seconds) ? <Nil /> : duration(m.train_seconds)}
+          sub={m?.accelerator ?? undefined}
+        />
+      </div>
+
+      <Panel>
+        <PanelHeader
+          eyebrow={selected}
+          title="Per-class results"
+          sub="Support sits next to every score, because a score computed on a handful of flows is not a measurement."
+        />
+        {report === null ? (
+          <div className="p-4 space-y-1.5">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-6 rounded-sm bg-surface animate-pulse" />
+            ))}
+          </div>
+        ) : report.length === 0 ? (
+          <p className="px-3 pb-3 text-[11.5px] text-ink-2">
+            This bundle stores no per-class report for {selected}.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-[11.5px]">
+              <thead>
+                <tr className="text-ink-3 border-b border-line-base">
+                  <th className="text-left font-medium px-3 py-2">Class</th>
+                  <th className="text-right font-medium px-3 py-2">Precision</th>
+                  <th className="text-right font-medium px-3 py-2">Recall</th>
+                  <th className="text-right font-medium px-3 py-2">F1</th>
+                  <th className="text-right font-medium px-3 py-2">Support</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.map((r) => {
+                  const weak = r.support < UNRELIABLE_SUPPORT;
+                  return (
+                    <tr key={r.class} className="border-b border-line-subtle">
+                      <td className="px-3 py-1.5 text-ink-0">{r.class}</td>
+                      <td className="px-3 py-1.5 text-right font-mono tabular-nums text-ink-1">
+                        {score(r.precision, 4)}
+                      </td>
+                      <td className="px-3 py-1.5 text-right font-mono tabular-nums text-ink-1">
+                        {score(r.recall, 4)}
+                      </td>
+                      <td className="px-3 py-1.5 text-right font-mono tabular-nums text-ink-1">
+                        {score(r["f1-score"], 4)}
+                      </td>
+                      <td
+                        className={
+                          "px-3 py-1.5 text-right font-mono tabular-nums " +
+                          (weak ? "text-warn" : "text-ink-2")
+                        }
+                        title={
+                          weak
+                            ? "Too few test flows for this score to mean anything"
+                            : undefined
+                        }
+                      >
+                        {count(r.support)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Panel>
+
+      <Panel>
+        <PanelHeader
+          title="Confusion matrix"
+          sub="Row-normalised: each row shows where that class went, as a percentage of its own support."
+        />
+        {noConfusion ? (
+          <p className="px-3 pb-3 text-[11.5px] text-ink-2 max-w-prose leading-relaxed">
+            Bundle <span className="font-mono text-ink-1">{data.id}</span> does not store a
+            confusion matrix as data. The CICIDS2017 pipeline saves one as a PNG figure
+            instead, so it cannot be re-rendered here.
+          </p>
+        ) : confusion === null ? (
+          <div className="h-40 m-3 rounded-sm bg-surface animate-pulse" />
+        ) : (
+          <ConfusionGrid labels={confusion.labels} rows={confusion.rows} />
+        )}
+      </Panel>
+    </div>
+  );
+}
+
+function ConfusionGrid({ labels, rows }: { labels: string[]; rows: number[][] }) {
+  return (
+    <div className="overflow-x-auto px-3 pb-3">
+      <table className="text-[10px] border-collapse">
+        <thead>
+          <tr>
+            <th className="p-1" />
+            {labels.map((l) => (
+              <th key={l} className="p-1 text-ink-3 font-normal align-bottom h-24" title={l}>
+                <div className="[writing-mode:vertical-rl] rotate-180 whitespace-nowrap">
+                  {l}
+                </div>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => {
+            const total = row.reduce((a, b) => a + b, 0);
+            return (
+              <tr key={labels[i]}>
+                <td className="p-1 pr-2 text-ink-2 whitespace-nowrap text-right">
+                  {labels[i]}
+                </td>
+                {row.map((cell, j) => {
+                  const frac = total ? cell / total : 0;
+                  return (
+                    <td
+                      key={j}
+                      title={`${labels[i]} to ${labels[j]}: ${cell.toLocaleString()} (${(
+                        frac * 100
+                      ).toFixed(1)}%)`}
+                      className="w-7 h-7 text-center font-mono border border-line-subtle"
+                      style={{
+                        background: `rgba(42,184,216,${frac.toFixed(3)})`,
+                        color: frac > 0.5 ? "#080D17" : undefined,
+                      }}
+                    >
+                      {frac >= 0.005 ? (frac * 100).toFixed(0) : ""}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

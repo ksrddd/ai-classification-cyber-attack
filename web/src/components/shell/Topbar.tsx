@@ -1,7 +1,24 @@
 "use client";
 
-import { Bell, Menu, Search } from "lucide-react";
+/**
+ * Page title, active run, theme.
+ *
+ * What used to be here: a search field that searched nothing, a notification
+ * bell with a permanent unread dot that notified nothing, and a user chip with
+ * an avatar and a role badge — on a single-user tool that runs on localhost.
+ * All three were borrowed SaaS furniture. A search box that does not search is
+ * worse than no search box: it is a promise the interface breaks on first
+ * contact, and this interface gets shown to people who are deciding whether to
+ * trust it.
+ *
+ * The right edge now carries the thing that changes meaning on every page —
+ * which run is on screen. That matters most exactly when the rail is collapsed
+ * or hidden on mobile, where the run selector is not visible at all.
+ */
+
+import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useBundle } from "@/components/bundle/BundleProvider";
 
 export function Topbar({
   title,
@@ -10,61 +27,47 @@ export function Topbar({
   title: string;
   onMobileMenu?: () => void;
 }) {
+  const { active } = useBundle();
+
   return (
-    <div className="h-12 bg-surface border-b border-line-base flex items-center gap-3 px-4 md:px-5 flex-shrink-0">
+    <header className="h-12 bg-surface border-b border-line-base flex items-center gap-3 px-4 md:px-5 flex-shrink-0">
       <button
         onClick={onMobileMenu}
+        aria-label="Open navigation"
         className="md:hidden h-7 w-7 grid place-items-center rounded-sm hover:bg-surface-elevated text-ink-2"
       >
         <Menu size={15} />
       </button>
 
-      {/* Breadcrumb */}
-      <div className="hidden md:flex items-center gap-1.5 text-[11.5px] text-ink-3 min-w-0 font-mono">
-        <span>cyberml</span>
-        <span>/</span>
-        <span className="text-ink-1 font-semibold truncate">{title.toLowerCase()}</span>
-      </div>
+      <h1 className="text-[12.5px] font-semibold text-ink-0 truncate">{title}</h1>
 
-      {/* Search */}
-      <div className="ml-auto hidden sm:block w-full max-w-xs">
-        <div className="relative">
-          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-3 pointer-events-none" />
-          <input
-            className="w-full h-7 rounded-sm bg-surface-raised border border-line-base hover:border-line-strong focus:border-info/50 transition-colors pl-7 pr-12 text-[11.5px] text-ink-1 placeholder:text-ink-3 outline-none font-mono"
-            placeholder="search metrics, features…"
-          />
-          <span className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-0.5 pointer-events-none">
-            <kbd className="font-mono text-[9.5px] px-1 py-0.5 rounded-sm bg-surface-elevated border border-line-base text-ink-3">⌘K</kbd>
+      <div className="ml-auto flex items-center gap-3 min-w-0">
+        {active ? (
+          <div className="hidden sm:flex items-baseline gap-2 min-w-0 text-[11px] font-mono">
+            <span className="text-ink-3 flex-shrink-0">viewing</span>
+            <span className="text-ink-1 truncate" title={`${active.dataset} — ${active.id}`}>
+              {active.id}
+            </span>
+            <span
+              className="text-ink-3 flex-shrink-0"
+              title={
+                active.split_protocol?.includes("temporal")
+                  ? "Chronological split"
+                  : "Random split — scores are an upper bound"
+              }
+            >
+              {active.split_protocol?.includes("temporal") ? "temporal" : "random"}
+            </span>
+          </div>
+        ) : (
+          <span className="hidden sm:block text-[11px] font-mono text-ink-3">
+            no run loaded
           </span>
-        </div>
-      </div>
+        )}
 
-      <div className="flex items-center gap-1 flex-shrink-0">
-        {/* Theme toggle */}
+        <div className="h-4 w-px bg-line-base" aria-hidden />
         <ThemeToggle />
-
-        <div className="h-4 w-px bg-line-base mx-0.5" />
-
-        {/* Notification */}
-        <button className="relative h-7 w-7 grid place-items-center rounded-sm hover:bg-surface-elevated transition-colors">
-          <Bell size={14} className="text-ink-2" />
-          <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-critical" />
-        </button>
-
-        <div className="h-4 w-px bg-line-base mx-1" />
-
-        {/* User */}
-        <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-sm bg-surface-elevated border border-line-base grid place-items-center text-[9.5px] font-semibold font-mono text-ink-1">
-            SR
-          </div>
-          <div className="hidden md:block leading-tight">
-            <div className="text-[11.5px] font-medium text-ink-0">Sukhum R.</div>
-            <div className="text-[9.5px] text-ink-3 font-mono">L4 · Senior Project</div>
-          </div>
-        </div>
       </div>
-    </div>
+    </header>
   );
 }
