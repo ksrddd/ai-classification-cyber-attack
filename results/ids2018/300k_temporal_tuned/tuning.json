@@ -1,0 +1,149 @@
+[
+  {
+    "model": "xgboost",
+    "tuned": true,
+    "best_params": {
+      "subsample": 0.8,
+      "reg_lambda": 0.5,
+      "n_estimators": 400,
+      "min_child_weight": 1,
+      "max_depth": 8,
+      "learning_rate": 0.05,
+      "colsample_bytree": 1.0
+    },
+    "best_score_f1_macro": 0.8024,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 60001,
+    "classes_pinned_to_train": [
+      "Brute Force -XSS",
+      "SQL Injection"
+    ],
+    "seconds": 1146.0,
+    "note": "recovered from train_ids2018.log after the run was killed before tuning.json was written"
+  },
+  {
+    "model": "lightgbm",
+    "tuned": true,
+    "best_params": {
+      "reg_lambda": 10.0,
+      "num_leaves": 63,
+      "n_estimators": 600,
+      "min_child_samples": 20,
+      "learning_rate": 0.03,
+      "colsample_bytree": 0.6
+    },
+    "best_score_f1_macro": 0.8035,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 60001,
+    "classes_pinned_to_train": [
+      "Brute Force -XSS",
+      "SQL Injection"
+    ],
+    "seconds": 822.0,
+    "note": "recovered from train_ids2018.log after the run was killed before tuning.json was written"
+  },
+  {
+    "model": "catboost",
+    "tuned": true,
+    "best_params": {
+      "learning_rate": 0.05,
+      "l2_leaf_reg": 1,
+      "iterations": 800,
+      "depth": 10
+    },
+    "best_score_f1_macro": 0.7995,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 60001,
+    "classes_pinned_to_train": [
+      "Brute Force -XSS",
+      "SQL Injection"
+    ],
+    "seconds": 9630.0,
+    "note": "recovered from train_ids2018.log after the run was killed before tuning.json was written"
+  },
+  {
+    "model": "random_forest",
+    "tuned": true,
+    "best_params": {
+      "n_estimators": 600,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_features": 0.3,
+      "max_depth": 15
+    },
+    "best_score_f1_macro": 0.8168697700914236,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 60001,
+    "classes_pinned_to_train": [
+      "Brute Force -XSS",
+      "SQL Injection"
+    ],
+    "seconds": 377.9,
+    "note": ""
+  },
+  {
+    "model": "mlp",
+    "tuned": true,
+    "best_params": {
+      "learning_rate_init": 0.001,
+      "hidden_layer_sizes": [
+        256,
+        128,
+        64
+      ],
+      "batch_size": 1024,
+      "alpha": 0.001
+    },
+    "best_score_f1_macro": 0.7841227679199467,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 60001,
+    "classes_pinned_to_train": [
+      "Brute Force -XSS",
+      "SQL Injection"
+    ],
+    "seconds": 1145.4,
+    "note": ""
+  },
+  {
+    "model": "logistic_regression",
+    "tuned": true,
+    "best_params": {
+      "tol": 0.0001,
+      "C": 1.0
+    },
+    "best_score_f1_macro": 0.7578362822876686,
+    "scoring": "f1_macro",
+    "n_candidates": 10,
+    "cv_folds": 3,
+    "search_rows": 60001,
+    "classes_pinned_to_train": [
+      "Brute Force -XSS",
+      "SQL Injection"
+    ],
+    "seconds": 225.0,
+    "note": ""
+  },
+  {
+    "model": "stacking",
+    "tuned": false,
+    "best_params": {},
+    "best_score_f1_macro": null,
+    "scoring": "f1_macro",
+    "n_candidates": 0,
+    "cv_folds": 0,
+    "search_rows": 0,
+    "classes_pinned_to_train": [],
+    "seconds": 0.0,
+    "note": "not searched; inherits tuned base-learner parameters"
+  }
+]

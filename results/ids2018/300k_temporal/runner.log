@@ -1,0 +1,7 @@
+﻿14:04:33 | RUNNER | waiting for 300k_temporal_tuned to finish
+14:25:34 | RUNNER | previous run finished
+14:25:34 | RUNNER | training start (temporal, untuned)
+14:38:52 | RUNNER | training exit=0
+14:38:52 | RUNNER | analysis start
+14:39:50 | RUNNER | analysis exit=0
+14:39:50 | RUNNER | runner done

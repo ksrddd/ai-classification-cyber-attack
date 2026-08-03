@@ -1,0 +1,13 @@
+{
+  "model": "xgboost",
+  "accuracy": 0.9834686871604582,
+  "balanced_accuracy": 0.680647151757652,
+  "precision_macro": 0.7773425706271184,
+  "recall_macro": 0.680647151757652,
+  "f1_macro": 0.7036668029758165,
+  "precision_weighted": 0.9785657823749798,
+  "recall_weighted": 0.9834686871604582,
+  "f1_weighted": 0.9796347109927603,
+  "train_seconds": 88.1927912000101,
+  "predict_seconds": 0.7497092999983579
+}

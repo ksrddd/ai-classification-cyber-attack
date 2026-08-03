@@ -1,0 +1,105 @@
+14:25:35 | INFO    | ======================================================================
+14:25:35 | INFO    | CSE-CIC-IDS2018 — stratified sampling + 7-model benchmark
+14:25:35 | INFO    | sample=300,000 rows | sampling=nested | seed=42 | split=70/30 | weighting=none | accelerator=cpu
+14:25:35 | INFO    | results -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal | models -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k_temporal
+14:25:35 | INFO    | ======================================================================
+14:25:35 | INFO    | Reusing cached sample: C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\data\ids2018\sample_300k.parquet (300,000 rows)
+14:25:35 | INFO    | Dropping non-generalisable columns: Flow ID, Src IP, Src Port, Dst IP, Dst Port
+14:25:35 | INFO    | Feature matrix before cleaning: 300,000 x 78
+14:25:36 | INFO    | Temporal split -> train 209,989 rows / test 90,011 rows (70/30)
+14:25:36 | WARNING | Classes with under 10 test flows -- their scores describe the sample, not the model: Brute Force -Web (4), Brute Force -XSS (2), SQL Injection (1)
+14:25:36 | INFO    | Split manifest written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\split_manifest.json
+14:25:36 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Blk Rate Avg, Bwd Byts/b Avg, Bwd PSH Flags, Bwd Pkts/b Avg, Bwd URG Flags, Fwd Blk Rate Avg, Fwd Byts/b Avg, Fwd Pkts/b Avg
+14:25:37 | INFO    | Preprocessor fitted: 69 features, scaler=standard
+14:25:37 | INFO    | Encoded 15 classes: ['Benign', 'Bot', 'Brute Force -Web', 'Brute Force -XSS', 'DDOS attack-HOIC', 'DDOS attack-LOIC-UDP', 'DDoS attacks-LOIC-HTTP', 'DoS attacks-GoldenEye', 'DoS attacks-Hulk', 'DoS attacks-SlowHTTPTest', 'DoS attacks-Slowloris', 'FTP-BruteForce', 'Infilteration', 'SQL Injection', 'SSH-Bruteforce']
+14:25:37 | INFO    | Ready: X_train (209989, 69), X_test (90011, 69) (float32, 82.8 MB total)
+14:25:37 | INFO    | Preprocessor, encoder and metadata saved to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\models\ids2018\300k_temporal
+14:25:37 | INFO    | ----------------------------------------------------------------------
+14:25:37 | INFO    | [1/7] xgboost
+14:27:06 | INFO    |   xgboost              acc=0.9835  f1_macro=0.7037  f1_weighted=0.9796
+14:27:07 | INFO    |   saved -> xgboost.joblib, xgboost.json
+14:27:07 | INFO    | 
+  model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+14:27:07 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:27:07 | INFO    | ----------------------------------------------------------------------
+14:27:07 | INFO    | [2/7] lightgbm
+14:27:48 | INFO    |   lightgbm             acc=0.9832  f1_macro=0.7026  f1_weighted=0.9793
+14:27:49 | INFO    |   saved -> lightgbm.joblib, lightgbm.txt
+14:27:49 | INFO    | 
+   model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+ xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+lightgbm    0.9832             0.6760           0.7806        0.6760    0.7026              0.9779           0.9832       0.9793           36.5              3.6
+14:27:49 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:27:49 | INFO    | ----------------------------------------------------------------------
+14:27:49 | INFO    | [3/7] catboost
+14:32:07 | INFO    |   catboost             acc=0.9833  f1_macro=0.7277  f1_weighted=0.9787
+14:32:07 | INFO    |   saved -> catboost.joblib, catboost.cbm
+14:32:07 | INFO    | 
+   model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+ xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+catboost    0.9833             0.7086           0.7808        0.7086    0.7277              0.9773           0.9833       0.9787          257.9              0.1
+lightgbm    0.9832             0.6760           0.7806        0.6760    0.7026              0.9779           0.9832       0.9793           36.5              3.6
+14:32:07 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:32:07 | INFO    | ----------------------------------------------------------------------
+14:32:07 | INFO    | [4/7] random_forest
+14:32:30 | INFO    |   random_forest        acc=0.9827  f1_macro=0.6833  f1_weighted=0.9786
+14:32:32 | INFO    |   saved -> random_forest.joblib
+14:32:32 | INFO    | 
+        model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+      xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+     catboost    0.9833             0.7086           0.7808        0.7086    0.7277              0.9773           0.9833       0.9787          257.9              0.1
+     lightgbm    0.9832             0.6760           0.7806        0.6760    0.7026              0.9779           0.9832       0.9793           36.5              3.6
+random_forest    0.9827             0.6724           0.7181        0.6724    0.6833              0.9776           0.9827       0.9786           22.1              0.9
+14:32:32 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:32:33 | INFO    | ----------------------------------------------------------------------
+14:32:33 | INFO    | [5/7] mlp
+14:34:13 | INFO    |   mlp                  acc=0.9814  f1_macro=0.7168  f1_weighted=0.9766
+14:34:13 | INFO    |   saved -> mlp.joblib
+14:34:13 | INFO    | 
+        model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+      xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+     catboost    0.9833             0.7086           0.7808        0.7086    0.7277              0.9773           0.9833       0.9787          257.9              0.1
+     lightgbm    0.9832             0.6760           0.7806        0.6760    0.7026              0.9779           0.9832       0.9793           36.5              3.6
+random_forest    0.9827             0.6724           0.7181        0.6724    0.6833              0.9776           0.9827       0.9786           22.1              0.9
+          mlp    0.9814             0.6931           0.7790        0.6931    0.7168              0.9747           0.9814       0.9766          100.3              0.1
+14:34:13 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:34:13 | INFO    | ----------------------------------------------------------------------
+14:34:13 | INFO    | [6/7] logistic_regression
+14:35:13 | INFO    |   logistic_regression  acc=0.9676  f1_macro=0.6725  f1_weighted=0.9615
+14:35:13 | INFO    |   saved -> logistic_regression.joblib
+14:35:13 | INFO    | 
+              model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+            xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+           catboost    0.9833             0.7086           0.7808        0.7086    0.7277              0.9773           0.9833       0.9787          257.9              0.1
+           lightgbm    0.9832             0.6760           0.7806        0.6760    0.7026              0.9779           0.9832       0.9793           36.5              3.6
+      random_forest    0.9827             0.6724           0.7181        0.6724    0.6833              0.9776           0.9827       0.9786           22.1              0.9
+                mlp    0.9814             0.6931           0.7790        0.6931    0.7168              0.9747           0.9814       0.9766          100.3              0.1
+logistic_regression    0.9676             0.6333           0.7518        0.6333    0.6725              0.9597           0.9676       0.9615           59.3              0.0
+14:35:13 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:35:13 | INFO    | ----------------------------------------------------------------------
+14:35:13 | INFO    | [7/7] stacking
+14:38:50 | INFO    |   stacking             acc=0.9837  f1_macro=0.6603  f1_weighted=0.9785
+14:38:52 | INFO    |   saved -> stacking.joblib
+14:38:52 | INFO    | 
+              model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+           stacking    0.9837             0.6414           0.6929        0.6414    0.6603              0.9738           0.9837       0.9785          214.5              2.6
+            xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+           catboost    0.9833             0.7086           0.7808        0.7086    0.7277              0.9773           0.9833       0.9787          257.9              0.1
+           lightgbm    0.9832             0.6760           0.7806        0.6760    0.7026              0.9779           0.9832       0.9793           36.5              3.6
+      random_forest    0.9827             0.6724           0.7181        0.6724    0.6833              0.9776           0.9827       0.9786           22.1              0.9
+                mlp    0.9814             0.6931           0.7790        0.6931    0.7168              0.9747           0.9814       0.9766          100.3              0.1
+logistic_regression    0.9676             0.6333           0.7518        0.6333    0.6725              0.9597           0.9676       0.9615           59.3              0.0
+14:38:52 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:38:52 | INFO    | ======================================================================
+14:38:52 | INFO    | 
+              model  accuracy  balanced_accuracy  precision_macro  recall_macro  f1_macro  precision_weighted  recall_weighted  f1_weighted  train_seconds  predict_seconds
+           stacking    0.9837             0.6414           0.6929        0.6414    0.6603              0.9738           0.9837       0.9785          214.5              2.6
+            xgboost    0.9835             0.6806           0.7773        0.6806    0.7037              0.9786           0.9835       0.9796           88.2              0.7
+           catboost    0.9833             0.7086           0.7808        0.7086    0.7277              0.9773           0.9833       0.9787          257.9              0.1
+           lightgbm    0.9832             0.6760           0.7806        0.6760    0.7026              0.9779           0.9832       0.9793           36.5              3.6
+      random_forest    0.9827             0.6724           0.7181        0.6724    0.6833              0.9776           0.9827       0.9786           22.1              0.9
+                mlp    0.9814             0.6931           0.7790        0.6931    0.7168              0.9747           0.9814       0.9766          100.3              0.1
+logistic_regression    0.9676             0.6333           0.7518        0.6333    0.6725              0.9597           0.9676       0.9615           59.3              0.0
+14:38:52 | INFO    | Comparison table written to C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\ids2018\300k_temporal\model_comparison.csv
+14:38:52 | INFO    | Total wall time: 13.3 min
