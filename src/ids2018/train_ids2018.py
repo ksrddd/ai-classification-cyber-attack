@@ -78,7 +78,7 @@ from src.ids2018.temporal_split import (
     build_temporal_manifest,
     temporal_train_test_split,
 )
-from src.ids2018.tuning import DEFAULT_TUNE_SUBSAMPLE, tune_model
+from src.ids2018.tuning import DEFAULT_TUNE_SUBSAMPLE, grid_fingerprint, tune_model
 
 logger = logging.getLogger("ids2018")
 
@@ -394,8 +394,23 @@ def prepare_data(sample: pd.DataFrame, args: argparse.Namespace):
     return X_train, X_test, y_train, y_test, pre, encoder
 
 
+def _per_class_counts(y: "pd.Series | Any", encoder) -> dict[str, int]:
+    """Rows per class on one side of the split, keyed by class name.
+
+    Encoded labels are counted rather than the raw Series so the keys match
+    ``encoder.classes_`` exactly -- the same strings the dashboard uses to join
+    the two sides of the table.
+    """
+    counts = pd.Series(y).value_counts()
+    return {str(encoder.classes_[code]): int(n) for code, n in counts.items()}
+
+
 def save_preprocessing_artifacts(
-    pre: Ids2018Preprocessor, encoder, args: argparse.Namespace
+    pre: Ids2018Preprocessor,
+    encoder,
+    args: argparse.Namespace,
+    y_train=None,
+    y_test=None,
 ) -> None:
     """Persist everything needed to score new traffic with these models."""
     args.models_dir.mkdir(parents=True, exist_ok=True)
@@ -437,6 +452,17 @@ def save_preprocessing_artifacts(
         "feature_names": pre.feature_names,
         "dropped_columns": pre.dropped_columns,
         "classes": list(encoder.classes_),
+        # Per-class split sizes. The temporal protocol already states these in
+        # split_manifest.json, but the random one wrote them nowhere, so the
+        # dashboard could only ever show the test side for those bundles -- the
+        # test supports are recoverable from any per-class report, the train
+        # counts from nothing at all. Recorded here for both protocols so the
+        # source is the same regardless of how the split was made.
+        #
+        # Absent rather than empty when unknown: a caller that did not pass the
+        # labels has not measured zero rows per class, it has measured nothing.
+        "per_class_n_train": _per_class_counts(y_train, encoder) if y_train is not None else None,
+        "per_class_n_test": _per_class_counts(y_test, encoder) if y_test is not None else None,
     }
     (args.models_dir / "metadata.json").write_text(
         json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8"
@@ -506,7 +532,7 @@ def run_training(X_train, X_test, y_train, y_test, class_names, args):
                 # stacking ensemble built later would silently inherit untuned
                 # base learners on a resumed run but tuned ones on a fresh run.
                 cached = tuning_by_model.get(name)
-                if cached and cached.get("tuned"):
+                if _reusable_search(cached, name):
                     MODEL_PARAMS[name].update(_restore_params(cached["best_params"]))
                 continue
 
@@ -516,7 +542,7 @@ def run_training(X_train, X_test, y_train, y_test, class_names, args):
 
             if args.tune:
                 cached = tuning_by_model.get(name) if args.resume else None
-                if cached and cached.get("tuned"):
+                if _reusable_search(cached, name):
                     best = _restore_params(cached["best_params"])
                     logger.info("  reusing recorded search result: %s", best)
                     model.set_params(**best)
@@ -617,6 +643,41 @@ def _save_tuning(by_model: dict[str, dict], output_dir: Path) -> None:
     )
 
 
+def _reusable_search(cached: dict | None, name: str) -> bool:
+    """Whether a recorded search still describes the grid this code would run.
+
+    ``--resume`` exists so an interrupted run does not repeat a finished search.
+    It must not also mean "reuse a winner drawn from a grid that has since been
+    edited": the recorded parameters would still set cleanly on the estimator
+    and the run would look normal, while the reported provenance described a
+    space the search never saw.
+
+    Records written before fingerprinting carry no ``grid_fingerprint``. Those
+    are reused, with a warning rather than silence -- refusing them would force
+    a full re-search of every bundle trained before this commit, and the far
+    likelier reason for a missing field is age, not an edit.
+    """
+    if not cached or not cached.get("tuned"):
+        return False
+    recorded = cached.get("grid_fingerprint")
+    current = grid_fingerprint(name)
+    if not recorded:
+        logger.warning(
+            "  %s: recorded search predates grid fingerprinting -- reusing it, but "
+            "its provenance cannot be verified against the current grid",
+            name,
+        )
+        return True
+    if recorded != current:
+        logger.warning(
+            "  %s: recorded search used grid %s, this code defines %s -- "
+            "discarding it and searching again",
+            name, recorded, current,
+        )
+        return False
+    return True
+
+
 def _restore_params(params: dict) -> dict:
     """Undo the JSON round trip for parameters that must not be lists.
 
@@ -680,7 +741,7 @@ def main(argv: list[str] | None = None) -> int:
     del sample
     gc.collect()
 
-    save_preprocessing_artifacts(pre, encoder, args)
+    save_preprocessing_artifacts(pre, encoder, args, y_train=y_train, y_test=y_test)
 
     if args.dry_run:
         logger.info("--dry-run set: data prepared, stopping before training")

@@ -380,7 +380,7 @@ def _load_2018(bundle_id: str, path: Path) -> Bundle:
             "n_features": meta.get("n_features"),
             "n_classes": len(classes or meta.get("classes", [])),
             "class_names": classes or list(meta.get("classes", [])),
-            "per_class_n_train": {},
+            "per_class_n_train": _train_supports(path, classes, meta),
             "per_class_n_test": _test_supports(path, classes),
             "majority_baseline_acc": _majority_baseline(path, classes),
             "hp_tuned": hp_tuned,
@@ -436,6 +436,44 @@ def _classes_from_report(path: Path) -> list[str]:
     col = df.columns[0]
     skip = {"accuracy", "macro avg", "weighted avg"}
     return [str(v) for v in df[col] if str(v) not in skip]
+
+
+def _train_supports(path: Path, classes: list[str], meta: dict[str, Any] | None = None) -> dict[str, int]:
+    """Per-class *train* counts, from whichever record the run left behind.
+
+    Two sources, checked in this order:
+
+    ``split_manifest.json``
+        Written by the temporal protocol only, and the older of the two. It is
+        preferred because it is derived from the split itself rather than from
+        the encoded labels, so a bundle carrying both is read from the record
+        that the analysis step also validates.
+
+    ``metadata.json`` -> ``per_class_n_train``
+        Written by every run from the commit that added it, under both
+        protocols. Bundles trained before that have no such key and fall
+        through to ``{}``; those are backfilled by
+        ``scripts/backfill_ids2018_counts.py`` rather than guessed at read time.
+
+    Deriving the counts from the test supports and the 70/30 ratio is
+    deliberately not done. It would be an inference presented in the same
+    typeface as the measured columns, and for the rarest classes -- where the
+    split floor at ``min_test_per_class`` moves the ratio away from 70/30 --
+    it would be wrong in exactly the rows a reader is most likely to check.
+    """
+    wanted = set(classes)
+
+    manifest = _read_json(path / "split_manifest.json")
+    counts = manifest.get("expected_counts") or {}
+    if counts:
+        return {
+            str(name): int(side["train"])
+            for name, side in counts.items()
+            if str(name) in wanted and isinstance(side, dict) and "train" in side
+        }
+
+    recorded = (meta or {}).get("per_class_n_train") or {}
+    return {str(name): int(n) for name, n in recorded.items() if str(name) in wanted}
 
 
 def _test_supports(path: Path, classes: list[str]) -> dict[str, int]:

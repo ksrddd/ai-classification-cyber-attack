@@ -1,0 +1,13 @@
+{
+  "model": "mlp",
+  "accuracy": 0.9808933333333333,
+  "balanced_accuracy": 0.6724928176574011,
+  "precision_macro": 0.705720932891902,
+  "recall_macro": 0.6724928176574011,
+  "f1_macro": 0.6682819719033335,
+  "precision_weighted": 0.9763169358765211,
+  "recall_weighted": 0.9808933333333333,
+  "f1_weighted": 0.9757738114143413,
+  "train_seconds": 84.75605850003194,
+  "predict_seconds": 0.0849588000564836
+}

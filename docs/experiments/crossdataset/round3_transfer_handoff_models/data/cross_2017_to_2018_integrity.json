@@ -1,0 +1,41 @@
+{
+ "encoder_classes": [
+  "BENIGN",
+  "Bot",
+  "Brute Force",
+  "DDoS",
+  "DoS",
+  "Heartbleed",
+  "Infiltration",
+  "PortScan",
+  "Web Attack"
+ ],
+ "lightgbm": {
+  "n_features_in": 77,
+  "n_classes": 9
+ },
+ "xgboost": {
+  "n_features_in": 77,
+  "n_classes": 9
+ },
+ "catboost": {
+  "n_features_in": 77,
+  "n_classes": 9
+ },
+ "random_forest": {
+  "n_features_in": 77,
+  "n_classes": 9
+ },
+ "mlp": {
+  "n_features_in": 77,
+  "n_classes": 9
+ },
+ "logistic_regression": {
+  "n_features_in": 77,
+  "n_classes": 9
+ },
+ "stacking": {
+  "n_features_in": 77,
+  "n_classes": 9
+ }
+}

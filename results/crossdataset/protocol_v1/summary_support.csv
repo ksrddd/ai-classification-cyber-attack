@@ -1,0 +1,5 @@
+mode,test,n__Benign,n__DDoS,n__DoS,n__Brute Force,n__Bot,n__Infiltration,n__Web Attack
+chronological,ids2017,74455,4600,6961,2745,584,10,643
+chronological,ids2018,67715,6195,2515,539,956,884,5
+random,ids2017,74456,4600,6961,2745,584,10,643
+random,ids2018,67715,6197,2515,539,956,883,5

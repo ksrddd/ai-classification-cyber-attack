@@ -1,0 +1,17 @@
+condition,model,n_features,n_classes,f1_macro,f1_weighted,seconds
+A_baseline_77,lightgbm,69,15,0.711,0.9797,46.4
+A_baseline_77,xgboost,69,15,0.699,0.9797,29.7
+A_baseline_77,random_forest,69,15,0.7648,0.979,41.2
+A_baseline_77,logistic_regression,69,15,0.6666,0.9597,67.2
+B_shared_76,lightgbm,68,15,0.7126,0.9797,43.5
+B_shared_76,xgboost,68,15,0.699,0.9797,30.5
+B_shared_76,random_forest,68,15,0.7642,0.9791,41.9
+B_shared_76,logistic_regression,68,15,0.6797,0.9606,62.1
+Bp_shared_77_dstport,lightgbm,69,15,0.7164,0.9801,39.7
+Bp_shared_77_dstport,xgboost,69,15,0.686,0.98,29.8
+Bp_shared_77_dstport,random_forest,69,15,0.7763,0.9796,42.5
+Bp_shared_77_dstport,logistic_regression,69,15,0.6713,0.9613,80.4
+C_shared_76_7class,lightgbm,68,7,0.788,0.98,28.4
+C_shared_76_7class,xgboost,68,7,0.7883,0.9799,18.2
+C_shared_76_7class,random_forest,68,7,0.7813,0.9795,38.7
+C_shared_76_7class,logistic_regression,68,7,0.6496,0.9527,24.2

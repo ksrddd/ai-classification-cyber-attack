@@ -1,0 +1,13 @@
+{
+  "model": "lightgbm",
+  "accuracy": 0.9838533333333334,
+  "balanced_accuracy": 0.7151996900558603,
+  "precision_macro": 0.7858939427902222,
+  "recall_macro": 0.7151996900558603,
+  "f1_macro": 0.7310994861882354,
+  "precision_weighted": 0.9792915370470503,
+  "recall_weighted": 0.9838533333333334,
+  "f1_weighted": 0.9799466901666757,
+  "train_seconds": 46.65508190001128,
+  "predict_seconds": 5.394884500012267
+}

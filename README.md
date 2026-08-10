@@ -173,6 +173,7 @@ cyber_attack_classification/
 │   └── sample/                   # synthetic CICIDS-shaped fixture for tests
 ├── configs/splits/               # temporal split manifest (70/30, chronological)
 ├── docs/
+│   ├── runbook.md                # ★ operate it yourself: train → analyze → API → web
 │   ├── architecture.md           # module map + ADRs
 │   ├── ml_pipeline.md            # end-to-end ML flow
 │   ├── evaluation.md             # metric definitions + rationale

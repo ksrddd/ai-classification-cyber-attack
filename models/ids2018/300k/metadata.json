@@ -109,5 +109,39 @@
     "Infilteration",
     "SQL Injection",
     "SSH-Bruteforce"
-  ]
+  ],
+  "per_class_n_train": {
+    "Benign": 174451,
+    "DDOS attack-HOIC": 8875,
+    "DDoS attacks-LOIC-HTTP": 7454,
+    "DoS attacks-Hulk": 5975,
+    "Bot": 3702,
+    "FTP-BruteForce": 2501,
+    "SSH-Bruteforce": 2426,
+    "Infilteration": 2094,
+    "DoS attacks-SlowHTTPTest": 1809,
+    "DoS attacks-GoldenEye": 537,
+    "DoS attacks-Slowloris": 142,
+    "DDOS attack-LOIC-UDP": 22,
+    "Brute Force -Web": 8,
+    "Brute Force -XSS": 3,
+    "SQL Injection": 1
+  },
+  "per_class_n_test": {
+    "Benign": 74764,
+    "DDOS attack-HOIC": 3803,
+    "DDoS attacks-LOIC-HTTP": 3194,
+    "DoS attacks-Hulk": 2561,
+    "Bot": 1587,
+    "FTP-BruteForce": 1072,
+    "SSH-Bruteforce": 1040,
+    "Infilteration": 898,
+    "DoS attacks-SlowHTTPTest": 776,
+    "DoS attacks-GoldenEye": 230,
+    "DoS attacks-Slowloris": 61,
+    "DDOS attack-LOIC-UDP": 9,
+    "Brute Force -Web": 3,
+    "Brute Force -XSS": 1,
+    "SQL Injection": 1
+  }
 }

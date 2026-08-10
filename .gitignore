@@ -9,7 +9,6 @@ __pycache__/
 *.so
 .Python
 .venv/
-catboost_info/
 venv/
 env/
 .env
@@ -66,6 +65,23 @@ results/**/checkpoints/
 results/**/shap/
 results/coverage/
 
+# Wrapper logs from ad-hoc overnight runner scripts, which land beside the
+# bundles rather than inside one. The pipeline's own train_ids2018.log carries
+# the same run in full detail and stays tracked; these hold only start/exit
+# lines. The pattern stops at one level on purpose -- results/ids2018/*.log
+# does not match results/ids2018/<bundle>/runner.log, and two of those are
+# already committed.
+results/ids2018/*.log
+
+# Superseded or throwaway cross-dataset runs. A leading underscore marks a
+# bundle that was kept on disk only long enough to diff against its successor
+# -- `_v1_unseeded_models`, for instance, reported five seeds that were really
+# one run repeated, because the loop seed never reached the estimators.
+# Committing those invites someone to quote a number the project has already
+# retracted; what changed between rounds is written up in
+# docs/experiments/crossdataset/README.md instead.
+results/crossdataset/_*
+
 # --- Trained model binaries (CSE-CIC-IDS2018 pipeline writes here) ---
 # 197 MB across the two 300k bundles, largest single file 44 MB. All of it is
 # regenerable from the cached sample in ~2 min. metadata.json is kept because
@@ -91,7 +107,11 @@ catboost_info/
 # --- Streamlit ---
 .streamlit/secrets.toml
 
-CLAUDE.md
-
-# --- Local tooling scratch (design skill's live-preview config) ---
+# --- Local editor / tooling state ---
+# Per-machine configuration: absolute interpreter paths, local run profiles and
+# per-user preferences. None of it is portable -- the committed launch profile
+# still pointed at D:/Projects/Senior Project/, a path this repo no longer lives
+# at -- and none of it is needed to run, train or reproduce anything here.
+.claude/
 .impeccable/
+CLAUDE.md

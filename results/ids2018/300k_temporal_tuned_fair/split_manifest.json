@@ -1,0 +1,77 @@
+{
+  "version": "ids2018_temporal_v1",
+  "dataset_id": "CSE-CIC-IDS2018",
+  "order_basis": "timestamp",
+  "split_strategy": "per_capture_day_per_class_chronological",
+  "split_protocol": "ids2018_temporal_v1",
+  "sample_size": 300000,
+  "test_size": 0.3,
+  "min_test_per_class": 1,
+  "random_row_split": false,
+  "final_test_locked": true,
+  "expected_counts": {
+    "Benign": {
+      "train": 174446,
+      "test": 74769
+    },
+    "Bot": {
+      "train": 3702,
+      "test": 1587
+    },
+    "Brute Force -Web": {
+      "train": 7,
+      "test": 4
+    },
+    "Brute Force -XSS": {
+      "train": 2,
+      "test": 2
+    },
+    "DDOS attack-HOIC": {
+      "train": 8874,
+      "test": 3804
+    },
+    "DDOS attack-LOIC-UDP": {
+      "train": 21,
+      "test": 10
+    },
+    "DDoS attacks-LOIC-HTTP": {
+      "train": 7453,
+      "test": 3195
+    },
+    "DoS attacks-GoldenEye": {
+      "train": 536,
+      "test": 231
+    },
+    "DoS attacks-Hulk": {
+      "train": 5975,
+      "test": 2561
+    },
+    "DoS attacks-SlowHTTPTest": {
+      "train": 1809,
+      "test": 776
+    },
+    "DoS attacks-Slowloris": {
+      "train": 142,
+      "test": 61
+    },
+    "FTP-BruteForce": {
+      "train": 2501,
+      "test": 1072
+    },
+    "Infilteration": {
+      "train": 2094,
+      "test": 898
+    },
+    "SQL Injection": {
+      "train": 1,
+      "test": 1
+    },
+    "SSH-Bruteforce": {
+      "train": 2426,
+      "test": 1040
+    }
+  },
+  "expected_train_rows": 209989,
+  "expected_test_rows": 90011,
+  "caveat": "12 of 15 classes occur on a single capture day, so for those the ordering is within one attack burst rather than across days."
+}

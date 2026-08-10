@@ -1,0 +1,142 @@
+[
+  {
+    "model": "xgboost",
+    "tuned": true,
+    "best_params": {
+      "subsample": 0.8,
+      "reg_lambda": 3.0,
+      "n_estimators": 400,
+      "min_child_weight": 1,
+      "max_depth": 8,
+      "learning_rate": 0.1,
+      "colsample_bytree": 1.0
+    },
+    "best_score_f1_macro": 0.7673778243084999,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 59999,
+    "classes_pinned_to_train": [
+      "SQL Injection"
+    ],
+    "seconds": 798.7,
+    "note": ""
+  },
+  {
+    "model": "lightgbm",
+    "tuned": true,
+    "best_params": {
+      "reg_lambda": 3.0,
+      "num_leaves": 31,
+      "n_estimators": 600,
+      "min_child_samples": 50,
+      "learning_rate": 0.1,
+      "colsample_bytree": 0.8
+    },
+    "best_score_f1_macro": 0.8317586171897836,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 59999,
+    "classes_pinned_to_train": [
+      "SQL Injection"
+    ],
+    "seconds": 686.9,
+    "note": ""
+  },
+  {
+    "model": "catboost",
+    "tuned": true,
+    "best_params": {
+      "learning_rate": 0.1,
+      "l2_leaf_reg": 3,
+      "iterations": 500,
+      "depth": 10
+    },
+    "best_score_f1_macro": 0.7604435182610066,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 59999,
+    "classes_pinned_to_train": [
+      "SQL Injection"
+    ],
+    "seconds": 1061.0,
+    "note": ""
+  },
+  {
+    "model": "random_forest",
+    "tuned": true,
+    "best_params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_features": 0.3,
+      "max_depth": 15
+    },
+    "best_score_f1_macro": 0.775234974803802,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 59999,
+    "classes_pinned_to_train": [
+      "SQL Injection"
+    ],
+    "seconds": 308.0,
+    "note": ""
+  },
+  {
+    "model": "mlp",
+    "tuned": true,
+    "best_params": {
+      "learning_rate_init": 0.001,
+      "hidden_layer_sizes": [
+        256,
+        128
+      ],
+      "batch_size": 256,
+      "alpha": 0.001
+    },
+    "best_score_f1_macro": 0.742247928005475,
+    "scoring": "f1_macro",
+    "n_candidates": 20,
+    "cv_folds": 3,
+    "search_rows": 59999,
+    "classes_pinned_to_train": [
+      "SQL Injection"
+    ],
+    "seconds": 1064.2,
+    "note": ""
+  },
+  {
+    "model": "logistic_regression",
+    "tuned": true,
+    "best_params": {
+      "tol": 0.0001,
+      "C": 10.0
+    },
+    "best_score_f1_macro": 0.7148410325776262,
+    "scoring": "f1_macro",
+    "n_candidates": 10,
+    "cv_folds": 3,
+    "search_rows": 59999,
+    "classes_pinned_to_train": [
+      "SQL Injection"
+    ],
+    "seconds": 161.2,
+    "note": ""
+  },
+  {
+    "model": "stacking",
+    "tuned": false,
+    "best_params": {},
+    "best_score_f1_macro": null,
+    "scoring": "f1_macro",
+    "n_candidates": 0,
+    "cv_folds": 0,
+    "search_rows": 0,
+    "classes_pinned_to_train": [],
+    "seconds": 0.0,
+    "note": "not searched; inherits tuned base-learner parameters"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "model": "stacking",
+  "accuracy": 0.9836242237059915,
+  "balanced_accuracy": 0.6386183907474053,
+  "precision_macro": 0.6925879457930402,
+  "recall_macro": 0.6386183907474053,
+  "f1_macro": 0.6580143040325542,
+  "precision_weighted": 0.9737361627288074,
+  "recall_weighted": 0.9836242237059915,
+  "f1_weighted": 0.9784016171621254,
+  "train_seconds": 176.95240670000203,
+  "predict_seconds": 1.7655175999971107
+}

@@ -1,0 +1,52 @@
+{
+  "ids2017": {
+    "name": "ids2017",
+    "n_rows": 300000,
+    "n_features": 77,
+    "order_basis": "_row_index",
+    "dropped_unmapped_rows": 90705,
+    "cleaning": {
+      "rows_in": 2407275,
+      "rows_out": 2407275,
+      "rows_dropped": 0,
+      "non_finite_values": 0,
+      "rows_dropped_non_finite": 0,
+      "rows_dropped_duplicate": 0,
+      "kept_fraction": 1.0
+    },
+    "class_counts": {
+      "Benign": 248188,
+      "DoS": 23203,
+      "DDoS": 15332,
+      "Brute Force": 9150,
+      "Web Attack": 2143,
+      "Bot": 1948,
+      "Infiltration": 36
+    }
+  },
+  "ids2018": {
+    "name": "ids2018",
+    "n_rows": 262701,
+    "n_features": 77,
+    "order_basis": "Timestamp",
+    "dropped_unmapped_rows": 0,
+    "cleaning": {
+      "rows_in": 300000,
+      "rows_out": 262701,
+      "rows_dropped": 37299,
+      "non_finite_values": 3476,
+      "rows_dropped_non_finite": 1738,
+      "rows_dropped_duplicate": 35561,
+      "kept_fraction": 0.87567
+    },
+    "class_counts": {
+      "Benign": 225717,
+      "DDoS": 20654,
+      "DoS": 8382,
+      "Bot": 3187,
+      "Infiltration": 2946,
+      "Brute Force": 1798,
+      "Web Attack": 17
+    }
+  }
+}

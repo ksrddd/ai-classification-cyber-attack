@@ -29,10 +29,16 @@ Three decisions here are not defaults and are the reason this file exists.
    has unbounded optimal value, the softmax overflows, and accuracy collapses to
    below the majority-class baseline. That is a correctness bound, not a
    hyper-parameter, so the search space starts above it.
+
+4. **Every model's search space is the same size.** Equal candidate counts over
+   unequal spaces are not an equal budget, and the resulting table compares
+   search effort as much as it compares models. See ``SEARCH_SPACES``.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 import time
 from dataclasses import dataclass, field
@@ -113,51 +119,117 @@ class RareAwareStratifiedKFold:
 # ----------------------------------------------------------------------
 # Search spaces
 # ----------------------------------------------------------------------
-# Ranges are centred on the untuned defaults in config.MODEL_PARAMS so the
-# search can confirm them rather than being forced away from them.
+# Every space below holds exactly SPACE_SIZE configurations. That is the point
+# of this block, not an accident of it.
+#
+# The CICIDS2017 pipeline fixed its grids at 144 apiece and states why in
+# ``train.py:hp_grids``: the search budget has to "stay identical across models,
+# or the imbalance treatment stops being a controlled variable". This module
+# shipped without that discipline. Every model drew the same 20 candidates, but
+# from spaces ranging over three orders of magnitude, so what each model
+# actually received was:
+#
+#     logistic_regression   10 configs, 10 drawn   -> 100%  (exhaustive)
+#     mlp                  108 configs, 20 drawn   -> 18.5%
+#     catboost             144 configs, 20 drawn   -> 13.9%
+#     random_forest        432 configs, 20 drawn   ->  4.6%
+#     lightgbm           1,296 configs, 20 drawn   ->  1.5%
+#     xgboost            5,184 configs, 20 drawn   ->  0.4%
+#
+# A table built on that cannot separate a better model from a better-searched
+# one, which is the only question the table exists to answer. Logistic
+# regression was handed its global optimum; XGBoost was shown 0.4% of its own
+# space and asked to compete with it.
+#
+# Bringing every space to 144 cuts both ways, and which way is decided by
+# evidence rather than taste. The 300k and 500k temporal searches agreed on some
+# winners and disagreed on others; a parameter both runs settled on is one the
+# search has already answered, so it is pinned -- to the value that won, not to
+# the old default the search rejected -- and written as a single-element list so
+# ``tuning.json`` still records what was held and where. Parameters the two runs
+# disagreed on stay open, because those are the ones still doing work. Spaces
+# that were *under* 144 are widened along their least-settled axis instead.
+#
+# Pinning is a real cost, not a free tidy-up: XGBoost loses the ability to
+# revisit subsample and colsample_bytree here. It is accepted because both runs
+# independently chose the same value for them, which is weak evidence that the
+# axis is spent -- and because the alternative, scaling n_iter to the space
+# (780 candidates for XGBoost against 10 for logistic regression), costs days
+# of compute to answer a question this project is not asking.
+SPACE_SIZE = 144
+
 SEARCH_SPACES: dict[str, dict[str, list]] = {
+    # 4 x 4 x 3 x 3 x 1. Both runs agreed on max_features=0.3, beating the
+    # 'sqrt' default; the estimator count is the only axis they split on.
     "random_forest": {
         "n_estimators": [200, 300, 400, 600],
         "max_depth": [15, 20, 30, None],
         "min_samples_split": [2, 5, 10],
         "min_samples_leaf": [1, 2, 4],
-        "max_features": ["sqrt", "log2", 0.3],
+        "max_features": [0.3],
     },
+    # 3 x 4 x 4 x 3 x 1 x 1 x 1. learning_rate and reg_lambda are the two axes
+    # the runs disagreed on, so they keep their full range; depth and estimator
+    # count stay open as the parameters that dominate a boosted tree's capacity.
     "xgboost": {
         "n_estimators": [200, 400, 600],
         "max_depth": [4, 6, 8, 10],
         "learning_rate": [0.03, 0.05, 0.1, 0.2],
-        "subsample": [0.6, 0.8, 1.0],
-        "colsample_bytree": [0.6, 0.8, 1.0],
-        "reg_lambda": [0.5, 1.0, 3.0, 10.0],
-        "min_child_weight": [1, 5, 10],
+        "reg_lambda": [0.5, 3.0, 10.0],
+        "subsample": [0.8],
+        "colsample_bytree": [1.0],
+        "min_child_weight": [1],
     },
+    # 4 x 4 x 3 x 3 x 1 x 1. Five of six axes disagreed between runs, so this
+    # space is pinned only where it must be: n_estimators=600 won twice, and
+    # colsample_bytree takes the midpoint of the two winners (0.6 and 0.8).
     "lightgbm": {
-        "n_estimators": [200, 400, 600],
         "num_leaves": [31, 63, 127, 255],
         "learning_rate": [0.03, 0.05, 0.1, 0.2],
-        "colsample_bytree": [0.6, 0.8, 1.0],
         # Floor of 1.0 is a correctness bound -- see the module docstring.
         "reg_lambda": [1.0, 3.0, 10.0],
         "min_child_samples": [5, 20, 50],
+        "n_estimators": [600],
+        "colsample_bytree": [0.8],
     },
+    # 3 x 4 x 3 x 4. Already at 144 before this change, and left untouched:
+    # it is the space the other five are being matched to.
     "catboost": {
         "iterations": [300, 500, 800],
         "depth": [4, 6, 8, 10],
         "learning_rate": [0.03, 0.05, 0.1],
         "l2_leaf_reg": [1, 3, 5, 9],
     },
+    # 4 x 3 x 4 x 3. Widened, not pinned: at 108 this space was over-covered
+    # relative to the others. learning_rate_init takes the fourth value, since
+    # both runs converged on 1e-3 and a step size bracketed on one side only
+    # cannot show that.
     "mlp": {
         "hidden_layer_sizes": [(128, 64), (256, 128), (128,), (256, 128, 64)],
         "alpha": [1e-5, 1e-4, 1e-3],
-        "learning_rate_init": [5e-4, 1e-3, 3e-3],
+        "learning_rate_init": [5e-4, 1e-3, 3e-3, 5e-3],
         "batch_size": [256, 512, 1024],
     },
+    # 24 x 3 x 2. The largest change in the file: this space was searched
+    # exhaustively before, so logistic regression is the one model that stands
+    # to score *worse* under an equal budget. That is what the unequal budget
+    # was hiding. C is filled out densely rather than padding the space with
+    # new axes, following the 2017 grid -- C is the parameter that governs a
+    # logistic regression, and solver stays lbfgs because config.py records
+    # that saga did not converge at this scale.
     "logistic_regression": {
-        # solver stays lbfgs: config.py records that saga did not converge at
-        # this scale, so switching it would tune an unfinished fit.
-        "C": [0.01, 0.1, 1.0, 10.0, 100.0],
-        "tol": [1e-4, 1e-3],
+        "C": [
+            0.001, 0.002, 0.003, 0.005,
+            0.01, 0.02, 0.03, 0.05,
+            0.1, 0.2, 0.3, 0.5,
+            1.0, 2.0, 3.0, 5.0,
+            10.0, 20.0, 30.0, 50.0,
+            100.0, 200.0, 300.0, 500.0,
+        ],
+        # At or above the sklearn default: a looser tolerance stops earlier, so
+        # none of these needs more iterations than max_iter already allows.
+        "tol": [1e-4, 5e-4, 1e-3],
+        "fit_intercept": [True, False],
     },
 }
 
@@ -175,6 +247,27 @@ def space_size(space: dict[str, list]) -> int:
     for values in space.values():
         total *= len(values)
     return total
+
+
+def grid_fingerprint(name: str) -> str:
+    """Content hash of a model's search space.
+
+    ``--resume`` reuses any search result already in ``tuning.json`` rather than
+    repeating it, which is right when the run was interrupted and wrong when the
+    grid has been edited since -- the second case would silently pair new code
+    with a winner drawn from a space that no longer exists. The size alone
+    cannot catch it: a grid whose values changed but whose shape did not still
+    hashes differently here. Borrowed from ``train.py:hp_grid_fingerprint``.
+    """
+    space = SEARCH_SPACES.get(name)
+    if not space:
+        return ""
+    encoded = json.dumps(
+        {key: list(values) for key, values in sorted(space.items())},
+        sort_keys=True,
+        default=str,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()[:16]
 
 
 # ----------------------------------------------------------------------
@@ -232,6 +325,8 @@ class TuneResult:
     n_candidates: int = 0
     n_splits: int = 0
     search_rows: int = 0
+    grid_size: int = 0
+    grid_fingerprint: str = ""
     pinned_classes: list = field(default_factory=list)
     seconds: float = 0.0
     note: str = ""
@@ -245,6 +340,14 @@ class TuneResult:
             "best_score_f1_macro": self.best_score,
             "scoring": SCORING,
             "n_candidates": self.n_candidates,
+            # Recorded next to the candidate count because one without the
+            # other is what made the old runs unreadable: 20 of 144 and 20 of
+            # 5,184 are the same number in a table and different experiments.
+            "grid_size": self.grid_size,
+            "grid_coverage": (
+                round(self.n_candidates / self.grid_size, 4) if self.grid_size else None
+            ),
+            "grid_fingerprint": self.grid_fingerprint,
             "cv_folds": self.n_splits,
             "search_rows": self.search_rows,
             "classes_pinned_to_train": [str(c) for c in self.pinned_classes],
@@ -295,9 +398,11 @@ def tune_model(
     pinned = [class_names[int(c)] if class_names else c for c in codes]
 
     logger.info(
-        "  tuning %s: %d candidate(s) x %d fold(s) on %s rows%s",
+        "  tuning %s: %d/%d config(s) = %.1f%% of grid x %d fold(s) on %s rows%s",
         name,
         candidates,
+        space_size(space),
+        candidates / space_size(space) * 100,
         n_splits,
         f"{rows:,}",
         f" ({len(pinned)} class(es) pinned to train)" if pinned else "",
@@ -351,6 +456,8 @@ def tune_model(
         n_candidates=candidates,
         n_splits=n_splits,
         search_rows=rows,
+        grid_size=space_size(space),
+        grid_fingerprint=grid_fingerprint(name),
         pinned_classes=pinned,
         seconds=elapsed,
     )
