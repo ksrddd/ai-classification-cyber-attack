@@ -4,6 +4,8 @@
 
 # Binary assets git must never touch.
 *.png    binary
+*.jpg    binary
+*.jpeg   binary
 *.pdf    binary
 *.woff   binary
 *.woff2  binary

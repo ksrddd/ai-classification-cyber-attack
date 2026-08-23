@@ -115,3 +115,14 @@ catboost_info/
 .claude/
 .impeccable/
 CLAUDE.md
+
+# --- Captured DOM snapshots of the dashboard (docs/design/figma-export/) ---
+# overview-dark.html and overview-light.html are saved-from-browser dumps: 67 KB
+# each, of which the same 46 KB of compiled Tailwind reset is duplicated
+# verbatim between them. Nothing in this repo regenerates them -- they were
+# captured by hand from a running dev server as a stepping stone into Figma.
+# What they carried now lives in three tracked-or-published places instead:
+# make-brief.md (the written system), screens/*.jpg (the visual reference) and
+# the Figma file itself (the design as real layers). Keep them locally if you
+# still want the html.to.design import path; they just don't need pushing.
+docs/design/figma-export/overview-*.html
