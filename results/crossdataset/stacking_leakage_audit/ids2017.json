@@ -1,0 +1,77 @@
+{
+  "dataset": "ids2017",
+  "run_utc": "2026-09-12T12:03:36+00:00",
+  "audit_rows": 40000,
+  "seed": 42,
+  "passed": true,
+  "n_checks": 11,
+  "n_failed": 0,
+  "checks": [
+    {
+      "section": "1. train/test disjointness",
+      "check": "no shared row index",
+      "passed": true,
+      "detail": "0 shared position(s)"
+    },
+    {
+      "section": "1. train/test disjointness",
+      "check": "no duplicate flow across split",
+      "passed": true,
+      "detail": "0 distinct flow(s) appear in both train and test"
+    },
+    {
+      "section": "2. meta-features are out-of-fold",
+      "check": "cv is set",
+      "passed": true,
+      "detail": "StackingClassifier(cv=3) -- cross_val_predict builds the meta matrix"
+    },
+    {
+      "section": "2. meta-features are out-of-fold",
+      "check": "passthrough is off",
+      "passed": true,
+      "detail": "passthrough=False -- meta-learner sees only OOF probabilities"
+    },
+    {
+      "section": "2. meta-features are out-of-fold",
+      "check": "meta-learner was fitted on OOF",
+      "passed": true,
+      "detail": "coefficient distance: out-of-fold 0.000000, in-sample 0.052408 -- closest is 'out-of-fold'"
+    },
+    {
+      "section": "3. label shuffle (end-to-end)",
+      "check": "shuffled labels are not learnable",
+      "passed": true,
+      "detail": "macro-F1 0.1296 against a majority baseline of 0.1296"
+    },
+    {
+      "section": "3. label shuffle (end-to-end)",
+      "check": "real labels are learnable",
+      "passed": true,
+      "detail": "real macro-F1 0.5935 vs shuffled 0.1296 -- the test has power"
+    },
+    {
+      "section": "4. LabelSafeXGBClassifier column alignment",
+      "check": "classes_ reports the original codes",
+      "passed": true,
+      "detail": "classes_=[0, 1, 3, 4]"
+    },
+    {
+      "section": "4. LabelSafeXGBClassifier column alignment",
+      "check": "predict returns original codes",
+      "passed": true,
+      "detail": "predicted codes [0, 1, 3, 4]"
+    },
+    {
+      "section": "4. LabelSafeXGBClassifier column alignment",
+      "check": "cross_val_predict pads to one column per class",
+      "passed": true,
+      "detail": "meta matrix shape (600, 4), expected (600, 4)"
+    },
+    {
+      "section": "4. LabelSafeXGBClassifier column alignment",
+      "check": "padded rows still sum to one",
+      "passed": true,
+      "detail": "row sums in [1.0000, 1.0000]"
+    }
+  ]
+}

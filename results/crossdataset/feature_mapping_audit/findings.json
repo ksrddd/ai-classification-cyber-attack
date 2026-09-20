@@ -1,0 +1,3696 @@
+{
+  "n_rows_ids2017": 384889,
+  "n_rows_ids2018": 399623,
+  "n_features": 77,
+  "invariants": [
+    {
+      "invariant": "fwd_mean_eq_total_over_count",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Fwd Packet Length Mean",
+        "Total Length of Fwd Packets",
+        "Total Fwd Packets"
+      ],
+      "note": "mean forward packet length is total bytes over packet count"
+    },
+    {
+      "invariant": "bwd_mean_eq_total_over_count",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Bwd Packet Length Mean",
+        "Total Length of Bwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "mean backward packet length is total bytes over packet count"
+    },
+    {
+      "invariant": "variance_eq_std_squared",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Packet Length Variance",
+        "Packet Length Std"
+      ],
+      "note": "variance is the square of the standard deviation"
+    },
+    {
+      "invariant": "avg_packet_size_eq_mean_times_n_plus_one_over_n",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Average Packet Size",
+        "Packet Length Mean",
+        "Total Fwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "CICFlowMeter's n+1 off-by-one between Pkt Size Avg and Pkt Len Mean"
+    },
+    {
+      "invariant": "fwd_seg_size_eq_fwd_pkt_len_mean",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Avg Fwd Segment Size",
+        "Fwd Packet Length Mean"
+      ],
+      "note": "CICFlowMeter emits these as the same quantity"
+    },
+    {
+      "invariant": "bwd_seg_size_eq_bwd_pkt_len_mean",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Avg Bwd Segment Size",
+        "Bwd Packet Length Mean"
+      ],
+      "note": "CICFlowMeter emits these as the same quantity"
+    },
+    {
+      "invariant": "fwd_pkt_len_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Fwd Packet Length Min",
+        "Fwd Packet Length Mean",
+        "Fwd Packet Length Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "bwd_pkt_len_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Bwd Packet Length Min",
+        "Bwd Packet Length Mean",
+        "Bwd Packet Length Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "pkt_len_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Min Packet Length",
+        "Packet Length Mean",
+        "Max Packet Length"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "flow_iat_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Flow IAT Min",
+        "Flow IAT Mean",
+        "Flow IAT Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "fwd_iat_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Fwd IAT Min",
+        "Fwd IAT Mean",
+        "Fwd IAT Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "bwd_iat_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Bwd IAT Min",
+        "Bwd IAT Mean",
+        "Bwd IAT Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "active_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Active Min",
+        "Active Mean",
+        "Active Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "idle_min_mean_max_ordered",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Idle Min",
+        "Idle Mean",
+        "Idle Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    {
+      "invariant": "subflow_fwd_pkts_eq_total",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Subflow Fwd Packets",
+        "Total Fwd Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    {
+      "invariant": "subflow_bwd_pkts_eq_total",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Subflow Bwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    {
+      "invariant": "subflow_fwd_bytes_eq_total",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Subflow Fwd Bytes",
+        "Total Length of Fwd Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    {
+      "invariant": "subflow_bwd_bytes_eq_total",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Subflow Bwd Bytes",
+        "Total Length of Bwd Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    {
+      "invariant": "flow_pkts_per_s_matches_duration",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Flow Packets/s",
+        "Flow Duration",
+        "Total Fwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    {
+      "invariant": "flow_byts_per_s_matches_duration",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Flow Bytes/s",
+        "Flow Duration",
+        "Total Length of Fwd Packets",
+        "Total Length of Bwd Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    {
+      "invariant": "fwd_pkts_per_s_matches_duration",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Fwd Packets/s",
+        "Flow Duration",
+        "Total Fwd Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    {
+      "invariant": "bwd_pkts_per_s_matches_duration",
+      "rate_ids2017": 0.0,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Bwd Packets/s",
+        "Flow Duration",
+        "Total Backward Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    {
+      "invariant": "fwd_iat_total_within_duration",
+      "rate_ids2017": 4.416857847327411e-05,
+      "rate_ids2018": 0.0,
+      "verdict": "PASS",
+      "columns": [
+        "Fwd IAT Total",
+        "Flow Duration"
+      ],
+      "note": "inter-arrival total cannot exceed the flow it belongs to"
+    },
+    {
+      "invariant": "bwd_iat_total_within_duration",
+      "rate_ids2017": 7.534639857205585e-05,
+      "rate_ids2018": 5.004716945721342e-06,
+      "verdict": "PASS",
+      "columns": [
+        "Bwd IAT Total",
+        "Flow Duration"
+      ],
+      "note": "inter-arrival total cannot exceed the flow it belongs to"
+    }
+  ],
+  "scale_audit": [
+    {
+      "feature": "Destination Port",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 80.0,
+        "p01": 53.0,
+        "p99": 62503.40000000002,
+        "iqr": 390.0,
+        "zero_frac": 0.0007939358994871114,
+        "neg_one_frac": 0.0,
+        "n_unique": 30431
+      },
+      "ids2018": {
+        "median": 445.0,
+        "p01": 0.0,
+        "p99": 62813.0,
+        "iqr": 11329.75,
+        "zero_frac": 0.02109347962987127,
+        "neg_one_frac": 0.0,
+        "n_unique": 29174
+      }
+    },
+    {
+      "feature": "Flow Duration",
+      "flag": "SCALE",
+      "reason": "median differs by 1.2 decades (4.617e+04 vs 7.076e+05)",
+      "ids2017": {
+        "median": 46171.0,
+        "p01": 2.0,
+        "p99": 118095875.2,
+        "iqr": 1239672.0,
+        "zero_frac": 0.0,
+        "neg_one_frac": 4.830028285853149e-05,
+        "n_unique": 160242
+      },
+      "ids2018": {
+        "median": 707631.0,
+        "p01": 2.0,
+        "p99": 118588404.0,
+        "iqr": 5437862.75,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 240220
+      }
+    },
+    {
+      "feature": "Total Fwd Packets",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 2.0,
+        "p01": 1.0,
+        "p99": 60.0,
+        "iqr": 3.0,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 603
+      },
+      "ids2018": {
+        "median": 3.0,
+        "p01": 1.0,
+        "p99": 45.0,
+        "iqr": 6.0,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 487
+      }
+    },
+    {
+      "feature": "Total Backward Packets",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 2.0,
+        "p01": 0.0,
+        "p99": 75.0,
+        "iqr": 3.0,
+        "zero_frac": 0.11785570894249549,
+        "neg_one_frac": 0.0,
+        "n_unique": 762
+      },
+      "ids2018": {
+        "median": 2.0,
+        "p01": 0.0,
+        "p99": 60.0,
+        "iqr": 6.0,
+        "zero_frac": 0.17104553990343974,
+        "neg_one_frac": 0.0,
+        "n_unique": 668
+      }
+    },
+    {
+      "feature": "Total Length of Fwd Packets",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 68.0,
+        "p01": 0.0,
+        "p99": 11607.0,
+        "iqr": 238.0,
+        "zero_frac": 0.12996096733391496,
+        "neg_one_frac": 0.0,
+        "n_unique": 8254
+      },
+      "ids2018": {
+        "median": 148.0,
+        "p01": 0.0,
+        "p99": 3092.75,
+        "iqr": 905.0,
+        "zero_frac": 0.2325700799373663,
+        "neg_one_frac": 0.0,
+        "n_unique": 5205
+      }
+    },
+    {
+      "feature": "Total Length of Bwd Packets",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 145.0,
+        "p01": 0.0,
+        "p99": 101757.20000000007,
+        "iqr": 370.0,
+        "zero_frac": 0.22760602666779367,
+        "neg_one_frac": 0.0,
+        "n_unique": 20936
+      },
+      "ids2018": {
+        "median": 243.0,
+        "p01": 0.0,
+        "p99": 42053.0,
+        "iqr": 1581.0,
+        "zero_frac": 0.299211973017593,
+        "neg_one_frac": 0.0,
+        "n_unique": 13760
+      }
+    },
+    {
+      "feature": "Fwd Packet Length Max",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 41.0,
+        "p01": 0.0,
+        "p99": 4380.0,
+        "iqr": 115.0,
+        "zero_frac": 0.12996096733391496,
+        "neg_one_frac": 0.0,
+        "n_unique": 3434
+      },
+      "ids2018": {
+        "median": 97.0,
+        "p01": 0.0,
+        "p99": 1084.0,
+        "iqr": 631.0,
+        "zero_frac": 0.2325700799373663,
+        "neg_one_frac": 0.0,
+        "n_unique": 1432
+      }
+    },
+    {
+      "feature": "Fwd Packet Length Min",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 6.0,
+        "p01": 0.0,
+        "p99": 81.0,
+        "iqr": 40.0,
+        "zero_frac": 0.4197958709295691,
+        "neg_one_frac": 0.0,
+        "n_unique": 217
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 60.0,
+        "iqr": 0.0,
+        "zero_frac": 0.8164872945541606,
+        "neg_one_frac": 0.0,
+        "n_unique": 151
+      }
+    },
+    {
+      "feature": "Fwd Packet Length Mean",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 38.0,
+        "p01": 0.0,
+        "p99": 1449.375,
+        "iqr": 46.17647171020508,
+        "zero_frac": 0.12996096733391496,
+        "neg_one_frac": 0.0,
+        "n_unique": 26792
+      },
+      "ids2018": {
+        "median": 45.0,
+        "p01": 0.0,
+        "p99": 213.11111450195312,
+        "iqr": 100.51282024383545,
+        "zero_frac": 0.2325700799373663,
+        "neg_one_frac": 0.0,
+        "n_unique": 15630
+      }
+    },
+    {
+      "feature": "Fwd Packet Length Std",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1528.8770751953175,
+        "iqr": 27.135461807250977,
+        "zero_frac": 0.6570378040276398,
+        "neg_one_frac": 0.0,
+        "n_unique": 48087
+      },
+      "ids2018": {
+        "median": 48.5,
+        "p01": 0.0,
+        "p99": 418.14471435546875,
+        "iqr": 198.7400665283203,
+        "zero_frac": 0.41311562835081667,
+        "neg_one_frac": 0.0,
+        "n_unique": 25090
+      }
+    },
+    {
+      "feature": "Bwd Packet Length Max",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 94.0,
+        "p01": 0.0,
+        "p99": 4344.0,
+        "iqr": 201.0,
+        "zero_frac": 0.22760602666779367,
+        "neg_one_frac": 0.0,
+        "n_unique": 3709
+      },
+      "ids2018": {
+        "median": 172.0,
+        "p01": 0.0,
+        "p99": 1460.0,
+        "iqr": 1173.0,
+        "zero_frac": 0.299211973017593,
+        "neg_one_frac": 0.0,
+        "n_unique": 1103
+      }
+    },
+    {
+      "feature": "Bwd Packet Length Min",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 6.0,
+        "p01": 0.0,
+        "p99": 268.0,
+        "iqr": 97.0,
+        "zero_frac": 0.45684520664974143,
+        "neg_one_frac": 0.0,
+        "n_unique": 436
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 211.0,
+        "iqr": 0.0,
+        "zero_frac": 0.8150774694632452,
+        "neg_one_frac": 0.0,
+        "n_unique": 308
+      }
+    },
+    {
+      "feature": "Bwd Packet Length Mean",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 84.0,
+        "p01": 0.0,
+        "p99": 1534.69235839844,
+        "iqr": 158.0,
+        "zero_frac": 0.22760602666779367,
+        "neg_one_frac": 0.0,
+        "n_unique": 36277
+      },
+      "ids2018": {
+        "median": 109.66666412353516,
+        "p01": 0.0,
+        "p99": 1002.8450775146484,
+        "iqr": 211.0,
+        "zero_frac": 0.299211973017593,
+        "neg_one_frac": 0.0,
+        "n_unique": 22035
+      }
+    },
+    {
+      "feature": "Bwd Packet Length Std",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1109.021044921876,
+        "iqr": 9.899495124816895,
+        "zero_frac": 0.7354653883191803,
+        "neg_one_frac": 0.0,
+        "n_unique": 48813
+      },
+      "ids2018": {
+        "median": 62.75348663330078,
+        "p01": 0.0,
+        "p99": 698.544921875,
+        "iqr": 405.46478271484375,
+        "zero_frac": 0.4808099260763745,
+        "neg_one_frac": 0.0,
+        "n_unique": 26183
+      }
+    },
+    {
+      "feature": "Flow Bytes/s",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 4160.85205078125,
+        "p01": 0.0,
+        "p99": 12333333.0,
+        "iqr": 124546.71937561035,
+        "zero_frac": 0.12470227403769234,
+        "neg_one_frac": 0.0,
+        "n_unique": 223088
+      },
+      "ids2018": {
+        "median": 741.8533935546875,
+        "p01": 0.0,
+        "p99": 1166666.625,
+        "iqr": 6813.694779515266,
+        "zero_frac": 0.232144579406909,
+        "neg_one_frac": 0.0,
+        "n_unique": 244868
+      }
+    },
+    {
+      "feature": "Flow Packets/s",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 84.5594482421875,
+        "p01": 0.06054953709244728,
+        "p99": 1000000.0,
+        "iqr": 18091.93725824356,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 173445
+      },
+      "ids2018": {
+        "median": 12.155632495880127,
+        "p01": 0.02315503777936101,
+        "p99": 1500000.0,
+        "iqr": 1245.0502479970455,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 247829
+      }
+    },
+    {
+      "feature": "Flow IAT Mean",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 16192.3330078125,
+        "p01": 2.0,
+        "p99": 22034807.600000005,
+        "iqr": 187841.66666412354,
+        "zero_frac": 0.0,
+        "neg_one_frac": 4.830028285853149e-05,
+        "n_unique": 171508
+      },
+      "ids2018": {
+        "median": 96346.375,
+        "p01": 1.0,
+        "p99": 86379674.0,
+        "iqr": 625038.1145935059,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 244574
+      }
+    },
+    {
+      "feature": "Flow IAT Std",
+      "flag": "SCALE",
+      "reason": "median differs by 2.1 decades (429.8 vs 4.986e+04)",
+      "ids2017": {
+        "median": 429.8492126464844,
+        "p01": 0.0,
+        "p99": 36600000.0,
+        "iqr": 168515.546875,
+        "zero_frac": 0.32689631438654115,
+        "neg_one_frac": 0.0,
+        "n_unique": 153356
+      },
+      "ids2018": {
+        "median": 49859.3046875,
+        "p01": 0.0,
+        "p99": 22800000.0,
+        "iqr": 653105.21875,
+        "zero_frac": 0.2827677958505188,
+        "neg_one_frac": 0.0,
+        "n_unique": 235214
+      }
+    },
+    {
+      "feature": "Flow IAT Max",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 31999.0,
+        "p01": 2.0,
+        "p99": 82200000.0,
+        "iqr": 951970.0,
+        "zero_frac": 0.0,
+        "neg_one_frac": 4.830028285853149e-05,
+        "n_unique": 119410
+      },
+      "ids2018": {
+        "median": 280015.5,
+        "p01": 2.0,
+        "p99": 86448886.0,
+        "iqr": 4953838.0,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 185722
+      }
+    },
+    {
+      "feature": "Flow IAT Min",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 4.0,
+        "p01": 0.0,
+        "p99": 483990.2000000059,
+        "iqr": 86.0,
+        "zero_frac": 0.024129010055515137,
+        "neg_one_frac": 0.0011924132330699963,
+        "n_unique": 37712
+      },
+      "ids2018": {
+        "median": 29.0,
+        "p01": 0.0,
+        "p99": 86379674.0,
+        "iqr": 225.0,
+        "zero_frac": 0.07537032729500803,
+        "neg_one_frac": 0.0,
+        "n_unique": 44946
+      }
+    },
+    {
+      "feature": "Fwd IAT Total",
+      "flag": "SCALE",
+      "reason": "median differs by 4.9 decades (4 vs 3.154e+05)",
+      "ids2017": {
+        "median": 4.0,
+        "p01": 0.0,
+        "p99": 118000000.0,
+        "iqr": 441485.0,
+        "zero_frac": 0.2552337884628737,
+        "neg_one_frac": 0.0,
+        "n_unique": 84089
+      },
+      "ids2018": {
+        "median": 315376.0,
+        "p01": 0.0,
+        "p99": 118517666.0,
+        "iqr": 4620647.0,
+        "zero_frac": 0.16127321105393644,
+        "neg_one_frac": 0.0,
+        "n_unique": 215538
+      }
+    },
+    {
+      "feature": "Fwd IAT Mean",
+      "flag": "SCALE",
+      "reason": "median differs by 4.5 decades (4 vs 1.228e+05)",
+      "ids2017": {
+        "median": 4.0,
+        "p01": 0.0,
+        "p99": 64054781.600000024,
+        "iqr": 74452.0,
+        "zero_frac": 0.2552337884628737,
+        "neg_one_frac": 0.0,
+        "n_unique": 114852
+      },
+      "ids2018": {
+        "median": 122827.0,
+        "p01": 0.0,
+        "p99": 86385398.0,
+        "iqr": 1031822.125,
+        "zero_frac": 0.16127321105393644,
+        "neg_one_frac": 0.0,
+        "n_unique": 222675
+      }
+    },
+    {
+      "feature": "Fwd IAT Std",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 25600000.0,
+        "iqr": 32923.109375,
+        "zero_frac": 0.6482380962443511,
+        "neg_one_frac": 0.0,
+        "n_unique": 100804
+      },
+      "ids2018": {
+        "median": 9852.61328125,
+        "p01": 0.0,
+        "p99": 25996154.5,
+        "iqr": 441874.8203125,
+        "zero_frac": 0.37326324866818333,
+        "neg_one_frac": 0.0,
+        "n_unique": 191596
+      }
+    },
+    {
+      "feature": "Fwd IAT Max",
+      "flag": "SCALE",
+      "reason": "median differs by 4.7 decades (4 vs 2e+05)",
+      "ids2017": {
+        "median": 4.0,
+        "p01": 0.0,
+        "p99": 83500000.0,
+        "iqr": 219652.0,
+        "zero_frac": 0.2552337884628737,
+        "neg_one_frac": 0.0,
+        "n_unique": 80847
+      },
+      "ids2018": {
+        "median": 200048.0,
+        "p01": 0.0,
+        "p99": 86417544.0,
+        "iqr": 4130483.5,
+        "zero_frac": 0.16127321105393644,
+        "neg_one_frac": 0.0,
+        "n_unique": 195697
+      }
+    },
+    {
+      "feature": "Fwd IAT Min",
+      "flag": "SCALE",
+      "reason": "median differs by 1.2 decades (3 vs 50)",
+      "ids2017": {
+        "median": 3.0,
+        "p01": 0.0,
+        "p99": 64054781.600000024,
+        "iqr": 49.0,
+        "zero_frac": 0.2604894629914176,
+        "neg_one_frac": 0.0,
+        "n_unique": 27990
+      },
+      "ids2018": {
+        "median": 50.0,
+        "p01": 0.0,
+        "p99": 86385398.0,
+        "iqr": 1197.0,
+        "zero_frac": 0.17360705309679286,
+        "neg_one_frac": 0.0,
+        "n_unique": 66481
+      }
+    },
+    {
+      "feature": "Bwd IAT Total",
+      "flag": "SCALE",
+      "reason": "median differs by 3.6 decades (3 vs 1.13e+04)",
+      "ids2017": {
+        "median": 3.0,
+        "p01": 0.0,
+        "p99": 118000000.0,
+        "iqr": 91531.0,
+        "zero_frac": 0.40982488128696104,
+        "neg_one_frac": 0.0,
+        "n_unique": 58476
+      },
+      "ids2018": {
+        "median": 11304.0,
+        "p01": 0.0,
+        "p99": 118151922.0,
+        "iqr": 2304603.0,
+        "zero_frac": 0.4003846524795334,
+        "neg_one_frac": 0.0,
+        "n_unique": 168703
+      }
+    },
+    {
+      "feature": "Bwd IAT Mean",
+      "flag": "SCALE",
+      "reason": "median differs by 3.3 decades (3 vs 5359)",
+      "ids2017": {
+        "median": 3.0,
+        "p01": 0.0,
+        "p99": 59001680.800000004,
+        "iqr": 15674.041015625,
+        "zero_frac": 0.40982488128696104,
+        "neg_one_frac": 0.0,
+        "n_unique": 88563
+      },
+      "ids2018": {
+        "median": 5359.0,
+        "p01": 0.0,
+        "p99": 13100000.0,
+        "iqr": 355379.578125,
+        "zero_frac": 0.4003846524795334,
+        "neg_one_frac": 0.0,
+        "n_unique": 174093
+      }
+    },
+    {
+      "feature": "Bwd IAT Std",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 23800000.0,
+        "iqr": 9690.2783203125,
+        "zero_frac": 0.7313447704378119,
+        "neg_one_frac": 0.0,
+        "n_unique": 80936
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 22696284.0,
+        "iqr": 333877.640625,
+        "zero_frac": 0.5093922150422947,
+        "neg_one_frac": 0.0,
+        "n_unique": 165980
+      }
+    },
+    {
+      "feature": "Bwd IAT Max",
+      "flag": "SCALE",
+      "reason": "median differs by 3.5 decades (3 vs 1.033e+04)",
+      "ids2017": {
+        "median": 3.0,
+        "p01": 0.0,
+        "p99": 78600000.0,
+        "iqr": 51362.0,
+        "zero_frac": 0.40982488128696104,
+        "neg_one_frac": 0.0,
+        "n_unique": 56961
+      },
+      "ids2018": {
+        "median": 10332.5,
+        "p01": 0.0,
+        "p99": 59060693.0,
+        "iqr": 953392.0,
+        "zero_frac": 0.4003846524795334,
+        "neg_one_frac": 0.0,
+        "n_unique": 129625
+      }
+    },
+    {
+      "feature": "Bwd IAT Min",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 2.0,
+        "p01": 0.0,
+        "p99": 59000000.0,
+        "iqr": 46.0,
+        "zero_frac": 0.41477867904763915,
+        "neg_one_frac": 0.0,
+        "n_unique": 14107
+      },
+      "ids2018": {
+        "median": 1.0,
+        "p01": 0.0,
+        "p99": 6030523.25,
+        "iqr": 23355.75,
+        "zero_frac": 0.4601788236896002,
+        "neg_one_frac": 0.0,
+        "n_unique": 86695
+      }
+    },
+    {
+      "feature": "Fwd PSH Flags",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9432290550351535,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9541991229015733,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "Bwd PSH Flags",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Fwd URG Flags",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9999637747878561,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9998751865110659,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "Bwd URG Flags",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Fwd Header Length",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 64.0,
+        "p01": 20.0,
+        "p99": 1592.0,
+        "iqr": 68.0,
+        "zero_frac": 0.0008211048085950353,
+        "neg_one_frac": 0.0,
+        "n_unique": 1552
+      },
+      "ids2018": {
+        "median": 72.0,
+        "p01": 0.0,
+        "p99": 680.0,
+        "iqr": 148.0,
+        "zero_frac": 0.021090642959668223,
+        "neg_one_frac": 0.0,
+        "n_unique": 841
+      }
+    },
+    {
+      "feature": "Bwd Header Length",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 40.0,
+        "p01": 0.0,
+        "p99": 1960.0,
+        "iqr": 72.0,
+        "zero_frac": 0.11790702799303268,
+        "neg_one_frac": 0.0,
+        "n_unique": 1724
+      },
+      "ids2018": {
+        "median": 40.0,
+        "p01": 0.0,
+        "p99": 1244.0,
+        "iqr": 144.0,
+        "zero_frac": 0.17184831757090258,
+        "neg_one_frac": 0.0,
+        "n_unique": 1285
+      }
+    },
+    {
+      "feature": "Fwd Packets/s",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 42.78990173339844,
+        "p01": 0.031215234845876693,
+        "p99": 1000000.0,
+        "iqr": 9519.885770559311,
+        "zero_frac": 5.131905053718971e-05,
+        "neg_one_frac": 0.0,
+        "n_unique": 171766
+      },
+      "ids2018": {
+        "median": 6.979549884796143,
+        "p01": 0.0231505767442286,
+        "p99": 1500000.0,
+        "iqr": 674.6088194847107,
+        "zero_frac": 5.673340406097706e-06,
+        "neg_one_frac": 0.0,
+        "n_unique": 246747
+      }
+    },
+    {
+      "feature": "Bwd Packets/s",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 23.81576156616211,
+        "p01": 0.0,
+        "p99": 60606.0625,
+        "iqr": 2164.2205311357975,
+        "zero_frac": 0.11790702799303268,
+        "neg_one_frac": 0.0,
+        "n_unique": 159711
+      },
+      "ids2018": {
+        "median": 3.181403875350952,
+        "p01": 0.0,
+        "p99": 66666.6640625,
+        "iqr": 58.68898645043373,
+        "zero_frac": 0.17104553990343974,
+        "neg_one_frac": 0.0,
+        "n_unique": 216382
+      }
+    },
+    {
+      "feature": "Min Packet Length",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 6.0,
+        "p01": 0.0,
+        "p99": 77.0,
+        "iqr": 40.0,
+        "zero_frac": 0.42806125683373536,
+        "neg_one_frac": 0.0,
+        "n_unique": 164
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 59.0,
+        "iqr": 0.0,
+        "zero_frac": 0.8182630501012691,
+        "neg_one_frac": 0.0,
+        "n_unique": 103
+      }
+    },
+    {
+      "feature": "Max Packet Length",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 99.0,
+        "p01": 0.0,
+        "p99": 4380.0,
+        "iqr": 273.0,
+        "zero_frac": 0.12470227403769234,
+        "neg_one_frac": 0.0,
+        "n_unique": 4231
+      },
+      "ids2018": {
+        "median": 197.0,
+        "p01": 0.0,
+        "p99": 1460.0,
+        "iqr": 1142.0,
+        "zero_frac": 0.232144579406909,
+        "neg_one_frac": 0.0,
+        "n_unique": 1250
+      }
+    },
+    {
+      "feature": "Packet Length Mean",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 61.66666793823242,
+        "p01": 0.0,
+        "p99": 1000.7210693359386,
+        "iqr": 98.33333587646484,
+        "zero_frac": 0.12470227403769234,
+        "neg_one_frac": 0.0,
+        "n_unique": 48620
+      },
+      "ids2018": {
+        "median": 69.33333587646484,
+        "p01": 0.0,
+        "p99": 639.8308563232422,
+        "iqr": 145.01111459732056,
+        "zero_frac": 0.232144579406909,
+        "neg_one_frac": 0.0,
+        "n_unique": 31550
+      }
+    },
+    {
+      "feature": "Packet Length Std",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 30.672462463378906,
+        "p01": 0.0,
+        "p99": 1294.457275390625,
+        "iqr": 121.04668140411377,
+        "zero_frac": 0.23357413036850097,
+        "neg_one_frac": 0.0,
+        "n_unique": 65918
+      },
+      "ids2018": {
+        "median": 73.90083312988281,
+        "p01": 0.0,
+        "p99": 673.4375762939453,
+        "iqr": 307.7135200500488,
+        "zero_frac": 0.24051559317610616,
+        "neg_one_frac": 0.0,
+        "n_unique": 37282
+      }
+    },
+    {
+      "feature": "Packet Length Variance",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 940.7999877929688,
+        "p01": 0.0,
+        "p99": 1675619.6,
+        "iqr": 15182.699999809265,
+        "zero_frac": 0.23357413036850097,
+        "neg_one_frac": 0.0,
+        "n_unique": 65937
+      },
+      "ids2018": {
+        "median": 5461.33349609375,
+        "p01": 0.0,
+        "p99": 453518.171875,
+        "iqr": 100080.94999694824,
+        "zero_frac": 0.24051559317610616,
+        "neg_one_frac": 0.0,
+        "n_unique": 37317
+      }
+    },
+    {
+      "feature": "FIN Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9893407313266578,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9948514435814664,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "SYN Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9432290550351535,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9541991229015733,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "RST Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9996800106260623,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.7627749442594305,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "PSH Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 1.0,
+        "zero_frac": 0.7297236921943724,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 1.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 1.0,
+        "zero_frac": 0.4913595025615132,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "ACK Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 1.0,
+        "zero_frac": 0.7089153265853814,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 1.0,
+        "zero_frac": 0.713856566607853,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "URG Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.8780146168731001,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9466706001826816,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "CWE Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9999637747878561,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9998751865110659,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "ECE Flag Count",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 0.9996800106260623,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1.0,
+        "iqr": 0.0,
+        "zero_frac": 0.7627777809296336,
+        "neg_one_frac": 0.0,
+        "n_unique": 2
+      }
+    },
+    {
+      "feature": "Down/Up Ratio",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 1.0,
+        "p01": 0.0,
+        "p99": 3.0,
+        "iqr": 1.0,
+        "zero_frac": 0.3439553705386387,
+        "neg_one_frac": 0.0,
+        "n_unique": 16
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 2.0,
+        "iqr": 1.0,
+        "zero_frac": 0.5877296993696919,
+        "neg_one_frac": 0.0,
+        "n_unique": 48
+      }
+    },
+    {
+      "feature": "Average Packet Size",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 78.5,
+        "p01": 0.0,
+        "p99": 1022.2556396484439,
+        "iqr": 124.5,
+        "zero_frac": 0.12470227403769234,
+        "neg_one_frac": 0.0,
+        "n_unique": 47741
+      },
+      "ids2018": {
+        "median": 92.25,
+        "p01": 0.0,
+        "p99": 653.4889831542969,
+        "iqr": 157.14999389648438,
+        "zero_frac": 0.232144579406909,
+        "neg_one_frac": 0.0,
+        "n_unique": 31237
+      }
+    },
+    {
+      "feature": "Avg Fwd Segment Size",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 38.0,
+        "p01": 0.0,
+        "p99": 1449.375,
+        "iqr": 46.17647171020508,
+        "zero_frac": 0.12996096733391496,
+        "neg_one_frac": 0.0,
+        "n_unique": 26792
+      },
+      "ids2018": {
+        "median": 45.0,
+        "p01": 0.0,
+        "p99": 213.11111450195312,
+        "iqr": 100.51282024383545,
+        "zero_frac": 0.2325700799373663,
+        "neg_one_frac": 0.0,
+        "n_unique": 15630
+      }
+    },
+    {
+      "feature": "Avg Bwd Segment Size",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 84.0,
+        "p01": 0.0,
+        "p99": 1534.69235839844,
+        "iqr": 158.0,
+        "zero_frac": 0.22760602666779367,
+        "neg_one_frac": 0.0,
+        "n_unique": 36277
+      },
+      "ids2018": {
+        "median": 109.66666412353516,
+        "p01": 0.0,
+        "p99": 1002.8450775146484,
+        "iqr": 211.0,
+        "zero_frac": 0.299211973017593,
+        "neg_one_frac": 0.0,
+        "n_unique": 22035
+      }
+    },
+    {
+      "feature": "Fwd Avg Bytes/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Fwd Avg Packets/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Fwd Avg Bulk Rate",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Bwd Avg Bytes/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Bwd Avg Packets/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Bwd Avg Bulk Rate",
+      "flag": "CONSTANT_BOTH",
+      "reason": "constant in both corpora; carries no signal either way",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 0.0,
+        "iqr": 0.0,
+        "zero_frac": 1.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 1
+      }
+    },
+    {
+      "feature": "Subflow Fwd Packets",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 2.0,
+        "p01": 1.0,
+        "p99": 60.0,
+        "iqr": 3.0,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 603
+      },
+      "ids2018": {
+        "median": 3.0,
+        "p01": 1.0,
+        "p99": 45.0,
+        "iqr": 6.0,
+        "zero_frac": 0.0,
+        "neg_one_frac": 0.0,
+        "n_unique": 487
+      }
+    },
+    {
+      "feature": "Subflow Fwd Bytes",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 68.0,
+        "p01": 0.0,
+        "p99": 11607.0,
+        "iqr": 238.0,
+        "zero_frac": 0.12996096733391496,
+        "neg_one_frac": 0.0,
+        "n_unique": 8254
+      },
+      "ids2018": {
+        "median": 148.0,
+        "p01": 0.0,
+        "p99": 3092.75,
+        "iqr": 905.0,
+        "zero_frac": 0.2325700799373663,
+        "neg_one_frac": 0.0,
+        "n_unique": 5205
+      }
+    },
+    {
+      "feature": "Subflow Bwd Packets",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 2.0,
+        "p01": 0.0,
+        "p99": 75.0,
+        "iqr": 3.0,
+        "zero_frac": 0.11785570894249549,
+        "neg_one_frac": 0.0,
+        "n_unique": 762
+      },
+      "ids2018": {
+        "median": 2.0,
+        "p01": 0.0,
+        "p99": 60.0,
+        "iqr": 6.0,
+        "zero_frac": 0.17104553990343974,
+        "neg_one_frac": 0.0,
+        "n_unique": 668
+      }
+    },
+    {
+      "feature": "Subflow Bwd Bytes",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 145.0,
+        "p01": 0.0,
+        "p99": 101757.20000000007,
+        "iqr": 370.0,
+        "zero_frac": 0.22760602666779367,
+        "neg_one_frac": 0.0,
+        "n_unique": 20937
+      },
+      "ids2018": {
+        "median": 243.0,
+        "p01": 0.0,
+        "p99": 42053.0,
+        "iqr": 1581.0,
+        "zero_frac": 0.299211973017593,
+        "neg_one_frac": 0.0,
+        "n_unique": 13759
+      }
+    },
+    {
+      "feature": "Init_Win_bytes_forward",
+      "flag": "SCALE",
+      "reason": "median differs by 1.8 decades (122 vs 8192)",
+      "ids2017": {
+        "median": 122.0,
+        "p01": -1.0,
+        "p99": 65535.0,
+        "iqr": 8193.0,
+        "zero_frac": 0.010517386592445232,
+        "neg_one_frac": 0.4314362390984752,
+        "n_unique": 5624
+      },
+      "ids2018": {
+        "median": 8192.0,
+        "p01": -1.0,
+        "p99": 65535.0,
+        "iqr": 8016.0,
+        "zero_frac": 0.005140046407924522,
+        "neg_one_frac": 0.20159364132007285,
+        "n_unique": 3061
+      }
+    },
+    {
+      "feature": "Init_Win_bytes_backward",
+      "flag": "SCALE",
+      "reason": "median differs by 2.2 decades (1 vs 149)",
+      "ids2017": {
+        "median": -1.0,
+        "p01": -1.0,
+        "p99": 63841.200000000186,
+        "iqr": 252.0,
+        "zero_frac": 0.05179601583041771,
+        "neg_one_frac": 0.5460256414126625,
+        "n_unique": 5711
+      },
+      "ids2018": {
+        "median": 149.0,
+        "p01": -1.0,
+        "p99": 64000.0,
+        "iqr": 8193.0,
+        "zero_frac": 0.06824744841515236,
+        "neg_one_frac": 0.34659571208932105,
+        "n_unique": 3785
+      }
+    },
+    {
+      "feature": "act_data_pkt_fwd",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 1.0,
+        "p01": 0.0,
+        "p99": 33.0,
+        "iqr": 3.0,
+        "zero_frac": 0.32966754311554936,
+        "neg_one_frac": 0.0,
+        "n_unique": 460
+      },
+      "ids2018": {
+        "median": 1.0,
+        "p01": 0.0,
+        "p99": 16.0,
+        "iqr": 5.0,
+        "zero_frac": 0.35784878278481586,
+        "neg_one_frac": 0.0,
+        "n_unique": 126
+      }
+    },
+    {
+      "feature": "min_seg_size_forward",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 20.0,
+        "p01": 20.0,
+        "p99": 40.0,
+        "iqr": 12.0,
+        "zero_frac": 0.0008573300207389339,
+        "neg_one_frac": 0.0,
+        "n_unique": 21
+      },
+      "ids2018": {
+        "median": 20.0,
+        "p01": 0.0,
+        "p99": 32.0,
+        "iqr": 0.0,
+        "zero_frac": 0.021090642959668223,
+        "neg_one_frac": 0.0,
+        "n_unique": 9
+      }
+    },
+    {
+      "feature": "Active Mean",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1953408.2000000027,
+        "iqr": 0.0,
+        "zero_frac": 0.8266170783762652,
+        "neg_one_frac": 0.0,
+        "n_unique": 54720
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 3726051.75,
+        "iqr": 0.0,
+        "zero_frac": 0.8422442599978441,
+        "neg_one_frac": 0.0,
+        "n_unique": 53955
+      }
+    },
+    {
+      "feature": "Active Std",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1354856.875000005,
+        "iqr": 0.0,
+        "zero_frac": 0.9019232568880732,
+        "neg_one_frac": 0.0,
+        "n_unique": 32262
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1467571.3125,
+        "iqr": 0.0,
+        "zero_frac": 0.8889131581784039,
+        "neg_one_frac": 0.0,
+        "n_unique": 38761
+      }
+    },
+    {
+      "feature": "Active Max",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 4318132.800000016,
+        "iqr": 0.0,
+        "zero_frac": 0.8266170783762652,
+        "neg_one_frac": 0.0,
+        "n_unique": 53521
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 5208383.0,
+        "iqr": 0.0,
+        "zero_frac": 0.8422442599978441,
+        "neg_one_frac": 0.0,
+        "n_unique": 52767
+      }
+    },
+    {
+      "feature": "Active Min",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 1056773.6000000061,
+        "iqr": 0.0,
+        "zero_frac": 0.8266170783762652,
+        "neg_one_frac": 0.0,
+        "n_unique": 38076
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 3164848.75,
+        "iqr": 0.0,
+        "zero_frac": 0.8422442599978441,
+        "neg_one_frac": 0.0,
+        "n_unique": 33712
+      }
+    },
+    {
+      "feature": "Idle Mean",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 75846081.6000021,
+        "iqr": 0.0,
+        "zero_frac": 0.8261431318507159,
+        "neg_one_frac": 0.0,
+        "n_unique": 32352
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 86400000.0,
+        "iqr": 0.0,
+        "zero_frac": 0.7985311721688613,
+        "neg_one_frac": 0.0,
+        "n_unique": 60083
+      }
+    },
+    {
+      "feature": "Idle Std",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 2996179.8500000765,
+        "iqr": 0.0,
+        "zero_frac": 0.899001089775132,
+        "neg_one_frac": 0.0,
+        "n_unique": 32051
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 5979569.875,
+        "iqr": 0.0,
+        "zero_frac": 0.8747751938864083,
+        "neg_one_frac": 0.0,
+        "n_unique": 40972
+      }
+    },
+    {
+      "feature": "Idle Max",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 80600000.0,
+        "iqr": 0.0,
+        "zero_frac": 0.8261431318507159,
+        "neg_one_frac": 0.0,
+        "n_unique": 23580
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 86400000.0,
+        "iqr": 0.0,
+        "zero_frac": 0.7985311721688613,
+        "neg_one_frac": 0.0,
+        "n_unique": 53485
+      }
+    },
+    {
+      "feature": "Idle Min",
+      "flag": "OK",
+      "reason": "",
+      "ids2017": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 75846081.6000021,
+        "iqr": 0.0,
+        "zero_frac": 0.8261431318507159,
+        "neg_one_frac": 0.0,
+        "n_unique": 35957
+      },
+      "ids2018": {
+        "median": 0.0,
+        "p01": 0.0,
+        "p99": 86400000.0,
+        "iqr": 0.0,
+        "zero_frac": 0.7985311721688613,
+        "neg_one_frac": 0.0,
+        "n_unique": 57350
+      }
+    }
+  ],
+  "pair_compatibility": [
+    {
+      "feature": "Destination Port",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Flow Duration",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Total Fwd Packets",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Total Backward Packets",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Total Length of Fwd Packets",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Total Length of Bwd Packets",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd Packet Length Max",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd Packet Length Min",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd Packet Length Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd Packet Length Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd Packet Length Max",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd Packet Length Min",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd Packet Length Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd Packet Length Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Flow Bytes/s",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Flow Packets/s",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Flow IAT Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Flow IAT Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Flow IAT Max",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Flow IAT Min",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd IAT Total",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd IAT Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd IAT Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd IAT Max",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd IAT Min",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd IAT Total",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd IAT Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd IAT Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd IAT Max",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd IAT Min",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd PSH Flags",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd PSH Flags",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Fwd URG Flags",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd URG Flags",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Fwd Header Length",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd Header Length",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd Packets/s",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Bwd Packets/s",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Min Packet Length",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Max Packet Length",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Packet Length Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Packet Length Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Packet Length Variance",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "FIN Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "SYN Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "RST Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "PSH Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "ACK Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "URG Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "CWE Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "ECE Flag Count",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Down/Up Ratio",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Average Packet Size",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Avg Fwd Segment Size",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Avg Bwd Segment Size",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Fwd Avg Bytes/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Fwd Avg Packets/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Fwd Avg Bulk Rate",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Bwd Avg Bytes/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Bwd Avg Packets/Bulk",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Bwd Avg Bulk Rate",
+      "flag": "CONSTANT_BOTH",
+      "reason": "no values to compare"
+    },
+    {
+      "feature": "Subflow Fwd Packets",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Subflow Fwd Bytes",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Subflow Bwd Packets",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Subflow Bwd Bytes",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Init_Win_bytes_forward",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Init_Win_bytes_backward",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "act_data_pkt_fwd",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "min_seg_size_forward",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Active Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Active Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Active Max",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Active Min",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Idle Mean",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Idle Std",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Idle Max",
+      "flag": "OK",
+      "reason": ""
+    },
+    {
+      "feature": "Idle Min",
+      "flag": "OK",
+      "reason": ""
+    }
+  ],
+  "correlation_sweep": [
+    {
+      "feature": "Init_Win_bytes_forward",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1927,
+      "runner_up": "min_seg_size_forward",
+      "distance_runner_up": 0.1281,
+      "margin": 0.665
+    },
+    {
+      "feature": "Idle Mean",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 12,
+      "distance_declared": 0.1803,
+      "runner_up": "Active Max",
+      "distance_runner_up": 0.1176,
+      "margin": 0.652
+    },
+    {
+      "feature": "Idle Max",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 12,
+      "distance_declared": 0.1804,
+      "runner_up": "Active Max",
+      "distance_runner_up": 0.1176,
+      "margin": 0.652
+    },
+    {
+      "feature": "Idle Min",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 12,
+      "distance_declared": 0.1796,
+      "runner_up": "Active Max",
+      "distance_runner_up": 0.1175,
+      "margin": 0.654
+    },
+    {
+      "feature": "Bwd Packet Length Std",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 13,
+      "distance_declared": 0.1638,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.0804,
+      "margin": 0.491
+    },
+    {
+      "feature": "Init_Win_bytes_backward",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 13,
+      "distance_declared": 0.2816,
+      "runner_up": "min_seg_size_forward",
+      "distance_runner_up": 0.1344,
+      "margin": 0.477
+    },
+    {
+      "feature": "min_seg_size_forward",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 15,
+      "distance_declared": 0.3452,
+      "runner_up": "FIN Flag Count",
+      "distance_runner_up": 0.0502,
+      "margin": 0.146
+    },
+    {
+      "feature": "Fwd Packet Length Std",
+      "verdict": "SUSPECT",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 20,
+      "distance_declared": 0.2114,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.1206,
+      "margin": 0.57
+    },
+    {
+      "feature": "Destination Port",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1845,
+      "runner_up": "Fwd PSH Flags",
+      "distance_runner_up": 0.2102,
+      "margin": 1.139
+    },
+    {
+      "feature": "Flow Duration",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0985,
+      "runner_up": "Flow IAT Max",
+      "distance_runner_up": 0.1212,
+      "margin": 1.231
+    },
+    {
+      "feature": "Total Length of Bwd Packets",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Length of Bwd Packets",
+        "Subflow Bwd Bytes"
+      ],
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1148,
+      "runner_up": "Avg Bwd Segment Size",
+      "distance_runner_up": 0.117,
+      "margin": 1.02
+    },
+    {
+      "feature": "Fwd Packet Length Min",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1211,
+      "runner_up": "Bwd Packet Length Min",
+      "distance_runner_up": 0.1218,
+      "margin": 1.006
+    },
+    {
+      "feature": "Bwd Packet Length Min",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1611,
+      "runner_up": "Min Packet Length",
+      "distance_runner_up": 0.1641,
+      "margin": 1.018
+    },
+    {
+      "feature": "Bwd Packet Length Mean",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Bwd Packet Length Mean",
+        "Avg Bwd Segment Size"
+      ],
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1147,
+      "runner_up": "Average Packet Size",
+      "distance_runner_up": 0.1412,
+      "margin": 1.231
+    },
+    {
+      "feature": "Fwd IAT Total",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1015,
+      "runner_up": "Fwd IAT Max",
+      "distance_runner_up": 0.1249,
+      "margin": 1.23
+    },
+    {
+      "feature": "Fwd IAT Std",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1139,
+      "runner_up": "Flow IAT Std",
+      "distance_runner_up": 0.1216,
+      "margin": 1.067
+    },
+    {
+      "feature": "Bwd IAT Mean",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0914,
+      "runner_up": "Bwd IAT Max",
+      "distance_runner_up": 0.1002,
+      "margin": 1.096
+    },
+    {
+      "feature": "Bwd IAT Min",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1535,
+      "runner_up": "PSH Flag Count",
+      "distance_runner_up": 0.1687,
+      "margin": 1.099
+    },
+    {
+      "feature": "Fwd Packets/s",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1146,
+      "runner_up": "Flow Packets/s",
+      "distance_runner_up": 0.1229,
+      "margin": 1.073
+    },
+    {
+      "feature": "Min Packet Length",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1211,
+      "runner_up": "Bwd Packet Length Min",
+      "distance_runner_up": 0.1234,
+      "margin": 1.019
+    },
+    {
+      "feature": "Avg Bwd Segment Size",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Bwd Packet Length Mean",
+        "Avg Bwd Segment Size"
+      ],
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1147,
+      "runner_up": "Average Packet Size",
+      "distance_runner_up": 0.1412,
+      "margin": 1.231
+    },
+    {
+      "feature": "Subflow Bwd Bytes",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Length of Bwd Packets",
+        "Subflow Bwd Bytes"
+      ],
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1148,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.117,
+      "margin": 1.02
+    },
+    {
+      "feature": "Active Mean",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1242,
+      "runner_up": "Active Max",
+      "distance_runner_up": 0.1251,
+      "margin": 1.007
+    },
+    {
+      "feature": "Active Std",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0805,
+      "runner_up": "Active Max",
+      "distance_runner_up": 0.0984,
+      "margin": 1.223
+    },
+    {
+      "feature": "Active Max",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1246,
+      "runner_up": "Active Mean",
+      "distance_runner_up": 0.1278,
+      "margin": 1.025
+    },
+    {
+      "feature": "Total Fwd Packets",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Fwd Packets",
+        "Subflow Fwd Packets"
+      ],
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1174,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.1121,
+      "margin": 0.955
+    },
+    {
+      "feature": "Flow Bytes/s",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1629,
+      "runner_up": "Bwd Packets/s",
+      "distance_runner_up": 0.1312,
+      "margin": 0.806
+    },
+    {
+      "feature": "Flow Packets/s",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1121,
+      "runner_up": "Fwd Packets/s",
+      "distance_runner_up": 0.1077,
+      "margin": 0.96
+    },
+    {
+      "feature": "Flow IAT Max",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1077,
+      "runner_up": "Flow Duration",
+      "distance_runner_up": 0.0993,
+      "margin": 0.922
+    },
+    {
+      "feature": "Flow IAT Min",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1478,
+      "runner_up": "URG Flag Count",
+      "distance_runner_up": 0.1431,
+      "margin": 0.968
+    },
+    {
+      "feature": "Fwd IAT Max",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1156,
+      "runner_up": "Fwd IAT Total",
+      "distance_runner_up": 0.0993,
+      "margin": 0.859
+    },
+    {
+      "feature": "Bwd IAT Max",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.096,
+      "runner_up": "Bwd IAT Mean",
+      "distance_runner_up": 0.0901,
+      "margin": 0.939
+    },
+    {
+      "feature": "Subflow Fwd Packets",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Fwd Packets",
+        "Subflow Fwd Packets"
+      ],
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1174,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.1121,
+      "margin": 0.955
+    },
+    {
+      "feature": "Active Min",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 2,
+      "distance_declared": 0.1236,
+      "runner_up": "Active Max",
+      "distance_runner_up": 0.1226,
+      "margin": 0.992
+    },
+    {
+      "feature": "Flow IAT Mean",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 3,
+      "distance_declared": 0.1126,
+      "runner_up": "Flow IAT Max",
+      "distance_runner_up": 0.1064,
+      "margin": 0.945
+    },
+    {
+      "feature": "Bwd IAT Total",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 3,
+      "distance_declared": 0.0945,
+      "runner_up": "Bwd IAT Mean",
+      "distance_runner_up": 0.0872,
+      "margin": 0.923
+    },
+    {
+      "feature": "Average Packet Size",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 3,
+      "distance_declared": 0.1235,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1234,
+      "margin": 0.999
+    },
+    {
+      "feature": "Fwd Packet Length Mean",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Fwd Packet Length Mean",
+        "Avg Fwd Segment Size"
+      ],
+      "rank_of_declared_partner": 4,
+      "distance_declared": 0.1824,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1636,
+      "margin": 0.897
+    },
+    {
+      "feature": "Fwd IAT Mean",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 4,
+      "distance_declared": 0.1289,
+      "runner_up": "Fwd IAT Total",
+      "distance_runner_up": 0.0946,
+      "margin": 0.734
+    },
+    {
+      "feature": "Packet Length Mean",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 4,
+      "distance_declared": 0.122,
+      "runner_up": "Average Packet Size",
+      "distance_runner_up": 0.1151,
+      "margin": 0.943
+    },
+    {
+      "feature": "Avg Fwd Segment Size",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Fwd Packet Length Mean",
+        "Avg Fwd Segment Size"
+      ],
+      "rank_of_declared_partner": 4,
+      "distance_declared": 0.1824,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1636,
+      "margin": 0.897
+    },
+    {
+      "feature": "Bwd Packet Length Max",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 5,
+      "distance_declared": 0.132,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1081,
+      "margin": 0.819
+    },
+    {
+      "feature": "Fwd Header Length",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 5,
+      "distance_declared": 0.1328,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.0995,
+      "margin": 0.75
+    },
+    {
+      "feature": "Idle Std",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 5,
+      "distance_declared": 0.0988,
+      "runner_up": "Active Std",
+      "distance_runner_up": 0.0817,
+      "margin": 0.826
+    },
+    {
+      "feature": "Total Backward Packets",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Backward Packets",
+        "Subflow Bwd Packets"
+      ],
+      "rank_of_declared_partner": 6,
+      "distance_declared": 0.1044,
+      "runner_up": "Bwd IAT Mean",
+      "distance_runner_up": 0.0805,
+      "margin": 0.771
+    },
+    {
+      "feature": "Bwd IAT Std",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 6,
+      "distance_declared": 0.1229,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.0907,
+      "margin": 0.738
+    },
+    {
+      "feature": "PSH Flag Count",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 6,
+      "distance_declared": 0.151,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.1338,
+      "margin": 0.886
+    },
+    {
+      "feature": "Subflow Bwd Packets",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Backward Packets",
+        "Subflow Bwd Packets"
+      ],
+      "rank_of_declared_partner": 6,
+      "distance_declared": 0.1044,
+      "runner_up": "Bwd IAT Mean",
+      "distance_runner_up": 0.0805,
+      "margin": 0.771
+    },
+    {
+      "feature": "act_data_pkt_fwd",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 6,
+      "distance_declared": 0.1174,
+      "runner_up": "Flow IAT Std",
+      "distance_runner_up": 0.0921,
+      "margin": 0.784
+    },
+    {
+      "feature": "Max Packet Length",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 7,
+      "distance_declared": 0.1295,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1176,
+      "margin": 0.908
+    },
+    {
+      "feature": "Packet Length Std",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Packet Length Std",
+        "Packet Length Variance"
+      ],
+      "rank_of_declared_partner": 8,
+      "distance_declared": 0.1294,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1153,
+      "margin": 0.891
+    },
+    {
+      "feature": "Packet Length Variance",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Packet Length Std",
+        "Packet Length Variance"
+      ],
+      "rank_of_declared_partner": 8,
+      "distance_declared": 0.1294,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1153,
+      "margin": 0.891
+    },
+    {
+      "feature": "Bwd Header Length",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 9,
+      "distance_declared": 0.1184,
+      "runner_up": "Bwd IAT Mean",
+      "distance_runner_up": 0.0809,
+      "margin": 0.683
+    },
+    {
+      "feature": "Total Length of Fwd Packets",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Length of Fwd Packets",
+        "Subflow Fwd Bytes"
+      ],
+      "rank_of_declared_partner": 10,
+      "distance_declared": 0.1358,
+      "runner_up": "act_data_pkt_fwd",
+      "distance_runner_up": 0.1172,
+      "margin": 0.863
+    },
+    {
+      "feature": "Subflow Fwd Bytes",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": [
+        "Total Length of Fwd Packets",
+        "Subflow Fwd Bytes"
+      ],
+      "rank_of_declared_partner": 10,
+      "distance_declared": 0.1358,
+      "runner_up": "act_data_pkt_fwd",
+      "distance_runner_up": 0.1172,
+      "margin": 0.863
+    },
+    {
+      "feature": "Fwd Packet Length Max",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 16,
+      "distance_declared": 0.1693,
+      "runner_up": "Bwd Packet Length Mean",
+      "distance_runner_up": 0.1502,
+      "margin": 0.887
+    },
+    {
+      "feature": "Fwd IAT Min",
+      "verdict": "AMBIGUOUS",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 16,
+      "distance_declared": 0.2152,
+      "runner_up": "Flow IAT Mean",
+      "distance_runner_up": 0.1646,
+      "margin": 0.765
+    },
+    {
+      "feature": "Flow IAT Std",
+      "verdict": "CONFIRMED",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0723,
+      "runner_up": "Fwd IAT Std",
+      "distance_runner_up": 0.1131,
+      "margin": 1.563
+    },
+    {
+      "feature": "Fwd PSH Flags",
+      "verdict": "CONFIRMED",
+      "duplicate_group": [
+        "Fwd PSH Flags",
+        "SYN Flag Count"
+      ],
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0616,
+      "runner_up": "FIN Flag Count",
+      "distance_runner_up": 0.0938,
+      "margin": 1.524
+    },
+    {
+      "feature": "Bwd Packets/s",
+      "verdict": "CONFIRMED",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1148,
+      "runner_up": "Min Packet Length",
+      "distance_runner_up": 0.1995,
+      "margin": 1.738
+    },
+    {
+      "feature": "FIN Flag Count",
+      "verdict": "CONFIRMED",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0242,
+      "runner_up": "Fwd PSH Flags",
+      "distance_runner_up": 0.0743,
+      "margin": 3.07
+    },
+    {
+      "feature": "SYN Flag Count",
+      "verdict": "CONFIRMED",
+      "duplicate_group": [
+        "Fwd PSH Flags",
+        "SYN Flag Count"
+      ],
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0616,
+      "runner_up": "FIN Flag Count",
+      "distance_runner_up": 0.0938,
+      "margin": 1.524
+    },
+    {
+      "feature": "ACK Flag Count",
+      "verdict": "CONFIRMED",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1249,
+      "runner_up": "URG Flag Count",
+      "distance_runner_up": 0.2093,
+      "margin": 1.676
+    },
+    {
+      "feature": "URG Flag Count",
+      "verdict": "CONFIRMED",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.0829,
+      "runner_up": "ACK Flag Count",
+      "distance_runner_up": 0.1581,
+      "margin": 1.907
+    },
+    {
+      "feature": "Down/Up Ratio",
+      "verdict": "CONFIRMED",
+      "duplicate_group": null,
+      "rank_of_declared_partner": 1,
+      "distance_declared": 0.1011,
+      "runner_up": "Bwd Packet Length Min",
+      "distance_runner_up": 0.1823,
+      "margin": 1.804
+    }
+  ],
+  "duplicate_groups": [
+    [
+      "Avg Bwd Segment Size",
+      "Bwd Packet Length Mean"
+    ],
+    [
+      "Avg Fwd Segment Size",
+      "Fwd Packet Length Mean"
+    ],
+    [
+      "Bwd Avg Bulk Rate",
+      "Bwd Avg Bytes/Bulk",
+      "Bwd Avg Packets/Bulk",
+      "Bwd PSH Flags",
+      "Bwd URG Flags",
+      "Fwd Avg Bulk Rate",
+      "Fwd Avg Bytes/Bulk",
+      "Fwd Avg Packets/Bulk"
+    ],
+    [
+      "CWE Flag Count",
+      "Fwd URG Flags"
+    ],
+    [
+      "Fwd PSH Flags",
+      "SYN Flag Count"
+    ],
+    [
+      "Packet Length Std",
+      "Packet Length Variance"
+    ],
+    [
+      "Subflow Bwd Bytes",
+      "Total Length of Bwd Packets"
+    ],
+    [
+      "Subflow Bwd Packets",
+      "Total Backward Packets"
+    ],
+    [
+      "Subflow Fwd Bytes",
+      "Total Length of Fwd Packets"
+    ],
+    [
+      "Subflow Fwd Packets",
+      "Total Fwd Packets"
+    ]
+  ],
+  "n_distinct_measurements": 61,
+  "discrete_audit": [
+    {
+      "feature": "Bwd PSH Flags",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "feature": "Fwd URG Flags",
+      "cardinality_ids2017": "binary",
+      "cardinality_ids2018": "binary",
+      "n_unique_ids2017": 2,
+      "n_unique_ids2018": 2,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          0.9999
+        ],
+        [
+          1.0,
+          0.0001
+        ]
+      ]
+    },
+    {
+      "feature": "Bwd URG Flags",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "feature": "RST Flag Count",
+      "cardinality_ids2017": "binary",
+      "cardinality_ids2018": "binary",
+      "n_unique_ids2017": 2,
+      "n_unique_ids2018": 2,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          0.9997
+        ],
+        [
+          1.0,
+          0.0003
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          0.7628
+        ],
+        [
+          1.0,
+          0.2372
+        ]
+      ]
+    },
+    {
+      "feature": "CWE Flag Count",
+      "cardinality_ids2017": "binary",
+      "cardinality_ids2018": "binary",
+      "n_unique_ids2017": 2,
+      "n_unique_ids2018": 2,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          0.9999
+        ],
+        [
+          1.0,
+          0.0001
+        ]
+      ]
+    },
+    {
+      "feature": "ECE Flag Count",
+      "cardinality_ids2017": "binary",
+      "cardinality_ids2018": "binary",
+      "n_unique_ids2017": 2,
+      "n_unique_ids2018": 2,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          0.9997
+        ],
+        [
+          1.0,
+          0.0003
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          0.7628
+        ],
+        [
+          1.0,
+          0.2372
+        ]
+      ]
+    },
+    {
+      "feature": "Fwd Avg Bytes/Bulk",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "feature": "Fwd Avg Packets/Bulk",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "feature": "Fwd Avg Bulk Rate",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "feature": "Bwd Avg Bytes/Bulk",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "feature": "Bwd Avg Packets/Bulk",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "feature": "Bwd Avg Bulk Rate",
+      "cardinality_ids2017": "constant",
+      "cardinality_ids2018": "constant",
+      "n_unique_ids2017": 1,
+      "n_unique_ids2018": 1,
+      "integral_ids2017": true,
+      "integral_ids2018": true,
+      "top_values_ids2017": [
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "top_values_ids2018": [
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "invariant_definitions": {
+    "fwd_mean_eq_total_over_count": {
+      "name": "fwd_mean_eq_total_over_count",
+      "columns": [
+        "Fwd Packet Length Mean",
+        "Total Length of Fwd Packets",
+        "Total Fwd Packets"
+      ],
+      "note": "mean forward packet length is total bytes over packet count"
+    },
+    "bwd_mean_eq_total_over_count": {
+      "name": "bwd_mean_eq_total_over_count",
+      "columns": [
+        "Bwd Packet Length Mean",
+        "Total Length of Bwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "mean backward packet length is total bytes over packet count"
+    },
+    "variance_eq_std_squared": {
+      "name": "variance_eq_std_squared",
+      "columns": [
+        "Packet Length Variance",
+        "Packet Length Std"
+      ],
+      "note": "variance is the square of the standard deviation"
+    },
+    "avg_packet_size_eq_mean_times_n_plus_one_over_n": {
+      "name": "avg_packet_size_eq_mean_times_n_plus_one_over_n",
+      "columns": [
+        "Average Packet Size",
+        "Packet Length Mean",
+        "Total Fwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "CICFlowMeter's n+1 off-by-one between Pkt Size Avg and Pkt Len Mean"
+    },
+    "fwd_seg_size_eq_fwd_pkt_len_mean": {
+      "name": "fwd_seg_size_eq_fwd_pkt_len_mean",
+      "columns": [
+        "Avg Fwd Segment Size",
+        "Fwd Packet Length Mean"
+      ],
+      "note": "CICFlowMeter emits these as the same quantity"
+    },
+    "bwd_seg_size_eq_bwd_pkt_len_mean": {
+      "name": "bwd_seg_size_eq_bwd_pkt_len_mean",
+      "columns": [
+        "Avg Bwd Segment Size",
+        "Bwd Packet Length Mean"
+      ],
+      "note": "CICFlowMeter emits these as the same quantity"
+    },
+    "fwd_pkt_len_min_mean_max_ordered": {
+      "name": "fwd_pkt_len_min_mean_max_ordered",
+      "columns": [
+        "Fwd Packet Length Min",
+        "Fwd Packet Length Mean",
+        "Fwd Packet Length Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "bwd_pkt_len_min_mean_max_ordered": {
+      "name": "bwd_pkt_len_min_mean_max_ordered",
+      "columns": [
+        "Bwd Packet Length Min",
+        "Bwd Packet Length Mean",
+        "Bwd Packet Length Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "pkt_len_min_mean_max_ordered": {
+      "name": "pkt_len_min_mean_max_ordered",
+      "columns": [
+        "Min Packet Length",
+        "Packet Length Mean",
+        "Max Packet Length"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "flow_iat_min_mean_max_ordered": {
+      "name": "flow_iat_min_mean_max_ordered",
+      "columns": [
+        "Flow IAT Min",
+        "Flow IAT Mean",
+        "Flow IAT Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "fwd_iat_min_mean_max_ordered": {
+      "name": "fwd_iat_min_mean_max_ordered",
+      "columns": [
+        "Fwd IAT Min",
+        "Fwd IAT Mean",
+        "Fwd IAT Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "bwd_iat_min_mean_max_ordered": {
+      "name": "bwd_iat_min_mean_max_ordered",
+      "columns": [
+        "Bwd IAT Min",
+        "Bwd IAT Mean",
+        "Bwd IAT Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "active_min_mean_max_ordered": {
+      "name": "active_min_mean_max_ordered",
+      "columns": [
+        "Active Min",
+        "Active Mean",
+        "Active Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "idle_min_mean_max_ordered": {
+      "name": "idle_min_mean_max_ordered",
+      "columns": [
+        "Idle Min",
+        "Idle Mean",
+        "Idle Max"
+      ],
+      "note": "min <= mean <= max"
+    },
+    "subflow_fwd_pkts_eq_total": {
+      "name": "subflow_fwd_pkts_eq_total",
+      "columns": [
+        "Subflow Fwd Packets",
+        "Total Fwd Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    "subflow_bwd_pkts_eq_total": {
+      "name": "subflow_bwd_pkts_eq_total",
+      "columns": [
+        "Subflow Bwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    "subflow_fwd_bytes_eq_total": {
+      "name": "subflow_fwd_bytes_eq_total",
+      "columns": [
+        "Subflow Fwd Bytes",
+        "Total Length of Fwd Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    "subflow_bwd_bytes_eq_total": {
+      "name": "subflow_bwd_bytes_eq_total",
+      "columns": [
+        "Subflow Bwd Bytes",
+        "Total Length of Bwd Packets"
+      ],
+      "note": "single-subflow flows dominate, so these normally coincide"
+    },
+    "flow_pkts_per_s_matches_duration": {
+      "name": "flow_pkts_per_s_matches_duration",
+      "columns": [
+        "Flow Packets/s",
+        "Flow Duration",
+        "Total Fwd Packets",
+        "Total Backward Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    "flow_byts_per_s_matches_duration": {
+      "name": "flow_byts_per_s_matches_duration",
+      "columns": [
+        "Flow Bytes/s",
+        "Flow Duration",
+        "Total Length of Fwd Packets",
+        "Total Length of Bwd Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    "fwd_pkts_per_s_matches_duration": {
+      "name": "fwd_pkts_per_s_matches_duration",
+      "columns": [
+        "Fwd Packets/s",
+        "Flow Duration",
+        "Total Fwd Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    "bwd_pkts_per_s_matches_duration": {
+      "name": "bwd_pkts_per_s_matches_duration",
+      "columns": [
+        "Bwd Packets/s",
+        "Flow Duration",
+        "Total Backward Packets"
+      ],
+      "note": "UNIT TEST: rate implies Flow Duration is in microseconds"
+    },
+    "fwd_iat_total_within_duration": {
+      "name": "fwd_iat_total_within_duration",
+      "columns": [
+        "Fwd IAT Total",
+        "Flow Duration"
+      ],
+      "note": "inter-arrival total cannot exceed the flow it belongs to"
+    },
+    "bwd_iat_total_within_duration": {
+      "name": "bwd_iat_total_within_duration",
+      "columns": [
+        "Bwd IAT Total",
+        "Flow Duration"
+      ],
+      "note": "inter-arrival total cannot exceed the flow it belongs to"
+    }
+  }
+}
