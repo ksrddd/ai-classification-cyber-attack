@@ -13,6 +13,8 @@ import { KpiCard } from "@/components/ui/KpiCard";
 import { Panel, PanelHeader } from "@/components/ui/Panel";
 import { Nil } from "@/components/ui/Nil";
 import { BundleGate } from "@/components/bundle/BundleGate";
+import { TransferMatrix } from "@/components/crossdataset/TransferMatrix";
+import { AuditView } from "@/components/audit/AuditView";
 import { modelColor } from "@/lib/colors";
 import {
   type BundleDetail,
@@ -26,7 +28,13 @@ import {
 export default function OverviewPage() {
   return (
     <AppShell title="Overview">
-      <BundleGate what="the overview">{(data) => <Body data={data} />}</BundleGate>
+      <BundleGate
+        what="the overview"
+        crossdataset={(cross, data) => <TransferMatrix cross={cross} id={data.id} />}
+        audit={(evidence, data) => <AuditView audit={evidence} id={data.id} />}
+      >
+        {(data) => <Body data={data} />}
+      </BundleGate>
     </AppShell>
   );
 }
