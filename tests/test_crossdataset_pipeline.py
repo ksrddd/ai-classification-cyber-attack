@@ -13,8 +13,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from src.crossdataset import loaders
 from src.crossdataset.cleaning import assert_idempotent, clean
 from src.crossdataset.sampling import allocate, sample
+from src.crossdataset.schema import canonical_features
 from src.crossdataset.splits import chronological_split, random_split
 
 FEATURES = ["a", "b"]
@@ -218,3 +220,128 @@ def test_random_split_varies_with_seed() -> None:
     b = random_split(y, seed=2)
 
     assert a.train.tolist() != b.train.tolist()
+
+
+# ------------------------------------------------------- loader guards
+class TestFinishGuards:
+    """The three conditions that make "same conditions" checkable.
+
+    Every one of them protects against a failure that is silent: the loader
+    still returns a Corpus, the run still finishes, and the only evidence is a
+    number in the gap table that is a little different from the right one.
+    """
+
+    # Classes must sit above sampling.KEEP_ALL_BELOW or the sampler takes every
+    # one of them whole and no draw can land on a target.
+    ROWS = 36_000
+    TARGET = 20_000
+    # 2017 spells the majority class in capitals; "Benign" is a 2018 label and
+    # map_to_shared would drop every row carrying it.
+    CLASSES = ("BENIGN", "DoS", "DDoS")
+
+    @classmethod
+    def _corpus(cls, n_rows: int = ROWS, *, dupes: int = 0):
+        """A synthetic frame shaped like a canonicalised 2017 corpus."""
+        cols = list(canonical_features(keep_dst_port=True))
+        rng = np.random.default_rng(0)
+        frame = pd.DataFrame(
+            rng.integers(1, 1_000_000, size=(n_rows, len(cols))).astype("float64"),
+            columns=cols,
+        )
+        labels = pd.Series([cls.CLASSES[i % len(cls.CLASSES)] for i in range(n_rows)])
+        if dupes:
+            # Label has to be copied too: clean() dedups on features *and* label.
+            frame.iloc[:dupes] = frame.iloc[dupes : 2 * dupes].to_numpy()
+            labels.iloc[:dupes] = labels.iloc[dupes : 2 * dupes].to_numpy()
+        return frame, labels, pd.Series(range(n_rows)), pd.Series(["mon"] * n_rows)
+
+    def _finish(self, frame, labels, order, group, **kw):
+        return loaders._finish(
+            "ids2017", frame, labels, order, group, "_row_index",
+            keep_dst_port=kw.pop("keep_dst_port", True),
+            target=kw.pop("target", self.TARGET),
+            seed=42,
+        )
+
+    def test_a_pre_sampled_input_is_refused(self, monkeypatch) -> None:
+        """The bug this guard exists for.
+
+        ``load_ids2018`` used to read a 300k file the 2018 pipeline had already
+        drawn from ~13M rows before cleaning. Cleaning then removed a further
+        37,299 rows from that draw -- almost all duplicates -- so 2018 reached
+        262,701 rows with a class balance the sampler never designed, while
+        2017 reached a full 300,000 by clean-then-sample. Nothing raised.
+        """
+        monkeypatch.setattr(loaders, "MIN_FULL_CORPUS_ROWS", 100_000)
+
+        with pytest.raises(ValueError, match="whole corpus"):
+            self._finish(*self._corpus())
+
+    def test_a_non_finite_row_means_the_rules_drifted(self, monkeypatch) -> None:
+        """Dropping non-finite rows does not depend on the label, so a corpus
+        built with these rules must yield exactly zero."""
+        monkeypatch.setattr(loaders, "MIN_FULL_CORPUS_ROWS", 100)
+        frame, labels, order, group = self._corpus()
+        frame.loc[0, "Flow Duration"] = np.inf
+
+        with pytest.raises(ValueError, match="non-finite"):
+            self._finish(frame, labels, order, group)
+
+    def test_a_few_duplicates_from_the_label_collapse_are_allowed(
+        self, monkeypatch, caplog
+    ) -> None:
+        """Collapsing each source vocabulary onto the shared seven is
+        many-to-one, so rows distinct under the source labels can coincide
+        under the shared ones. On the real 2018 corpus this is 13 rows: pairs
+        of identical flows labelled FTP-BruteForce and SSH-Bruteforce, or two
+        of the three web variants. Demanding zero would demand that both
+        parquets be labelled at the same granularity, which they are not.
+        """
+        monkeypatch.setattr(loaders, "MIN_FULL_CORPUS_ROWS", 100)
+
+        with caplog.at_level("INFO"):
+            corpus = self._finish(*self._corpus(dupes=5))
+
+        assert corpus.cleaning.rows_dropped_duplicate == 5
+        assert len(corpus.X) == self.TARGET
+        assert "labels collapsed" in caplog.text
+
+    def test_a_large_duplicate_drop_is_still_refused(self, monkeypatch) -> None:
+        """The pre-sampled 2018 file lost 11.9% of its rows to duplicates."""
+        monkeypatch.setattr(loaders, "MIN_FULL_CORPUS_ROWS", 100)
+
+        with pytest.raises(ValueError, match="not cleaned with these rules"):
+            self._finish(*self._corpus(dupes=self.ROWS // 4))
+
+    def test_dropping_the_port_column_may_legitimately_dedup(self, monkeypatch) -> None:
+        """76-column dedup can merge rows that 77 kept apart, so the no-op claim
+        is asserted only on the basis the files were cleaned with."""
+        monkeypatch.setattr(loaders, "MIN_FULL_CORPUS_ROWS", 100)
+        frame, labels, order, group = self._corpus()
+        # Identical but for the port: one row on 76 columns, two on 77.
+        frame.iloc[0] = frame.iloc[1]
+        labels.iloc[0] = labels.iloc[1]
+        frame.loc[0, "Destination Port"] = 9999
+
+        corpus = self._finish(frame, labels, order, group, keep_dst_port=False)
+
+        assert corpus.cleaning.rows_dropped_duplicate == 1
+        assert len(corpus.X) == self.TARGET
+
+    def test_a_short_draw_is_refused(self, monkeypatch) -> None:
+        """A side that lands under target is no longer compared at the
+        protocol's size -- which is exactly how 2018 reached 262,701."""
+        monkeypatch.setattr(loaders, "MIN_FULL_CORPUS_ROWS", 100)
+
+        with pytest.raises(ValueError, match="same size"):
+            self._finish(*self._corpus(), target=self.ROWS * 2)
+
+    def test_a_clean_full_corpus_passes_every_guard(self, monkeypatch) -> None:
+        monkeypatch.setattr(loaders, "MIN_FULL_CORPUS_ROWS", 100)
+
+        corpus = self._finish(*self._corpus())
+
+        assert len(corpus.X) == self.TARGET
+        assert corpus.cleaning.rows_dropped == 0
+        assert corpus.dropped_unmapped == 0
+        assert list(corpus.X.columns) == list(canonical_features(keep_dst_port=True))

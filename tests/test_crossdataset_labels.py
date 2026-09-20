@@ -23,7 +23,7 @@ from src.crossdataset.labels import (
     shared_class_counts,
 )
 
-SAMPLE_2018 = Path("data/ids2018/sample_300k.parquet")
+CORPUS_2018 = Path("data/ids2018/cicids2018_clean.parquet")
 
 
 def test_seven_shared_classes() -> None:
@@ -99,11 +99,14 @@ def test_counts_reindex_onto_all_seven() -> None:
 
 
 @pytest.mark.skipif(
-    not SAMPLE_2018.exists(), reason="2018 sample parquet not present"
+    not CORPUS_2018.exists(), reason="2018 corpus parquet not present"
 )
-def test_real_2018_sample_loses_no_rows() -> None:
-    """Every label in the real file matches a key -- nothing drops out."""
-    labels = pd.read_parquet(SAMPLE_2018, columns=["Label"])["Label"]
+def test_real_2018_corpus_loses_no_rows() -> None:
+    """Every label in the real file matches a key -- nothing drops out.
+
+    Reads only the label column: the corpus is 11.4M rows.
+    """
+    labels = pd.read_parquet(CORPUS_2018, columns=["Label"])["Label"]
 
     mapped = map_to_shared(labels, "ids2018")
 

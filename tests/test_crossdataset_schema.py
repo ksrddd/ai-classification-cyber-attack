@@ -25,7 +25,7 @@ from src.crossdataset.schema import (
 )
 from src.data.schema import EXPECTED_FEATURES
 
-SAMPLE_2018 = Path("data/ids2018/sample_300k.parquet")
+CORPUS_2018 = Path("data/ids2018/cicids2018_clean.parquet")
 
 
 def test_both_sides_have_seventy_seven_columns() -> None:
@@ -132,11 +132,17 @@ def test_to_canonical_rejects_an_unknown_dataset() -> None:
 
 
 @pytest.mark.skipif(
-    not SAMPLE_2018.exists(), reason="2018 sample parquet not present"
+    not CORPUS_2018.exists(), reason="2018 corpus parquet not present"
 )
-def test_real_2018_sample_converts() -> None:
-    """The mapping must hold against the actual file, not just a fixture."""
-    frame = pd.read_parquet(SAMPLE_2018)
+def test_real_2018_corpus_converts() -> None:
+    """The mapping must hold against the actual file, not just a fixture.
+
+    Reads one row group rather than all 11.4M rows; a rename either resolves
+    every column or it does not, and one batch settles that.
+    """
+    import pyarrow.parquet as pq
+
+    frame = next(pq.ParquetFile(CORPUS_2018).iter_batches(batch_size=50_000)).to_pandas()
     out = to_canonical(frame, "ids2018")
 
     assert list(out.columns) == list(CANONICAL_FEATURES)
