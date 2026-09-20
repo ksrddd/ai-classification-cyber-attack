@@ -1,0 +1,287 @@
+{
+  "question": "With the attack tool held fixed, do the two corpora still separate?",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "min_per_side": 300,
+  "max_per_side": 8000,
+  "n_features": 60,
+  "tool_pairs": [
+    {
+      "tool": "Hulk",
+      "shared_class": "DoS",
+      "ids2017_label": "DoS Hulk",
+      "ids2018_label": "DoS attacks-Hulk",
+      "identity_from_documentation": false,
+      "n_per_side": 8000,
+      "n_available": {
+        "ids2017": 40000,
+        "ids2018": 40000
+      },
+      "same_tool_across_corpora": {
+        "auc": 0.9999,
+        "auc_sd": 0.00012,
+        "auc_per_seed": [
+          1.0,
+          0.9997,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.9529,
+        "n_per_side": 8000
+      },
+      "whole_class_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.8935,
+        "n_per_side": 8000
+      },
+      "delta": 0.0001
+    },
+    {
+      "tool": "GoldenEye",
+      "shared_class": "DoS",
+      "ids2017_label": "DoS GoldenEye",
+      "ids2018_label": "DoS attacks-GoldenEye",
+      "identity_from_documentation": false,
+      "n_per_side": 8000,
+      "n_available": {
+        "ids2017": 10282,
+        "ids2018": 40000
+      },
+      "same_tool_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.8588,
+        "n_per_side": 8000
+      },
+      "whole_class_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.8935,
+        "n_per_side": 8000
+      },
+      "delta": 0.0
+    },
+    {
+      "tool": "Slowloris",
+      "shared_class": "DoS",
+      "ids2017_label": "DoS slowloris",
+      "ids2018_label": "DoS attacks-Slowloris",
+      "identity_from_documentation": false,
+      "n_per_side": 5374,
+      "n_available": {
+        "ids2017": 5374,
+        "ids2018": 9712
+      },
+      "same_tool_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.8614,
+        "n_per_side": 5374
+      },
+      "whole_class_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.8912,
+        "n_per_side": 5374
+      },
+      "delta": 0.0
+    },
+    {
+      "tool": "Bot",
+      "shared_class": "Bot",
+      "ids2017_label": "Bot",
+      "ids2018_label": "Bot",
+      "identity_from_documentation": false,
+      "n_per_side": 1948,
+      "n_available": {
+        "ids2017": 1948,
+        "ids2018": 40000
+      },
+      "same_tool_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.9945,
+        "n_per_side": 1948
+      },
+      "whole_class_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.9945,
+        "n_per_side": 1948
+      },
+      "delta": 0.0
+    },
+    {
+      "tool": "LOIC-HTTP",
+      "shared_class": "DDoS",
+      "ids2017_label": "DDoS",
+      "ids2018_label": "DDoS attacks-LOIC-HTTP",
+      "identity_from_documentation": true,
+      "n_per_side": 8000,
+      "n_available": {
+        "ids2017": 40000,
+        "ids2018": 40000
+      },
+      "same_tool_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.994,
+        "n_per_side": 8000
+      },
+      "whole_class_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.983,
+        "n_per_side": 8000
+      },
+      "delta": 0.0
+    },
+    {
+      "tool": "Web brute force",
+      "shared_class": "Web Attack",
+      "ids2017_label": "Web Attack - Brute Force",
+      "ids2018_label": "Brute Force -Web",
+      "identity_from_documentation": false,
+      "n_per_side": 553,
+      "n_available": {
+        "ids2017": 1470,
+        "ids2018": 553
+      },
+      "same_tool_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.9982,
+        "n_per_side": 553
+      },
+      "whole_class_across_corpora": {
+        "auc": 1.0,
+        "auc_sd": 0.0,
+        "auc_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "stump": 0.9994,
+        "n_per_side": 553
+      },
+      "delta": 0.0
+    }
+  ],
+  "different_tools_within_ids2017": [
+    {
+      "shared_class": "DoS",
+      "tools": [
+        "DoS Hulk",
+        "DoS GoldenEye"
+      ],
+      "n_per_side": 8000,
+      "auc": 1.0,
+      "auc_sd": 0.0,
+      "auc_per_seed": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "stump": 0.9536
+    },
+    {
+      "shared_class": "Web Attack",
+      "tools": [
+        "Web Attack - Brute Force",
+        "Web Attack - XSS"
+      ],
+      "n_per_side": 652,
+      "auc": 0.6768,
+      "auc_sd": 0.03891,
+      "auc_per_seed": [
+        0.6619,
+        0.6084,
+        0.7021,
+        0.7189,
+        0.6928
+      ],
+      "stump": 0.5811
+    }
+  ]
+}

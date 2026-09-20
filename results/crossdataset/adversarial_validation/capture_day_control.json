@@ -1,0 +1,90 @@
+{
+  "question": "Is the perfect within-2018 group separation a capture-day effect, or two different attack tools the schema collapsed into one class?",
+  "corpus": "ids2018",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "min_per_side": 300,
+  "max_per_side": 8000,
+  "n_features": 60,
+  "same_tool_other_day": [
+    {
+      "label": "Benign",
+      "kind": "same tool, other day",
+      "n_per_side": 8000,
+      "boundary": "2018-02-20 against 2018-02-22, identical sub-label",
+      "auc": 0.834,
+      "auc_sd": 0.00879,
+      "auc_per_seed": [
+        0.8483,
+        0.8209,
+        0.8309,
+        0.8358,
+        0.834
+      ],
+      "stump": 0.5429
+    },
+    {
+      "label": "Infilteration",
+      "kind": "same tool, other day",
+      "n_per_side": 8000,
+      "boundary": "2018-03-01 against 2018-02-28, identical sub-label",
+      "auc": 0.746,
+      "auc_sd": 0.00708,
+      "auc_per_seed": [
+        0.7408,
+        0.7599,
+        0.745,
+        0.7412,
+        0.7432
+      ],
+      "stump": 0.5917
+    }
+  ],
+  "other_tool_same_class": [
+    {
+      "label": "DoS",
+      "kind": "other tool, same class",
+      "n_per_side": 8000,
+      "boundary": "DoS attacks-Hulk against DoS attacks-GoldenEye, both collapsed to DoS",
+      "auc": 1.0,
+      "auc_sd": 0.0,
+      "auc_per_seed": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "stump": 0.9472
+    },
+    {
+      "label": "DDoS",
+      "kind": "other tool, same class",
+      "n_per_side": 8000,
+      "boundary": "DDoS attacks-LOIC-HTTP against DDOS attack-HOIC, both collapsed to DDoS",
+      "auc": 1.0,
+      "auc_sd": 0.0,
+      "auc_per_seed": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "stump": 1.0
+    }
+  ],
+  "same_tool_other_day_range": [
+    0.746,
+    0.834
+  ],
+  "other_tool_same_class_range": [
+    1.0,
+    1.0
+  ]
+}
