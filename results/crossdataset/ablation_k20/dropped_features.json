@@ -1,0 +1,28 @@
+{
+  "drop_top_k": 20,
+  "dropped": [
+    "min_seg_size_forward",
+    "RST Flag Count",
+    "Init_Win_bytes_forward",
+    "Destination Port",
+    "Fwd Packet Length Min",
+    "Max Packet Length",
+    "act_data_pkt_fwd",
+    "Fwd IAT Min",
+    "Flow IAT Min",
+    "Avg Bwd Segment Size",
+    "Bwd Packet Length Mean",
+    "Init_Win_bytes_backward",
+    "Bwd IAT Min",
+    "Min Packet Length",
+    "Fwd Header Length",
+    "Bwd Packet Length Min",
+    "Bwd Header Length",
+    "Fwd Packet Length Std",
+    "Flow IAT Max",
+    "Subflow Bwd Packets",
+    "Total Backward Packets",
+    "PSH Flag Count",
+    "ECE Flag Count"
+  ]
+}

@@ -1,0 +1,590 @@
+23:22:52 | INFO    | loading corpora (Destination Port kept)
+23:22:52 | INFO    | ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+23:22:53 | INFO    | ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+23:23:03 | INFO    | clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+23:23:03 | INFO    | sampled 300000 rows (target 300000) across 7 classes with seed 42
+23:23:03 | INFO    | ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+23:23:13 | INFO    | ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+23:24:38 | INFO    | clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+23:24:38 | INFO    | ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+23:24:39 | INFO    | sampled 300000 rows (target 300000) across 7 classes with seed 42
+23:24:39 | INFO    | ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+23:24:39 | INFO    | ablation: dropped 23 of 77 feature(s), 54 remain -- min_seg_size_forward, RST Flag Count, Init_Win_bytes_forward, Destination Port, Fwd Packet Length Min, Max Packet Length, act_data_pkt_fwd, Fwd IAT Min, Flow IAT Min, Avg Bwd Segment Size, Bwd Packet Length Mean, Init_Win_bytes_backward, Bwd IAT Min, Min Packet Length, Fwd Header Length, Bwd Packet Length Min, Bwd Header Length, Fwd Packet Length Std, Flow IAT Max, Subflow Bwd Packets, Total Backward Packets, PSH Flag Count, ECE Flag Count
+23:24:39 | INFO    | random split: {'mode': 'random', 'seed': 42, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+23:24:39 | INFO    | random split: {'mode': 'random', 'seed': 42, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+23:24:40 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:24:40 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:24:57 | INFO    | random seed=42 2017->2017 lightgbm             macro=0.9190 measurable=0.9349 acc=0.9934 (base 0.1294)
+23:25:00 | INFO    | random seed=42 2017->2018 lightgbm             macro=0.1856 measurable=0.1856 acc=0.8543 (base 0.1337)
+23:25:14 | INFO    | random seed=42 2017->2017 random_forest        macro=0.9106 measurable=0.9374 acc=0.9933 (base 0.1294)
+23:25:15 | INFO    | random seed=42 2017->2018 random_forest        macro=0.1677 measurable=0.1677 acc=0.8460 (base 0.1337)
+23:25:15 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:25:15 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:25:32 | INFO    | random seed=42 2018->2017 lightgbm             macro=0.1378 measurable=0.1608 acc=0.8204 (base 0.1294)
+23:25:34 | INFO    | random seed=42 2018->2018 lightgbm             macro=0.7967 measurable=0.7967 acc=0.9772 (base 0.1337)
+23:25:54 | INFO    | random seed=42 2018->2017 random_forest        macro=0.1381 measurable=0.1611 acc=0.8071 (base 0.1294)
+23:25:55 | INFO    | random seed=42 2018->2018 random_forest        macro=0.8065 measurable=0.8065 acc=0.9777 (base 0.1337)
+23:25:55 | INFO    | random split: {'mode': 'random', 'seed': 43, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+23:25:55 | INFO    | random split: {'mode': 'random', 'seed': 43, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+23:25:55 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:25:55 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:26:12 | INFO    | random seed=43 2017->2017 lightgbm             macro=0.9403 measurable=0.9391 acc=0.9936 (base 0.1294)
+23:26:15 | INFO    | random seed=43 2017->2018 lightgbm             macro=0.2063 measurable=0.2063 acc=0.8627 (base 0.1337)
+23:26:29 | INFO    | random seed=43 2017->2017 random_forest        macro=0.9236 measurable=0.9402 acc=0.9935 (base 0.1294)
+23:26:30 | INFO    | random seed=43 2017->2018 random_forest        macro=0.1661 measurable=0.1661 acc=0.8462 (base 0.1337)
+23:26:30 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:26:30 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:26:46 | INFO    | random seed=43 2018->2017 lightgbm             macro=0.1484 measurable=0.1731 acc=0.8219 (base 0.1294)
+23:26:49 | INFO    | random seed=43 2018->2018 lightgbm             macro=0.8087 measurable=0.8087 acc=0.9769 (base 0.1337)
+23:27:09 | INFO    | random seed=43 2018->2017 random_forest        macro=0.1377 measurable=0.1606 acc=0.8064 (base 0.1294)
+23:27:10 | INFO    | random seed=43 2018->2018 random_forest        macro=0.8046 measurable=0.8046 acc=0.9776 (base 0.1337)
+23:27:10 | INFO    | random split: {'mode': 'random', 'seed': 44, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+23:27:10 | INFO    | random split: {'mode': 'random', 'seed': 44, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+23:27:10 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:27:10 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:27:27 | INFO    | random seed=44 2017->2017 lightgbm             macro=0.8786 measurable=0.9298 acc=0.9931 (base 0.1294)
+23:27:30 | INFO    | random seed=44 2017->2018 lightgbm             macro=0.1591 measurable=0.1591 acc=0.8436 (base 0.1337)
+23:27:44 | INFO    | random seed=44 2017->2017 random_forest        macro=0.8699 measurable=0.9197 acc=0.9916 (base 0.1294)
+23:27:45 | INFO    | random seed=44 2017->2018 random_forest        macro=0.1607 measurable=0.1607 acc=0.8454 (base 0.1337)
+23:27:45 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:27:45 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:28:02 | INFO    | random seed=44 2018->2017 lightgbm             macro=0.1416 measurable=0.1652 acc=0.8231 (base 0.1294)
+23:28:04 | INFO    | random seed=44 2018->2018 lightgbm             macro=0.8120 measurable=0.8120 acc=0.9778 (base 0.1337)
+23:28:24 | INFO    | random seed=44 2018->2017 random_forest        macro=0.1379 measurable=0.1609 acc=0.8037 (base 0.1294)
+23:28:25 | INFO    | random seed=44 2018->2018 random_forest        macro=0.8075 measurable=0.8075 acc=0.9783 (base 0.1337)
+23:28:25 | INFO    | random split: {'mode': 'random', 'seed': 45, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+23:28:25 | INFO    | random split: {'mode': 'random', 'seed': 45, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+23:28:25 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:28:26 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:28:43 | INFO    | random seed=45 2017->2017 lightgbm             macro=0.9274 measurable=0.9338 acc=0.9933 (base 0.1294)
+23:28:46 | INFO    | random seed=45 2017->2018 lightgbm             macro=0.2390 measurable=0.2390 acc=0.8693 (base 0.1337)
+23:29:01 | INFO    | random seed=45 2017->2017 random_forest        macro=0.8937 measurable=0.9177 acc=0.9913 (base 0.1294)
+23:29:02 | INFO    | random seed=45 2017->2018 random_forest        macro=0.1569 measurable=0.1569 acc=0.8445 (base 0.1337)
+23:29:02 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:29:02 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:29:22 | INFO    | random seed=45 2018->2017 lightgbm             macro=0.1445 measurable=0.1686 acc=0.8219 (base 0.1294)
+23:29:24 | INFO    | random seed=45 2018->2018 lightgbm             macro=0.8100 measurable=0.8100 acc=0.9772 (base 0.1337)
+23:29:46 | INFO    | random seed=45 2018->2017 random_forest        macro=0.1383 measurable=0.1614 acc=0.8072 (base 0.1294)
+23:29:47 | INFO    | random seed=45 2018->2018 random_forest        macro=0.8056 measurable=0.8056 acc=0.9774 (base 0.1337)
+23:29:47 | INFO    | random split: {'mode': 'random', 'seed': 46, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+23:29:47 | INFO    | random split: {'mode': 'random', 'seed': 46, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+23:29:47 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:29:48 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:30:05 | INFO    | random seed=46 2017->2017 lightgbm             macro=0.9131 measurable=0.9402 acc=0.9937 (base 0.1294)
+23:30:08 | INFO    | random seed=46 2017->2018 lightgbm             macro=0.1901 measurable=0.1901 acc=0.8506 (base 0.1337)
+23:30:22 | INFO    | random seed=46 2017->2017 random_forest        macro=0.9163 measurable=0.9441 acc=0.9939 (base 0.1294)
+23:30:22 | INFO    | random seed=46 2017->2018 random_forest        macro=0.1674 measurable=0.1674 acc=0.8449 (base 0.1337)
+23:30:23 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:30:23 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:30:41 | INFO    | random seed=46 2018->2017 lightgbm             macro=0.1611 measurable=0.1879 acc=0.8214 (base 0.1294)
+23:30:44 | INFO    | random seed=46 2018->2018 lightgbm             macro=0.8056 measurable=0.8056 acc=0.9775 (base 0.1337)
+23:31:04 | INFO    | random seed=46 2018->2017 random_forest        macro=0.1365 measurable=0.1592 acc=0.8064 (base 0.1294)
+23:31:05 | INFO    | random seed=46 2018->2018 random_forest        macro=0.8023 measurable=0.8023 acc=0.9778 (base 0.1337)
+23:31:05 | INFO    | chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+23:31:05 | INFO    | chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+23:31:05 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:31:05 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:31:21 | INFO    | chronological seed=42 2017->2017 lightgbm             macro=0.6623 measurable=0.6477 acc=0.9394 (base 0.1294)
+23:31:24 | INFO    | chronological seed=42 2017->2018 lightgbm             macro=0.1700 measurable=0.1700 acc=0.8802 (base 0.1337)
+23:31:40 | INFO    | chronological seed=42 2017->2017 random_forest        macro=0.5039 measurable=0.5879 acc=0.9394 (base 0.1294)
+23:31:41 | INFO    | chronological seed=42 2017->2018 random_forest        macro=0.1711 measurable=0.1711 acc=0.8815 (base 0.1337)
+23:31:41 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:31:41 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:31:57 | INFO    | chronological seed=42 2018->2017 lightgbm             macro=0.1675 measurable=0.1954 acc=0.8201 (base 0.1294)
+23:32:00 | INFO    | chronological seed=42 2018->2018 lightgbm             macro=0.7960 measurable=0.7960 acc=0.9768 (base 0.1337)
+23:32:20 | INFO    | chronological seed=42 2018->2017 random_forest        macro=0.1367 measurable=0.1595 acc=0.8119 (base 0.1294)
+23:32:21 | INFO    | chronological seed=42 2018->2018 random_forest        macro=0.8018 measurable=0.8018 acc=0.9777 (base 0.1337)
+23:32:21 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:32:21 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:32:40 | INFO    | chronological seed=43 2017->2017 lightgbm             macro=0.6624 measurable=0.6478 acc=0.9397 (base 0.1294)
+23:32:43 | INFO    | chronological seed=43 2017->2018 lightgbm             macro=0.1697 measurable=0.1697 acc=0.8801 (base 0.1337)
+23:33:01 | INFO    | chronological seed=43 2017->2017 random_forest        macro=0.5027 measurable=0.5864 acc=0.9393 (base 0.1294)
+23:33:02 | INFO    | chronological seed=43 2017->2018 random_forest        macro=0.1713 measurable=0.1713 acc=0.8815 (base 0.1337)
+23:33:02 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:33:02 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:33:20 | INFO    | chronological seed=43 2018->2017 lightgbm             macro=0.1679 measurable=0.1959 acc=0.8215 (base 0.1294)
+23:33:22 | INFO    | chronological seed=43 2018->2018 lightgbm             macro=0.7961 measurable=0.7961 acc=0.9767 (base 0.1337)
+23:33:42 | INFO    | chronological seed=43 2018->2017 random_forest        macro=0.1363 measurable=0.1590 acc=0.8121 (base 0.1294)
+23:33:43 | INFO    | chronological seed=43 2018->2018 random_forest        macro=0.8020 measurable=0.8020 acc=0.9777 (base 0.1337)
+23:33:43 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:33:43 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:34:00 | INFO    | chronological seed=44 2017->2017 lightgbm             macro=0.6732 measurable=0.6482 acc=0.9397 (base 0.1294)
+23:34:03 | INFO    | chronological seed=44 2017->2018 lightgbm             macro=0.1701 measurable=0.1701 acc=0.8804 (base 0.1337)
+23:34:19 | INFO    | chronological seed=44 2017->2017 random_forest        macro=0.5054 measurable=0.5897 acc=0.9391 (base 0.1294)
+23:34:20 | INFO    | chronological seed=44 2017->2018 random_forest        macro=0.1714 measurable=0.1714 acc=0.8816 (base 0.1337)
+23:34:20 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:34:20 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:34:37 | INFO    | chronological seed=44 2018->2017 lightgbm             macro=0.1726 measurable=0.2013 acc=0.8215 (base 0.1294)
+23:34:39 | INFO    | chronological seed=44 2018->2018 lightgbm             macro=0.7938 measurable=0.7938 acc=0.9767 (base 0.1337)
+23:34:59 | INFO    | chronological seed=44 2018->2017 random_forest        macro=0.1379 measurable=0.1609 acc=0.8118 (base 0.1294)
+23:35:00 | INFO    | chronological seed=44 2018->2018 random_forest        macro=0.7999 measurable=0.7999 acc=0.9776 (base 0.1337)
+23:35:00 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:35:00 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:35:16 | INFO    | chronological seed=45 2017->2017 lightgbm             macro=0.6730 measurable=0.6479 acc=0.9396 (base 0.1294)
+23:35:19 | INFO    | chronological seed=45 2017->2018 lightgbm             macro=0.1698 measurable=0.1698 acc=0.8802 (base 0.1337)
+23:35:35 | INFO    | chronological seed=45 2017->2017 random_forest        macro=0.5325 measurable=0.5909 acc=0.9383 (base 0.1294)
+23:35:36 | INFO    | chronological seed=45 2017->2018 random_forest        macro=0.1711 measurable=0.1711 acc=0.8816 (base 0.1337)
+23:35:36 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:35:36 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:35:53 | INFO    | chronological seed=45 2018->2017 lightgbm             macro=0.1683 measurable=0.1964 acc=0.8213 (base 0.1294)
+23:35:55 | INFO    | chronological seed=45 2018->2018 lightgbm             macro=0.7957 measurable=0.7957 acc=0.9767 (base 0.1337)
+23:36:15 | INFO    | chronological seed=45 2018->2017 random_forest        macro=0.1363 measurable=0.1590 acc=0.8116 (base 0.1294)
+23:36:16 | INFO    | chronological seed=45 2018->2018 random_forest        macro=0.8035 measurable=0.8035 acc=0.9778 (base 0.1337)
+23:36:16 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:36:16 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:36:32 | INFO    | chronological seed=46 2017->2017 lightgbm             macro=0.6728 measurable=0.6477 acc=0.9396 (base 0.1294)
+23:36:35 | INFO    | chronological seed=46 2017->2018 lightgbm             macro=0.1702 measurable=0.1702 acc=0.8804 (base 0.1337)
+23:36:51 | INFO    | chronological seed=46 2017->2017 random_forest        macro=0.5087 measurable=0.5935 acc=0.9384 (base 0.1294)
+23:36:52 | INFO    | chronological seed=46 2017->2018 random_forest        macro=0.1711 measurable=0.1711 acc=0.8815 (base 0.1337)
+23:36:52 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+23:36:52 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+23:37:09 | INFO    | chronological seed=46 2018->2017 lightgbm             macro=0.1761 measurable=0.2054 acc=0.8227 (base 0.1294)
+23:37:12 | INFO    | chronological seed=46 2018->2018 lightgbm             macro=0.7948 measurable=0.7948 acc=0.9767 (base 0.1337)
+23:37:31 | INFO    | chronological seed=46 2018->2017 random_forest        macro=0.1364 measurable=0.1592 acc=0.8121 (base 0.1294)
+23:37:32 | INFO    | chronological seed=46 2018->2018 random_forest        macro=0.8009 measurable=0.8009 acc=0.9777 (base 0.1337)
+23:37:32 | INFO    | done: 80 result rows in 12.9 min -> D:\Projects\Senior Project\ai-classification-cyber-attack\results\crossdataset\ablation_k20
+23:59:00 | INFO    | loading corpora (Destination Port kept)
+23:59:01 | INFO    | ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+23:59:01 | INFO    | ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+23:59:14 | INFO    | clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+23:59:14 | INFO    | sampled 300000 rows (target 300000) across 7 classes with seed 42
+23:59:14 | INFO    | ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+23:59:27 | INFO    | ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+00:01:27 | INFO    | clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+00:01:28 | INFO    | ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+00:01:30 | INFO    | sampled 300000 rows (target 300000) across 7 classes with seed 42
+00:01:30 | INFO    | ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+00:01:30 | INFO    | ablation: dropped 23 of 77 feature(s), 54 remain -- min_seg_size_forward, RST Flag Count, Init_Win_bytes_forward, Destination Port, Fwd Packet Length Min, Max Packet Length, act_data_pkt_fwd, Fwd IAT Min, Flow IAT Min, Avg Bwd Segment Size, Bwd Packet Length Mean, Init_Win_bytes_backward, Bwd IAT Min, Min Packet Length, Fwd Header Length, Bwd Packet Length Min, Bwd Header Length, Fwd Packet Length Std, Flow IAT Max, Subflow Bwd Packets, Total Backward Packets, PSH Flag Count, ECE Flag Count
+00:01:30 | INFO    | random split: {'mode': 'random', 'seed': 42, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+00:01:30 | INFO    | random split: {'mode': 'random', 'seed': 42, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+00:01:31 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:01:31 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:01:31 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:01:32 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:01:56 | INFO    | random seed=42 2017->2017 lightgbm             macro=0.9190 measurable=0.9349 acc=0.9934 (base 0.1294)
+00:01:59 | INFO    | random seed=42 2017->2018 lightgbm             macro=0.1856 measurable=0.1856 acc=0.8543 (base 0.1337)
+00:02:15 | INFO    | random seed=42 2017->2017 xgboost              macro=0.9188 measurable=0.9347 acc=0.9934 (base 0.1294)
+00:02:16 | INFO    | random seed=42 2017->2018 xgboost              macro=0.1706 measurable=0.1706 acc=0.8468 (base 0.1337)
+00:09:34 | INFO    | random seed=42 2017->2017 catboost             macro=0.9069 measurable=0.9208 acc=0.9917 (base 0.1294)
+00:09:35 | INFO    | random seed=42 2017->2018 catboost             macro=0.1453 measurable=0.1453 acc=0.8423 (base 0.1337)
+00:09:35 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:09:56 | INFO    | random seed=42 2017->2017 random_forest        macro=0.9106 measurable=0.9374 acc=0.9933 (base 0.1294)
+00:09:57 | INFO    | random seed=42 2017->2018 random_forest        macro=0.1677 measurable=0.1677 acc=0.8460 (base 0.1337)
+00:09:57 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:10:33 | INFO    | random seed=42 2017->2017 mlp                  macro=0.8206 measurable=0.8548 acc=0.9834 (base 0.1294)
+00:10:34 | INFO    | random seed=42 2017->2018 mlp                  macro=0.2041 measurable=0.2041 acc=0.8536 (base 0.1337)
+00:10:34 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:10:51 | INFO    | random seed=42 2017->2017 logistic_regression  macro=0.6141 measurable=0.6371 acc=0.9654 (base 0.1294)
+00:10:51 | INFO    | random seed=42 2017->2018 logistic_regression  macro=0.1640 measurable=0.1640 acc=0.8467 (base 0.1337)
+00:12:20 | INFO    | random seed=42 2017->2017 stacking             macro=0.9233 measurable=0.9400 acc=0.9936 (base 0.1294)
+00:12:22 | INFO    | random seed=42 2017->2018 stacking             macro=0.1422 measurable=0.1422 acc=0.8433 (base 0.1337)
+00:12:22 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:12:23 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:12:23 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:12:23 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:12:47 | INFO    | random seed=42 2018->2017 lightgbm             macro=0.1378 measurable=0.1608 acc=0.8204 (base 0.1294)
+00:12:51 | INFO    | random seed=42 2018->2018 lightgbm             macro=0.7967 measurable=0.7967 acc=0.9772 (base 0.1337)
+00:13:08 | INFO    | random seed=42 2018->2017 xgboost              macro=0.1419 measurable=0.1655 acc=0.8253 (base 0.1294)
+00:13:09 | INFO    | random seed=42 2018->2018 xgboost              macro=0.8070 measurable=0.8070 acc=0.9775 (base 0.1337)
+00:13:25 | INFO    | random seed=42 2018->2017 catboost             macro=0.1682 measurable=0.1963 acc=0.8312 (base 0.1294)
+00:13:26 | INFO    | random seed=42 2018->2018 catboost             macro=0.7971 measurable=0.7971 acc=0.9778 (base 0.1337)
+00:13:26 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:13:55 | INFO    | random seed=42 2018->2017 random_forest        macro=0.1381 measurable=0.1611 acc=0.8071 (base 0.1294)
+00:13:57 | INFO    | random seed=42 2018->2018 random_forest        macro=0.8065 measurable=0.8065 acc=0.9777 (base 0.1337)
+00:13:57 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:14:15 | INFO    | random seed=42 2018->2017 mlp                  macro=0.2524 measurable=0.2944 acc=0.8335 (base 0.1294)
+00:14:15 | INFO    | random seed=42 2018->2018 mlp                  macro=0.7829 measurable=0.7829 acc=0.9722 (base 0.1337)
+00:14:15 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:14:30 | INFO    | random seed=42 2018->2017 logistic_regression  macro=0.2216 measurable=0.2585 acc=0.7843 (base 0.1294)
+00:14:31 | INFO    | random seed=42 2018->2018 logistic_regression  macro=0.6159 measurable=0.6159 acc=0.9391 (base 0.1337)
+00:16:13 | INFO    | random seed=42 2018->2017 stacking             macro=0.1305 measurable=0.1522 acc=0.8238 (base 0.1294)
+00:16:15 | INFO    | random seed=42 2018->2018 stacking             macro=0.6624 measurable=0.6624 acc=0.9661 (base 0.1337)
+00:16:15 | INFO    | random split: {'mode': 'random', 'seed': 43, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+00:16:15 | INFO    | random split: {'mode': 'random', 'seed': 43, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+00:16:16 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:16:16 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:16:16 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:16:16 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:16:41 | INFO    | random seed=43 2017->2017 lightgbm             macro=0.9403 measurable=0.9391 acc=0.9936 (base 0.1294)
+00:16:45 | INFO    | random seed=43 2017->2018 lightgbm             macro=0.2063 measurable=0.2063 acc=0.8627 (base 0.1337)
+00:17:02 | INFO    | random seed=43 2017->2017 xgboost              macro=0.9370 measurable=0.9352 acc=0.9932 (base 0.1294)
+00:17:03 | INFO    | random seed=43 2017->2018 xgboost              macro=0.1783 measurable=0.1783 acc=0.8461 (base 0.1337)
+00:17:17 | INFO    | random seed=43 2017->2017 catboost             macro=0.9104 measurable=0.9249 acc=0.9920 (base 0.1294)
+00:17:18 | INFO    | random seed=43 2017->2018 catboost             macro=0.1665 measurable=0.1665 acc=0.8443 (base 0.1337)
+00:17:18 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:17:38 | INFO    | random seed=43 2017->2017 random_forest        macro=0.9236 measurable=0.9402 acc=0.9935 (base 0.1294)
+00:17:39 | INFO    | random seed=43 2017->2018 random_forest        macro=0.1661 measurable=0.1661 acc=0.8462 (base 0.1337)
+00:17:39 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:18:11 | INFO    | random seed=43 2017->2017 mlp                  macro=0.8979 measurable=0.8976 acc=0.9858 (base 0.1294)
+00:18:11 | INFO    | random seed=43 2017->2018 mlp                  macro=0.1865 measurable=0.1865 acc=0.8519 (base 0.1337)
+00:18:11 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:18:26 | INFO    | random seed=43 2017->2017 logistic_regression  macro=0.6304 measurable=0.6402 acc=0.9669 (base 0.1294)
+00:18:27 | INFO    | random seed=43 2017->2018 logistic_regression  macro=0.1676 measurable=0.1676 acc=0.8480 (base 0.1337)
+00:19:53 | INFO    | random seed=43 2017->2017 stacking             macro=0.9449 measurable=0.9445 acc=0.9940 (base 0.1294)
+00:19:55 | INFO    | random seed=43 2017->2018 stacking             macro=0.1473 measurable=0.1473 acc=0.8443 (base 0.1337)
+00:19:55 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:19:56 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:19:56 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:19:56 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:20:23 | INFO    | random seed=43 2018->2017 lightgbm             macro=0.1484 measurable=0.1731 acc=0.8219 (base 0.1294)
+00:20:27 | INFO    | random seed=43 2018->2018 lightgbm             macro=0.8087 measurable=0.8087 acc=0.9769 (base 0.1337)
+00:20:44 | INFO    | random seed=43 2018->2017 xgboost              macro=0.1416 measurable=0.1652 acc=0.8242 (base 0.1294)
+00:20:45 | INFO    | random seed=43 2018->2018 xgboost              macro=0.8074 measurable=0.8074 acc=0.9774 (base 0.1337)
+00:21:01 | INFO    | random seed=43 2018->2017 catboost             macro=0.1475 measurable=0.1721 acc=0.8251 (base 0.1294)
+00:21:02 | INFO    | random seed=43 2018->2018 catboost             macro=0.7968 measurable=0.7968 acc=0.9776 (base 0.1337)
+00:21:02 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:21:28 | INFO    | random seed=43 2018->2017 random_forest        macro=0.1377 measurable=0.1606 acc=0.8064 (base 0.1294)
+00:21:29 | INFO    | random seed=43 2018->2018 random_forest        macro=0.8046 measurable=0.8046 acc=0.9776 (base 0.1337)
+00:21:30 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:21:40 | INFO    | random seed=43 2018->2017 mlp                  macro=0.2553 measurable=0.2978 acc=0.8340 (base 0.1294)
+00:21:41 | INFO    | random seed=43 2018->2018 mlp                  macro=0.7253 measurable=0.7253 acc=0.9703 (base 0.1337)
+00:21:41 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:21:57 | INFO    | random seed=43 2018->2017 logistic_regression  macro=0.2165 measurable=0.2525 acc=0.7850 (base 0.1294)
+00:21:57 | INFO    | random seed=43 2018->2018 logistic_regression  macro=0.6144 measurable=0.6144 acc=0.9401 (base 0.1337)
+00:23:30 | INFO    | random seed=43 2018->2017 stacking             macro=0.1317 measurable=0.1537 acc=0.8242 (base 0.1294)
+00:23:33 | INFO    | random seed=43 2018->2018 stacking             macro=0.6543 measurable=0.6543 acc=0.9655 (base 0.1337)
+00:23:33 | INFO    | random split: {'mode': 'random', 'seed': 44, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+00:23:33 | INFO    | random split: {'mode': 'random', 'seed': 44, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+00:23:33 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:23:33 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:23:33 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:23:33 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:23:57 | INFO    | random seed=44 2017->2017 lightgbm             macro=0.8786 measurable=0.9298 acc=0.9931 (base 0.1294)
+00:24:01 | INFO    | random seed=44 2017->2018 lightgbm             macro=0.1591 measurable=0.1591 acc=0.8436 (base 0.1337)
+00:24:17 | INFO    | random seed=44 2017->2017 xgboost              macro=0.9187 measurable=0.9345 acc=0.9935 (base 0.1294)
+00:24:18 | INFO    | random seed=44 2017->2018 xgboost              macro=0.1745 measurable=0.1745 acc=0.8459 (base 0.1337)
+00:24:35 | INFO    | random seed=44 2017->2017 catboost             macro=0.8537 measurable=0.9190 acc=0.9915 (base 0.1294)
+00:24:36 | INFO    | random seed=44 2017->2018 catboost             macro=0.1610 measurable=0.1610 acc=0.8422 (base 0.1337)
+00:24:36 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:24:53 | INFO    | random seed=44 2017->2017 random_forest        macro=0.8699 measurable=0.9197 acc=0.9916 (base 0.1294)
+00:24:54 | INFO    | random seed=44 2017->2018 random_forest        macro=0.1607 measurable=0.1607 acc=0.8454 (base 0.1337)
+00:24:54 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:25:21 | INFO    | random seed=44 2017->2017 mlp                  macro=0.8180 measurable=0.8645 acc=0.9828 (base 0.1294)
+00:25:21 | INFO    | random seed=44 2017->2018 mlp                  macro=0.1974 measurable=0.1974 acc=0.8425 (base 0.1337)
+00:25:21 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:25:35 | INFO    | random seed=44 2017->2017 logistic_regression  macro=0.6032 measurable=0.6482 acc=0.9656 (base 0.1294)
+00:25:36 | INFO    | random seed=44 2017->2018 logistic_regression  macro=0.1685 measurable=0.1685 acc=0.8466 (base 0.1337)
+00:26:59 | INFO    | random seed=44 2017->2017 stacking             macro=0.8843 measurable=0.9365 acc=0.9934 (base 0.1294)
+00:27:02 | INFO    | random seed=44 2017->2018 stacking             macro=0.1608 measurable=0.1608 acc=0.8448 (base 0.1337)
+00:27:02 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:27:02 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:27:02 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:27:02 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:27:26 | INFO    | random seed=44 2018->2017 lightgbm             macro=0.1416 measurable=0.1652 acc=0.8231 (base 0.1294)
+00:27:30 | INFO    | random seed=44 2018->2018 lightgbm             macro=0.8120 measurable=0.8120 acc=0.9778 (base 0.1337)
+00:27:47 | INFO    | random seed=44 2018->2017 xgboost              macro=0.1402 measurable=0.1636 acc=0.8253 (base 0.1294)
+00:27:48 | INFO    | random seed=44 2018->2018 xgboost              macro=0.8075 measurable=0.8075 acc=0.9782 (base 0.1337)
+00:28:04 | INFO    | random seed=44 2018->2017 catboost             macro=0.1479 measurable=0.1725 acc=0.8256 (base 0.1294)
+00:28:05 | INFO    | random seed=44 2018->2018 catboost             macro=0.7936 measurable=0.7936 acc=0.9782 (base 0.1337)
+00:28:05 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:28:29 | INFO    | random seed=44 2018->2017 random_forest        macro=0.1379 measurable=0.1609 acc=0.8037 (base 0.1294)
+00:28:30 | INFO    | random seed=44 2018->2018 random_forest        macro=0.8075 measurable=0.8075 acc=0.9783 (base 0.1337)
+00:28:30 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:28:52 | INFO    | random seed=44 2018->2017 mlp                  macro=0.1752 measurable=0.2044 acc=0.8138 (base 0.1294)
+00:28:53 | INFO    | random seed=44 2018->2018 mlp                  macro=0.7782 measurable=0.7782 acc=0.9751 (base 0.1337)
+00:28:53 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:29:09 | INFO    | random seed=44 2018->2017 logistic_regression  macro=0.2339 measurable=0.2729 acc=0.7891 (base 0.1294)
+00:29:10 | INFO    | random seed=44 2018->2018 logistic_regression  macro=0.6069 measurable=0.6069 acc=0.9377 (base 0.1337)
+00:30:44 | INFO    | random seed=44 2018->2017 stacking             macro=0.1322 measurable=0.1543 acc=0.8241 (base 0.1294)
+00:30:47 | INFO    | random seed=44 2018->2018 stacking             macro=0.6539 measurable=0.6539 acc=0.9658 (base 0.1337)
+00:30:47 | INFO    | random split: {'mode': 'random', 'seed': 45, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+00:30:47 | INFO    | random split: {'mode': 'random', 'seed': 45, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+00:30:47 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:30:47 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:30:47 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:30:47 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:31:11 | INFO    | random seed=45 2017->2017 lightgbm             macro=0.9274 measurable=0.9338 acc=0.9933 (base 0.1294)
+00:31:15 | INFO    | random seed=45 2017->2018 lightgbm             macro=0.2390 measurable=0.2390 acc=0.8693 (base 0.1337)
+00:31:31 | INFO    | random seed=45 2017->2017 xgboost              macro=0.9131 measurable=0.9280 acc=0.9930 (base 0.1294)
+00:31:32 | INFO    | random seed=45 2017->2018 xgboost              macro=0.1737 measurable=0.1737 acc=0.8460 (base 0.1337)
+00:31:50 | INFO    | random seed=45 2017->2017 catboost             macro=0.8978 measurable=0.9224 acc=0.9920 (base 0.1294)
+00:31:51 | INFO    | random seed=45 2017->2018 catboost             macro=0.1619 measurable=0.1619 acc=0.8428 (base 0.1337)
+00:31:51 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:32:07 | INFO    | random seed=45 2017->2017 random_forest        macro=0.8937 measurable=0.9177 acc=0.9913 (base 0.1294)
+00:32:08 | INFO    | random seed=45 2017->2018 random_forest        macro=0.1569 measurable=0.1569 acc=0.8445 (base 0.1337)
+00:32:08 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:32:44 | INFO    | random seed=45 2017->2017 mlp                  macro=0.8897 measurable=0.9130 acc=0.9875 (base 0.1294)
+00:32:44 | INFO    | random seed=45 2017->2018 mlp                  macro=0.1913 measurable=0.1913 acc=0.8541 (base 0.1337)
+00:32:44 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:32:59 | INFO    | random seed=45 2017->2017 logistic_regression  macro=0.5834 measurable=0.6390 acc=0.9666 (base 0.1294)
+00:33:00 | INFO    | random seed=45 2017->2018 logistic_regression  macro=0.1670 measurable=0.1670 acc=0.8467 (base 0.1337)
+00:34:23 | INFO    | random seed=45 2017->2017 stacking             macro=0.9128 measurable=0.9399 acc=0.9936 (base 0.1294)
+00:34:25 | INFO    | random seed=45 2017->2018 stacking             macro=0.1762 measurable=0.1762 acc=0.8428 (base 0.1337)
+00:34:25 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:34:26 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:34:26 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:34:26 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:34:48 | INFO    | random seed=45 2018->2017 lightgbm             macro=0.1445 measurable=0.1686 acc=0.8219 (base 0.1294)
+00:34:52 | INFO    | random seed=45 2018->2018 lightgbm             macro=0.8100 measurable=0.8100 acc=0.9771 (base 0.1337)
+00:35:09 | INFO    | random seed=45 2018->2017 xgboost              macro=0.1602 measurable=0.1869 acc=0.8283 (base 0.1294)
+00:35:10 | INFO    | random seed=45 2018->2018 xgboost              macro=0.8095 measurable=0.8095 acc=0.9778 (base 0.1337)
+00:35:26 | INFO    | random seed=45 2018->2017 catboost             macro=0.1721 measurable=0.2008 acc=0.8306 (base 0.1294)
+00:35:27 | INFO    | random seed=45 2018->2018 catboost             macro=0.7915 measurable=0.7915 acc=0.9778 (base 0.1337)
+00:35:27 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:35:51 | INFO    | random seed=45 2018->2017 random_forest        macro=0.1383 measurable=0.1614 acc=0.8072 (base 0.1294)
+00:35:52 | INFO    | random seed=45 2018->2018 random_forest        macro=0.8056 measurable=0.8056 acc=0.9774 (base 0.1337)
+00:35:52 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:36:13 | INFO    | random seed=45 2018->2017 mlp                  macro=0.1448 measurable=0.1689 acc=0.8052 (base 0.1294)
+00:36:13 | INFO    | random seed=45 2018->2018 mlp                  macro=0.7642 measurable=0.7642 acc=0.9727 (base 0.1337)
+00:36:13 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:36:32 | INFO    | random seed=45 2018->2017 logistic_regression  macro=0.1364 measurable=0.1592 acc=0.7749 (base 0.1294)
+00:36:33 | INFO    | random seed=45 2018->2018 logistic_regression  macro=0.6160 measurable=0.6160 acc=0.9405 (base 0.1337)
+00:38:09 | INFO    | random seed=45 2018->2017 stacking             macro=0.1311 measurable=0.1529 acc=0.8232 (base 0.1294)
+00:38:11 | INFO    | random seed=45 2018->2018 stacking             macro=0.6646 measurable=0.6646 acc=0.9660 (base 0.1337)
+00:38:11 | INFO    | random split: {'mode': 'random', 'seed': 46, 'n_train': 180001, 'n_calibration': 30000, 'n_test': 89999}
+00:38:11 | INFO    | random split: {'mode': 'random', 'seed': 46, 'n_train': 179999, 'n_calibration': 30000, 'n_test': 90001}
+00:38:11 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:38:11 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:38:12 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:38:12 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:38:35 | INFO    | random seed=46 2017->2017 lightgbm             macro=0.9131 measurable=0.9402 acc=0.9937 (base 0.1294)
+00:38:39 | INFO    | random seed=46 2017->2018 lightgbm             macro=0.1901 measurable=0.1901 acc=0.8506 (base 0.1337)
+00:38:54 | INFO    | random seed=46 2017->2017 xgboost              macro=0.9103 measurable=0.9370 acc=0.9935 (base 0.1294)
+00:38:55 | INFO    | random seed=46 2017->2018 xgboost              macro=0.1666 measurable=0.1666 acc=0.8439 (base 0.1337)
+00:39:12 | INFO    | random seed=46 2017->2017 catboost             macro=0.8925 measurable=0.9162 acc=0.9915 (base 0.1294)
+00:39:13 | INFO    | random seed=46 2017->2018 catboost             macro=0.1870 measurable=0.1870 acc=0.8431 (base 0.1337)
+00:39:13 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:39:29 | INFO    | random seed=46 2017->2017 random_forest        macro=0.9163 measurable=0.9441 acc=0.9939 (base 0.1294)
+00:39:30 | INFO    | random seed=46 2017->2018 random_forest        macro=0.1674 measurable=0.1674 acc=0.8449 (base 0.1337)
+00:39:30 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:39:56 | INFO    | random seed=46 2017->2017 mlp                  macro=0.8484 measurable=0.8787 acc=0.9843 (base 0.1294)
+00:39:57 | INFO    | random seed=46 2017->2018 mlp                  macro=0.2001 measurable=0.2001 acc=0.8495 (base 0.1337)
+00:39:57 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:40:11 | INFO    | random seed=46 2017->2017 logistic_regression  macro=0.5876 measurable=0.6485 acc=0.9660 (base 0.1294)
+00:40:12 | INFO    | random seed=46 2017->2018 logistic_regression  macro=0.1637 measurable=0.1637 acc=0.8367 (base 0.1337)
+00:41:34 | INFO    | random seed=46 2017->2017 stacking             macro=0.9156 measurable=0.9432 acc=0.9939 (base 0.1294)
+00:41:36 | INFO    | random seed=46 2017->2018 stacking             macro=0.1436 measurable=0.1436 acc=0.8435 (base 0.1337)
+00:41:36 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:41:36 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:41:37 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:41:37 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:42:00 | INFO    | random seed=46 2018->2017 lightgbm             macro=0.1611 measurable=0.1879 acc=0.8214 (base 0.1294)
+00:42:04 | INFO    | random seed=46 2018->2018 lightgbm             macro=0.8056 measurable=0.8056 acc=0.9775 (base 0.1337)
+00:42:21 | INFO    | random seed=46 2018->2017 xgboost              macro=0.1453 measurable=0.1695 acc=0.8252 (base 0.1294)
+00:42:22 | INFO    | random seed=46 2018->2018 xgboost              macro=0.8050 measurable=0.8050 acc=0.9778 (base 0.1337)
+00:42:38 | INFO    | random seed=46 2018->2017 catboost             macro=0.1615 measurable=0.1884 acc=0.8293 (base 0.1294)
+00:42:39 | INFO    | random seed=46 2018->2018 catboost             macro=0.7911 measurable=0.7911 acc=0.9779 (base 0.1337)
+00:42:39 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:43:03 | INFO    | random seed=46 2018->2017 random_forest        macro=0.1365 measurable=0.1592 acc=0.8064 (base 0.1294)
+00:43:04 | INFO    | random seed=46 2018->2018 random_forest        macro=0.8023 measurable=0.8023 acc=0.9778 (base 0.1337)
+00:43:04 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:43:16 | INFO    | random seed=46 2018->2017 mlp                  macro=0.2488 measurable=0.2903 acc=0.8186 (base 0.1294)
+00:43:16 | INFO    | random seed=46 2018->2018 mlp                  macro=0.7679 measurable=0.7679 acc=0.9744 (base 0.1337)
+00:43:16 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:43:31 | INFO    | random seed=46 2018->2017 logistic_regression  macro=0.2196 measurable=0.2562 acc=0.7844 (base 0.1294)
+00:43:32 | INFO    | random seed=46 2018->2018 logistic_regression  macro=0.6126 measurable=0.6126 acc=0.9391 (base 0.1337)
+00:45:05 | INFO    | random seed=46 2018->2017 stacking             macro=0.1317 measurable=0.1536 acc=0.8239 (base 0.1294)
+00:45:08 | INFO    | random seed=46 2018->2018 stacking             macro=0.6665 measurable=0.6665 acc=0.9661 (base 0.1337)
+00:45:08 | INFO    | chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+00:45:09 | INFO    | chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+00:45:09 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:45:09 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:45:09 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:45:09 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:45:33 | INFO    | chronological seed=42 2017->2017 lightgbm             macro=0.6623 measurable=0.6477 acc=0.9394 (base 0.1294)
+00:45:37 | INFO    | chronological seed=42 2017->2018 lightgbm             macro=0.1700 measurable=0.1700 acc=0.8802 (base 0.1337)
+00:45:52 | INFO    | chronological seed=42 2017->2017 xgboost              macro=0.6626 measurable=0.6358 acc=0.9382 (base 0.1294)
+00:45:53 | INFO    | chronological seed=42 2017->2018 xgboost              macro=0.1704 measurable=0.1704 acc=0.8807 (base 0.1337)
+00:46:09 | INFO    | chronological seed=42 2017->2017 catboost             macro=0.6444 measurable=0.6145 acc=0.9334 (base 0.1294)
+00:46:10 | INFO    | chronological seed=42 2017->2018 catboost             macro=0.1707 measurable=0.1707 acc=0.8809 (base 0.1337)
+00:46:10 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:46:29 | INFO    | chronological seed=42 2017->2017 random_forest        macro=0.5039 measurable=0.5879 acc=0.9394 (base 0.1294)
+00:46:31 | INFO    | chronological seed=42 2017->2018 random_forest        macro=0.1711 measurable=0.1711 acc=0.8815 (base 0.1337)
+00:46:31 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:47:01 | INFO    | chronological seed=42 2017->2017 mlp                  macro=0.4732 measurable=0.5008 acc=0.9253 (base 0.1294)
+00:47:02 | INFO    | chronological seed=42 2017->2018 mlp                  macro=0.2188 measurable=0.2188 acc=0.8800 (base 0.1337)
+00:47:02 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:47:15 | INFO    | chronological seed=42 2017->2017 logistic_regression  macro=0.3751 measurable=0.4376 acc=0.9181 (base 0.1294)
+00:47:16 | INFO    | chronological seed=42 2017->2018 logistic_regression  macro=0.1934 measurable=0.1934 acc=0.8717 (base 0.1337)
+00:48:39 | INFO    | chronological seed=42 2017->2017 stacking             macro=0.6525 measurable=0.6501 acc=0.9432 (base 0.1294)
+00:48:42 | INFO    | chronological seed=42 2017->2018 stacking             macro=0.1689 measurable=0.1689 acc=0.8805 (base 0.1337)
+00:48:42 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:48:42 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:48:42 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:48:42 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:49:05 | INFO    | chronological seed=42 2018->2017 lightgbm             macro=0.1675 measurable=0.1954 acc=0.8201 (base 0.1294)
+00:49:09 | INFO    | chronological seed=42 2018->2018 lightgbm             macro=0.7960 measurable=0.7960 acc=0.9768 (base 0.1337)
+00:49:26 | INFO    | chronological seed=42 2018->2017 xgboost              macro=0.2249 measurable=0.2624 acc=0.8358 (base 0.1294)
+00:49:27 | INFO    | chronological seed=42 2018->2018 xgboost              macro=0.8040 measurable=0.8040 acc=0.9774 (base 0.1337)
+00:49:43 | INFO    | chronological seed=42 2018->2017 catboost             macro=0.1640 measurable=0.1913 acc=0.8310 (base 0.1294)
+00:49:44 | INFO    | chronological seed=42 2018->2018 catboost             macro=0.7964 measurable=0.7964 acc=0.9780 (base 0.1337)
+00:49:44 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:50:07 | INFO    | chronological seed=42 2018->2017 random_forest        macro=0.1367 measurable=0.1595 acc=0.8119 (base 0.1294)
+00:50:08 | INFO    | chronological seed=42 2018->2018 random_forest        macro=0.8018 measurable=0.8018 acc=0.9777 (base 0.1337)
+00:50:08 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:50:24 | INFO    | chronological seed=42 2018->2017 mlp                  macro=0.3017 measurable=0.3520 acc=0.8540 (base 0.1294)
+00:50:24 | INFO    | chronological seed=42 2018->2018 mlp                  macro=0.7240 measurable=0.7240 acc=0.9716 (base 0.1337)
+00:50:24 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:50:43 | INFO    | chronological seed=42 2018->2017 logistic_regression  macro=0.2181 measurable=0.2545 acc=0.8183 (base 0.1294)
+00:50:43 | INFO    | chronological seed=42 2018->2018 logistic_regression  macro=0.6041 measurable=0.6041 acc=0.9407 (base 0.1337)
+00:52:16 | INFO    | chronological seed=42 2018->2017 stacking             macro=0.1376 measurable=0.1606 acc=0.8256 (base 0.1294)
+00:52:18 | INFO    | chronological seed=42 2018->2018 stacking             macro=0.6450 measurable=0.6450 acc=0.9657 (base 0.1337)
+00:52:18 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:52:18 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:52:18 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:52:18 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:52:40 | INFO    | chronological seed=43 2017->2017 lightgbm             macro=0.6624 measurable=0.6478 acc=0.9397 (base 0.1294)
+00:52:44 | INFO    | chronological seed=43 2017->2018 lightgbm             macro=0.1697 measurable=0.1697 acc=0.8801 (base 0.1337)
+00:52:59 | INFO    | chronological seed=43 2017->2017 xgboost              macro=0.6743 measurable=0.6386 acc=0.9394 (base 0.1294)
+00:52:59 | INFO    | chronological seed=43 2017->2018 xgboost              macro=0.1702 measurable=0.1702 acc=0.8806 (base 0.1337)
+00:53:17 | INFO    | chronological seed=43 2017->2017 catboost             macro=0.6215 measurable=0.6140 acc=0.9338 (base 0.1294)
+00:53:18 | INFO    | chronological seed=43 2017->2018 catboost             macro=0.1706 measurable=0.1706 acc=0.8809 (base 0.1337)
+00:53:18 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:53:39 | INFO    | chronological seed=43 2017->2017 random_forest        macro=0.5027 measurable=0.5864 acc=0.9393 (base 0.1294)
+00:53:40 | INFO    | chronological seed=43 2017->2018 random_forest        macro=0.1713 measurable=0.1713 acc=0.8815 (base 0.1337)
+00:53:40 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:54:05 | INFO    | chronological seed=43 2017->2017 mlp                  macro=0.5032 measurable=0.5567 acc=0.9264 (base 0.1294)
+00:54:06 | INFO    | chronological seed=43 2017->2018 mlp                  macro=0.2158 measurable=0.2158 acc=0.8798 (base 0.1337)
+00:54:06 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+00:54:19 | INFO    | chronological seed=43 2017->2017 logistic_regression  macro=0.3751 measurable=0.4376 acc=0.9181 (base 0.1294)
+00:54:20 | INFO    | chronological seed=43 2017->2018 logistic_regression  macro=0.1934 measurable=0.1934 acc=0.8717 (base 0.1337)
+00:55:44 | INFO    | chronological seed=43 2017->2017 stacking             macro=0.6653 measurable=0.6512 acc=0.9443 (base 0.1294)
+00:55:46 | INFO    | chronological seed=43 2017->2018 stacking             macro=0.1693 measurable=0.1693 acc=0.8806 (base 0.1337)
+00:55:46 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+00:55:46 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+00:55:46 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+00:55:46 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+00:56:11 | INFO    | chronological seed=43 2018->2017 lightgbm             macro=0.1679 measurable=0.1959 acc=0.8215 (base 0.1294)
+00:56:15 | INFO    | chronological seed=43 2018->2018 lightgbm             macro=0.7961 measurable=0.7961 acc=0.9767 (base 0.1337)
+00:56:32 | INFO    | chronological seed=43 2018->2017 xgboost              macro=0.1851 measurable=0.2160 acc=0.8275 (base 0.1294)
+00:56:32 | INFO    | chronological seed=43 2018->2018 xgboost              macro=0.8041 measurable=0.8041 acc=0.9773 (base 0.1337)
+00:59:04 | INFO    | chronological seed=43 2018->2017 catboost             macro=0.1528 measurable=0.1783 acc=0.8286 (base 0.1294)
+00:59:05 | INFO    | chronological seed=43 2018->2018 catboost             macro=0.7949 measurable=0.7949 acc=0.9782 (base 0.1337)
+00:59:05 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+00:59:29 | INFO    | chronological seed=43 2018->2017 random_forest        macro=0.1363 measurable=0.1590 acc=0.8121 (base 0.1294)
+00:59:30 | INFO    | chronological seed=43 2018->2018 random_forest        macro=0.8020 measurable=0.8020 acc=0.9777 (base 0.1337)
+00:59:30 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+00:59:46 | INFO    | chronological seed=43 2018->2017 mlp                  macro=0.3294 measurable=0.3843 acc=0.8622 (base 0.1294)
+00:59:47 | INFO    | chronological seed=43 2018->2018 mlp                  macro=0.7348 measurable=0.7348 acc=0.9730 (base 0.1337)
+00:59:47 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+01:00:05 | INFO    | chronological seed=43 2018->2017 logistic_regression  macro=0.2181 measurable=0.2545 acc=0.8183 (base 0.1294)
+01:00:05 | INFO    | chronological seed=43 2018->2018 logistic_regression  macro=0.6041 measurable=0.6041 acc=0.9407 (base 0.1337)
+01:01:40 | INFO    | chronological seed=43 2018->2017 stacking             macro=0.1376 measurable=0.1606 acc=0.8259 (base 0.1294)
+01:01:42 | INFO    | chronological seed=43 2018->2018 stacking             macro=0.6457 measurable=0.6457 acc=0.9658 (base 0.1337)
+01:01:42 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:01:43 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+01:01:43 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+01:01:43 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+01:02:05 | INFO    | chronological seed=44 2017->2017 lightgbm             macro=0.6732 measurable=0.6482 acc=0.9397 (base 0.1294)
+01:02:09 | INFO    | chronological seed=44 2017->2018 lightgbm             macro=0.1701 measurable=0.1701 acc=0.8804 (base 0.1337)
+01:02:24 | INFO    | chronological seed=44 2017->2017 xgboost              macro=0.6653 measurable=0.6390 acc=0.9392 (base 0.1294)
+01:02:24 | INFO    | chronological seed=44 2017->2018 xgboost              macro=0.1697 measurable=0.1697 acc=0.8803 (base 0.1337)
+01:02:42 | INFO    | chronological seed=44 2017->2017 catboost             macro=0.6319 measurable=0.6122 acc=0.9332 (base 0.1294)
+01:02:43 | INFO    | chronological seed=44 2017->2018 catboost             macro=0.1709 measurable=0.1709 acc=0.8810 (base 0.1337)
+01:02:43 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+01:03:07 | INFO    | chronological seed=44 2017->2017 random_forest        macro=0.5054 measurable=0.5897 acc=0.9391 (base 0.1294)
+01:03:08 | INFO    | chronological seed=44 2017->2018 random_forest        macro=0.1714 measurable=0.1714 acc=0.8816 (base 0.1337)
+01:03:08 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+01:03:38 | INFO    | chronological seed=44 2017->2017 mlp                  macro=0.4935 measurable=0.4868 acc=0.9259 (base 0.1294)
+01:03:39 | INFO    | chronological seed=44 2017->2018 mlp                  macro=0.2225 measurable=0.2225 acc=0.8801 (base 0.1337)
+01:03:39 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+01:03:53 | INFO    | chronological seed=44 2017->2017 logistic_regression  macro=0.3751 measurable=0.4376 acc=0.9181 (base 0.1294)
+01:03:53 | INFO    | chronological seed=44 2017->2018 logistic_regression  macro=0.1934 measurable=0.1934 acc=0.8717 (base 0.1337)
+01:05:18 | INFO    | chronological seed=44 2017->2017 stacking             macro=0.6769 measurable=0.6524 acc=0.9441 (base 0.1294)
+01:05:20 | INFO    | chronological seed=44 2017->2018 stacking             macro=0.1696 measurable=0.1696 acc=0.8809 (base 0.1337)
+01:05:21 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:05:21 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+01:05:21 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+01:05:21 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+01:05:44 | INFO    | chronological seed=44 2018->2017 lightgbm             macro=0.1726 measurable=0.2013 acc=0.8215 (base 0.1294)
+01:05:48 | INFO    | chronological seed=44 2018->2018 lightgbm             macro=0.7938 measurable=0.7938 acc=0.9767 (base 0.1337)
+01:06:05 | INFO    | chronological seed=44 2018->2017 xgboost              macro=0.1834 measurable=0.2139 acc=0.8271 (base 0.1294)
+01:06:06 | INFO    | chronological seed=44 2018->2018 xgboost              macro=0.8029 measurable=0.8029 acc=0.9771 (base 0.1337)
+01:06:22 | INFO    | chronological seed=44 2018->2017 catboost             macro=0.1412 measurable=0.1648 acc=0.8261 (base 0.1294)
+01:06:23 | INFO    | chronological seed=44 2018->2018 catboost             macro=0.7947 measurable=0.7947 acc=0.9778 (base 0.1337)
+01:06:23 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+01:06:45 | INFO    | chronological seed=44 2018->2017 random_forest        macro=0.1379 measurable=0.1609 acc=0.8118 (base 0.1294)
+01:06:47 | INFO    | chronological seed=44 2018->2018 random_forest        macro=0.7999 measurable=0.7999 acc=0.9776 (base 0.1337)
+01:06:47 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+01:06:59 | INFO    | chronological seed=44 2018->2017 mlp                  macro=0.2909 measurable=0.3394 acc=0.8489 (base 0.1294)
+01:07:00 | INFO    | chronological seed=44 2018->2018 mlp                  macro=0.7298 measurable=0.7298 acc=0.9746 (base 0.1337)
+01:07:00 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+01:07:18 | INFO    | chronological seed=44 2018->2017 logistic_regression  macro=0.2181 measurable=0.2545 acc=0.8183 (base 0.1294)
+01:07:18 | INFO    | chronological seed=44 2018->2018 logistic_regression  macro=0.6041 measurable=0.6041 acc=0.9407 (base 0.1337)
+01:08:51 | INFO    | chronological seed=44 2018->2017 stacking             macro=0.1380 measurable=0.1610 acc=0.8257 (base 0.1294)
+01:08:53 | INFO    | chronological seed=44 2018->2018 stacking             macro=0.6451 measurable=0.6451 acc=0.9657 (base 0.1337)
+01:08:54 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:08:54 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+01:08:54 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+01:08:54 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+01:09:16 | INFO    | chronological seed=45 2017->2017 lightgbm             macro=0.6730 measurable=0.6479 acc=0.9396 (base 0.1294)
+01:09:20 | INFO    | chronological seed=45 2017->2018 lightgbm             macro=0.1698 measurable=0.1698 acc=0.8802 (base 0.1337)
+01:09:34 | INFO    | chronological seed=45 2017->2017 xgboost              macro=0.6536 measurable=0.6376 acc=0.9386 (base 0.1294)
+01:09:35 | INFO    | chronological seed=45 2017->2018 xgboost              macro=0.1702 measurable=0.1702 acc=0.8806 (base 0.1337)
+01:09:53 | INFO    | chronological seed=45 2017->2017 catboost             macro=0.6335 measurable=0.6140 acc=0.9325 (base 0.1294)
+01:09:54 | INFO    | chronological seed=45 2017->2018 catboost             macro=0.1704 measurable=0.1704 acc=0.8808 (base 0.1337)
+01:09:54 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+01:10:13 | INFO    | chronological seed=45 2017->2017 random_forest        macro=0.5325 measurable=0.5909 acc=0.9383 (base 0.1294)
+01:10:14 | INFO    | chronological seed=45 2017->2018 random_forest        macro=0.1711 measurable=0.1711 acc=0.8816 (base 0.1337)
+01:10:14 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+01:10:45 | INFO    | chronological seed=45 2017->2017 mlp                  macro=0.4386 measurable=0.4814 acc=0.9253 (base 0.1294)
+01:10:46 | INFO    | chronological seed=45 2017->2018 mlp                  macro=0.2080 measurable=0.2080 acc=0.8791 (base 0.1337)
+01:10:46 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+01:10:59 | INFO    | chronological seed=45 2017->2017 logistic_regression  macro=0.3751 measurable=0.4376 acc=0.9181 (base 0.1294)
+01:11:00 | INFO    | chronological seed=45 2017->2018 logistic_regression  macro=0.1934 measurable=0.1934 acc=0.8717 (base 0.1337)
+01:12:23 | INFO    | chronological seed=45 2017->2017 stacking             macro=0.6654 measurable=0.6513 acc=0.9436 (base 0.1294)
+01:12:25 | INFO    | chronological seed=45 2017->2018 stacking             macro=0.1697 measurable=0.1697 acc=0.8809 (base 0.1337)
+01:12:25 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:12:25 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+01:12:26 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+01:12:26 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+01:12:50 | INFO    | chronological seed=45 2018->2017 lightgbm             macro=0.1683 measurable=0.1964 acc=0.8213 (base 0.1294)
+01:12:54 | INFO    | chronological seed=45 2018->2018 lightgbm             macro=0.7957 measurable=0.7957 acc=0.9767 (base 0.1337)
+01:13:11 | INFO    | chronological seed=45 2018->2017 xgboost              macro=0.2016 measurable=0.2352 acc=0.8308 (base 0.1294)
+01:13:12 | INFO    | chronological seed=45 2018->2018 xgboost              macro=0.8034 measurable=0.8034 acc=0.9773 (base 0.1337)
+01:13:28 | INFO    | chronological seed=45 2018->2017 catboost             macro=0.1454 measurable=0.1696 acc=0.8271 (base 0.1294)
+01:13:29 | INFO    | chronological seed=45 2018->2018 catboost             macro=0.7947 measurable=0.7947 acc=0.9780 (base 0.1337)
+01:13:29 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+01:13:51 | INFO    | chronological seed=45 2018->2017 random_forest        macro=0.1363 measurable=0.1590 acc=0.8116 (base 0.1294)
+01:13:52 | INFO    | chronological seed=45 2018->2018 random_forest        macro=0.8035 measurable=0.8035 acc=0.9778 (base 0.1337)
+01:13:52 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+01:14:03 | INFO    | chronological seed=45 2018->2017 mlp                  macro=0.3066 measurable=0.3577 acc=0.8524 (base 0.1294)
+01:14:04 | INFO    | chronological seed=45 2018->2018 mlp                  macro=0.7174 measurable=0.7174 acc=0.9686 (base 0.1337)
+01:14:04 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+01:14:21 | INFO    | chronological seed=45 2018->2017 logistic_regression  macro=0.2181 measurable=0.2545 acc=0.8183 (base 0.1294)
+01:14:22 | INFO    | chronological seed=45 2018->2018 logistic_regression  macro=0.6041 measurable=0.6041 acc=0.9407 (base 0.1337)
+01:15:56 | INFO    | chronological seed=45 2018->2017 stacking             macro=0.1425 measurable=0.1662 acc=0.8258 (base 0.1294)
+01:15:58 | INFO    | chronological seed=45 2018->2018 stacking             macro=0.6452 measurable=0.6452 acc=0.9658 (base 0.1337)
+01:15:58 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:15:59 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+01:15:59 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+01:15:59 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+01:16:21 | INFO    | chronological seed=46 2017->2017 lightgbm             macro=0.6728 measurable=0.6477 acc=0.9396 (base 0.1294)
+01:16:24 | INFO    | chronological seed=46 2017->2018 lightgbm             macro=0.1702 measurable=0.1702 acc=0.8804 (base 0.1337)
+01:16:40 | INFO    | chronological seed=46 2017->2017 xgboost              macro=0.6531 measurable=0.6370 acc=0.9384 (base 0.1294)
+01:16:41 | INFO    | chronological seed=46 2017->2018 xgboost              macro=0.1703 measurable=0.1703 acc=0.8807 (base 0.1337)
+01:16:57 | INFO    | chronological seed=46 2017->2017 catboost             macro=0.6038 measurable=0.6093 acc=0.9319 (base 0.1294)
+01:16:58 | INFO    | chronological seed=46 2017->2018 catboost             macro=0.1708 measurable=0.1708 acc=0.8810 (base 0.1337)
+01:16:58 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+01:17:18 | INFO    | chronological seed=46 2017->2017 random_forest        macro=0.5087 measurable=0.5935 acc=0.9384 (base 0.1294)
+01:17:19 | INFO    | chronological seed=46 2017->2018 random_forest        macro=0.1711 measurable=0.1711 acc=0.8815 (base 0.1337)
+01:17:19 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+01:17:51 | INFO    | chronological seed=46 2017->2017 mlp                  macro=0.5379 measurable=0.5387 acc=0.9269 (base 0.1294)
+01:17:51 | INFO    | chronological seed=46 2017->2018 mlp                  macro=0.1695 measurable=0.1695 acc=0.8797 (base 0.1337)
+01:17:51 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+01:18:04 | INFO    | chronological seed=46 2017->2017 logistic_regression  macro=0.3751 measurable=0.4376 acc=0.9181 (base 0.1294)
+01:18:05 | INFO    | chronological seed=46 2017->2018 logistic_regression  macro=0.1934 measurable=0.1934 acc=0.8717 (base 0.1337)
+01:19:31 | INFO    | chronological seed=46 2017->2017 stacking             macro=0.6531 measurable=0.6509 acc=0.9437 (base 0.1294)
+01:19:34 | INFO    | chronological seed=46 2017->2018 stacking             macro=0.1695 measurable=0.1695 acc=0.8809 (base 0.1337)
+01:19:34 | INFO    | Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:19:34 | INFO    | Preprocessor fitted: 46 features, scaler=standard
+01:19:34 | INFO    |   lightgbm is CPU-only -- --accelerator gpu does not apply
+01:19:34 | INFO    |   lightgbm has no GPU support in the PyPI wheel -- running on CPU
+01:19:58 | INFO    | chronological seed=46 2018->2017 lightgbm             macro=0.1761 measurable=0.2054 acc=0.8227 (base 0.1294)
+01:20:01 | INFO    | chronological seed=46 2018->2018 lightgbm             macro=0.7948 measurable=0.7948 acc=0.9767 (base 0.1337)
+01:20:18 | INFO    | chronological seed=46 2018->2017 xgboost              macro=0.2275 measurable=0.2654 acc=0.8364 (base 0.1294)
+01:20:19 | INFO    | chronological seed=46 2018->2018 xgboost              macro=0.8036 measurable=0.8036 acc=0.9772 (base 0.1337)
+01:20:35 | INFO    | chronological seed=46 2018->2017 catboost             macro=0.1433 measurable=0.1672 acc=0.8267 (base 0.1294)
+01:20:36 | INFO    | chronological seed=46 2018->2018 catboost             macro=0.7963 measurable=0.7963 acc=0.9779 (base 0.1337)
+01:20:36 | INFO    |   random_forest is CPU-only -- --accelerator gpu does not apply
+01:20:59 | INFO    | chronological seed=46 2018->2017 random_forest        macro=0.1364 measurable=0.1592 acc=0.8121 (base 0.1294)
+01:21:00 | INFO    | chronological seed=46 2018->2018 random_forest        macro=0.8009 measurable=0.8009 acc=0.9777 (base 0.1337)
+01:21:00 | INFO    |   mlp is CPU-only -- --accelerator gpu does not apply
+01:21:11 | INFO    | chronological seed=46 2018->2017 mlp                  macro=0.3282 measurable=0.3829 acc=0.8598 (base 0.1294)
+01:21:12 | INFO    | chronological seed=46 2018->2018 mlp                  macro=0.7234 measurable=0.7234 acc=0.9712 (base 0.1337)
+01:21:12 | INFO    |   logistic_regression is CPU-only -- --accelerator gpu does not apply
+01:21:30 | INFO    | chronological seed=46 2018->2017 logistic_regression  macro=0.2181 measurable=0.2545 acc=0.8183 (base 0.1294)
+01:21:30 | INFO    | chronological seed=46 2018->2018 logistic_regression  macro=0.6041 measurable=0.6041 acc=0.9407 (base 0.1337)
+01:23:05 | INFO    | chronological seed=46 2018->2017 stacking             macro=0.1387 measurable=0.1619 acc=0.8253 (base 0.1294)
+01:23:07 | INFO    | chronological seed=46 2018->2018 stacking             macro=0.6457 measurable=0.6457 acc=0.9658 (base 0.1337)
+01:23:07 | INFO    | done: 280 result rows in 81.6 min -> D:\Projects\Senior Project\ai-classification-cyber-attack\results\crossdataset\ablation_k20

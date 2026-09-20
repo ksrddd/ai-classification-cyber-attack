@@ -1,0 +1,17 @@
+{
+  "drop_top_k": 10,
+  "dropped": [
+    "min_seg_size_forward",
+    "RST Flag Count",
+    "Init_Win_bytes_forward",
+    "Destination Port",
+    "Fwd Packet Length Min",
+    "Max Packet Length",
+    "act_data_pkt_fwd",
+    "Fwd IAT Min",
+    "Flow IAT Min",
+    "Avg Bwd Segment Size",
+    "Bwd Packet Length Mean",
+    "ECE Flag Count"
+  ]
+}

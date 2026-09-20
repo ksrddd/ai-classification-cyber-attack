@@ -1,0 +1,11 @@
+{
+  "drop_top_k": 5,
+  "dropped": [
+    "min_seg_size_forward",
+    "RST Flag Count",
+    "Init_Win_bytes_forward",
+    "Destination Port",
+    "Fwd Packet Length Min",
+    "ECE Flag Count"
+  ]
+}

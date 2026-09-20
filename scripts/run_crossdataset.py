@@ -134,6 +134,30 @@ def score(y_true: pd.Series, y_pred: np.ndarray, encoder: LabelEncoder) -> dict:
     return out
 
 
+def resolve_dropped(args) -> list[str]:
+    """The top-K ranked features, expanded to whole duplicate groups.
+
+    Expansion is the point. Dropping ``Total Backward Packets`` while leaving
+    ``Subflow Bwd Packets`` in place removes a name, not a measurement: the two
+    hold identical values on every row of both corpora, so the model reads the
+    signal off the survivor and the ablation tests nothing.
+    """
+    import pandas as pd
+
+    audit = (PROJECT_ROOT / "results" / "crossdataset" / "feature_mapping_audit"
+             / "findings.json")
+    groups = json.loads(audit.read_text(encoding="utf-8"))["duplicate_groups"]
+    member = {c: g for g in groups for c in g}
+
+    ranked = pd.read_csv(args.ranking)["feature"].tolist()[: args.drop_top_k]
+    out: list[str] = []
+    for feature in [*ranked, *args.also_drop]:
+        for column in member.get(feature, [feature]):
+            if column not in out:
+                out.append(column)
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--run-name", default="protocol_v1")
@@ -145,6 +169,27 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--no-dst-port", action="store_true",
         help="drop Destination Port from the shared schema (76 features)",
+    )
+    ap.add_argument(
+        "--drop-top-k", type=int, default=0,
+        help="ablation: drop the K features ranked most dataset-identifying by "
+             "adversarial validation, together with their exact duplicates",
+    )
+    ap.add_argument(
+        "--ranking", type=Path,
+        default=PROJECT_ROOT / "results" / "crossdataset" / "adversarial_validation"
+        / "ranking.csv",
+        help="feature ranking that --drop-top-k reads",
+    )
+    ap.add_argument(
+        "--also-drop", nargs="*", default=[],
+        help="extra columns to drop alongside the top-K, for near-duplicates that "
+             "would otherwise carry the dropped signal onward",
+    )
+    ap.add_argument(
+        "--dry-run", action="store_true",
+        help="load both corpora, write corpora.json and stop before training -- "
+             "the quickest way to check the data path and the loader guards",
     )
     args = ap.parse_args(argv)
 
@@ -166,10 +211,36 @@ def main(argv: list[str] | None = None) -> int:
         "ids2017": load_ids2017(keep_dst_port=keep_port, target=args.target),
         "ids2018": load_ids2018(keep_dst_port=keep_port, target=args.target),
     }
+    dropped: list[str] = []
+    if args.drop_top_k or args.also_drop:
+        dropped = resolve_dropped(args)
+        for corpus in corpora.values():
+            corpus.X.drop(columns=dropped, inplace=True, errors="ignore")
+        logger.info(
+            "ablation: dropped %d of %d feature(s), %d remain -- %s",
+            len(dropped), len(dropped) + corpora["ids2017"].X.shape[1],
+            corpora["ids2017"].X.shape[1], ", ".join(dropped),
+        )
+        (out_dir / "dropped_features.json").write_text(
+            json.dumps({"drop_top_k": args.drop_top_k, "dropped": dropped}, indent=2),
+            encoding="utf-8",
+        )
+
     (out_dir / "corpora.json").write_text(
         json.dumps({k: v.as_dict() for k, v in corpora.items()}, indent=2),
         encoding="utf-8",
     )
+
+    if args.dry_run:
+        for name, corpus in corpora.items():
+            logger.info(
+                "%s: %s rows from a corpus of %s, %d features, ordered by %s",
+                name, f"{len(corpus.X):,}",
+                f"{corpus.cleaning.rows_in:,}", corpus.X.shape[1], corpus.order_basis,
+            )
+        logger.info("--dry-run set: corpora written to %s, stopping before training",
+                    out_dir / "corpora.json")
+        return 0
 
     # One encoder over the shared vocabulary, so a class always gets the same
     # code no matter which dataset trained the model.
