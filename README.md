@@ -690,7 +690,19 @@ The Streamlit dashboard, the FastAPI backend, SHAP and batch inference all read 
 
 > Page 6 expects the 77-feature CICIDS2017 schema and uses model artifacts from the published run (see above), not a hardcoded `results/latest/`.
 
-มี Next.js dashboard เป็นอีก frontend หนึ่ง โดยเปิด backend และ frontend คนละ terminal:
+มี Next.js dashboard เป็นอีก frontend หนึ่ง ทั้ง backend และ frontend ต้องรันคู่กันเสมอ เพราะ
+frontend อ่านตัวเลขทุกตัวผ่าน API — `scripts/serve.py` จึงเปิดทั้งสองตัวใน terminal เดียว
+รวม log ของทั้งคู่ไว้ที่เดียว และ Ctrl-C ครั้งเดียวปิดทั้งคู่:
+
+```bash
+npm --prefix web install       # ครั้งแรกครั้งเดียว
+python scripts/serve.py        # API :8000 + web :3000, เปิด browser ให้เมื่อ API พร้อม
+```
+
+Flags: `--no-browser`, `--api-only`, `--web-only`, `--api-port`, `--web-port`
+(`--web-port` รับได้เฉพาะ 3000/3001 ตามที่ `api/main.py` อนุญาตไว้ใน CORS)
+
+หรือจะเปิดแยก terminal เองก็ได้:
 
 ```bash
 # Terminal 1: FastAPI (http://localhost:8000, OpenAPI docs at /docs)
