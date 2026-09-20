@@ -1,0 +1,252 @@
+{
+  "split": "random stratified 70%/30%, same for every class",
+  "preprocessing": "none (LightGBM on raw features); ladder scalers inside a Pipeline",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "max_per_side": 8000,
+  "near_dup_quantile": 0.001,
+  "n_features": 60,
+  "classes": [
+    {
+      "shared_class": "Benign",
+      "n_per_side": 8000,
+      "auc_mean": 0.999,
+      "auc_sd": 0.00018,
+      "best_single_feature_auc": 0.7659,
+      "best_single_feature": "min_seg_size_forward",
+      "best_single_feature_median": {
+        "ids2017": 20.0,
+        "ids2018": 20.0
+      },
+      "disjoint_columns": [],
+      "rows_identical_across_corpora": 13,
+      "rows_identical_across_split": 0,
+      "near_duplicate_test_share": 0.00104,
+      "model_ladder": {
+        "stump": 0.7165,
+        "tree_depth3": 0.9496,
+        "logreg": 0.9531,
+        "logreg_rank": 0.9791,
+        "lightgbm": 0.999
+      },
+      "null_ladder": {
+        "ids2017": {
+          "stump": 0.4996,
+          "tree_depth3": 0.4996,
+          "logreg": 0.5205,
+          "logreg_rank": 0.5142,
+          "lightgbm": 0.4956
+        },
+        "ids2018": {
+          "stump": 0.5019,
+          "tree_depth3": 0.4971,
+          "logreg": 0.498,
+          "logreg_rank": 0.4943,
+          "lightgbm": 0.5082
+        }
+      }
+    },
+    {
+      "shared_class": "DDoS",
+      "n_per_side": 8000,
+      "auc_mean": 1.0,
+      "auc_sd": 0.0,
+      "best_single_feature_auc": 0.9927,
+      "best_single_feature": "act_data_pkt_fwd",
+      "best_single_feature_median": {
+        "ids2017": 3.0,
+        "ids2018": 1.0
+      },
+      "disjoint_columns": [],
+      "rows_identical_across_corpora": 0,
+      "rows_identical_across_split": 0,
+      "near_duplicate_test_share": 0.06771,
+      "model_ladder": {
+        "stump": 0.9935,
+        "tree_depth3": 1.0,
+        "logreg": 1.0,
+        "logreg_rank": 1.0,
+        "lightgbm": 1.0
+      },
+      "null_ladder": {
+        "ids2017": {
+          "stump": 0.4972,
+          "tree_depth3": 0.497,
+          "logreg": 0.4923,
+          "logreg_rank": 0.4956,
+          "lightgbm": 0.5005
+        },
+        "ids2018": {
+          "stump": 0.4965,
+          "tree_depth3": 0.4915,
+          "logreg": 0.4969,
+          "logreg_rank": 0.5104,
+          "lightgbm": 0.5051
+        }
+      }
+    },
+    {
+      "shared_class": "DoS",
+      "n_per_side": 5132,
+      "auc_mean": 1.0,
+      "auc_sd": 0.0,
+      "best_single_feature_auc": 0.9269,
+      "best_single_feature": "Packet Length Mean",
+      "best_single_feature_median": {
+        "ids2017": 850.7857055664062,
+        "ids2018": 0.0
+      },
+      "disjoint_columns": [],
+      "rows_identical_across_corpora": 0,
+      "rows_identical_across_split": 0,
+      "near_duplicate_test_share": 0.00162,
+      "model_ladder": {
+        "stump": 0.9425,
+        "tree_depth3": 0.9889,
+        "logreg": 0.9955,
+        "logreg_rank": 1.0,
+        "lightgbm": 1.0
+      },
+      "null_ladder": {
+        "ids2017": {
+          "stump": 0.4931,
+          "tree_depth3": 0.4965,
+          "logreg": 0.4857,
+          "logreg_rank": 0.4879,
+          "lightgbm": 0.5036
+        },
+        "ids2018": {
+          "stump": 0.5039,
+          "tree_depth3": 0.5051,
+          "logreg": 0.5109,
+          "logreg_rank": 0.4938,
+          "lightgbm": 0.5143
+        }
+      }
+    },
+    {
+      "shared_class": "Brute Force",
+      "n_per_side": 2459,
+      "auc_mean": 1.0,
+      "auc_sd": 2e-05,
+      "best_single_feature_auc": 0.9937,
+      "best_single_feature": "Avg Bwd Segment Size",
+      "best_single_feature_median": {
+        "ids2017": 12.533333778381348,
+        "ids2018": 121.13636016845703
+      },
+      "disjoint_columns": [],
+      "rows_identical_across_corpora": 0,
+      "rows_identical_across_split": 0,
+      "near_duplicate_test_share": 0.00203,
+      "model_ladder": {
+        "stump": 0.9959,
+        "tree_depth3": 1.0,
+        "logreg": 1.0,
+        "logreg_rank": 0.9999,
+        "lightgbm": 1.0
+      },
+      "null_ladder": {
+        "ids2017": {
+          "stump": 0.5003,
+          "tree_depth3": 0.5014,
+          "logreg": 0.4948,
+          "logreg_rank": 0.4749,
+          "lightgbm": 0.4917
+        },
+        "ids2018": {
+          "stump": 0.5095,
+          "tree_depth3": 0.4907,
+          "logreg": 0.5095,
+          "logreg_rank": 0.5156,
+          "lightgbm": 0.4774
+        }
+      }
+    },
+    {
+      "shared_class": "Bot",
+      "n_per_side": 1948,
+      "auc_mean": 1.0,
+      "auc_sd": 0.0,
+      "best_single_feature_auc": 0.9952,
+      "best_single_feature": "RST Flag Count",
+      "best_single_feature_median": {
+        "ids2017": 0.0,
+        "ids2018": 1.0
+      },
+      "disjoint_columns": [],
+      "rows_identical_across_corpora": 0,
+      "rows_identical_across_split": 0,
+      "near_duplicate_test_share": 0.00086,
+      "model_ladder": {
+        "stump": 0.9957,
+        "tree_depth3": 1.0,
+        "logreg": 1.0,
+        "logreg_rank": 1.0,
+        "lightgbm": 1.0
+      },
+      "null_ladder": {
+        "ids2017": {
+          "stump": 0.4948,
+          "tree_depth3": 0.4981,
+          "logreg": 0.502,
+          "logreg_rank": 0.4697,
+          "lightgbm": 0.5029
+        },
+        "ids2018": {
+          "stump": 0.5026,
+          "tree_depth3": 0.5214,
+          "logreg": 0.5227,
+          "logreg_rank": 0.5298,
+          "lightgbm": 0.5095
+        }
+      }
+    },
+    {
+      "shared_class": "Web Attack",
+      "n_per_side": 859,
+      "auc_mean": 1.0,
+      "auc_sd": 1e-05,
+      "best_single_feature_auc": 0.9994,
+      "best_single_feature": "min_seg_size_forward",
+      "best_single_feature_median": {
+        "ids2017": 32.0,
+        "ids2018": 20.0
+      },
+      "disjoint_columns": [
+        "min_seg_size_forward"
+      ],
+      "rows_identical_across_corpora": 0,
+      "rows_identical_across_split": 0,
+      "near_duplicate_test_share": 0.02326,
+      "model_ladder": {
+        "stump": 1.0,
+        "tree_depth3": 1.0,
+        "logreg": 1.0,
+        "logreg_rank": 1.0,
+        "lightgbm": 1.0
+      },
+      "null_ladder": {
+        "ids2017": {
+          "stump": 0.4912,
+          "tree_depth3": 0.4826,
+          "logreg": 0.4892,
+          "logreg_rank": 0.4594,
+          "lightgbm": 0.4836
+        },
+        "ids2018": {
+          "stump": 0.5116,
+          "tree_depth3": 0.5286,
+          "logreg": 0.494,
+          "logreg_rank": 0.5229,
+          "lightgbm": 0.5026
+        }
+      }
+    }
+  ]
+}
