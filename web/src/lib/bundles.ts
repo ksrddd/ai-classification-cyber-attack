@@ -300,8 +300,34 @@ export type ToolPair = {
   delta: number | null;
 };
 
+/** One model's own cross-against-within comparison, never mixed with another's. */
+export type ControlModelRow = {
+  cross_auc: number | null;
+  within_auc_max: number | null;
+  gap: number | null;
+  null_auc_max: number | null;
+};
+
 export type WithinDatasetControl = {
   question: string | null;
+  /**
+   * The pre-registered rule re-applied to each model's numbers.
+   *
+   * A robustness check beside the headline verdict, not a replacement for it:
+   * the rule was registered against one model, and reporting the friendliest
+   * of eight afterwards is the freedom pre-registration exists to remove.
+   * `stump` is the capacity floor, not one of the study's seven models.
+   */
+  per_model: Record<
+    string,
+    {
+      verdict: string;
+      n_classes_judged: number | null;
+      min_gap: number | null;
+      max_within_auc: number | null;
+      max_null_auc: number | null;
+    }
+  >;
   /** Null when the tool-matched control was never run. */
   tool_matched: {
     question: string | null;
@@ -340,6 +366,7 @@ export type WithinDatasetControl = {
     within_auc_max: number | null;
     gap: number | null;
     contrasts: Record<string, ControlContrast>;
+    per_model: Record<string, ControlModelRow>;
   }[];
 };
 

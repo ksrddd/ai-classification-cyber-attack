@@ -974,6 +974,20 @@ def _audit_adversarial_control(path: Path) -> dict[str, Any] | None:
         "n_classes_judged": _int(raw.get("n_classes_judged")),
         "min_gap": _num(raw.get("min_gap")),
         "max_within_auc": _num(raw.get("max_within_auc")),
+        # The pre-registered rule re-applied to each model's own numbers. A
+        # robustness check reported beside the headline verdict, never in place
+        # of it: the rule was registered against one model, and picking the
+        # friendliest of eight afterwards is the freedom it exists to remove.
+        "per_model": {
+            name: {
+                "verdict": str(v.get("verdict")),
+                "n_classes_judged": _int(v.get("n_classes_judged")),
+                "min_gap": _num(v.get("min_gap")),
+                "max_within_auc": _num(v.get("max_within_auc")),
+                "max_null_auc": _num(v.get("max_null_auc")),
+            }
+            for name, v in (raw.get("per_model") or {}).items()
+        },
         "classes": [
             {
                 "shared_class": str(c.get("shared_class")),
@@ -981,6 +995,19 @@ def _audit_adversarial_control(path: Path) -> dict[str, Any] | None:
                 "cross_auc": _num(c.get("cross_auc")),
                 "within_auc_max": _num(c.get("within_auc_max")),
                 "gap": _num(c.get("gap")),
+                # Per model, so a reader can see whether the comparison holds
+                # across the study's seven or only for the one that produced
+                # the headline. Each entry pairs a model's own cross figure
+                # with its own within figure rather than mixing two models.
+                "per_model": {
+                    name: {
+                        "cross_auc": _num(v.get("cross_auc")),
+                        "within_auc_max": _num(v.get("within_auc_max")),
+                        "gap": _num(v.get("gap")),
+                        "null_auc_max": _num(v.get("null_auc_max")),
+                    }
+                    for name, v in (c.get("per_model") or {}).items()
+                },
                 "contrasts": {
                     key: {
                         "auc": _num(v.get("auc")),

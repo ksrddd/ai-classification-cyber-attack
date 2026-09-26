@@ -21,6 +21,15 @@ G. **Does a simple model get there too?** A gradient-boosted ensemble with 300
    stump and a logistic regression cannot. If the simple models land near the
    same AUC, the separation is broad and shallow rather than an artefact of
    model capacity.
+H. **Label shuffle.** The same real rows the headline used, with the
+   2017/2018 labels permuted before the split. F asks whether the procedure
+   can invent separation inside one corpus; H holds the actual cross-corpus
+   feature distribution fixed and removes only the link between a row and its
+   label. Anything above chance is the pipeline reaching the label by a route
+   other than the features.
+
+Every check that depends on a draw (C, F, G, H) runs on all five seeds. An
+earlier version ran them on seed 42 alone.
 
 Run for every testable class, not just the largest
 --------------------------------------------------
@@ -188,38 +197,69 @@ def diagnose(name: str, a: pd.DataFrame, b: pd.DataFrame, feats: list[str]) -> d
         if hi_a < lo_b or hi_b < lo_a:
             disjoint.append(f)
 
-    # C -- shared and near-shared rows
+    # C -- rows shared between the corpora. Independent of any draw.
     across = len(pd.merge(a[feats].drop_duplicates(), b[feats].drop_duplicates(), how="inner"))
-    X, y, n = balanced(a, b, feats, 42)
-    X_tr, X_te, y_tr, y_te = split(X, y, 42)
-    straddle = len(pd.merge(X_tr.drop_duplicates(), X_te.drop_duplicates(), how="inner"))
-    near = near_duplicate_share(X_tr, X_te)
 
-    # B -- seed stability
-    aucs = [auc_once(*balanced(a, b, feats, s)[:2], s) for s in SEEDS]
+    # Every check that depends on a draw runs on every seed. The first version
+    # ran the model ladder, the near-duplicate check and the null control on
+    # seed 42 alone and reported that one draw as the answer -- the headline
+    # AUC had a spread across five seeds and nothing checking it did.
+    rungs = list(model_ladder(SEEDS[0]))
+    straddle, near = [], []
+    ladder = {k: [] for k in rungs}
+    shuffled = {k: [] for k in rungs}
+    nulls = {c: {k: [] for k in rungs} for c in ("ids2017", "ids2018")}
+    n = 0
 
-    # G -- model ladder
-    ladder = run_ladder(X, y, 42)
+    for seed in SEEDS:
+        X, y, n = balanced(a, b, feats, seed)
+        X_tr, X_te, _, _ = split(X, y, seed)
+        straddle.append(len(pd.merge(X_tr.drop_duplicates(), X_te.drop_duplicates(), how="inner")))
+        near.append(near_duplicate_share(X_tr, X_te))
 
-    # F -- null control on this class, both corpora
-    nulls = {}
-    for corpus_name, corpus in (("ids2017", a), ("ids2018", b)):
-        rng = np.random.default_rng(7)
-        idx = rng.permutation(len(corpus))
-        half = len(idx) // 2
-        Xn, yn, _ = balanced(
-            corpus.iloc[idx[:half]].reset_index(drop=True),
-            corpus.iloc[idx[half : 2 * half]].reset_index(drop=True),
-            feats,
-            42,
-        )
-        nulls[corpus_name] = run_ladder(Xn, yn, 42)
+        # G -- model ladder. Its lightgbm rung is the same classifier on the
+        # same draw and split as the headline run, so the headline AUC falls
+        # out of it rather than being fitted a second time.
+        for k, v in run_ladder(X, y, seed).items():
+            ladder[k].append(v)
+
+        # H -- label shuffle. The same real rows the headline used, with the
+        # 2017/2018 labels permuted before the split. The random-halves null
+        # below draws one corpus and so asks a different question; this one
+        # holds the actual cross-corpus feature distribution fixed and removes
+        # only the link between a row and its label. Anything above chance here
+        # would be the pipeline reaching the label by some route other than the
+        # features.
+        y_perm = np.random.default_rng(seed).permutation(y)
+        for k, v in run_ladder(X, y_perm, seed).items():
+            shuffled[k].append(v)
+
+        # F -- null control: one corpus split into random halves, fresh halves
+        # on every seed rather than one fixed split.
+        for corpus_name, corpus in (("ids2017", a), ("ids2018", b)):
+            idx = np.random.default_rng(seed).permutation(len(corpus))
+            half = len(idx) // 2
+            Xn, yn, _ = balanced(
+                corpus.iloc[idx[:half]].reset_index(drop=True),
+                corpus.iloc[idx[half : 2 * half]].reset_index(drop=True),
+                feats,
+                seed,
+            )
+            for k, v in run_ladder(Xn, yn, seed).items():
+                nulls[corpus_name][k].append(v)
+
+    def mean(v: list[float]) -> float:
+        return round(float(np.mean(v)), 4)
+
+    def sd(v: list[float]) -> float:
+        return round(float(np.std(v)), 5)
 
     return {
         "shared_class": name,
         "n_per_side": n,
-        "auc_mean": round(float(np.mean(aucs)), 4),
-        "auc_sd": round(float(np.std(aucs)), 5),
+        "auc_mean": mean(ladder["lightgbm"]),
+        "auc_sd": sd(ladder["lightgbm"]),
+        "auc_per_seed": [round(v, 4) for v in ladder["lightgbm"]],
         "best_single_feature_auc": round(best_single, 4),
         # Which column, and where its centre sits on each side. Without the
         # name the AUC says "something separates them" and stops; with it the
@@ -231,10 +271,22 @@ def diagnose(name: str, a: pd.DataFrame, b: pd.DataFrame, feats: list[str]) -> d
         },
         "disjoint_columns": disjoint,
         "rows_identical_across_corpora": int(across),
-        "rows_identical_across_split": int(straddle),
-        "near_duplicate_test_share": round(near, 5),
-        "model_ladder": ladder,
-        "null_ladder": nulls,
+        # The worst seed, not the mean. One row answered from memory is a
+        # leak whichever draw it turned up in, and averaging would dilute it.
+        "rows_identical_across_split": int(max(straddle)),
+        "rows_identical_across_split_per_seed": [int(v) for v in straddle],
+        "near_duplicate_test_share": round(float(np.mean(near)), 5),
+        "near_duplicate_test_share_max": round(float(np.max(near)), 5),
+        "near_duplicate_test_share_per_seed": [round(v, 5) for v in near],
+        # Means over every seed. Same keys and shape as the single-seed
+        # version, so everything already reading them keeps working.
+        "model_ladder": {k: mean(v) for k, v in ladder.items()},
+        "model_ladder_sd": {k: sd(v) for k, v in ladder.items()},
+        "model_ladder_per_seed": {k: [round(x, 4) for x in v] for k, v in ladder.items()},
+        "label_shuffle": {k: mean(v) for k, v in shuffled.items()},
+        "label_shuffle_sd": {k: sd(v) for k, v in shuffled.items()},
+        "null_ladder": {c: {k: mean(v) for k, v in r.items()} for c, r in nulls.items()},
+        "null_ladder_sd": {c: {k: sd(v) for k, v in r.items()} for c, r in nulls.items()},
     }
 
 
@@ -300,13 +352,31 @@ def main() -> int:
             ),
         )
 
+    keys = list(model_ladder(SEEDS[0]))
+
     logger.info("")
-    logger.info("G. model ladder per class (null control in brackets, ids2017 halves)")
-    keys = list(model_ladder(42))
-    logger.info("%-12s %s", "class", " ".join(f"{k:>22}" for k in keys))
+    logger.info("G. model ladder, mean ± sd over %d seeds", len(SEEDS))
+    logger.info("%-12s %s", "class", " ".join(f"{k:>18}" for k in keys))
     for r in results:
-        cells = [f'{r["model_ladder"][k]:.4f} [{r["null_ladder"]["ids2017"][k]:.2f}]' for k in keys]
-        logger.info("%-12s %s", r["shared_class"], " ".join(f"{c:>22}" for c in cells))
+        cells = [f'{r["model_ladder"][k]:.4f} ±{r["model_ladder_sd"][k]:.4f}' for k in keys]
+        logger.info("%-12s %s", r["shared_class"], " ".join(f"{c:>18}" for c in cells))
+
+    logger.info("")
+    logger.info("H. label shuffle -- the same real rows, 2017/2018 labels permuted")
+    logger.info("%-12s %s", "class", " ".join(f"{k:>18}" for k in keys))
+    for r in results:
+        cells = [f'{r["label_shuffle"][k]:.4f} ±{r["label_shuffle_sd"][k]:.4f}' for k in keys]
+        logger.info("%-12s %s", r["shared_class"], " ".join(f"{c:>18}" for c in cells))
+
+    logger.info("")
+    logger.info("F. null control -- one corpus in random halves (ids2017 / ids2018)")
+    logger.info("%-12s %s", "class", " ".join(f"{k:>18}" for k in keys))
+    for r in results:
+        cells = [
+            f'{r["null_ladder"]["ids2017"][k]:.4f} / {r["null_ladder"]["ids2018"][k]:.4f}'
+            for k in keys
+        ]
+        logger.info("%-12s %s", r["shared_class"], " ".join(f"{c:>18}" for c in cells))
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
@@ -317,6 +387,10 @@ def main() -> int:
                 "seeds": list(SEEDS),
                 "max_per_side": MAX_PER_SIDE,
                 "near_dup_quantile": NEAR_DUP_QUANTILE,
+                # Every check that depends on a draw -- the ladder, label
+                # shuffle, near-duplicates, straddling rows, the null -- runs
+                # once per seed; the single-seed version is superseded.
+                "draw_dependent_checks_run_on": "every seed",
                 "n_features": len(feats),
                 "classes": results,
             },

@@ -61,17 +61,17 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 # ``adversarial_validation`` is the sibling script, imported rather than copied
-# so the feature set and the classifier are defined exactly once: the same
-# duplicate-collapsed, constant-dropped 60 columns and the same LightGBM the
-# main run uses. A second definition here could drift from it and the
-# comparison would quietly stop being like-for-like.
-from adversarial_validation import (  # noqa: E402
-    build_classifier,
-    representative_features,
-)
+# so the feature set is defined exactly once: the same duplicate-collapsed,
+# constant-dropped 60 columns the main run measured over. A second definition
+# here could drift from it and the comparison would quietly stop being
+# like-for-like. The models come from the transfer protocol's own factory for
+# the same reason.
+from adversarial_validation import representative_features  # noqa: E402
 
 from src.crossdataset.labels import SHARED_CLASSES  # noqa: E402
 from src.crossdataset.loaders import load_ids2017, load_ids2018  # noqa: E402
+from src.ids2018.models import build_model, fit_model  # noqa: E402
+from src.ids2018.preprocessing import Ids2018Preprocessor  # noqa: E402
 
 logger = logging.getLogger("within_dataset_control")
 
@@ -85,6 +85,25 @@ OUT = (
 
 SEEDS = (42, 43, 44, 45, 46)
 TEST_SIZE = 0.3
+
+#: The protocol's seven models, in the order ``run_crossdataset.py`` lists
+#: them. A control that holds only for the model that produced the headline is
+#: a weaker claim than one that holds for every model in the study, and the
+#: seven disagree enough elsewhere in this project that the question is worth
+#: asking rather than assuming.
+PROTOCOL_MODELS = (
+    "lightgbm",
+    "xgboost",
+    "catboost",
+    "random_forest",
+    "mlp",
+    "logistic_regression",
+    "stacking",
+)
+#: Reported beside them, and not one of the seven: a decision stump is the
+#: capacity floor. One threshold on one column cannot memorise a draw at any
+#: sample size, so where it separates, the separation is in the features.
+STUMP = "stump"
 
 #: Lower than the main run's 500. Too few rows lets a model memorise and pushes
 #: the AUC *up*, which argues against the fingerprint conclusion rather than
@@ -162,33 +181,88 @@ def draw(
     return X, y
 
 
-def score_contrast(
-    a: pd.DataFrame, b: pd.DataFrame, features: list[str], n: int
-) -> dict[str, float | list[float]]:
-    """AUC over every seed, for the ensemble and for a single threshold.
+def seed_model(model, seed: int):
+    """Point every ``random_state`` inside ``model`` at ``seed``.
 
-    The stump is carried alongside because it cannot memorise: one threshold on
-    one column, whatever the sample size. Where the ensemble and the stump agree
-    the separation is broad and shallow rather than an artefact of capacity, and
-    that reading has to hold for the control as much as for the main result.
+    Copied in spirit from ``run_crossdataset.py``: ``build_model`` bakes in the
+    project's RANDOM_STATE, so without this the five seeds would vary the draw
+    and the split but leave every model identical, and the reported spread
+    would understate what re-running actually costs. ``deep=True`` reaches
+    stacking's base learners; catboost spells the key ``random_seed``.
     """
-    ensemble, stump = [], []
+    keys = [
+        k
+        for k in model.get_params(deep=True)
+        if k.split("__")[-1] in ("random_state", "random_seed")
+    ]
+    if keys:
+        model.set_params(**dict.fromkeys(keys, seed))
+    return model
+
+
+def score_one(name: str, X_tr, y_tr, X_te, y_te, seed: int) -> float:
+    """Fit one model on the training half and score AUC on the held-out half.
+
+    The stump is built here rather than through ``build_model`` because it is
+    not one of the protocol's models -- it is the capacity floor they are read
+    against, and giving it a depth of one is the whole point.
+    """
+    if name == STUMP:
+        model = DecisionTreeClassifier(max_depth=1, random_state=seed)
+        model.fit(X_tr, y_tr)
+    else:
+        model = fit_model(name, seed_model(build_model(name), seed), X_tr, y_tr)
+    return float(roc_auc_score(y_te, model.predict_proba(X_te)[:, 1]))
+
+
+def score_contrast(
+    a: pd.DataFrame,
+    b: pd.DataFrame,
+    features: list[str],
+    n: int,
+    models: tuple[str, ...] = PROTOCOL_MODELS + (STUMP,),
+) -> dict:
+    """AUC over every seed, for every model, on one boundary.
+
+    Every model sees the *same* draw and the same split at each seed, so a
+    difference between two rows is the model and nothing else. Preprocessing is
+    fitted on the training half alone and applied to the other, exactly as the
+    transfer protocol does it -- the linear and neural models need the scaling
+    and the trees are indifferent to it, and fitting it on the whole draw first
+    would leak the held-out half into every number here.
+
+    ``auc`` and ``stump`` stay at the top level and stay LightGBM and the
+    stump, because the earlier single-model run is quoted in the report and in
+    the pre-registered decision rule; the rest arrives under ``per_model``.
+    """
+    scores: dict[str, list[float]] = {name: [] for name in models}
+
     for seed in SEEDS:
         X, y = draw(a, b, features, n, seed)
         X_tr, X_te, y_tr, y_te = train_test_split(
             X, y, test_size=TEST_SIZE, random_state=seed, stratify=y
         )
-        model = build_classifier(seed).fit(X_tr, y_tr)
-        ensemble.append(float(roc_auc_score(y_te, model.predict_proba(X_te)[:, 1])))
+        pre = Ids2018Preprocessor()
+        Xt = pre.fit_transform(X_tr)
+        Xe = pre.transform(X_te)
+        for name in models:
+            scores[name].append(score_one(name, Xt, y_tr, Xe, y_te, seed))
 
-        one = DecisionTreeClassifier(max_depth=1, random_state=seed).fit(X_tr, y_tr)
-        stump.append(float(roc_auc_score(y_te, one.predict_proba(X_te)[:, 1])))
-
+    per_model = {
+        name: {
+            "auc": round(float(np.mean(v)), 4),
+            "auc_sd": round(float(np.std(v)), 5),
+            "auc_per_seed": [round(x, 4) for x in v],
+        }
+        for name, v in scores.items()
+    }
+    headline = per_model.get("lightgbm") or next(iter(per_model.values()))
     return {
-        "auc": round(float(np.mean(ensemble)), 4),
-        "auc_sd": round(float(np.std(ensemble)), 5),
-        "auc_per_seed": [round(v, 4) for v in ensemble],
-        "stump": round(float(np.mean(stump)), 4),
+        "auc": headline["auc"],
+        "auc_sd": headline["auc_sd"],
+        "auc_per_seed": headline["auc_per_seed"],
+        "stump": per_model[STUMP]["auc"] if STUMP in per_model else None,
+        "per_model": per_model,
     }
 
 
@@ -250,6 +324,31 @@ def contrasts_for(
     return out
 
 
+def summarise_models(results: dict[str, dict]) -> dict[str, dict]:
+    """The same cross-against-within comparison, once per model.
+
+    A conclusion that holds only for the model that produced the headline is a
+    weaker claim than one every model agrees on, and this is the table that
+    says which of the two we have. ``within_auc_max`` takes the highest
+    within-dataset boundary *for that model*, keeping each row internally
+    consistent rather than mixing one model's cross figure with another's
+    within figure.
+    """
+    names = list(next(iter(results.values()))["per_model"])
+    out = {}
+    for model in names:
+        cross = results["cross"]["per_model"][model]["auc"]
+        within = [v["per_model"][model]["auc"] for v in results.values() if v["kind"] == "within"]
+        null = [v["per_model"][model]["auc"] for v in results.values() if v["kind"] == "null"]
+        out[model] = {
+            "cross_auc": cross,
+            "within_auc_max": round(max(within), 4) if within else None,
+            "gap": round(cross - max(within), 4) if within else None,
+            "null_auc_max": round(max(null), 4) if null else None,
+        }
+    return out
+
+
 def run_class(name: str, rows: dict, features: list[str]) -> dict | None:
     """One class, every contrast, all at the same rows per side."""
     available = contrasts_for(name, rows)
@@ -287,6 +386,7 @@ def run_class(name: str, rows: dict, features: list[str]) -> dict | None:
         # convenient one.
         "within_auc_max": round(max(within), 4) if within else None,
         "gap": round(results["cross"]["auc"] - max(within), 4) if within else None,
+        "per_model": summarise_models(results),
     }
 
     logger.info(
@@ -298,12 +398,17 @@ def run_class(name: str, rows: dict, features: list[str]) -> dict | None:
         row["gap"],
     )
     for key, value in results.items():
+        # The stump is the capacity floor, not one of the seven; folding it
+        # into the range would make every row look as though some protocol
+        # model had barely separated the boundary.
+        aucs = [value["per_model"][m]["auc"] for m in PROTOCOL_MODELS]
         logger.info(
-            "  %-12s   %-16s AUC %.4f ±%.4f  stump %.4f   %s",
+            "  %-12s   %-16s lgbm %.4f  7 models %.4f-%.4f  stump %.4f   %s",
             "",
             key,
             value["auc"],
-            value["auc_sd"],
+            min(aucs),
+            max(aucs),
             value["stump"],
             value["boundary"],
         )
@@ -342,7 +447,49 @@ def verdict(rows: list[dict]) -> dict:
         "n_classes_judged": len(judged),
         "min_gap": round(min(r["gap"] for r in judged), 4),
         "max_within_auc": round(max(r["within_auc_max"] for r in judged), 4),
+        "per_model": verdict_per_model(rows),
     }
+
+
+def verdict_per_model(rows: list[dict]) -> dict[str, dict]:
+    """The same rule, applied to each model's own numbers.
+
+    Reported alongside the headline verdict, never in place of it. The rule was
+    pre-registered against a single model and that verdict is what the report
+    quotes; running it seven more times afterwards is a robustness check, and
+    presenting the friendliest of the eight as *the* answer would be exactly
+    the freedom the pre-registration exists to remove.
+    """
+    if not rows:
+        return {}
+    out = {}
+    for model in next(iter(rows)).get("per_model", {}):
+        judged = [
+            r["per_model"][model]
+            for r in rows
+            if r["per_model"][model]["cross_auc"] >= SEPARABLE
+            and r["per_model"][model]["gap"] is not None
+        ]
+        if not judged:
+            out[model] = {"verdict": "inconclusive", "n_classes_judged": 0}
+            continue
+        confirmed = all(j["gap"] >= 0.10 and j["within_auc_max"] < 0.95 for j in judged)
+        refuted = sum(j["within_auc_max"] >= SEPARABLE for j in judged) > len(judged) / 2
+        out[model] = {
+            "verdict": (
+                "fingerprint confirmed"
+                if confirmed
+                else "fingerprint refuted" if refuted else "partial"
+            ),
+            "n_classes_judged": len(judged),
+            "min_gap": round(min(j["gap"] for j in judged), 4),
+            "max_within_auc": round(max(j["within_auc_max"] for j in judged), 4),
+            "max_null_auc": round(
+                max(j["null_auc_max"] for j in judged if j["null_auc_max"] is not None),
+                4,
+            ),
+        }
+    return out
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -383,6 +530,18 @@ def main(argv: list[str] | None = None) -> int:
     decided = verdict(results)
     logger.info("=" * 78)
     logger.info("verdict: %s -- %s", decided["verdict"], decided["reason"])
+    logger.info("")
+    logger.info("%-20s %-22s %9s %9s %9s", "model", "verdict", "min gap", "within", "null")
+    for model, v in decided.get("per_model", {}).items():
+        if v.get("n_classes_judged"):
+            logger.info(
+                "%-20s %-22s %9.4f %9.4f %9.4f",
+                model,
+                v["verdict"],
+                v["min_gap"],
+                v["max_within_auc"],
+                v["max_null_auc"],
+            )
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(

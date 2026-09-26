@@ -1,0 +1,147 @@
+{
+  "versions": [
+    "v1",
+    "v2"
+  ],
+  "asymmetry": {
+    "chronological": {
+      "v1": {
+        "mean": {
+          "2017->2018": 4.2,
+          "2018->2017": 44.6,
+          "asymmetry": 40.4
+        },
+        "median": {
+          "2017->2018": 3.6,
+          "2018->2017": 51.2,
+          "asymmetry": 48.0
+        },
+        "models_favouring_2018_to_2017": 7,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "stacking",
+          "recovered_pct": 73.9
+        }
+      },
+      "v2": {
+        "mean": {
+          "2017->2018": 5.7,
+          "2018->2017": 39.3,
+          "asymmetry": 33.6
+        },
+        "median": {
+          "2017->2018": 5.4,
+          "2018->2017": 39.7,
+          "asymmetry": 34.3
+        },
+        "models_favouring_2018_to_2017": 7,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "logistic_regression",
+          "recovered_pct": 79.8
+        }
+      }
+    },
+    "random": {
+      "v1": {
+        "mean": {
+          "2017->2018": 15.0,
+          "2018->2017": 15.7,
+          "asymmetry": 0.7
+        },
+        "median": {
+          "2017->2018": 9.9,
+          "2018->2017": 15.0,
+          "asymmetry": -0.1
+        },
+        "models_favouring_2018_to_2017": 3,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "lightgbm",
+          "recovered_pct": 25.8
+        }
+      },
+      "v2": {
+        "mean": {
+          "2017->2018": 11.5,
+          "2018->2017": 15.8,
+          "asymmetry": 4.3
+        },
+        "median": {
+          "2017->2018": 6.0,
+          "2018->2017": 16.2,
+          "asymmetry": -0.3
+        },
+        "models_favouring_2018_to_2017": 3,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "logistic_regression",
+          "recovered_pct": 26.0
+        }
+      }
+    }
+  },
+  "split_mode_effect": {
+    "v1": {
+      "2017->2018": {
+        "mean": 10.8,
+        "min": -4.1,
+        "max": 27.5
+      },
+      "2018->2017": {
+        "mean": -29.0,
+        "min": -52.5,
+        "max": -2.3
+      }
+    },
+    "v2": {
+      "2017->2018": {
+        "mean": 5.7,
+        "min": -2.1,
+        "max": 15.9
+      },
+      "2018->2017": {
+        "mean": -23.5,
+        "min": -53.8,
+        "max": -3.6
+      }
+    }
+  },
+  "ceiling_inflation": {
+    "v1": {
+      "ids2017": 0.2567,
+      "ids2018": 0.0246
+    },
+    "v2": {
+      "ids2017": 0.2559,
+      "ids2018": 0.0129
+    }
+  },
+  "ceilings": {
+    "v1": {
+      "chronological/ids2017": 0.6495,
+      "chronological/ids2018": 0.7236,
+      "random/ids2017": 0.9062,
+      "random/ids2018": 0.7481
+    },
+    "v2": {
+      "chronological/ids2017": 0.6491,
+      "chronological/ids2018": 0.8293,
+      "random/ids2017": 0.905,
+      "random/ids2018": 0.8422
+    }
+  },
+  "control_2017_ceiling": {
+    "reproduced": [
+      "lightgbm",
+      "logistic_regression",
+      "random_forest"
+    ],
+    "drifted": {
+      "catboost": 0.0018,
+      "mlp": 0.0208,
+      "stacking": -0.011,
+      "xgboost": -0.0142
+    }
+  }
+}

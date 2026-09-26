@@ -110,6 +110,22 @@ def _write_control(path: Path) -> None:
                 "n_classes_judged": 1,
                 "min_gap": 0.24,
                 "max_within_auc": 0.76,
+                "per_model": {
+                    "lightgbm": {
+                        "verdict": "fingerprint confirmed",
+                        "n_classes_judged": 1,
+                        "min_gap": 0.24,
+                        "max_within_auc": 0.759,
+                        "max_null_auc": 0.501,
+                    },
+                    "stump": {
+                        "verdict": "partial",
+                        "n_classes_judged": 1,
+                        "min_gap": 0.05,
+                        "max_within_auc": 0.61,
+                        "max_null_auc": 0.5,
+                    },
+                },
                 "classes": [
                     {
                         "shared_class": "Benign",
@@ -117,6 +133,20 @@ def _write_control(path: Path) -> None:
                         "cross_auc": 0.999,
                         "within_auc_max": 0.759,
                         "gap": 0.24,
+                        "per_model": {
+                            "lightgbm": {
+                                "cross_auc": 0.999,
+                                "within_auc_max": 0.759,
+                                "gap": 0.24,
+                                "null_auc_max": 0.501,
+                            },
+                            "stump": {
+                                "cross_auc": 0.7165,
+                                "within_auc_max": 0.61,
+                                "gap": 0.1065,
+                                "null_auc_max": 0.5,
+                            },
+                        },
                         "contrasts": {
                             "cross": {
                                 "auc": 0.999,
@@ -459,3 +489,20 @@ def test_tool_matched_absent_reads_as_not_run(results: Path, tmp_path: Path) -> 
         ]
         is None
     )
+
+
+def test_control_reports_every_model_without_merging_them(results: Path) -> None:
+    """Each model's cross figure is paired with its own within figure.
+
+    Mixing one model's cross-dataset AUC with another's within-dataset AUC
+    would produce a gap no single run ever produced, which is exactly the
+    number a reader would quote. The stump rides along as the capacity floor
+    and is named, not silently counted among the study's models.
+    """
+    control = describe_bundle("crossdataset/adversarial_validation", results)["audit"]["control"]
+    assert control["per_model"]["lightgbm"]["verdict"] == "fingerprint confirmed"
+    assert control["per_model"]["stump"]["verdict"] == "partial"
+
+    per_model = control["classes"][0]["per_model"]
+    for row in per_model.values():
+        assert row["gap"] == pytest.approx(row["cross_auc"] - row["within_auc_max"], abs=1e-4)

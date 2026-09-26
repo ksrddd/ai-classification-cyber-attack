@@ -639,6 +639,10 @@ function ControlPanel({ control }: { control: WithinDatasetControl }) {
           </tbody>
         </table>
 
+        {Object.keys(control.per_model ?? {}).length > 0 && (
+          <ControlModelBlock control={control} />
+        )}
+
         {control.capture_day && <CaptureDayBlock capture={control.capture_day} />}
 
         <p className="text-[11px] text-ink-2 leading-relaxed max-w-prose">
@@ -653,6 +657,108 @@ function ControlPanel({ control }: { control: WithinDatasetControl }) {
         </p>
       </div>
     </Panel>
+  );
+}
+
+/**
+ * Does the control's conclusion depend on which model draws the boundary?
+ *
+ * Every model sees the same draw and the same split at each seed, so a
+ * difference between two rows here is the model and nothing else. The verdict
+ * column is the pre-registered rule re-applied to each model's own numbers —
+ * a robustness check, not a menu to choose the answer from.
+ *
+ * `stump` is separated out because it is not one of the study's seven: a
+ * depth-1 tree is the capacity floor they are read against, and listing it
+ * among them would make the spread look wider than it is.
+ */
+function ControlModelBlock({
+  control,
+}: {
+  control: WithinDatasetControl;
+}) {
+  const entries = Object.entries(control.per_model);
+  const models = entries.filter(([name]) => name !== "stump");
+  const stump = entries.find(([name]) => name === "stump");
+  const verdicts = new Set(models.map(([, v]) => v.verdict));
+
+  return (
+    <div className="rounded border border-line-subtle bg-surface-elevated/40 p-3 space-y-2">
+      <div>
+        <div className="text-[9.5px] uppercase tracking-[.16em] text-ink-3 font-semibold">
+          The same rule, once per model
+        </div>
+        <div className="text-[10px] text-ink-3">
+          {verdicts.size === 1
+            ? `All ${models.length} models return the same verdict`
+            : `${verdicts.size} different verdicts across ${models.length} models`}
+        </div>
+      </div>
+
+      <table className="w-full text-[11px]">
+        <thead>
+          <tr className="text-ink-3 text-[10px] uppercase tracking-[.14em]">
+            <th className="text-left font-semibold pb-1">Model</th>
+            <th className="text-left font-semibold pb-1">Verdict</th>
+            <th
+              className="text-right font-semibold pb-1 cursor-help"
+              title="The smallest cross-minus-within margin across the classes the rule judges. The rule asks for at least 0.10."
+            >
+              Min gap
+            </th>
+            <th
+              className="text-right font-semibold pb-1 cursor-help"
+              title="The highest within-dataset boundary this model separated, over every class and contrast."
+            >
+              Max within
+            </th>
+            <th
+              className="text-right font-semibold pb-1 cursor-help"
+              title="The highest this model reached on a random half-split, where there is nothing to find. Anything well above chance would invalidate its whole column."
+            >
+              Max null
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {[...models, ...(stump ? [stump] : [])].map(([name, v]) => (
+            <tr
+              key={name}
+              className={clsx(
+                "border-t border-line-subtle",
+                name === "stump" && "text-ink-3",
+              )}
+            >
+              <td className="py-1 font-mono text-[10.5px]">
+                {name}
+                {name === "stump" && (
+                  <span className="ml-1.5 text-[9.5px]">· capacity floor</span>
+                )}
+              </td>
+              <td className="py-1 text-ink-2">{v.verdict}</td>
+              <td className="py-1 text-right font-mono tabular-nums">
+                {isAbsent(v.min_gap)
+                  ? "—"
+                  : `${(v.min_gap as number) > 0 ? "+" : ""}${(v.min_gap as number).toFixed(4)}`}
+              </td>
+              <td className="py-1 text-right font-mono tabular-nums">
+                {score(v.max_within_auc, 4)}
+              </td>
+              <td className="py-1 text-right font-mono tabular-nums">
+                {score(v.max_null_auc, 4)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p className="text-[10.5px] text-ink-2 leading-relaxed">
+        Read the <strong className="text-ink-1">Max null</strong> column first: every
+        model sits at chance on a boundary that means nothing, so no column here is
+        measuring itself. The verdict then agreeing across all of them is what turns
+        &ldquo;the model we happened to use says so&rdquo; into a property of the data.
+      </p>
+    </div>
   );
 }
 
