@@ -1,0 +1,226 @@
+19:22:39 pre-registration sha256 75665718988da1df11133b1e40a23dcac64d606dfcb057084f207cdb38f05016
+19:22:39 models ['xgboost', 'catboost', 'random_forest'] | seeds [42, 43, 44, 45, 46] | feature sets {'consensus': 13, 'shap': 26, 'perm': 18}
+19:22:41 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+19:22:41 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+19:22:57 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+19:22:58 sampled 300000 rows (target 300000) across 7 classes with seed 42
+19:22:58 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+19:23:20 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+19:26:19 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+19:26:19 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+19:26:21 sampled 300000 rows (target 300000) across 7 classes with seed 42
+19:26:21 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+19:26:21 rows: 2017 300000, 2018 300000
+19:26:21 Part A: xgboost
+19:26:23 Preprocessor fitted: 60 features, scaler=standard
+19:26:56   attack side xgboost              ids2017  seed 42 done (SHAP 1s)
+19:26:57 Preprocessor fitted: 60 features, scaler=standard
+19:27:36   attack side xgboost              ids2017  seed 43 done (SHAP 2s)
+19:27:36 Preprocessor fitted: 60 features, scaler=standard
+19:28:14   attack side xgboost              ids2017  seed 44 done (SHAP 2s)
+19:28:15 Preprocessor fitted: 60 features, scaler=standard
+19:28:51   attack side xgboost              ids2017  seed 45 done (SHAP 2s)
+19:28:52 Preprocessor fitted: 60 features, scaler=standard
+19:29:29   attack side xgboost              ids2017  seed 46 done (SHAP 2s)
+19:29:30 Preprocessor fitted: 60 features, scaler=standard
+19:30:09   attack side xgboost              ids2018  seed 42 done (SHAP 3s)
+19:30:09 Preprocessor fitted: 60 features, scaler=standard
+19:30:46   attack side xgboost              ids2018  seed 43 done (SHAP 2s)
+19:30:46 Preprocessor fitted: 60 features, scaler=standard
+19:31:25   attack side xgboost              ids2018  seed 44 done (SHAP 2s)
+19:31:26 Preprocessor fitted: 60 features, scaler=standard
+19:32:05   attack side xgboost              ids2018  seed 45 done (SHAP 2s)
+19:32:05 Preprocessor fitted: 60 features, scaler=standard
+19:32:40   attack side xgboost              ids2018  seed 46 done (SHAP 3s)
+19:32:40 Part A xgboost: kappa vs LightGBM 0.874, spearman {'ids2017': 0.8973, 'ids2018': 0.912}
+19:32:40 Part B: xgboost
+19:32:40 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+19:32:41 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+19:32:41 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:32:41 Preprocessor fitted: 69 features, scaler=standard
+19:33:15   xgboost 2017->2018 seed 42 done (34s, 10602 missed attacks)
+19:33:15 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:33:15 Preprocessor fitted: 69 features, scaler=standard
+19:33:49   xgboost 2017->2018 seed 43 done (34s, 10576 missed attacks)
+19:33:49 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:33:50 Preprocessor fitted: 69 features, scaler=standard
+19:34:22   xgboost 2017->2018 seed 44 done (33s, 10579 missed attacks)
+19:34:22 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:34:23 Preprocessor fitted: 69 features, scaler=standard
+19:34:56   xgboost 2017->2018 seed 45 done (34s, 9534 missed attacks)
+19:34:56 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:34:57 Preprocessor fitted: 69 features, scaler=standard
+19:35:29   xgboost 2017->2018 seed 46 done (33s, 10601 missed attacks)
+19:35:30 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:35:30 Preprocessor fitted: 69 features, scaler=standard
+19:36:08   xgboost 2018->2017 seed 42 done (39s, 11034 missed attacks)
+19:36:08 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:36:09 Preprocessor fitted: 69 features, scaler=standard
+19:36:48   xgboost 2018->2017 seed 43 done (40s, 7464 missed attacks)
+19:36:48 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:36:48 Preprocessor fitted: 69 features, scaler=standard
+19:37:31   xgboost 2018->2017 seed 44 done (43s, 8198 missed attacks)
+19:37:31 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:37:31 Preprocessor fitted: 69 features, scaler=standard
+19:38:10   xgboost 2018->2017 seed 45 done (39s, 8037 missed attacks)
+19:38:10 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:38:10 Preprocessor fitted: 69 features, scaler=standard
+19:38:52   xgboost 2018->2017 seed 46 done (43s, 13501 missed attacks)
+19:38:57 Part B xgboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+19:38:57 Part A: catboost
+19:38:57 Preprocessor fitted: 60 features, scaler=standard
+19:40:50   attack side catboost             ids2017  seed 42 done (SHAP 1s)
+19:40:50 Preprocessor fitted: 60 features, scaler=standard
+19:42:43   attack side catboost             ids2017  seed 43 done (SHAP 1s)
+19:42:44 Preprocessor fitted: 60 features, scaler=standard
+19:44:38   attack side catboost             ids2017  seed 44 done (SHAP 1s)
+19:44:39 Preprocessor fitted: 60 features, scaler=standard
+19:46:34   attack side catboost             ids2017  seed 45 done (SHAP 1s)
+19:46:35 Preprocessor fitted: 60 features, scaler=standard
+19:48:21   attack side catboost             ids2017  seed 46 done (SHAP 1s)
+19:48:22 Preprocessor fitted: 60 features, scaler=standard
+19:49:59   attack side catboost             ids2018  seed 42 done (SHAP 1s)
+19:50:00 Preprocessor fitted: 60 features, scaler=standard
+19:51:37   attack side catboost             ids2018  seed 43 done (SHAP 1s)
+19:51:38 Preprocessor fitted: 60 features, scaler=standard
+19:53:12   attack side catboost             ids2018  seed 44 done (SHAP 1s)
+19:53:12 Preprocessor fitted: 60 features, scaler=standard
+19:54:45   attack side catboost             ids2018  seed 45 done (SHAP 1s)
+19:54:46 Preprocessor fitted: 60 features, scaler=standard
+19:56:18   attack side catboost             ids2018  seed 46 done (SHAP 1s)
+19:56:18 Part A catboost: kappa vs LightGBM 0.770, spearman {'ids2017': 0.8662, 'ids2018': 0.8566}
+19:56:18 Part B: catboost
+19:56:18 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+19:56:18 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+19:56:19 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:56:19 Preprocessor fitted: 69 features, scaler=standard
+19:57:53   catboost 2017->2018 seed 42 done (95s, 9576 missed attacks)
+19:57:54 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:57:54 Preprocessor fitted: 69 features, scaler=standard
+19:59:41   catboost 2017->2018 seed 43 done (107s, 10095 missed attacks)
+19:59:41 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:59:41 Preprocessor fitted: 69 features, scaler=standard
+20:02:03   catboost 2017->2018 seed 44 done (142s, 9465 missed attacks)
+20:02:03 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:02:03 Preprocessor fitted: 69 features, scaler=standard
+20:04:36   catboost 2017->2018 seed 45 done (153s, 9859 missed attacks)
+20:04:36 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:04:37 Preprocessor fitted: 69 features, scaler=standard
+20:08:04   catboost 2017->2018 seed 46 done (208s, 9932 missed attacks)
+20:08:04 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:08:05 Preprocessor fitted: 69 features, scaler=standard
+20:12:05   catboost 2018->2017 seed 42 done (242s, 11718 missed attacks)
+20:12:06 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:12:06 Preprocessor fitted: 69 features, scaler=standard
+20:16:04   catboost 2018->2017 seed 43 done (238s, 11651 missed attacks)
+20:16:04 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:16:05 Preprocessor fitted: 69 features, scaler=standard
+20:20:07   catboost 2018->2017 seed 44 done (243s, 11661 missed attacks)
+20:20:07 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:20:07 Preprocessor fitted: 69 features, scaler=standard
+20:23:50   catboost 2018->2017 seed 45 done (223s, 11645 missed attacks)
+20:23:50 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:23:51 Preprocessor fitted: 69 features, scaler=standard
+20:27:49   catboost 2018->2017 seed 46 done (240s, 11630 missed attacks)
+20:27:56 Part B catboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+20:27:56 Part A: random_forest
+20:27:58 Preprocessor fitted: 60 features, scaler=standard
+20:49:54 pre-registration sha256 75665718988da1df11133b1e40a23dcac64d606dfcb057084f207cdb38f05016
+20:49:54 models ['random_forest'] | seeds [42, 43, 44, 45, 46] | feature sets {'consensus': 13, 'shap': 26, 'perm': 18}
+20:49:56 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+20:49:56 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+20:50:08 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+20:50:08 sampled 300000 rows (target 300000) across 7 classes with seed 42
+20:50:08 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+20:50:22 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+20:52:13 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+20:52:13 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+20:52:15 sampled 300000 rows (target 300000) across 7 classes with seed 42
+20:52:15 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+20:52:15 rows: 2017 300000, 2018 300000
+20:52:15 Part A: random_forest
+20:52:16 Preprocessor fitted: 60 features, scaler=standard
+20:54:52   attack side random_forest        ids2017  seed 42 done (SHAP 142s)
+20:54:52 Preprocessor fitted: 60 features, scaler=standard
+20:57:30   attack side random_forest        ids2017  seed 43 done (SHAP 145s)
+20:57:31 Preprocessor fitted: 60 features, scaler=standard
+21:00:09   attack side random_forest        ids2017  seed 44 done (SHAP 145s)
+21:00:10 Preprocessor fitted: 60 features, scaler=standard
+21:02:50   attack side random_forest        ids2017  seed 45 done (SHAP 147s)
+21:02:50 Preprocessor fitted: 60 features, scaler=standard
+21:05:30   attack side random_forest        ids2017  seed 46 done (SHAP 146s)
+21:05:31 Preprocessor fitted: 60 features, scaler=standard
+21:21:00   attack side random_forest        ids2018  seed 42 done (SHAP 911s)
+21:21:01 Preprocessor fitted: 60 features, scaler=standard
+21:35:57   attack side random_forest        ids2018  seed 43 done (SHAP 880s)
+21:35:58 Preprocessor fitted: 60 features, scaler=standard
+21:50:50   attack side random_forest        ids2018  seed 44 done (SHAP 875s)
+21:50:50 Preprocessor fitted: 60 features, scaler=standard
+22:07:16   attack side random_forest        ids2018  seed 45 done (SHAP 968s)
+22:07:16 Preprocessor fitted: 60 features, scaler=standard
+22:22:29   attack side random_forest        ids2018  seed 46 done (SHAP 896s)
+22:22:29 Part A random_forest: kappa vs LightGBM 0.626, spearman {'ids2017': 0.6993, 'ids2018': 0.8207}
+22:22:29 Part B: random_forest
+22:22:29 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+22:22:29 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+22:22:30 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+22:22:30 Preprocessor fitted: 69 features, scaler=standard
+01:32:56 pre-registration sha256 75665718988da1df11133b1e40a23dcac64d606dfcb057084f207cdb38f05016
+01:32:56 models ['random_forest'] | seeds [42, 43, 44, 45, 46] | feature sets {'consensus': 13, 'shap': 26, 'perm': 18}
+01:32:57 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+01:32:57 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+01:33:09 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+01:33:10 sampled 300000 rows (target 300000) across 7 classes with seed 42
+01:33:10 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+01:33:24 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+01:35:01 pre-registration sha256 75665718988da1df11133b1e40a23dcac64d606dfcb057084f207cdb38f05016
+01:35:01 models ['random_forest'] | seeds [42, 43, 44, 45, 46] | feature sets {'consensus': 13, 'shap': 26, 'perm': 18}
+01:35:02 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+01:35:02 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+01:35:14 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+01:35:14 sampled 300000 rows (target 300000) across 7 classes with seed 42
+01:35:14 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+01:35:27 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+01:37:16 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+01:37:16 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+01:37:17 sampled 300000 rows (target 300000) across 7 classes with seed 42
+01:37:17 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+01:37:18 rows: 2017 300000, 2018 300000
+01:37:18 Part A random_forest: kappa vs LightGBM 0.626, spearman {'ids2017': 0.6993, 'ids2018': 0.8207}
+01:37:18 Part A random_forest rebuilt from part_a_roles.csv
+01:37:18 Part B: random_forest
+01:37:18 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+01:37:18 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+01:37:19 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:37:19 Preprocessor fitted: 69 features, scaler=standard
+01:43:31   random_forest 2017->2018 seed 42 done (373s, 10601 missed attacks)
+01:43:31 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:43:31 Preprocessor fitted: 69 features, scaler=standard
+01:49:50   random_forest 2017->2018 seed 43 done (380s, 10601 missed attacks)
+01:49:51 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:49:51 Preprocessor fitted: 69 features, scaler=standard
+01:56:07   random_forest 2017->2018 seed 44 done (376s, 10601 missed attacks)
+01:56:07 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+01:56:08 Preprocessor fitted: 69 features, scaler=standard
+02:02:24   random_forest 2017->2018 seed 45 done (377s, 10599 missed attacks)
+02:02:25 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+02:02:25 Preprocessor fitted: 69 features, scaler=standard
+02:08:40   random_forest 2017->2018 seed 46 done (375s, 10601 missed attacks)
+02:08:40 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+02:08:40 Preprocessor fitted: 69 features, scaler=standard
+03:06:46   random_forest 2018->2017 seed 42 done (3486s, 8910 missed attacks)
+03:06:47 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+03:06:47 Preprocessor fitted: 69 features, scaler=standard
+04:04:27   random_forest 2018->2017 seed 43 done (3461s, 8455 missed attacks)
+04:04:28 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+04:04:28 Preprocessor fitted: 69 features, scaler=standard
+05:01:44   random_forest 2018->2017 seed 44 done (3436s, 8981 missed attacks)
+05:01:44 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:01:45 Preprocessor fitted: 69 features, scaler=standard
+05:58:55   random_forest 2018->2017 seed 45 done (3430s, 8904 missed attacks)
+05:58:55 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:58:55 Preprocessor fitted: 69 features, scaler=standard
+06:56:32   random_forest 2018->2017 seed 46 done (3456s, 8840 missed attacks)
+06:56:35 Part B random_forest: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+06:56:35 round 3 overall (consensus): not supported {'xgboost': 'not supported', 'catboost': 'not supported', 'random_forest': 'not supported'}
+06:56:35 done in 321.6 min -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_round3
