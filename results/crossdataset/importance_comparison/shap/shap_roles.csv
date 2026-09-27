@@ -1,0 +1,61 @@
+feature,dataset_shap_max_class_share,dataset_carries,attack_lightgbm_ids2017_share,attack_lightgbm_ids2017_carries,attack_lightgbm_ids2018_share,attack_lightgbm_ids2018_carries,role_lightgbm_shap,role_lightgbm_perm,attack_logistic_regression_ids2017_share,attack_logistic_regression_ids2017_carries,attack_logistic_regression_ids2018_share,attack_logistic_regression_ids2018_carries,role_logistic_regression_shap,role_logistic_regression_perm
+Destination Port,0.06844742443744453,True,0.1703563888461849,True,0.21398496483082355,True,entangled,entangled,0.113382235,True,0.15483895,True,entangled,entangled
+Flow Duration,0.008585611914659144,False,0.00915268948549025,False,0.017317003733569276,False,neither,neither,0.020082874,True,0.002340902,False,attack only,attack only
+Total Fwd Packets,0.013669955812174067,False,0.0028334579628020357,False,0.018190512760554056,True,attack only,neither,0.0025930249,False,0.0006093775,False,neither,neither
+Total Backward Packets,0.015624814930388933,False,0.007474469100071749,False,0.01386640799906606,False,neither,neither,0.0033087977,False,0.001960624,False,neither,neither
+Total Length of Fwd Packets,0.08294147102217278,True,0.03366022336250264,True,0.020337327985904003,True,entangled,attack only,0.0031312392,False,0.0025410221,False,fingerprint only,attack only
+Total Length of Bwd Packets,0.07077461623303104,True,0.010850127301229065,False,0.01065020130752277,False,fingerprint only,neither,0.0022996743,False,0.0018532844,False,fingerprint only,neither
+Fwd Packet Length Max,0.010287691256330634,False,0.03903765911924142,True,0.02131648010722278,True,attack only,neither,0.030244593,True,0.06578731,True,attack only,attack only
+Fwd Packet Length Min,0.08731674648056484,True,0.0008774109035480692,False,0.001747410773511373,False,fingerprint only,neither,0.010654919,False,0.0050563,False,fingerprint only,attack only
+Fwd Packet Length Mean,0.006404752749118142,False,0.020262984277655296,True,0.015079308300638212,False,attack only,neither,0.011598073,False,0.015386377,False,neither,attack only
+Fwd Packet Length Std,0.011674014107058876,False,0.008001619480790454,False,0.017256460409679146,False,neither,entangled,0.029766524,True,0.054811634,True,attack only,entangled
+Bwd Packet Length Max,0.018079519762240013,False,0.008244959975658269,False,0.010839864725555514,False,neither,neither,0.024767004,True,0.041247517,True,attack only,attack only
+Bwd Packet Length Min,0.05141792498782719,True,0.018972682883785112,False,0.003117868639812244,False,fingerprint only,fingerprint only,0.04172416,True,0.012622048,False,entangled,entangled
+Bwd Packet Length Mean,0.28173987073454715,True,0.03899315379350189,True,0.006774937717094592,False,entangled,neither,0.022718411,True,0.05993527,True,entangled,attack only
+Bwd Packet Length Std,0.05191570653794362,True,0.061255728164555046,True,0.031005147337430462,True,entangled,entangled,0.01233133,False,0.07938463,True,entangled,entangled
+Flow Bytes/s,0.009066733592457603,False,0.008909850945986248,False,0.016249722255648157,False,neither,attack only,0.001442154,False,0.002065058,False,neither,attack only
+Flow Packets/s,0.0052281888405635,False,0.005644545692829304,False,0.0072681061760175025,False,neither,neither,0.0069970354,False,0.014270106,False,neither,attack only
+Flow IAT Mean,0.015215788626460908,False,0.006637373511869493,False,0.012778240179839149,False,neither,neither,0.022143437,True,0.01104061,False,attack only,attack only
+Flow IAT Std,0.013598559218200726,False,0.00864403633308962,False,0.013895020823692275,False,neither,neither,0.023947649,True,0.0038195252,False,attack only,attack only
+Flow IAT Max,0.008043210417028476,False,0.014996847223621873,False,0.019243519698310098,True,attack only,attack only,0.030699247,True,0.0027708139,False,attack only,neither
+Flow IAT Min,0.042371366706572294,True,0.02675208129735051,True,0.03518885569916012,True,entangled,entangled,0.0049141636,False,0.0010951762,False,fingerprint only,entangled
+Fwd IAT Total,0.007370369452314304,False,0.012269401528559643,False,0.019572505766521198,True,attack only,attack only,0.027238768,True,0.001955601,False,attack only,attack only
+Fwd IAT Mean,0.00553829207891574,False,0.012126031449722663,False,0.011134432166168572,False,neither,neither,0.01974882,True,0.010488046,False,attack only,attack only
+Fwd IAT Std,0.07159190942936329,True,0.02792735978874254,True,0.024967856072898177,True,entangled,neither,0.033610027,True,0.0022324848,False,entangled,attack only
+Fwd IAT Max,0.005746918231009573,False,0.012863270504392565,False,0.012935038474637001,False,neither,attack only,0.030077234,True,0.0023755827,False,attack only,attack only
+Fwd IAT Min,0.045844328707969284,True,0.028544892821927636,True,0.023062746510135495,True,entangled,entangled,0.009069307,False,0.0013078647,False,fingerprint only,fingerprint only
+Bwd IAT Total,0.009775575180149841,False,0.0034557111146622404,False,0.005471396677504381,False,neither,fingerprint only,0.036457572,True,0.017283604,False,attack only,entangled
+Bwd IAT Mean,0.0018975930161992279,False,0.0026082519504161713,False,0.0031417568970524058,False,neither,neither,0.015758025,False,0.010304331,False,neither,attack only
+Bwd IAT Std,0.0023681676872591402,False,0.016254392731550545,False,0.005642835948076061,False,neither,neither,0.004703827,False,0.018513732,True,attack only,attack only
+Bwd IAT Max,0.017262805661637286,True,0.003854207184461117,False,0.00897029650664308,False,fingerprint only,neither,0.017046535,False,0.013949093,False,fingerprint only,attack only
+Bwd IAT Min,0.027831772035671526,True,0.005990789612029115,False,0.008741018677894138,False,fingerprint only,fingerprint only,0.007819602,False,0.0018314397,False,fingerprint only,entangled
+Fwd PSH Flags,0.003906270100600973,False,0.001465588714036937,False,0.0004770725564288496,False,neither,fingerprint only,0.016008109,False,0.0040562777,False,neither,entangled
+Fwd URG Flags,0.0,False,0.0,False,3.0815558110402173e-06,False,neither,neither,7.3607043e-06,False,1.00280895e-11,False,neither,neither
+Fwd Header Length,0.03280498729791997,True,0.014840088338072321,False,0.022589322175301352,True,entangled,neither,5.350127e-08,False,0.00068364944,False,fingerprint only,attack only
+Bwd Header Length,0.020751894163605105,False,0.009271201088200037,False,0.012386225090762712,False,neither,neither,0.00037297368,False,0.002255503,False,neither,neither
+Fwd Packets/s,0.01162088227726925,False,0.007939797337841718,False,0.013353061525441018,False,neither,neither,0.013735471,False,0.012488549,False,neither,attack only
+Bwd Packets/s,0.07789660557687414,True,0.019086886873520593,True,0.03098413278506574,True,entangled,attack only,0.0019081223,False,0.010289287,False,fingerprint only,attack only
+Min Packet Length,0.05935600475108338,True,0.007347893890120488,False,0.0011328721705814334,False,fingerprint only,fingerprint only,0.03173644,True,0.007989431,False,entangled,entangled
+Max Packet Length,0.06342525664932616,True,0.010919949461471323,False,0.00931704171275803,False,fingerprint only,fingerprint only,0.01591454,False,0.04084174,True,entangled,entangled
+Packet Length Mean,0.16286566871935979,True,0.00512469493263251,False,0.008249520705611265,False,fingerprint only,neither,0.028002646,True,0.018114554,True,entangled,attack only
+Packet Length Std,0.008366992658420686,False,0.010884227119350122,False,0.012059829467181605,False,neither,fingerprint only,0.02496822,True,0.051298577,True,attack only,entangled
+FIN Flag Count,0.023384248424697704,True,0.006677596067695281,False,0.001558784010488166,False,fingerprint only,attack only,0.004824377,False,0.0007559319,False,fingerprint only,attack only
+RST Flag Count,0.6983175273340217,True,0.0,False,0.024716754272546212,True,entangled,fingerprint only,8.8591514e-05,False,0.02846305,True,entangled,entangled
+PSH Flag Count,0.0405662474626138,True,0.00033440393267431873,False,0.004257452193705958,False,fingerprint only,attack only,0.01613703,False,0.014313012,False,fingerprint only,attack only
+ACK Flag Count,0.005686813366309264,False,0.0055284280039526006,False,0.009532958543226912,False,neither,attack only,0.026595136,True,0.037583366,True,attack only,attack only
+URG Flag Count,0.0024676892832960666,False,0.011417652796310265,False,0.004514776208960472,False,neither,neither,0.018144675,True,0.008383238,False,attack only,attack only
+ECE Flag Count,0.1127264729718785,True,0.0,False,0.014173213179795311,False,fingerprint only,neither,8.8253764e-05,False,0.0284646,True,entangled,attack only
+Down/Up Ratio,0.002738310665935367,False,0.0018385495866200293,False,0.0017849437844168173,False,neither,neither,0.00540874,False,0.007249533,False,neither,attack only
+Average Packet Size,0.0930679621266645,True,0.012894940594927773,False,0.014171207591945314,False,fingerprint only,neither,0.03252249,True,0.017458076,True,entangled,attack only
+Init_Win_bytes_forward,0.19422619173004024,True,0.07941852432614346,True,0.07660917349801047,True,entangled,entangled,0.03218761,True,0.0053115054,False,entangled,entangled
+Init_Win_bytes_backward,0.2997397983010316,True,0.07139372846153576,True,0.025570750433438434,True,entangled,entangled,0.009680192,False,0.037500195,True,entangled,entangled
+act_data_pkt_fwd,0.4714921432844389,True,0.014639119552831625,False,0.010319182663137132,False,fingerprint only,fingerprint only,0.0035225805,False,0.00062559405,False,fingerprint only,fingerprint only
+min_seg_size_forward,0.7307167505718359,True,0.04891717779107541,True,0.04546788463089839,True,entangled,entangled,1.0529518e-09,False,0.032005955,True,entangled,entangled
+Active Mean,0.0008690861140051995,False,0.0007058532277239973,False,0.0011236049110782025,False,neither,neither,0.0044137468,False,0.0022519592,False,neither,neither
+Active Std,0.0003776093700886972,False,0.0008814755261310226,False,0.0037993317418360028,False,neither,neither,0.0023316103,False,0.0007641257,False,neither,attack only
+Active Max,0.0006467684146296713,False,0.000979442806044891,False,0.0022913758631347507,False,neither,neither,0.0074762935,False,0.0022716788,False,neither,attack only
+Active Min,0.003926267141011691,False,0.006190603632102737,False,0.0014750016183674322,False,neither,neither,0.0028591447,False,0.0024637536,False,neither,neither
+Idle Mean,0.001450409434026439,False,0.0036777103038337145,False,0.004428909380882434,False,neither,neither,0.025598774,True,0.0015870205,False,attack only,attack only
+Idle Std,0.0006087385515458096,False,0.0001574657027586408,False,0.0026520504204929924,False,neither,neither,0.0055738855,False,0.00015645291,False,neither,neither
+Idle Max,0.005751731320326427,False,0.007397962817684222,False,0.0031358171015446108,False,neither,fingerprint only,0.027947614,True,0.001741101,False,attack only,entangled
+Idle Min,0.0017271506601109446,False,0.012616438766480803,False,0.008117423048569095,False,neither,neither,0.021669073,True,0.008953947,False,attack only,attack only

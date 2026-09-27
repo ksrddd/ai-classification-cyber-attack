@@ -1,0 +1,99 @@
+{
+  "path_seconds": 3.2,
+  "interventional_seconds": 144.2,
+  "rows": 300,
+  "background": 100,
+  "corpus": "ids2017",
+  "seed": 42,
+  "spearman": 0.9835,
+  "top10_overlap": 10,
+  "above_1_60": {
+    "path": 15,
+    "interventional": 15
+  },
+  "above_1_60_agree": 0.967,
+  "top10_path": [
+    [
+      "Destination Port",
+      0.1783
+    ],
+    [
+      "Init_Win_bytes_forward",
+      0.0821
+    ],
+    [
+      "Init_Win_bytes_backward",
+      0.0744
+    ],
+    [
+      "Bwd Packet Length Std",
+      0.0611
+    ],
+    [
+      "min_seg_size_forward",
+      0.0424
+    ],
+    [
+      "Fwd Packet Length Max",
+      0.0392
+    ],
+    [
+      "Total Length of Fwd Packets",
+      0.0384
+    ],
+    [
+      "Bwd Packet Length Mean",
+      0.0382
+    ],
+    [
+      "Fwd IAT Min",
+      0.031
+    ],
+    [
+      "Fwd IAT Std",
+      0.0276
+    ]
+  ],
+  "top10_interventional": [
+    [
+      "Destination Port",
+      0.1712
+    ],
+    [
+      "Init_Win_bytes_forward",
+      0.0853
+    ],
+    [
+      "Init_Win_bytes_backward",
+      0.0813
+    ],
+    [
+      "Bwd Packet Length Std",
+      0.0484
+    ],
+    [
+      "min_seg_size_forward",
+      0.0426
+    ],
+    [
+      "Bwd Packet Length Mean",
+      0.0408
+    ],
+    [
+      "Fwd Packet Length Max",
+      0.0405
+    ],
+    [
+      "Fwd IAT Min",
+      0.0324
+    ],
+    [
+      "Total Length of Fwd Packets",
+      0.0293
+    ],
+    [
+      "Fwd IAT Std",
+      0.0289
+    ]
+  ]
+}

@@ -1,0 +1,131 @@
+18:57:51 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+18:57:52 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+18:58:04 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+18:58:04 sampled 300000 rows (target 300000) across 7 classes with seed 42
+18:58:04 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+18:58:18 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+19:00:31 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+19:00:32 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+19:00:34 sampled 300000 rows (target 300000) across 7 classes with seed 42
+19:00:34 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+19:00:34 rows: 2017 300000, 2018 300000 | features 60 | seeds [42, 43, 44, 45, 46]
+19:00:34 pre-registration sha256 8f701b154de2e07fb92924deebf5968ca8ea42b7227d03a296f0c7f9b8f85173
+19:00:34 Part A: dataset side (adversarial LightGBM)
+19:00:39   dataset side Benign       seed 42 done (n=20000 per side)
+19:00:42   dataset side Benign       seed 43 done (n=20000 per side)
+19:00:45   dataset side Benign       seed 44 done (n=20000 per side)
+19:00:48   dataset side Benign       seed 45 done (n=20000 per side)
+19:00:51   dataset side Benign       seed 46 done (n=20000 per side)
+19:00:52   dataset side DDoS         seed 42 done (n=15332 per side)
+19:00:52   dataset side DDoS         seed 43 done (n=15332 per side)
+19:00:52   dataset side DDoS         seed 44 done (n=15332 per side)
+19:00:53   dataset side DDoS         seed 45 done (n=15332 per side)
+19:00:53   dataset side DDoS         seed 46 done (n=15332 per side)
+19:00:54   dataset side DoS          seed 42 done (n=5132 per side)
+19:00:54   dataset side DoS          seed 43 done (n=5132 per side)
+19:00:55   dataset side DoS          seed 44 done (n=5132 per side)
+19:00:55   dataset side DoS          seed 45 done (n=5132 per side)
+19:00:56   dataset side DoS          seed 46 done (n=5132 per side)
+19:00:56   dataset side Brute Force  seed 42 done (n=2459 per side)
+19:00:56   dataset side Brute Force  seed 43 done (n=2459 per side)
+19:00:57   dataset side Brute Force  seed 44 done (n=2459 per side)
+19:00:57   dataset side Brute Force  seed 45 done (n=2459 per side)
+19:00:57   dataset side Brute Force  seed 46 done (n=2459 per side)
+19:00:57   dataset side Bot          seed 42 done (n=1948 per side)
+19:00:57   dataset side Bot          seed 43 done (n=1948 per side)
+19:00:57   dataset side Bot          seed 44 done (n=1948 per side)
+19:00:57   dataset side Bot          seed 45 done (n=1948 per side)
+19:00:58   dataset side Bot          seed 46 done (n=1948 per side)
+19:00:58   dataset side: skip Infiltration (36 / 3642 rows)
+19:00:58   dataset side Web Attack   seed 42 done (n=859 per side)
+19:00:58   dataset side Web Attack   seed 43 done (n=859 per side)
+19:00:58   dataset side Web Attack   seed 44 done (n=859 per side)
+19:00:58   dataset side Web Attack   seed 45 done (n=859 per side)
+19:00:58   dataset side Web Attack   seed 46 done (n=859 per side)
+19:00:58 Part A: attack side, lightgbm
+19:00:59 Preprocessor fitted: 60 features, scaler=standard
+19:01:22   attack side lightgbm             ids2017  seed 42 done (SHAP 6s)
+19:01:22 Preprocessor fitted: 60 features, scaler=standard
+19:01:47   attack side lightgbm             ids2017  seed 43 done (SHAP 6s)
+19:01:47 Preprocessor fitted: 60 features, scaler=standard
+19:02:13   attack side lightgbm             ids2017  seed 44 done (SHAP 6s)
+19:02:13 Preprocessor fitted: 60 features, scaler=standard
+19:02:39   attack side lightgbm             ids2017  seed 45 done (SHAP 6s)
+19:02:39 Preprocessor fitted: 60 features, scaler=standard
+19:03:09   attack side lightgbm             ids2017  seed 46 done (SHAP 6s)
+19:03:10 Preprocessor fitted: 60 features, scaler=standard
+19:03:32   attack side lightgbm             ids2018  seed 42 done (SHAP 6s)
+19:03:33 Preprocessor fitted: 60 features, scaler=standard
+19:03:57   attack side lightgbm             ids2018  seed 43 done (SHAP 5s)
+19:03:57 Preprocessor fitted: 60 features, scaler=standard
+19:04:20   attack side lightgbm             ids2018  seed 44 done (SHAP 6s)
+19:04:21 Preprocessor fitted: 60 features, scaler=standard
+19:04:43   attack side lightgbm             ids2018  seed 45 done (SHAP 5s)
+19:04:43 Preprocessor fitted: 60 features, scaler=standard
+19:05:07   attack side lightgbm             ids2018  seed 46 done (SHAP 6s)
+19:05:07 Part A: attack side, logistic_regression
+19:05:08 Preprocessor fitted: 60 features, scaler=standard
+19:05:20   attack side logistic_regression  ids2017  seed 42 done (SHAP 0s)
+19:05:20 Preprocessor fitted: 60 features, scaler=standard
+19:05:33   attack side logistic_regression  ids2017  seed 43 done (SHAP 0s)
+19:05:33 Preprocessor fitted: 60 features, scaler=standard
+19:05:45   attack side logistic_regression  ids2017  seed 44 done (SHAP 0s)
+19:05:45 Preprocessor fitted: 60 features, scaler=standard
+19:05:58   attack side logistic_regression  ids2017  seed 45 done (SHAP 0s)
+19:05:59 Preprocessor fitted: 60 features, scaler=standard
+19:06:12   attack side logistic_regression  ids2017  seed 46 done (SHAP 0s)
+19:06:13 Preprocessor fitted: 60 features, scaler=standard
+19:06:24   attack side logistic_regression  ids2018  seed 42 done (SHAP 0s)
+19:06:25 Preprocessor fitted: 60 features, scaler=standard
+19:06:37   attack side logistic_regression  ids2018  seed 43 done (SHAP 0s)
+19:06:38 Preprocessor fitted: 60 features, scaler=standard
+19:06:49   attack side logistic_regression  ids2018  seed 44 done (SHAP 0s)
+19:06:49 Preprocessor fitted: 60 features, scaler=standard
+19:07:03   attack side logistic_regression  ids2018  seed 45 done (SHAP 0s)
+19:07:03 Preprocessor fitted: 60 features, scaler=standard
+19:07:15   attack side logistic_regression  ids2018  seed 46 done (SHAP 0s)
+19:07:15 Part A kappa {'lightgbm': 0.3655, 'logistic_regression': 0.3344} -> not confirmed
+19:07:15 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+19:07:15 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+19:07:15 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:07:15 Preprocessor fitted: 69 features, scaler=standard
+19:07:42   2017->2018 seed 42 missed: 4003 rows (SHAP 7s)
+19:07:47   2017->2018 seed 42 caught: 2705 rows (SHAP 5s)
+19:07:48 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:07:48 Preprocessor fitted: 69 features, scaler=standard
+19:08:18   2017->2018 seed 43 missed: 4995 rows (SHAP 8s)
+19:08:23   2017->2018 seed 43 caught: 2703 rows (SHAP 5s)
+19:08:23 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:08:23 Preprocessor fitted: 69 features, scaler=standard
+19:08:53   2017->2018 seed 44 missed: 4995 rows (SHAP 8s)
+19:08:58   2017->2018 seed 44 caught: 2702 rows (SHAP 5s)
+19:08:58 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:08:58 Preprocessor fitted: 69 features, scaler=standard
+19:09:27   2017->2018 seed 45 missed: 4995 rows (SHAP 8s)
+19:09:32   2017->2018 seed 45 caught: 2711 rows (SHAP 5s)
+19:09:32 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:09:32 Preprocessor fitted: 69 features, scaler=standard
+19:10:03   2017->2018 seed 46 missed: 4995 rows (SHAP 9s)
+19:10:08   2017->2018 seed 46 caught: 2705 rows (SHAP 5s)
+19:10:08 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:10:08 Preprocessor fitted: 69 features, scaler=standard
+19:10:35   2018->2017 seed 42 missed: 2749 rows (SHAP 6s)
+19:10:44   2018->2017 seed 42 caught: 4072 rows (SHAP 9s)
+19:10:45 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:10:45 Preprocessor fitted: 69 features, scaler=standard
+19:11:13   2018->2017 seed 43 missed: 3147 rows (SHAP 7s)
+19:11:23   2018->2017 seed 43 caught: 4070 rows (SHAP 9s)
+19:11:23 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:11:23 Preprocessor fitted: 69 features, scaler=standard
+19:11:49   2018->2017 seed 44 missed: 2756 rows (SHAP 7s)
+19:11:59   2018->2017 seed 44 caught: 4068 rows (SHAP 9s)
+19:11:59 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:11:59 Preprocessor fitted: 69 features, scaler=standard
+19:12:25   2018->2017 seed 45 missed: 2732 rows (SHAP 7s)
+19:12:34   2018->2017 seed 45 caught: 4071 rows (SHAP 9s)
+19:12:34 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:12:34 Preprocessor fitted: 69 features, scaler=standard
+19:13:01   2018->2017 seed 46 missed: 2740 rows (SHAP 7s)
+19:13:10   2018->2017 seed 46 caught: 4062 rows (SHAP 9s)
+19:13:10 Part B -> {'shap': {'verdict': 'partial', 'judged_classes': ['DDoS', 'DoS', 'Web Attack'], 'n_supported': 1, 'n_not_supported': 1}, 'perm': {'verdict': 'not supported', 'judged_classes': ['DDoS', 'DoS', 'Web Attack'], 'n_supported': 0, 'n_not_supported': 2}, 'main_roles': 'both'}
+19:13:10 done in 12.6 min -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap

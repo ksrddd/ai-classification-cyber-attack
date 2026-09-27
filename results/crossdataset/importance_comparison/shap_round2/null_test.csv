@@ -1,0 +1,37 @@
+set,set_size,direction,class,eligible,G,null_mean,null_95,p,min_missed_total,min_caught
+consensus,13,ids2017->ids2018,DDoS,True,-0.021,-0.002,0.1786,0.5747,6081,1000
+consensus,13,ids2017->ids2018,DoS,True,0.0663,0.0022,0.2091,0.3203,1256,1000
+consensus,13,ids2017->ids2018,Brute Force,False,,,,,738,0
+consensus,13,ids2017->ids2018,Bot,False,-0.0114,-0.0055,0.1853,0.5432,8,89
+consensus,13,ids2017->ids2018,Infiltration,False,0.0089,-0.0,0.1723,0.4713,1092,10
+consensus,13,ids2017->ids2018,Web Attack,True,-0.0122,-0.0052,0.2428,0.5857,257,602
+consensus,13,ids2018->ids2017,DDoS,True,0.1897,0.0043,0.1844,0.045,4467,1000
+consensus,13,ids2018->ids2017,DoS,True,0.0353,0.0046,0.1959,0.3698,3920,1000
+consensus,13,ids2018->ids2017,Brute Force,False,0.0156,-0.0009,0.151,0.3998,18,737
+consensus,13,ids2018->ids2017,Bot,False,0.3077,0.0029,0.2563,0.0255,75,1000
+consensus,13,ids2018->ids2017,Infiltration,False,-0.006,0.0002,0.1571,0.5162,10,127
+consensus,13,ids2018->ids2017,Web Attack,True,0.2583,-0.0034,0.2525,0.0485,595,198
+shap,26,ids2017->ids2018,DDoS,True,0.1385,-0.004,0.2176,0.1439,6081,1000
+shap,26,ids2017->ids2018,DoS,True,0.1348,-0.0042,0.2381,0.1864,1256,1000
+shap,26,ids2017->ids2018,Brute Force,False,,,,,738,0
+shap,26,ids2017->ids2018,Bot,False,0.0497,-0.0046,0.2065,0.3508,8,89
+shap,26,ids2017->ids2018,Infiltration,False,0.2235,-0.004,0.1925,0.0275,1092,10
+shap,26,ids2017->ids2018,Web Attack,True,-0.0543,0.0007,0.3304,0.6027,257,602
+shap,26,ids2018->ids2017,DDoS,True,0.3413,-0.0033,0.2005,0.0015,4467,1000
+shap,26,ids2018->ids2017,DoS,True,0.0997,-0.002,0.2102,0.2254,3920,1000
+shap,26,ids2018->ids2017,Brute Force,False,0.0244,0.0023,0.1723,0.4103,18,737
+shap,26,ids2018->ids2017,Bot,False,0.1231,0.0041,0.3237,0.2834,75,1000
+shap,26,ids2018->ids2017,Infiltration,False,-0.0607,-0.0011,0.1848,0.6847,10,127
+shap,26,ids2018->ids2017,Web Attack,True,0.2179,0.0003,0.2674,0.1034,595,198
+perm,18,ids2017->ids2018,DDoS,True,-0.0759,-0.0049,0.2026,0.7076,6081,1000
+perm,18,ids2017->ids2018,DoS,True,0.0541,-0.0031,0.2245,0.3418,1256,1000
+perm,18,ids2017->ids2018,Brute Force,False,,,,,738,0
+perm,18,ids2017->ids2018,Bot,False,-0.0653,-0.0006,0.2078,0.7021,8,89
+perm,18,ids2017->ids2018,Infiltration,False,0.0001,0.0018,0.1899,0.5097,1092,10
+perm,18,ids2017->ids2018,Web Attack,True,-0.0984,0.002,0.2826,0.7061,257,602
+perm,18,ids2018->ids2017,DDoS,True,0.1967,0.0005,0.2015,0.055,4467,1000
+perm,18,ids2018->ids2017,DoS,True,-0.032,0.0021,0.201,0.5847,3920,1000
+perm,18,ids2018->ids2017,Brute Force,False,0.1082,0.002,0.1721,0.1534,18,737
+perm,18,ids2018->ids2017,Bot,False,0.3016,-0.001,0.2934,0.0455,75,1000
+perm,18,ids2018->ids2017,Infiltration,False,0.1107,0.003,0.1777,0.1684,10,127
+perm,18,ids2018->ids2017,Web Attack,True,0.1775,0.0012,0.2656,0.1394,595,198

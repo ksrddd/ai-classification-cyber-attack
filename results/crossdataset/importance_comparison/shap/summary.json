@@ -1,0 +1,391 @@
+{
+  "smoke": false,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "n_features": 60,
+  "background_rows": 200,
+  "explain_rows": 2000,
+  "preregistration_sha256": "8f701b154de2e07fb92924deebf5968ca8ea42b7227d03a296f0c7f9b8f85173",
+  "part_a": {
+    "roles": {
+      "lightgbm": {
+        "neither": 29,
+        "entangled": 13,
+        "fingerprint only": 13,
+        "attack only": 5
+      },
+      "logistic_regression": {
+        "attack only": 18,
+        "neither": 16,
+        "entangled": 14,
+        "fingerprint only": 12
+      }
+    },
+    "kappa": {
+      "lightgbm": 0.3655,
+      "logistic_regression": 0.3344
+    },
+    "spearman": {
+      "lightgbm_ids2017": 0.6764,
+      "lightgbm_ids2018": 0.6834,
+      "logistic_regression_ids2017": 0.7437,
+      "logistic_regression_ids2018": 0.8825
+    },
+    "moved": {
+      "lightgbm": [
+        {
+          "feature": "Total Fwd Packets",
+          "perm": "neither",
+          "shap": "attack only"
+        },
+        {
+          "feature": "Total Length of Fwd Packets",
+          "perm": "attack only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Total Length of Bwd Packets",
+          "perm": "neither",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd Packet Length Max",
+          "perm": "neither",
+          "shap": "attack only"
+        },
+        {
+          "feature": "Fwd Packet Length Min",
+          "perm": "neither",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd Packet Length Mean",
+          "perm": "neither",
+          "shap": "attack only"
+        },
+        {
+          "feature": "Fwd Packet Length Std",
+          "perm": "entangled",
+          "shap": "neither"
+        },
+        {
+          "feature": "Bwd Packet Length Mean",
+          "perm": "neither",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Flow Bytes/s",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Fwd IAT Std",
+          "perm": "neither",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Fwd IAT Max",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Bwd IAT Total",
+          "perm": "fingerprint only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Bwd IAT Max",
+          "perm": "neither",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd PSH Flags",
+          "perm": "fingerprint only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Fwd Header Length",
+          "perm": "neither",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Bwd Packets/s",
+          "perm": "attack only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Packet Length Mean",
+          "perm": "neither",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Packet Length Std",
+          "perm": "fingerprint only",
+          "shap": "neither"
+        },
+        {
+          "feature": "FIN Flag Count",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "RST Flag Count",
+          "perm": "fingerprint only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "PSH Flag Count",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "ACK Flag Count",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "ECE Flag Count",
+          "perm": "neither",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Average Packet Size",
+          "perm": "neither",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Idle Max",
+          "perm": "fingerprint only",
+          "shap": "neither"
+        }
+      ],
+      "logistic_regression": [
+        {
+          "feature": "Total Length of Fwd Packets",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Total Length of Bwd Packets",
+          "perm": "neither",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd Packet Length Min",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd Packet Length Mean",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Fwd Packet Length Std",
+          "perm": "entangled",
+          "shap": "attack only"
+        },
+        {
+          "feature": "Bwd Packet Length Mean",
+          "perm": "attack only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Flow Bytes/s",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Flow Packets/s",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Flow IAT Max",
+          "perm": "neither",
+          "shap": "attack only"
+        },
+        {
+          "feature": "Flow IAT Min",
+          "perm": "entangled",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd IAT Std",
+          "perm": "attack only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Bwd IAT Total",
+          "perm": "entangled",
+          "shap": "attack only"
+        },
+        {
+          "feature": "Bwd IAT Mean",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Bwd IAT Max",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Bwd IAT Min",
+          "perm": "entangled",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd PSH Flags",
+          "perm": "entangled",
+          "shap": "neither"
+        },
+        {
+          "feature": "Fwd Header Length",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Fwd Packets/s",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Bwd Packets/s",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "Packet Length Mean",
+          "perm": "attack only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Packet Length Std",
+          "perm": "entangled",
+          "shap": "attack only"
+        },
+        {
+          "feature": "FIN Flag Count",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "PSH Flag Count",
+          "perm": "attack only",
+          "shap": "fingerprint only"
+        },
+        {
+          "feature": "ECE Flag Count",
+          "perm": "attack only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Down/Up Ratio",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Average Packet Size",
+          "perm": "attack only",
+          "shap": "entangled"
+        },
+        {
+          "feature": "Active Std",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Active Max",
+          "perm": "attack only",
+          "shap": "neither"
+        },
+        {
+          "feature": "Idle Max",
+          "perm": "entangled",
+          "shap": "attack only"
+        }
+      ]
+    },
+    "verdict": "not confirmed"
+  },
+  "part_b_F": {
+    "shap": [
+      "Average Packet Size",
+      "Bwd IAT Max",
+      "Bwd IAT Min",
+      "Bwd Packet Length Mean",
+      "Bwd Packet Length Min",
+      "Bwd Packet Length Std",
+      "Bwd Packets/s",
+      "Destination Port",
+      "ECE Flag Count",
+      "FIN Flag Count",
+      "Flow IAT Min",
+      "Fwd Header Length",
+      "Fwd IAT Min",
+      "Fwd IAT Std",
+      "Fwd Packet Length Min",
+      "Init_Win_bytes_backward",
+      "Init_Win_bytes_forward",
+      "Max Packet Length",
+      "Min Packet Length",
+      "PSH Flag Count",
+      "Packet Length Mean",
+      "RST Flag Count",
+      "Total Length of Bwd Packets",
+      "Total Length of Fwd Packets",
+      "act_data_pkt_fwd",
+      "min_seg_size_forward"
+    ],
+    "perm": [
+      "Bwd IAT Min",
+      "Bwd IAT Total",
+      "Bwd Packet Length Min",
+      "Bwd Packet Length Std",
+      "Destination Port",
+      "Flow IAT Min",
+      "Fwd IAT Min",
+      "Fwd PSH Flags",
+      "Fwd Packet Length Std",
+      "Idle Max",
+      "Init_Win_bytes_backward",
+      "Init_Win_bytes_forward",
+      "Max Packet Length",
+      "Min Packet Length",
+      "Packet Length Std",
+      "RST Flag Count",
+      "act_data_pkt_fwd",
+      "min_seg_size_forward"
+    ]
+  },
+  "part_b": {
+    "shap": {
+      "verdict": "partial",
+      "judged_classes": [
+        "DDoS",
+        "DoS",
+        "Web Attack"
+      ],
+      "n_supported": 1,
+      "n_not_supported": 1
+    },
+    "perm": {
+      "verdict": "not supported",
+      "judged_classes": [
+        "DDoS",
+        "DoS",
+        "Web Attack"
+      ],
+      "n_supported": 0,
+      "n_not_supported": 2
+    },
+    "main_roles": "both"
+  },
+  "minutes": 12.6
+}

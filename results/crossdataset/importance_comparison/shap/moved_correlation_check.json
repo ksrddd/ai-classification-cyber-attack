@@ -1,0 +1,10 @@
+{
+  "lightgbm": {
+    "moved": 25,
+    "with_r_ge_0.9": 13
+  },
+  "logistic_regression": {
+    "moved": 29,
+    "with_r_ge_0.9": 16
+  }
+}

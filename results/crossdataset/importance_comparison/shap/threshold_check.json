@@ -1,0 +1,49 @@
+{
+  "note": "exploratory; same top-K rule for both methods",
+  "k": {
+    "5": {
+      "dataset_side_agreement": 0.8,
+      "lightgbm": {
+        "kappa": 0.524,
+        "attack_side_agreement": 0.95
+      },
+      "logistic_regression": {
+        "kappa": 0.486,
+        "attack_side_agreement": 0.85
+      }
+    },
+    "10": {
+      "dataset_side_agreement": 0.767,
+      "lightgbm": {
+        "kappa": 0.448,
+        "attack_side_agreement": 0.817
+      },
+      "logistic_regression": {
+        "kappa": 0.411,
+        "attack_side_agreement": 0.75
+      }
+    },
+    "15": {
+      "dataset_side_agreement": 0.833,
+      "lightgbm": {
+        "kappa": 0.517,
+        "attack_side_agreement": 0.783
+      },
+      "logistic_regression": {
+        "kappa": 0.622,
+        "attack_side_agreement": 0.867
+      }
+    },
+    "20": {
+      "dataset_side_agreement": 0.8,
+      "lightgbm": {
+        "kappa": 0.403,
+        "attack_side_agreement": 0.767
+      },
+      "logistic_regression": {
+        "kappa": 0.481,
+        "attack_side_agreement": 0.833
+      }
+    }
+  }
+}
