@@ -1,0 +1,61 @@
+feature,in_F,times_drawn
+Destination Port,True,446
+Flow Duration,False,478
+Total Fwd Packets,False,427
+Total Backward Packets,False,417
+Total Length of Fwd Packets,False,455
+Total Length of Bwd Packets,False,454
+Fwd Packet Length Max,False,425
+Fwd Packet Length Min,False,431
+Fwd Packet Length Mean,False,454
+Fwd Packet Length Std,False,415
+Bwd Packet Length Max,False,457
+Bwd Packet Length Min,True,417
+Bwd Packet Length Mean,False,426
+Bwd Packet Length Std,True,477
+Flow Bytes/s,False,435
+Flow Packets/s,False,454
+Flow IAT Mean,False,432
+Flow IAT Std,False,445
+Flow IAT Max,False,407
+Flow IAT Min,True,420
+Fwd IAT Total,False,425
+Fwd IAT Mean,False,443
+Fwd IAT Std,False,448
+Fwd IAT Max,False,420
+Fwd IAT Min,True,449
+Bwd IAT Total,False,422
+Bwd IAT Mean,False,432
+Bwd IAT Std,False,447
+Bwd IAT Max,False,422
+Bwd IAT Min,True,418
+Fwd PSH Flags,False,413
+Fwd URG Flags,False,450
+Fwd Header Length,False,450
+Bwd Header Length,False,420
+Fwd Packets/s,False,427
+Bwd Packets/s,False,419
+Min Packet Length,True,439
+Max Packet Length,True,449
+Packet Length Mean,False,440
+Packet Length Std,False,441
+FIN Flag Count,False,437
+RST Flag Count,True,430
+PSH Flag Count,False,429
+ACK Flag Count,False,423
+URG Flag Count,False,413
+ECE Flag Count,False,407
+Down/Up Ratio,False,422
+Average Packet Size,False,423
+Init_Win_bytes_forward,True,427
+Init_Win_bytes_backward,True,426
+act_data_pkt_fwd,True,410
+min_seg_size_forward,True,443
+Active Mean,False,409
+Active Std,False,454
+Active Max,False,466
+Active Min,False,442
+Idle Mean,False,421
+Idle Std,False,419
+Idle Max,False,463
+Idle Min,False,390

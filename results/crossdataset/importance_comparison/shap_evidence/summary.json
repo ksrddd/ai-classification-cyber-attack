@@ -1,0 +1,35 @@
+{
+  "source_blocks": {
+    "lightgbm": "results\\crossdataset\\importance_comparison\\shap_round2\\blocks.joblib",
+    "random_forest": "results\\crossdataset\\importance_comparison\\shap_round3\\blocks_random_forest.joblib",
+    "xgboost": "results\\crossdataset\\importance_comparison\\shap_round3\\blocks_xgboost.joblib",
+    "catboost": "results\\crossdataset\\importance_comparison\\shap_round3\\blocks_catboost.joblib"
+  },
+  "F": [
+    "Destination Port",
+    "Bwd Packet Length Min",
+    "Bwd Packet Length Std",
+    "Flow IAT Min",
+    "Fwd IAT Min",
+    "Bwd IAT Min",
+    "Min Packet Length",
+    "Max Packet Length",
+    "RST Flag Count",
+    "Init_Win_bytes_forward",
+    "Init_Win_bytes_backward",
+    "act_data_pkt_fwd",
+    "min_seg_size_forward"
+  ],
+  "set_size": 13,
+  "n_features_pool": 60,
+  "n_draws": 2000,
+  "draw_seed": 2026,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "checked_against_saved_null_test": true
+}
