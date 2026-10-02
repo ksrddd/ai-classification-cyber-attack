@@ -10,6 +10,7 @@ the subset of Markdown used in our guides:
     - 1. numbered lists
     - regular paragraphs
     - inline `code` (rendered as monospace span)
+    - ![caption](path) on its own line, path relative to the Markdown file
 
 Uses Tahoma (ships with Windows) so Thai characters render correctly.
 On non-Windows systems, falls back to the default Helvetica (Thai chars
@@ -22,6 +23,7 @@ Usage
 from __future__ import annotations
 
 import re
+import tempfile
 from pathlib import Path
 
 from reportlab.lib.colors import HexColor
@@ -31,6 +33,7 @@ from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
+    Image,
     Paragraph,
     Preformatted,
     SimpleDocTemplate,
@@ -41,17 +44,60 @@ from reportlab.platypus import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DOCS_DIR = PROJECT_ROOT / "docs"
+LINE_SEED_DIR = PROJECT_ROOT / "assets" / "fonts" / "line_seed_sans_th"
+
+# reportlab does not apply GPOS, so a Thai tone mark after an upper vowel (or
+# before sara am) is drawn on top of the vowel. For LINE Seed we add raised
+# copies of the tone marks in the private use area and swap them in.
+TONE_MARKS = "่้๊๋์"
+RAISED = {c: chr(0xF70A + i) for i, c in enumerate(TONE_MARKS)}
+UPPER_VOWELS = "ัิีึื็ํ"
+RAISE_BY = 220  # font units; upper vowels end about 220 above where tone marks start
+
+
+def line_seed_with_raised_marks(src: Path) -> str:
+    """Write a copy of ``src`` with raised tone marks added; return its path."""
+    from fontTools.ttLib import TTFont as FtFont
+    from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent
+
+    font = FtFont(str(src))
+    glyf, hmtx, cmap = font["glyf"], font["hmtx"], font.getBestCmap()
+    for tone, raised in RAISED.items():
+        base = cmap[ord(tone)]
+        name = f"{base}.raised"
+        comp = GlyphComponent()
+        comp.glyphName, comp.x, comp.y, comp.flags = base, 0, RAISE_BY, 0x4
+        glyph = Glyph()
+        glyph.numberOfContours, glyph.components = -1, [comp]
+        glyf[name] = glyph
+        hmtx[name] = hmtx[base]
+        for table in font["cmap"].tables:
+            if table.isUnicode():
+                table.cmap[ord(raised)] = name
+    font.setGlyphOrder(glyf.glyphOrder)  # glyf appends new names on assignment
+    out = Path(tempfile.gettempdir()) / f"{src.stem}_raised.ttf"
+    font.save(str(out))
+    return str(out)
+
+
+def raise_thai_tone_marks(text: str) -> str:
+    """Use the raised tone mark where it sits above an upper vowel or sara am."""
+    text = re.sub(f"([{UPPER_VOWELS}])([{TONE_MARKS}])",
+                  lambda m: m.group(1) + RAISED[m.group(2)], text)
+    return re.sub(f"([{TONE_MARKS}])ำ", lambda m: RAISED[m.group(1)] + "ำ", text)
 
 
 # ---------------------------------------------------------------------------
 # Font registration -- Tahoma supports Thai on Windows
 # ---------------------------------------------------------------------------
-def register_thai_fonts() -> tuple[str, str, str]:
+def register_thai_fonts(font: str = "tahoma") -> tuple[str, str, str]:
     """Register Thai-capable fonts and return (regular, bold, mono).
 
     - Tahoma / Tahoma-Bold: proportional, supports Thai. Ships with Windows.
     - Consolas: monospace, supports Thai on Win10+. Used for code blocks
       and inline `code` so Thai comments inside code render correctly.
+
+    - LINE Seed Sans TH (``font="line"``): kept in assets/fonts, SIL OFL 1.1.
 
     Falls back to Helvetica/Courier on non-Windows (Thai will not render).
     """
@@ -59,7 +105,14 @@ def register_thai_fonts() -> tuple[str, str, str]:
     tahoma = win_fonts / "tahoma.ttf"
     tahoma_bd = win_fonts / "tahomabd.ttf"
     consolas = win_fonts / "consola.ttf"
-    if tahoma.exists() and tahoma_bd.exists():
+    line_rg = LINE_SEED_DIR / "LINESeedSansTH_Rg.ttf"
+    line_bd = LINE_SEED_DIR / "LINESeedSansTH_Bd.ttf"
+    if font == "line" and line_rg.exists() and line_bd.exists():
+        pdfmetrics.registerFont(TTFont("LINESeedSansTH", line_seed_with_raised_marks(line_rg)))
+        pdfmetrics.registerFont(TTFont("LINESeedSansTH-Bold",
+                                       line_seed_with_raised_marks(line_bd)))
+        reg, bold = "LINESeedSansTH", "LINESeedSansTH-Bold"
+    elif tahoma.exists() and tahoma_bd.exists():
         pdfmetrics.registerFont(TTFont("Tahoma", str(tahoma)))
         pdfmetrics.registerFont(TTFont("Tahoma-Bold", str(tahoma_bd)))
         reg, bold = "Tahoma", "Tahoma-Bold"
@@ -79,7 +132,7 @@ def register_thai_fonts() -> tuple[str, str, str]:
 class MdBlock:
     """One renderable block: heading / paragraph / code / table / list."""
     def __init__(self, kind: str, lines: list[str], level: int = 0):
-        self.kind = kind     # "h1" "h2" "h3" "p" "code" "table" "ul" "ol"
+        self.kind = kind     # "h1" "h2" "h3" "p" "code" "table" "ul" "ol" "img"
         self.lines = lines
         self.level = level
 
@@ -107,6 +160,13 @@ def parse_markdown(text: str) -> list[MdBlock]:
                 j += 1
             blocks.append(MdBlock("code", buf))
             i = j + 1
+            continue
+
+        # image on its own line: lines = [caption, path]
+        m = re.match(r"^!\[(.*)\]\((.+)\)$", stripped)
+        if m:
+            blocks.append(MdBlock("img", [m.group(1), m.group(2)]))
+            i += 1
             continue
 
         # heading
@@ -295,13 +355,28 @@ def render_blocks(blocks: list[MdBlock], styles: dict[str, ParagraphStyle]):
         elif b.kind == "table":
             yield render_table(b, styles)
             yield Spacer(1, 6)
+        elif b.kind == "img":
+            caption, path = b.lines
+            img = Image(path)
+            width = A4[0] - 4 * cm  # page width minus the 2 cm margins
+            img.drawHeight = img.imageHeight * width / img.imageWidth
+            img.drawWidth = width
+            yield img
+            if caption:
+                yield Paragraph(render_inline(caption), styles["p"])
+            yield Spacer(1, 6)
 
 
-def render_pdf(md_path: Path, pdf_path: Path) -> None:
+def render_pdf(md_path: Path, pdf_path: Path, font: str = "tahoma") -> None:
     text = md_path.read_text(encoding="utf-8")
+    if font == "line":
+        text = raise_thai_tone_marks(text)
     blocks = parse_markdown(text)
+    for b in blocks:
+        if b.kind == "img":
+            b.lines[1] = str((md_path.parent / b.lines[1]).resolve())
 
-    regular, bold, mono = register_thai_fonts()
+    regular, bold, mono = register_thai_fonts(font)
     styles = build_styles(regular, bold, mono)
 
     doc = SimpleDocTemplate(
@@ -336,6 +411,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="Markdown files to render (default: docs/*_guide.md)")
     parser.add_argument("--out-dir", type=Path, default=None,
                         help="write PDFs here instead of beside the source")
+    parser.add_argument("--font", choices=("tahoma", "line"), default="tahoma",
+                        help="body font: tahoma (default) or LINE Seed Sans TH")
     args = parser.parse_args(argv)
 
     sources = args.sources or sorted(DOCS_DIR.glob("*_guide.md"))
@@ -355,7 +432,7 @@ def main(argv: list[str] | None = None) -> int:
     for md in sources:
         pdf = (args.out_dir / f"{md.stem}.pdf") if args.out_dir else md.with_suffix(".pdf")
         print(f"Rendering {md.name} -> {pdf}")
-        render_pdf(md, pdf)
+        render_pdf(md, pdf, args.font)
         print(f"  written {pdf.stat().st_size / 1024:.1f} KB")
     return 0
 
