@@ -1,0 +1,191 @@
+{
+  "preregistration_sha256": "3d09753576ce9527f8569d8851937b874ccb2e159996c90d4d7b9c69933c2347",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "n_draws": 2000,
+  "draw_seed": 2026,
+  "feature_sets": {
+    "consensus": [
+      "Destination Port",
+      "Bwd Packet Length Min",
+      "Bwd Packet Length Std",
+      "Flow IAT Min",
+      "Fwd IAT Min",
+      "Bwd IAT Min",
+      "Min Packet Length",
+      "Max Packet Length",
+      "RST Flag Count",
+      "Init_Win_bytes_forward",
+      "Init_Win_bytes_backward",
+      "act_data_pkt_fwd",
+      "min_seg_size_forward"
+    ],
+    "shap": [
+      "Destination Port",
+      "Total Length of Fwd Packets",
+      "Total Length of Bwd Packets",
+      "Fwd Packet Length Min",
+      "Bwd Packet Length Min",
+      "Bwd Packet Length Mean",
+      "Bwd Packet Length Std",
+      "Flow IAT Min",
+      "Fwd IAT Std",
+      "Fwd IAT Min",
+      "Bwd IAT Max",
+      "Bwd IAT Min",
+      "Fwd Header Length",
+      "Bwd Packets/s",
+      "Min Packet Length",
+      "Max Packet Length",
+      "Packet Length Mean",
+      "FIN Flag Count",
+      "RST Flag Count",
+      "PSH Flag Count",
+      "ECE Flag Count",
+      "Average Packet Size",
+      "Init_Win_bytes_forward",
+      "Init_Win_bytes_backward",
+      "act_data_pkt_fwd",
+      "min_seg_size_forward"
+    ],
+    "perm": [
+      "Destination Port",
+      "Fwd Packet Length Std",
+      "Bwd Packet Length Min",
+      "Bwd Packet Length Std",
+      "Flow IAT Min",
+      "Fwd IAT Min",
+      "Bwd IAT Total",
+      "Bwd IAT Min",
+      "Fwd PSH Flags",
+      "Min Packet Length",
+      "Max Packet Length",
+      "Packet Length Std",
+      "RST Flag Count",
+      "Init_Win_bytes_forward",
+      "Init_Win_bytes_backward",
+      "act_data_pkt_fwd",
+      "min_seg_size_forward",
+      "Idle Max"
+    ]
+  },
+  "decision_set": "consensus",
+  "models": {
+    "lightgbm": {
+      "consensus": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "shap": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "perm": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "minutes": 4.1
+    },
+    "xgboost": {
+      "consensus": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "shap": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "perm": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "minutes": 4.4
+    },
+    "catboost": {
+      "consensus": {
+        "overall": "not supported",
+        "n_eligible": 3,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported",
+          "ids2018->ids2017 Brute Force": "not supported"
+        }
+      },
+      "shap": {
+        "overall": "not supported",
+        "n_eligible": 3,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported",
+          "ids2018->ids2017 Brute Force": "not supported"
+        }
+      },
+      "perm": {
+        "overall": "not supported",
+        "n_eligible": 3,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported",
+          "ids2018->ids2017 Brute Force": "not supported"
+        }
+      },
+      "minutes": 15.6
+    },
+    "random_forest": {
+      "consensus": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "shap": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "perm": {
+        "overall": "not supported",
+        "n_eligible": 2,
+        "per_cell": {
+          "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DoS": "not supported"
+        }
+      },
+      "minutes": 70.5
+    }
+  }
+}

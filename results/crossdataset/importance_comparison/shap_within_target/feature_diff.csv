@@ -1,0 +1,1321 @@
+model,direction,class,feature,within,dataset
+lightgbm,ids2017->ids2018,DoS,Destination Port,0.0,0.0
+lightgbm,ids2017->ids2018,DoS,Flow Duration,-0.0057,0.0046
+lightgbm,ids2017->ids2018,DoS,Total Fwd Packets,-0.0103,0.0317
+lightgbm,ids2017->ids2018,DoS,Total Backward Packets,-0.0239,0.025
+lightgbm,ids2017->ids2018,DoS,Total Length of Fwd Packets,0.0958,-0.0021
+lightgbm,ids2017->ids2018,DoS,Total Length of Bwd Packets,0.0266,-0.0309
+lightgbm,ids2017->ids2018,DoS,Fwd Packet Length Max,0.0032,-0.0395
+lightgbm,ids2017->ids2018,DoS,Fwd Packet Length Min,-0.0001,0.0
+lightgbm,ids2017->ids2018,DoS,Fwd Packet Length Mean,0.0069,-0.1681
+lightgbm,ids2017->ids2018,DoS,Fwd Packet Length Std,-0.0002,0.0005
+lightgbm,ids2017->ids2018,DoS,Bwd Packet Length Max,0.0031,-0.0004
+lightgbm,ids2017->ids2018,DoS,Bwd Packet Length Min,0.0,0.0
+lightgbm,ids2017->ids2018,DoS,Bwd Packet Length Mean,0.0402,0.0037
+lightgbm,ids2017->ids2018,DoS,Bwd Packet Length Std,-0.1282,0.2472
+lightgbm,ids2017->ids2018,DoS,Flow Bytes/s,-0.0039,0.0103
+lightgbm,ids2017->ids2018,DoS,Flow Packets/s,0.009,-0.0021
+lightgbm,ids2017->ids2018,DoS,Flow IAT Mean,0.0361,-0.005
+lightgbm,ids2017->ids2018,DoS,Flow IAT Std,-0.0008,0.0086
+lightgbm,ids2017->ids2018,DoS,Flow IAT Max,0.0046,-0.0014
+lightgbm,ids2017->ids2018,DoS,Flow IAT Min,0.0363,0.0003
+lightgbm,ids2017->ids2018,DoS,Fwd IAT Total,0.0005,-0.0005
+lightgbm,ids2017->ids2018,DoS,Fwd IAT Mean,0.0093,-0.0012
+lightgbm,ids2017->ids2018,DoS,Fwd IAT Std,0.0574,0.0095
+lightgbm,ids2017->ids2018,DoS,Fwd IAT Max,0.0176,-0.0011
+lightgbm,ids2017->ids2018,DoS,Fwd IAT Min,0.002,0.0111
+lightgbm,ids2017->ids2018,DoS,Bwd IAT Total,-0.0111,-0.0293
+lightgbm,ids2017->ids2018,DoS,Bwd IAT Mean,0.0006,-0.0022
+lightgbm,ids2017->ids2018,DoS,Bwd IAT Std,0.0,-0.0013
+lightgbm,ids2017->ids2018,DoS,Bwd IAT Max,0.0015,-0.009
+lightgbm,ids2017->ids2018,DoS,Bwd IAT Min,0.0011,-0.0243
+lightgbm,ids2017->ids2018,DoS,Fwd PSH Flags,0.0022,-0.0073
+lightgbm,ids2017->ids2018,DoS,Fwd URG Flags,0.0,0.0
+lightgbm,ids2017->ids2018,DoS,Fwd Header Length,-0.0054,-0.0083
+lightgbm,ids2017->ids2018,DoS,Bwd Header Length,-0.0113,-0.0158
+lightgbm,ids2017->ids2018,DoS,Fwd Packets/s,0.0327,-0.0146
+lightgbm,ids2017->ids2018,DoS,Bwd Packets/s,0.0043,-0.044
+lightgbm,ids2017->ids2018,DoS,Min Packet Length,0.0,0.0
+lightgbm,ids2017->ids2018,DoS,Max Packet Length,0.006,-0.0405
+lightgbm,ids2017->ids2018,DoS,Packet Length Mean,0.0,-0.0007
+lightgbm,ids2017->ids2018,DoS,Packet Length Std,-0.0187,0.0514
+lightgbm,ids2017->ids2018,DoS,FIN Flag Count,-0.0038,0.0001
+lightgbm,ids2017->ids2018,DoS,RST Flag Count,0.0,0.0
+lightgbm,ids2017->ids2018,DoS,PSH Flag Count,-0.0007,0.0004
+lightgbm,ids2017->ids2018,DoS,ACK Flag Count,-0.0,-0.0003
+lightgbm,ids2017->ids2018,DoS,URG Flag Count,0.0013,0.0004
+lightgbm,ids2017->ids2018,DoS,ECE Flag Count,0.0,0.0
+lightgbm,ids2017->ids2018,DoS,Down/Up Ratio,-0.0,0.0009
+lightgbm,ids2017->ids2018,DoS,Average Packet Size,0.0006,-0.0668
+lightgbm,ids2017->ids2018,DoS,Init_Win_bytes_forward,0.001,-0.0274
+lightgbm,ids2017->ids2018,DoS,Init_Win_bytes_backward,-0.0566,0.1399
+lightgbm,ids2017->ids2018,DoS,act_data_pkt_fwd,0.0086,0.0006
+lightgbm,ids2017->ids2018,DoS,min_seg_size_forward,0.0005,-0.1113
+lightgbm,ids2017->ids2018,DoS,Active Mean,-0.0007,-0.0001
+lightgbm,ids2017->ids2018,DoS,Active Std,-0.0239,0.0239
+lightgbm,ids2017->ids2018,DoS,Active Max,-0.0004,-0.0004
+lightgbm,ids2017->ids2018,DoS,Active Min,-0.0976,0.0802
+lightgbm,ids2017->ids2018,DoS,Idle Mean,-0.0033,0.0054
+lightgbm,ids2017->ids2018,DoS,Idle Std,-0.0004,-0.0
+lightgbm,ids2017->ids2018,DoS,Idle Max,-0.0012,0.0015
+lightgbm,ids2017->ids2018,DoS,Idle Min,-0.001,-0.0013
+lightgbm,ids2018->ids2017,DDoS,Destination Port,0.0,0.0
+lightgbm,ids2018->ids2017,DDoS,Flow Duration,0.0084,-0.0523
+lightgbm,ids2018->ids2017,DDoS,Total Fwd Packets,0.0204,-0.0004
+lightgbm,ids2018->ids2017,DDoS,Total Backward Packets,0.0015,-0.0013
+lightgbm,ids2018->ids2017,DDoS,Total Length of Fwd Packets,0.0102,-0.0
+lightgbm,ids2018->ids2017,DDoS,Total Length of Bwd Packets,0.1123,-0.0
+lightgbm,ids2018->ids2017,DDoS,Fwd Packet Length Max,0.0063,-0.0196
+lightgbm,ids2018->ids2017,DDoS,Fwd Packet Length Min,-0.1179,0.1341
+lightgbm,ids2018->ids2017,DDoS,Fwd Packet Length Mean,-0.0209,0.024
+lightgbm,ids2018->ids2017,DDoS,Fwd Packet Length Std,0.0016,0.0
+lightgbm,ids2018->ids2017,DDoS,Bwd Packet Length Max,0.0039,0.0021
+lightgbm,ids2018->ids2017,DDoS,Bwd Packet Length Min,0.0007,-0.0004
+lightgbm,ids2018->ids2017,DDoS,Bwd Packet Length Mean,-0.0022,0.0008
+lightgbm,ids2018->ids2017,DDoS,Bwd Packet Length Std,0.0603,0.022
+lightgbm,ids2018->ids2017,DDoS,Flow Bytes/s,0.0136,-0.1045
+lightgbm,ids2018->ids2017,DDoS,Flow Packets/s,-0.0444,0.0089
+lightgbm,ids2018->ids2017,DDoS,Flow IAT Mean,0.004,-0.0163
+lightgbm,ids2018->ids2017,DDoS,Flow IAT Std,0.0924,-0.0281
+lightgbm,ids2018->ids2017,DDoS,Flow IAT Max,0.0051,-0.002
+lightgbm,ids2018->ids2017,DDoS,Flow IAT Min,0.0161,-0.0063
+lightgbm,ids2018->ids2017,DDoS,Fwd IAT Total,-0.0204,0.0112
+lightgbm,ids2018->ids2017,DDoS,Fwd IAT Mean,-0.0001,-0.0459
+lightgbm,ids2018->ids2017,DDoS,Fwd IAT Std,0.0638,-0.0044
+lightgbm,ids2018->ids2017,DDoS,Fwd IAT Max,-0.0117,0.0005
+lightgbm,ids2018->ids2017,DDoS,Fwd IAT Min,-0.0106,-0.0145
+lightgbm,ids2018->ids2017,DDoS,Bwd IAT Total,0.0142,-0.0076
+lightgbm,ids2018->ids2017,DDoS,Bwd IAT Mean,-0.0011,-0.0188
+lightgbm,ids2018->ids2017,DDoS,Bwd IAT Std,0.0063,-0.03
+lightgbm,ids2018->ids2017,DDoS,Bwd IAT Max,0.0018,-0.0305
+lightgbm,ids2018->ids2017,DDoS,Bwd IAT Min,0.0037,-0.0074
+lightgbm,ids2018->ids2017,DDoS,Fwd PSH Flags,-0.0001,-0.0002
+lightgbm,ids2018->ids2017,DDoS,Fwd URG Flags,-0.0,-0.0
+lightgbm,ids2018->ids2017,DDoS,Fwd Header Length,0.0006,0.0
+lightgbm,ids2018->ids2017,DDoS,Bwd Header Length,0.0011,-0.0007
+lightgbm,ids2018->ids2017,DDoS,Fwd Packets/s,0.0092,-0.0344
+lightgbm,ids2018->ids2017,DDoS,Bwd Packets/s,0.0053,-0.0258
+lightgbm,ids2018->ids2017,DDoS,Min Packet Length,-0.0232,0.0235
+lightgbm,ids2018->ids2017,DDoS,Max Packet Length,0.11,0.0
+lightgbm,ids2018->ids2017,DDoS,Packet Length Mean,0.0142,-0.0179
+lightgbm,ids2018->ids2017,DDoS,Packet Length Std,-0.022,0.028
+lightgbm,ids2018->ids2017,DDoS,FIN Flag Count,-0.0001,-0.0
+lightgbm,ids2018->ids2017,DDoS,RST Flag Count,-0.0597,0.0355
+lightgbm,ids2018->ids2017,DDoS,PSH Flag Count,-0.0102,0.0034
+lightgbm,ids2018->ids2017,DDoS,ACK Flag Count,0.0038,-0.0364
+lightgbm,ids2018->ids2017,DDoS,URG Flag Count,0.0,-0.0002
+lightgbm,ids2018->ids2017,DDoS,ECE Flag Count,-0.0265,0.0353
+lightgbm,ids2018->ids2017,DDoS,Down/Up Ratio,-0.0038,0.0011
+lightgbm,ids2018->ids2017,DDoS,Average Packet Size,0.0042,0.0012
+lightgbm,ids2018->ids2017,DDoS,Init_Win_bytes_forward,-0.1915,0.2281
+lightgbm,ids2018->ids2017,DDoS,Init_Win_bytes_backward,0.0,-0.0001
+lightgbm,ids2018->ids2017,DDoS,act_data_pkt_fwd,0.0027,0.0
+lightgbm,ids2018->ids2017,DDoS,min_seg_size_forward,-0.0601,0.0609
+lightgbm,ids2018->ids2017,DDoS,Active Mean,0.0052,-0.0027
+lightgbm,ids2018->ids2017,DDoS,Active Std,0.0004,-0.0004
+lightgbm,ids2018->ids2017,DDoS,Active Max,0.0009,-0.0001
+lightgbm,ids2018->ids2017,DDoS,Active Min,0.0004,0.0003
+lightgbm,ids2018->ids2017,DDoS,Idle Mean,0.0115,-0.0453
+lightgbm,ids2018->ids2017,DDoS,Idle Std,-0.0093,0.0049
+lightgbm,ids2018->ids2017,DDoS,Idle Max,0.0128,-0.0197
+lightgbm,ids2018->ids2017,DDoS,Idle Min,0.0068,-0.0516
+lightgbm,ids2018->ids2017,DoS,Destination Port,0.0,0.0
+lightgbm,ids2018->ids2017,DoS,Flow Duration,-0.0106,0.0156
+lightgbm,ids2018->ids2017,DoS,Total Fwd Packets,-0.0224,0.0296
+lightgbm,ids2018->ids2017,DoS,Total Backward Packets,0.0037,0.0006
+lightgbm,ids2018->ids2017,DoS,Total Length of Fwd Packets,0.0031,0.0007
+lightgbm,ids2018->ids2017,DoS,Total Length of Bwd Packets,0.0888,0.0375
+lightgbm,ids2018->ids2017,DoS,Fwd Packet Length Max,-0.0105,-0.0116
+lightgbm,ids2018->ids2017,DoS,Fwd Packet Length Min,0.0086,-0.0041
+lightgbm,ids2018->ids2017,DoS,Fwd Packet Length Mean,0.0015,-0.0052
+lightgbm,ids2018->ids2017,DoS,Fwd Packet Length Std,-0.0013,0.001
+lightgbm,ids2018->ids2017,DoS,Bwd Packet Length Max,0.0128,0.01
+lightgbm,ids2018->ids2017,DoS,Bwd Packet Length Min,-0.0001,0.0001
+lightgbm,ids2018->ids2017,DoS,Bwd Packet Length Mean,-0.0072,0.0024
+lightgbm,ids2018->ids2017,DoS,Bwd Packet Length Std,0.0601,-0.0092
+lightgbm,ids2018->ids2017,DoS,Flow Bytes/s,0.0017,-0.0002
+lightgbm,ids2018->ids2017,DoS,Flow Packets/s,-0.0183,0.0088
+lightgbm,ids2018->ids2017,DoS,Flow IAT Mean,-0.0076,0.007
+lightgbm,ids2018->ids2017,DoS,Flow IAT Std,0.051,0.0097
+lightgbm,ids2018->ids2017,DoS,Flow IAT Max,0.0047,0.0106
+lightgbm,ids2018->ids2017,DoS,Flow IAT Min,-0.0106,-0.0364
+lightgbm,ids2018->ids2017,DoS,Fwd IAT Total,0.0004,-0.0036
+lightgbm,ids2018->ids2017,DoS,Fwd IAT Mean,-0.0229,-0.0009
+lightgbm,ids2018->ids2017,DoS,Fwd IAT Std,0.0126,-0.0441
+lightgbm,ids2018->ids2017,DoS,Fwd IAT Max,0.0031,0.0369
+lightgbm,ids2018->ids2017,DoS,Fwd IAT Min,-0.0259,-0.0117
+lightgbm,ids2018->ids2017,DoS,Bwd IAT Total,0.0295,-0.029
+lightgbm,ids2018->ids2017,DoS,Bwd IAT Mean,-0.0022,-0.005
+lightgbm,ids2018->ids2017,DoS,Bwd IAT Std,0.0091,-0.0078
+lightgbm,ids2018->ids2017,DoS,Bwd IAT Max,0.0021,-0.0026
+lightgbm,ids2018->ids2017,DoS,Bwd IAT Min,0.0033,-0.0151
+lightgbm,ids2018->ids2017,DoS,Fwd PSH Flags,0.0001,-0.0001
+lightgbm,ids2018->ids2017,DoS,Fwd URG Flags,-0.0,-0.0
+lightgbm,ids2018->ids2017,DoS,Fwd Header Length,0.0021,-0.0
+lightgbm,ids2018->ids2017,DoS,Bwd Header Length,0.001,-0.0008
+lightgbm,ids2018->ids2017,DoS,Fwd Packets/s,-0.043,0.008
+lightgbm,ids2018->ids2017,DoS,Bwd Packets/s,0.0222,-0.0008
+lightgbm,ids2018->ids2017,DoS,Min Packet Length,-0.0023,-0.0042
+lightgbm,ids2018->ids2017,DoS,Max Packet Length,0.1007,0.0396
+lightgbm,ids2018->ids2017,DoS,Packet Length Mean,0.0006,-0.0013
+lightgbm,ids2018->ids2017,DoS,Packet Length Std,-0.0026,-0.0203
+lightgbm,ids2018->ids2017,DoS,FIN Flag Count,0.006,-0.0011
+lightgbm,ids2018->ids2017,DoS,RST Flag Count,-0.022,-0.0641
+lightgbm,ids2018->ids2017,DoS,PSH Flag Count,-0.0038,-0.0004
+lightgbm,ids2018->ids2017,DoS,ACK Flag Count,0.0126,-0.0078
+lightgbm,ids2018->ids2017,DoS,URG Flag Count,-0.0001,-0.0003
+lightgbm,ids2018->ids2017,DoS,ECE Flag Count,-0.0161,-0.0336
+lightgbm,ids2018->ids2017,DoS,Down/Up Ratio,-0.0018,-0.0025
+lightgbm,ids2018->ids2017,DoS,Average Packet Size,-0.0113,0.004
+lightgbm,ids2018->ids2017,DoS,Init_Win_bytes_forward,-0.1685,0.1916
+lightgbm,ids2018->ids2017,DoS,Init_Win_bytes_backward,0.005,-0.0014
+lightgbm,ids2018->ids2017,DoS,act_data_pkt_fwd,0.001,-0.0109
+lightgbm,ids2018->ids2017,DoS,min_seg_size_forward,0.0165,-0.0002
+lightgbm,ids2018->ids2017,DoS,Active Mean,0.0036,0.0007
+lightgbm,ids2018->ids2017,DoS,Active Std,0.0002,-0.0071
+lightgbm,ids2018->ids2017,DoS,Active Max,0.0003,-0.0017
+lightgbm,ids2018->ids2017,DoS,Active Min,0.0007,-0.0001
+lightgbm,ids2018->ids2017,DoS,Idle Mean,-0.0187,-0.0218
+lightgbm,ids2018->ids2017,DoS,Idle Std,-0.0005,-0.0094
+lightgbm,ids2018->ids2017,DoS,Idle Max,-0.0268,-0.0178
+lightgbm,ids2018->ids2017,DoS,Idle Min,-0.0116,-0.0202
+lightgbm,ids2018->ids2017,Brute Force,Destination Port,0.0,0.0
+lightgbm,ids2018->ids2017,Brute Force,Flow Duration,0.0089,-0.0326
+lightgbm,ids2018->ids2017,Brute Force,Total Fwd Packets,-0.0119,0.0027
+lightgbm,ids2018->ids2017,Brute Force,Total Backward Packets,0.0049,0.0002
+lightgbm,ids2018->ids2017,Brute Force,Total Length of Fwd Packets,-0.0067,0.0145
+lightgbm,ids2018->ids2017,Brute Force,Total Length of Bwd Packets,-0.0061,-0.0048
+lightgbm,ids2018->ids2017,Brute Force,Fwd Packet Length Max,0.015,-0.0026
+lightgbm,ids2018->ids2017,Brute Force,Fwd Packet Length Min,0.0004,0.0004
+lightgbm,ids2018->ids2017,Brute Force,Fwd Packet Length Mean,0.0007,0.0002
+lightgbm,ids2018->ids2017,Brute Force,Fwd Packet Length Std,0.0,0.0
+lightgbm,ids2018->ids2017,Brute Force,Bwd Packet Length Max,0.0053,0.0
+lightgbm,ids2018->ids2017,Brute Force,Bwd Packet Length Min,0.0003,-0.0023
+lightgbm,ids2018->ids2017,Brute Force,Bwd Packet Length Mean,0.0039,-0.037
+lightgbm,ids2018->ids2017,Brute Force,Bwd Packet Length Std,-0.0223,-0.0336
+lightgbm,ids2018->ids2017,Brute Force,Flow Bytes/s,0.0104,-0.0227
+lightgbm,ids2018->ids2017,Brute Force,Flow Packets/s,0.0053,-0.0089
+lightgbm,ids2018->ids2017,Brute Force,Flow IAT Mean,0.0198,-0.0031
+lightgbm,ids2018->ids2017,Brute Force,Flow IAT Std,-0.0188,0.0059
+lightgbm,ids2018->ids2017,Brute Force,Flow IAT Max,0.0005,-0.0001
+lightgbm,ids2018->ids2017,Brute Force,Flow IAT Min,0.0225,0.0047
+lightgbm,ids2018->ids2017,Brute Force,Fwd IAT Total,-0.0112,-0.0109
+lightgbm,ids2018->ids2017,Brute Force,Fwd IAT Mean,0.0118,-0.0097
+lightgbm,ids2018->ids2017,Brute Force,Fwd IAT Std,-0.0193,0.0391
+lightgbm,ids2018->ids2017,Brute Force,Fwd IAT Max,0.0017,-0.0126
+lightgbm,ids2018->ids2017,Brute Force,Fwd IAT Min,0.0199,0.001
+lightgbm,ids2018->ids2017,Brute Force,Bwd IAT Total,-0.0366,0.1178
+lightgbm,ids2018->ids2017,Brute Force,Bwd IAT Mean,-0.0084,-0.0111
+lightgbm,ids2018->ids2017,Brute Force,Bwd IAT Std,-0.0036,0.0024
+lightgbm,ids2018->ids2017,Brute Force,Bwd IAT Max,0.001,0.0015
+lightgbm,ids2018->ids2017,Brute Force,Bwd IAT Min,0.0069,-0.0014
+lightgbm,ids2018->ids2017,Brute Force,Fwd PSH Flags,0.0006,0.0001
+lightgbm,ids2018->ids2017,Brute Force,Fwd URG Flags,0.0,-0.0
+lightgbm,ids2018->ids2017,Brute Force,Fwd Header Length,-0.0013,0.0021
+lightgbm,ids2018->ids2017,Brute Force,Bwd Header Length,-0.0042,0.0054
+lightgbm,ids2018->ids2017,Brute Force,Fwd Packets/s,0.0134,-0.0146
+lightgbm,ids2018->ids2017,Brute Force,Bwd Packets/s,0.0103,-0.0057
+lightgbm,ids2018->ids2017,Brute Force,Min Packet Length,0.0011,-0.0035
+lightgbm,ids2018->ids2017,Brute Force,Max Packet Length,0.0017,-0.0023
+lightgbm,ids2018->ids2017,Brute Force,Packet Length Mean,-0.0053,0.0137
+lightgbm,ids2018->ids2017,Brute Force,Packet Length Std,0.0015,0.0014
+lightgbm,ids2018->ids2017,Brute Force,FIN Flag Count,0.0,-0.0
+lightgbm,ids2018->ids2017,Brute Force,RST Flag Count,-0.004,-0.0125
+lightgbm,ids2018->ids2017,Brute Force,PSH Flag Count,0.0046,0.0006
+lightgbm,ids2018->ids2017,Brute Force,ACK Flag Count,-0.0057,-0.0377
+lightgbm,ids2018->ids2017,Brute Force,URG Flag Count,-0.0,-0.0001
+lightgbm,ids2018->ids2017,Brute Force,ECE Flag Count,0.0054,-0.0095
+lightgbm,ids2018->ids2017,Brute Force,Down/Up Ratio,0.0019,-0.0025
+lightgbm,ids2018->ids2017,Brute Force,Average Packet Size,-0.0129,0.0198
+lightgbm,ids2018->ids2017,Brute Force,Init_Win_bytes_forward,0.0262,0.1013
+lightgbm,ids2018->ids2017,Brute Force,Init_Win_bytes_backward,-0.0035,0.009
+lightgbm,ids2018->ids2017,Brute Force,act_data_pkt_fwd,-0.0402,-0.0579
+lightgbm,ids2018->ids2017,Brute Force,min_seg_size_forward,0.0044,0.0001
+lightgbm,ids2018->ids2017,Brute Force,Active Mean,0.0012,-0.001
+lightgbm,ids2018->ids2017,Brute Force,Active Std,-0.0002,-0.0002
+lightgbm,ids2018->ids2017,Brute Force,Active Max,-0.0029,-0.0007
+lightgbm,ids2018->ids2017,Brute Force,Active Min,0.0005,0.0
+lightgbm,ids2018->ids2017,Brute Force,Idle Mean,0.004,0.0017
+lightgbm,ids2018->ids2017,Brute Force,Idle Std,-0.0003,-0.0013
+lightgbm,ids2018->ids2017,Brute Force,Idle Max,0.0075,0.0001
+lightgbm,ids2018->ids2017,Brute Force,Idle Min,0.0019,-0.0029
+lightgbm,ids2018->ids2017,Bot,Destination Port,0.0192,0.1452
+lightgbm,ids2018->ids2017,Bot,Flow Duration,0.0036,0.0024
+lightgbm,ids2018->ids2017,Bot,Total Fwd Packets,0.0029,0.0003
+lightgbm,ids2018->ids2017,Bot,Total Backward Packets,-0.0024,0.0029
+lightgbm,ids2018->ids2017,Bot,Total Length of Fwd Packets,0.0022,0.0
+lightgbm,ids2018->ids2017,Bot,Total Length of Bwd Packets,0.0002,-0.0
+lightgbm,ids2018->ids2017,Bot,Fwd Packet Length Max,0.0084,0.0004
+lightgbm,ids2018->ids2017,Bot,Fwd Packet Length Min,0.0168,-0.0009
+lightgbm,ids2018->ids2017,Bot,Fwd Packet Length Mean,0.0037,0.0009
+lightgbm,ids2018->ids2017,Bot,Fwd Packet Length Std,0.0,0.0
+lightgbm,ids2018->ids2017,Bot,Bwd Packet Length Max,0.0,-0.0009
+lightgbm,ids2018->ids2017,Bot,Bwd Packet Length Min,-0.0035,0.0042
+lightgbm,ids2018->ids2017,Bot,Bwd Packet Length Mean,0.0044,-0.0625
+lightgbm,ids2018->ids2017,Bot,Bwd Packet Length Std,0.0224,0.0035
+lightgbm,ids2018->ids2017,Bot,Flow Bytes/s,0.0463,0.001
+lightgbm,ids2018->ids2017,Bot,Flow Packets/s,-0.0138,0.0161
+lightgbm,ids2018->ids2017,Bot,Flow IAT Mean,0.0148,0.0075
+lightgbm,ids2018->ids2017,Bot,Flow IAT Std,-0.0354,0.047
+lightgbm,ids2018->ids2017,Bot,Flow IAT Max,-0.0049,0.0166
+lightgbm,ids2018->ids2017,Bot,Flow IAT Min,0.0213,-0.0827
+lightgbm,ids2018->ids2017,Bot,Fwd IAT Total,-0.0403,0.0865
+lightgbm,ids2018->ids2017,Bot,Fwd IAT Mean,0.0108,-0.0159
+lightgbm,ids2018->ids2017,Bot,Fwd IAT Std,0.0084,0.0041
+lightgbm,ids2018->ids2017,Bot,Fwd IAT Max,-0.0043,0.0128
+lightgbm,ids2018->ids2017,Bot,Fwd IAT Min,0.0134,-0.0021
+lightgbm,ids2018->ids2017,Bot,Bwd IAT Total,0.0282,0.0037
+lightgbm,ids2018->ids2017,Bot,Bwd IAT Mean,0.0062,-0.0728
+lightgbm,ids2018->ids2017,Bot,Bwd IAT Std,0.0012,-0.0191
+lightgbm,ids2018->ids2017,Bot,Bwd IAT Max,0.0004,-0.0001
+lightgbm,ids2018->ids2017,Bot,Bwd IAT Min,-0.0454,0.0501
+lightgbm,ids2018->ids2017,Bot,Fwd PSH Flags,0.0001,-0.0001
+lightgbm,ids2018->ids2017,Bot,Fwd URG Flags,0.0,-0.0
+lightgbm,ids2018->ids2017,Bot,Fwd Header Length,-0.0029,0.0069
+lightgbm,ids2018->ids2017,Bot,Bwd Header Length,0.0013,-0.0001
+lightgbm,ids2018->ids2017,Bot,Fwd Packets/s,0.0104,0.0014
+lightgbm,ids2018->ids2017,Bot,Bwd Packets/s,0.0055,-0.0909
+lightgbm,ids2018->ids2017,Bot,Min Packet Length,0.0012,0.0004
+lightgbm,ids2018->ids2017,Bot,Max Packet Length,0.0001,-0.0123
+lightgbm,ids2018->ids2017,Bot,Packet Length Mean,0.0018,0.0009
+lightgbm,ids2018->ids2017,Bot,Packet Length Std,0.0004,-0.0403
+lightgbm,ids2018->ids2017,Bot,FIN Flag Count,-0.0002,0.0002
+lightgbm,ids2018->ids2017,Bot,RST Flag Count,-0.0818,0.2354
+lightgbm,ids2018->ids2017,Bot,PSH Flag Count,0.0114,-0.0195
+lightgbm,ids2018->ids2017,Bot,ACK Flag Count,-0.0165,-0.1832
+lightgbm,ids2018->ids2017,Bot,URG Flag Count,-0.0001,0.0001
+lightgbm,ids2018->ids2017,Bot,ECE Flag Count,-0.0143,0.1002
+lightgbm,ids2018->ids2017,Bot,Down/Up Ratio,0.0019,0.0001
+lightgbm,ids2018->ids2017,Bot,Average Packet Size,0.0096,-0.1666
+lightgbm,ids2018->ids2017,Bot,Init_Win_bytes_forward,-0.0057,0.0095
+lightgbm,ids2018->ids2017,Bot,Init_Win_bytes_backward,0.006,-0.0004
+lightgbm,ids2018->ids2017,Bot,act_data_pkt_fwd,0.0,0.0
+lightgbm,ids2018->ids2017,Bot,min_seg_size_forward,-0.0019,0.0117
+lightgbm,ids2018->ids2017,Bot,Active Mean,0.0,-0.0014
+lightgbm,ids2018->ids2017,Bot,Active Std,0.0001,-0.0001
+lightgbm,ids2018->ids2017,Bot,Active Max,0.0001,-0.0017
+lightgbm,ids2018->ids2017,Bot,Active Min,0.0,-0.0001
+lightgbm,ids2018->ids2017,Bot,Idle Mean,-0.0066,-0.0021
+lightgbm,ids2018->ids2017,Bot,Idle Std,-0.0002,0.0002
+lightgbm,ids2018->ids2017,Bot,Idle Max,0.0003,0.0015
+lightgbm,ids2018->ids2017,Bot,Idle Min,-0.0046,0.0014
+lightgbm,ids2018->ids2017,Web Attack,Destination Port,0.0,0.0
+lightgbm,ids2018->ids2017,Web Attack,Flow Duration,-0.0032,-0.0095
+lightgbm,ids2018->ids2017,Web Attack,Total Fwd Packets,-0.0044,-0.0206
+lightgbm,ids2018->ids2017,Web Attack,Total Backward Packets,-0.0091,0.003
+lightgbm,ids2018->ids2017,Web Attack,Total Length of Fwd Packets,-0.0067,0.0061
+lightgbm,ids2018->ids2017,Web Attack,Total Length of Bwd Packets,-0.1523,0.0631
+lightgbm,ids2018->ids2017,Web Attack,Fwd Packet Length Max,0.0597,0.0066
+lightgbm,ids2018->ids2017,Web Attack,Fwd Packet Length Min,0.0003,-0.0032
+lightgbm,ids2018->ids2017,Web Attack,Fwd Packet Length Mean,0.0026,-0.0003
+lightgbm,ids2018->ids2017,Web Attack,Fwd Packet Length Std,-0.0096,0.0059
+lightgbm,ids2018->ids2017,Web Attack,Bwd Packet Length Max,-0.0243,0.0191
+lightgbm,ids2018->ids2017,Web Attack,Bwd Packet Length Min,0.0009,-0.0001
+lightgbm,ids2018->ids2017,Web Attack,Bwd Packet Length Mean,-0.0065,-0.0555
+lightgbm,ids2018->ids2017,Web Attack,Bwd Packet Length Std,-0.0146,-0.0593
+lightgbm,ids2018->ids2017,Web Attack,Flow Bytes/s,-0.0035,0.0034
+lightgbm,ids2018->ids2017,Web Attack,Flow Packets/s,0.0161,-0.0232
+lightgbm,ids2018->ids2017,Web Attack,Flow IAT Mean,-0.0044,-0.0498
+lightgbm,ids2018->ids2017,Web Attack,Flow IAT Std,0.0237,0.0006
+lightgbm,ids2018->ids2017,Web Attack,Flow IAT Max,0.0038,-0.0008
+lightgbm,ids2018->ids2017,Web Attack,Flow IAT Min,0.0879,-0.0135
+lightgbm,ids2018->ids2017,Web Attack,Fwd IAT Total,-0.0017,-0.0123
+lightgbm,ids2018->ids2017,Web Attack,Fwd IAT Mean,0.0008,-0.013
+lightgbm,ids2018->ids2017,Web Attack,Fwd IAT Std,0.1017,0.0046
+lightgbm,ids2018->ids2017,Web Attack,Fwd IAT Max,0.0082,-0.014
+lightgbm,ids2018->ids2017,Web Attack,Fwd IAT Min,-0.012,0.0013
+lightgbm,ids2018->ids2017,Web Attack,Bwd IAT Total,-0.0599,-0.0159
+lightgbm,ids2018->ids2017,Web Attack,Bwd IAT Mean,0.0067,-0.0102
+lightgbm,ids2018->ids2017,Web Attack,Bwd IAT Std,-0.0076,-0.0118
+lightgbm,ids2018->ids2017,Web Attack,Bwd IAT Max,-0.0008,0.0008
+lightgbm,ids2018->ids2017,Web Attack,Bwd IAT Min,-0.0015,0.0009
+lightgbm,ids2018->ids2017,Web Attack,Fwd PSH Flags,-0.0001,-0.0
+lightgbm,ids2018->ids2017,Web Attack,Fwd URG Flags,0.0,-0.0
+lightgbm,ids2018->ids2017,Web Attack,Fwd Header Length,0.0015,-0.0046
+lightgbm,ids2018->ids2017,Web Attack,Bwd Header Length,-0.0337,-0.0113
+lightgbm,ids2018->ids2017,Web Attack,Fwd Packets/s,0.0307,-0.0404
+lightgbm,ids2018->ids2017,Web Attack,Bwd Packets/s,0.0026,0.0002
+lightgbm,ids2018->ids2017,Web Attack,Min Packet Length,0.0007,-0.0022
+lightgbm,ids2018->ids2017,Web Attack,Max Packet Length,-0.2136,0.214
+lightgbm,ids2018->ids2017,Web Attack,Packet Length Mean,-0.0039,0.0029
+lightgbm,ids2018->ids2017,Web Attack,Packet Length Std,-0.0138,0.0245
+lightgbm,ids2018->ids2017,Web Attack,FIN Flag Count,0.0001,-0.0
+lightgbm,ids2018->ids2017,Web Attack,RST Flag Count,-0.0124,0.0203
+lightgbm,ids2018->ids2017,Web Attack,PSH Flag Count,0.0002,-0.0071
+lightgbm,ids2018->ids2017,Web Attack,ACK Flag Count,0.0187,-0.0239
+lightgbm,ids2018->ids2017,Web Attack,URG Flag Count,-0.0,-0.0002
+lightgbm,ids2018->ids2017,Web Attack,ECE Flag Count,-0.0267,0.0347
+lightgbm,ids2018->ids2017,Web Attack,Down/Up Ratio,0.0005,-0.0025
+lightgbm,ids2018->ids2017,Web Attack,Average Packet Size,0.0053,0.0029
+lightgbm,ids2018->ids2017,Web Attack,Init_Win_bytes_forward,0.1754,0.05
+lightgbm,ids2018->ids2017,Web Attack,Init_Win_bytes_backward,0.065,0.0035
+lightgbm,ids2018->ids2017,Web Attack,act_data_pkt_fwd,-0.0035,0.0025
+lightgbm,ids2018->ids2017,Web Attack,min_seg_size_forward,-0.0001,-0.0309
+lightgbm,ids2018->ids2017,Web Attack,Active Mean,-0.0059,0.0048
+lightgbm,ids2018->ids2017,Web Attack,Active Std,-0.0024,-0.001
+lightgbm,ids2018->ids2017,Web Attack,Active Max,-0.0024,-0.0005
+lightgbm,ids2018->ids2017,Web Attack,Active Min,-0.0003,-0.0003
+lightgbm,ids2018->ids2017,Web Attack,Idle Mean,0.0118,-0.0104
+lightgbm,ids2018->ids2017,Web Attack,Idle Std,-0.0026,-0.0025
+lightgbm,ids2018->ids2017,Web Attack,Idle Max,0.0034,-0.0153
+lightgbm,ids2018->ids2017,Web Attack,Idle Min,0.0154,-0.0091
+xgboost,ids2017->ids2018,DoS,Destination Port,0.0,0.0
+xgboost,ids2017->ids2018,DoS,Flow Duration,-0.006,-0.0094
+xgboost,ids2017->ids2018,DoS,Total Fwd Packets,-0.0474,0.0387
+xgboost,ids2017->ids2018,DoS,Total Backward Packets,-0.0168,-0.0165
+xgboost,ids2017->ids2018,DoS,Total Length of Fwd Packets,0.0586,-0.0046
+xgboost,ids2017->ids2018,DoS,Total Length of Bwd Packets,0.0375,-0.0001
+xgboost,ids2017->ids2018,DoS,Fwd Packet Length Max,0.0023,-0.02
+xgboost,ids2017->ids2018,DoS,Fwd Packet Length Min,-0.0009,0.001
+xgboost,ids2017->ids2018,DoS,Fwd Packet Length Mean,0.0073,-0.0968
+xgboost,ids2017->ids2018,DoS,Fwd Packet Length Std,-0.0001,-0.0128
+xgboost,ids2017->ids2018,DoS,Bwd Packet Length Max,0.0061,0.0005
+xgboost,ids2017->ids2018,DoS,Bwd Packet Length Min,-0.0001,0.0
+xgboost,ids2017->ids2018,DoS,Bwd Packet Length Mean,0.0453,-0.0593
+xgboost,ids2017->ids2018,DoS,Bwd Packet Length Std,0.0081,0.0827
+xgboost,ids2017->ids2018,DoS,Flow Bytes/s,0.0124,-0.0015
+xgboost,ids2017->ids2018,DoS,Flow Packets/s,0.0161,-0.0368
+xgboost,ids2017->ids2018,DoS,Flow IAT Mean,0.0393,-0.0086
+xgboost,ids2017->ids2018,DoS,Flow IAT Std,0.0047,-0.0032
+xgboost,ids2017->ids2018,DoS,Flow IAT Max,0.0475,-0.0032
+xgboost,ids2017->ids2018,DoS,Flow IAT Min,0.0501,-0.0202
+xgboost,ids2017->ids2018,DoS,Fwd IAT Total,-0.0005,-0.0002
+xgboost,ids2017->ids2018,DoS,Fwd IAT Mean,0.0034,-0.0013
+xgboost,ids2017->ids2018,DoS,Fwd IAT Std,0.0103,-0.0006
+xgboost,ids2017->ids2018,DoS,Fwd IAT Max,0.0001,-0.0003
+xgboost,ids2017->ids2018,DoS,Fwd IAT Min,0.0095,0.0445
+xgboost,ids2017->ids2018,DoS,Bwd IAT Total,-0.0047,-0.011
+xgboost,ids2017->ids2018,DoS,Bwd IAT Mean,-0.0016,-0.0011
+xgboost,ids2017->ids2018,DoS,Bwd IAT Std,-0.0007,0.0001
+xgboost,ids2017->ids2018,DoS,Bwd IAT Max,-0.0026,-0.0023
+xgboost,ids2017->ids2018,DoS,Bwd IAT Min,0.0014,0.0006
+xgboost,ids2017->ids2018,DoS,Fwd PSH Flags,0.0008,-0.0001
+xgboost,ids2017->ids2018,DoS,Fwd URG Flags,0.0,0.0
+xgboost,ids2017->ids2018,DoS,Fwd Header Length,0.0005,-0.0077
+xgboost,ids2017->ids2018,DoS,Bwd Header Length,-0.0067,-0.006
+xgboost,ids2017->ids2018,DoS,Fwd Packets/s,-0.0303,-0.0387
+xgboost,ids2017->ids2018,DoS,Bwd Packets/s,0.0121,-0.0142
+xgboost,ids2017->ids2018,DoS,Min Packet Length,-0.0006,-0.0009
+xgboost,ids2017->ids2018,DoS,Max Packet Length,0.0008,-0.0103
+xgboost,ids2017->ids2018,DoS,Packet Length Mean,0.0035,0.0033
+xgboost,ids2017->ids2018,DoS,Packet Length Std,0.0115,0.0098
+xgboost,ids2017->ids2018,DoS,FIN Flag Count,0.0049,0.0055
+xgboost,ids2017->ids2018,DoS,RST Flag Count,0.0,0.0
+xgboost,ids2017->ids2018,DoS,PSH Flag Count,0.001,-0.0005
+xgboost,ids2017->ids2018,DoS,ACK Flag Count,0.0013,-0.0031
+xgboost,ids2017->ids2018,DoS,URG Flag Count,0.0146,-0.0001
+xgboost,ids2017->ids2018,DoS,ECE Flag Count,0.0,0.0
+xgboost,ids2017->ids2018,DoS,Down/Up Ratio,-0.0005,-0.0012
+xgboost,ids2017->ids2018,DoS,Average Packet Size,0.0066,-0.0118
+xgboost,ids2017->ids2018,DoS,Init_Win_bytes_forward,-0.1194,0.0519
+xgboost,ids2017->ids2018,DoS,Init_Win_bytes_backward,-0.0407,0.1086
+xgboost,ids2017->ids2018,DoS,act_data_pkt_fwd,0.0028,-0.0045
+xgboost,ids2017->ids2018,DoS,min_seg_size_forward,0.0009,-0.0683
+xgboost,ids2017->ids2018,DoS,Active Mean,-0.0024,-0.0039
+xgboost,ids2017->ids2018,DoS,Active Std,-0.0054,0.0053
+xgboost,ids2017->ids2018,DoS,Active Max,-0.0008,-0.0019
+xgboost,ids2017->ids2018,DoS,Active Min,-0.1284,0.115
+xgboost,ids2017->ids2018,DoS,Idle Mean,-0.0043,0.0063
+xgboost,ids2017->ids2018,DoS,Idle Std,-0.0006,0.0
+xgboost,ids2017->ids2018,DoS,Idle Max,0.0027,0.0046
+xgboost,ids2017->ids2018,DoS,Idle Min,-0.0027,0.0047
+xgboost,ids2018->ids2017,DDoS,Destination Port,0.0,0.0
+xgboost,ids2018->ids2017,DDoS,Flow Duration,-0.0001,-0.0365
+xgboost,ids2018->ids2017,DDoS,Total Fwd Packets,0.0246,0.0007
+xgboost,ids2018->ids2017,DDoS,Total Backward Packets,0.0278,0.0022
+xgboost,ids2018->ids2017,DDoS,Total Length of Fwd Packets,-0.0076,0.0064
+xgboost,ids2018->ids2017,DDoS,Total Length of Bwd Packets,-0.084,0.154
+xgboost,ids2018->ids2017,DDoS,Fwd Packet Length Max,0.0011,-0.0077
+xgboost,ids2018->ids2017,DDoS,Fwd Packet Length Min,0.0039,-0.0004
+xgboost,ids2018->ids2017,DDoS,Fwd Packet Length Mean,0.0008,0.0025
+xgboost,ids2018->ids2017,DDoS,Fwd Packet Length Std,-0.0014,-0.0184
+xgboost,ids2018->ids2017,DDoS,Bwd Packet Length Max,0.0064,-0.0024
+xgboost,ids2018->ids2017,DDoS,Bwd Packet Length Min,0.0013,-0.0174
+xgboost,ids2018->ids2017,DDoS,Bwd Packet Length Mean,0.0006,-0.0013
+xgboost,ids2018->ids2017,DDoS,Bwd Packet Length Std,0.013,0.0282
+xgboost,ids2018->ids2017,DDoS,Flow Bytes/s,-0.0235,0.0001
+xgboost,ids2018->ids2017,DDoS,Flow Packets/s,0.0025,-0.02
+xgboost,ids2018->ids2017,DDoS,Flow IAT Mean,0.0096,-0.0302
+xgboost,ids2018->ids2017,DDoS,Flow IAT Std,0.1094,-0.0013
+xgboost,ids2018->ids2017,DDoS,Flow IAT Max,0.0207,-0.009
+xgboost,ids2018->ids2017,DDoS,Flow IAT Min,0.0111,0.0045
+xgboost,ids2018->ids2017,DDoS,Fwd IAT Total,0.003,0.0003
+xgboost,ids2018->ids2017,DDoS,Fwd IAT Mean,-0.0051,-0.0536
+xgboost,ids2018->ids2017,DDoS,Fwd IAT Std,0.0468,0.0053
+xgboost,ids2018->ids2017,DDoS,Fwd IAT Max,0.0069,-0.0132
+xgboost,ids2018->ids2017,DDoS,Fwd IAT Min,-0.0077,-0.0023
+xgboost,ids2018->ids2017,DDoS,Bwd IAT Total,-0.0063,-0.0011
+xgboost,ids2018->ids2017,DDoS,Bwd IAT Mean,0.0037,-0.0057
+xgboost,ids2018->ids2017,DDoS,Bwd IAT Std,0.0014,-0.0118
+xgboost,ids2018->ids2017,DDoS,Bwd IAT Max,0.0023,-0.002
+xgboost,ids2018->ids2017,DDoS,Bwd IAT Min,-0.008,0.0015
+xgboost,ids2018->ids2017,DDoS,Fwd PSH Flags,-0.0009,-0.0001
+xgboost,ids2018->ids2017,DDoS,Fwd URG Flags,0.0001,-0.0012
+xgboost,ids2018->ids2017,DDoS,Fwd Header Length,0.0,0.0
+xgboost,ids2018->ids2017,DDoS,Bwd Header Length,0.0022,-0.001
+xgboost,ids2018->ids2017,DDoS,Fwd Packets/s,-0.0068,-0.0217
+xgboost,ids2018->ids2017,DDoS,Bwd Packets/s,-0.0146,-0.0047
+xgboost,ids2018->ids2017,DDoS,Min Packet Length,-0.0021,-0.0207
+xgboost,ids2018->ids2017,DDoS,Max Packet Length,-0.0446,0.0867
+xgboost,ids2018->ids2017,DDoS,Packet Length Mean,-0.0106,-0.0348
+xgboost,ids2018->ids2017,DDoS,Packet Length Std,-0.0123,0.0251
+xgboost,ids2018->ids2017,DDoS,FIN Flag Count,0.0,-0.0004
+xgboost,ids2018->ids2017,DDoS,RST Flag Count,-0.0472,0.0931
+xgboost,ids2018->ids2017,DDoS,PSH Flag Count,-0.0043,-0.0082
+xgboost,ids2018->ids2017,DDoS,ACK Flag Count,-0.0145,-0.0466
+xgboost,ids2018->ids2017,DDoS,URG Flag Count,-0.0001,-0.0033
+xgboost,ids2018->ids2017,DDoS,ECE Flag Count,-0.0205,0.0392
+xgboost,ids2018->ids2017,DDoS,Down/Up Ratio,0.0044,-0.0002
+xgboost,ids2018->ids2017,DDoS,Average Packet Size,0.0038,0.0018
+xgboost,ids2018->ids2017,DDoS,Init_Win_bytes_forward,0.0044,0.0198
+xgboost,ids2018->ids2017,DDoS,Init_Win_bytes_backward,-0.0031,-0.0003
+xgboost,ids2018->ids2017,DDoS,act_data_pkt_fwd,0.005,-0.0001
+xgboost,ids2018->ids2017,DDoS,min_seg_size_forward,0.0114,-0.0234
+xgboost,ids2018->ids2017,DDoS,Active Mean,-0.0007,-0.0046
+xgboost,ids2018->ids2017,DDoS,Active Std,0.0003,-0.0001
+xgboost,ids2018->ids2017,DDoS,Active Max,0.0016,-0.0034
+xgboost,ids2018->ids2017,DDoS,Active Min,-0.0046,0.0011
+xgboost,ids2018->ids2017,DDoS,Idle Mean,0.0008,-0.0239
+xgboost,ids2018->ids2017,DDoS,Idle Std,0.0019,-0.0211
+xgboost,ids2018->ids2017,DDoS,Idle Max,0.0012,-0.0004
+xgboost,ids2018->ids2017,DDoS,Idle Min,-0.0037,-0.0177
+xgboost,ids2018->ids2017,DoS,Destination Port,0.0,0.0
+xgboost,ids2018->ids2017,DoS,Flow Duration,-0.0062,0.0262
+xgboost,ids2018->ids2017,DoS,Total Fwd Packets,0.0015,0.0089
+xgboost,ids2018->ids2017,DoS,Total Backward Packets,-0.0021,0.017
+xgboost,ids2018->ids2017,DoS,Total Length of Fwd Packets,-0.0007,0.0032
+xgboost,ids2018->ids2017,DoS,Total Length of Bwd Packets,-0.012,0.0566
+xgboost,ids2018->ids2017,DoS,Fwd Packet Length Max,0.0009,-0.0077
+xgboost,ids2018->ids2017,DoS,Fwd Packet Length Min,0.004,-0.0018
+xgboost,ids2018->ids2017,DoS,Fwd Packet Length Mean,0.0005,0.0054
+xgboost,ids2018->ids2017,DoS,Fwd Packet Length Std,0.0021,-0.0037
+xgboost,ids2018->ids2017,DoS,Bwd Packet Length Max,0.0175,-0.0142
+xgboost,ids2018->ids2017,DoS,Bwd Packet Length Min,0.0033,-0.0326
+xgboost,ids2018->ids2017,DoS,Bwd Packet Length Mean,0.0008,-0.0027
+xgboost,ids2018->ids2017,DoS,Bwd Packet Length Std,-0.0073,0.0607
+xgboost,ids2018->ids2017,DoS,Flow Bytes/s,0.0012,0.0072
+xgboost,ids2018->ids2017,DoS,Flow Packets/s,0.0004,-0.0126
+xgboost,ids2018->ids2017,DoS,Flow IAT Mean,0.0036,-0.0339
+xgboost,ids2018->ids2017,DoS,Flow IAT Std,-0.0128,0.0595
+xgboost,ids2018->ids2017,DoS,Flow IAT Max,-0.0224,0.0752
+xgboost,ids2018->ids2017,DoS,Flow IAT Min,-0.0021,-0.0684
+xgboost,ids2018->ids2017,DoS,Fwd IAT Total,0.0007,-0.0292
+xgboost,ids2018->ids2017,DoS,Fwd IAT Mean,0.0049,-0.065
+xgboost,ids2018->ids2017,DoS,Fwd IAT Std,0.0004,-0.0288
+xgboost,ids2018->ids2017,DoS,Fwd IAT Max,-0.0073,0.0211
+xgboost,ids2018->ids2017,DoS,Fwd IAT Min,0.007,-0.006
+xgboost,ids2018->ids2017,DoS,Bwd IAT Total,-0.0018,0.0011
+xgboost,ids2018->ids2017,DoS,Bwd IAT Mean,0.003,-0.0041
+xgboost,ids2018->ids2017,DoS,Bwd IAT Std,0.0019,-0.0026
+xgboost,ids2018->ids2017,DoS,Bwd IAT Max,-0.0027,0.0041
+xgboost,ids2018->ids2017,DoS,Bwd IAT Min,0.0055,-0.0246
+xgboost,ids2018->ids2017,DoS,Fwd PSH Flags,-0.0009,0.002
+xgboost,ids2018->ids2017,DoS,Fwd URG Flags,-0.0,-0.0006
+xgboost,ids2018->ids2017,DoS,Fwd Header Length,0.0006,-0.0009
+xgboost,ids2018->ids2017,DoS,Bwd Header Length,-0.001,0.0049
+xgboost,ids2018->ids2017,DoS,Fwd Packets/s,-0.014,-0.0004
+xgboost,ids2018->ids2017,DoS,Bwd Packets/s,0.0022,-0.0149
+xgboost,ids2018->ids2017,DoS,Min Packet Length,0.0017,-0.0166
+xgboost,ids2018->ids2017,DoS,Max Packet Length,-0.0052,0.0418
+xgboost,ids2018->ids2017,DoS,Packet Length Mean,-0.0025,-0.0034
+xgboost,ids2018->ids2017,DoS,Packet Length Std,-0.0011,-0.0043
+xgboost,ids2018->ids2017,DoS,FIN Flag Count,0.0001,-0.0004
+xgboost,ids2018->ids2017,DoS,RST Flag Count,-0.0178,0.0036
+xgboost,ids2018->ids2017,DoS,PSH Flag Count,0.0001,-0.0008
+xgboost,ids2018->ids2017,DoS,ACK Flag Count,0.0084,0.0037
+xgboost,ids2018->ids2017,DoS,URG Flag Count,-0.0014,0.0014
+xgboost,ids2018->ids2017,DoS,ECE Flag Count,-0.0044,0.0102
+xgboost,ids2018->ids2017,DoS,Down/Up Ratio,0.0022,-0.0031
+xgboost,ids2018->ids2017,DoS,Average Packet Size,0.003,-0.0252
+xgboost,ids2018->ids2017,DoS,Init_Win_bytes_forward,-0.002,0.0533
+xgboost,ids2018->ids2017,DoS,Init_Win_bytes_backward,0.0321,-0.0081
+xgboost,ids2018->ids2017,DoS,act_data_pkt_fwd,-0.0001,-0.0014
+xgboost,ids2018->ids2017,DoS,min_seg_size_forward,0.009,0.0133
+xgboost,ids2018->ids2017,DoS,Active Mean,-0.0006,-0.0005
+xgboost,ids2018->ids2017,DoS,Active Std,-0.0015,-0.0028
+xgboost,ids2018->ids2017,DoS,Active Max,0.0003,-0.0024
+xgboost,ids2018->ids2017,DoS,Active Min,0.0024,0.0005
+xgboost,ids2018->ids2017,DoS,Idle Mean,0.0052,-0.0225
+xgboost,ids2018->ids2017,DoS,Idle Std,-0.0001,-0.004
+xgboost,ids2018->ids2017,DoS,Idle Max,0.0001,-0.0007
+xgboost,ids2018->ids2017,DoS,Idle Min,0.0036,-0.0301
+xgboost,ids2018->ids2017,Brute Force,Destination Port,0.0,0.0
+xgboost,ids2018->ids2017,Brute Force,Flow Duration,-0.0193,-0.0263
+xgboost,ids2018->ids2017,Brute Force,Total Fwd Packets,-0.0046,-0.0346
+xgboost,ids2018->ids2017,Brute Force,Total Backward Packets,0.0019,0.0123
+xgboost,ids2018->ids2017,Brute Force,Total Length of Fwd Packets,0.0011,0.0043
+xgboost,ids2018->ids2017,Brute Force,Total Length of Bwd Packets,0.0001,0.0036
+xgboost,ids2018->ids2017,Brute Force,Fwd Packet Length Max,0.006,0.0011
+xgboost,ids2018->ids2017,Brute Force,Fwd Packet Length Min,0.001,-0.0004
+xgboost,ids2018->ids2017,Brute Force,Fwd Packet Length Mean,0.0008,0.0007
+xgboost,ids2018->ids2017,Brute Force,Fwd Packet Length Std,0.0024,0.0018
+xgboost,ids2018->ids2017,Brute Force,Bwd Packet Length Max,0.0196,0.0077
+xgboost,ids2018->ids2017,Brute Force,Bwd Packet Length Min,0.0007,0.0009
+xgboost,ids2018->ids2017,Brute Force,Bwd Packet Length Mean,-0.0144,-0.0176
+xgboost,ids2018->ids2017,Brute Force,Bwd Packet Length Std,0.0069,-0.0228
+xgboost,ids2018->ids2017,Brute Force,Flow Bytes/s,-0.0118,0.0166
+xgboost,ids2018->ids2017,Brute Force,Flow Packets/s,-0.01,-0.0022
+xgboost,ids2018->ids2017,Brute Force,Flow IAT Mean,0.0018,0.0146
+xgboost,ids2018->ids2017,Brute Force,Flow IAT Std,-0.0123,-0.0056
+xgboost,ids2018->ids2017,Brute Force,Flow IAT Max,0.016,0.0165
+xgboost,ids2018->ids2017,Brute Force,Flow IAT Min,0.0384,0.0234
+xgboost,ids2018->ids2017,Brute Force,Fwd IAT Total,0.0049,-0.0368
+xgboost,ids2018->ids2017,Brute Force,Fwd IAT Mean,0.0158,-0.011
+xgboost,ids2018->ids2017,Brute Force,Fwd IAT Std,-0.0592,0.1032
+xgboost,ids2018->ids2017,Brute Force,Fwd IAT Max,0.0009,-0.0101
+xgboost,ids2018->ids2017,Brute Force,Fwd IAT Min,0.0021,0.0214
+xgboost,ids2018->ids2017,Brute Force,Bwd IAT Total,-0.0019,0.0044
+xgboost,ids2018->ids2017,Brute Force,Bwd IAT Mean,-0.0049,-0.0045
+xgboost,ids2018->ids2017,Brute Force,Bwd IAT Std,-0.0013,-0.0014
+xgboost,ids2018->ids2017,Brute Force,Bwd IAT Max,0.001,-0.0017
+xgboost,ids2018->ids2017,Brute Force,Bwd IAT Min,0.0069,-0.0019
+xgboost,ids2018->ids2017,Brute Force,Fwd PSH Flags,0.0013,-0.0015
+xgboost,ids2018->ids2017,Brute Force,Fwd URG Flags,0.0001,-0.0004
+xgboost,ids2018->ids2017,Brute Force,Fwd Header Length,0.0195,0.0172
+xgboost,ids2018->ids2017,Brute Force,Bwd Header Length,0.0068,-0.0002
+xgboost,ids2018->ids2017,Brute Force,Fwd Packets/s,-0.0037,0.0241
+xgboost,ids2018->ids2017,Brute Force,Bwd Packets/s,-0.0206,0.0117
+xgboost,ids2018->ids2017,Brute Force,Min Packet Length,-0.0014,-0.0095
+xgboost,ids2018->ids2017,Brute Force,Max Packet Length,0.0064,0.0002
+xgboost,ids2018->ids2017,Brute Force,Packet Length Mean,-0.0252,-0.0286
+xgboost,ids2018->ids2017,Brute Force,Packet Length Std,0.0024,-0.0031
+xgboost,ids2018->ids2017,Brute Force,FIN Flag Count,0.0,-0.0002
+xgboost,ids2018->ids2017,Brute Force,RST Flag Count,-0.0326,-0.0861
+xgboost,ids2018->ids2017,Brute Force,PSH Flag Count,-0.0069,-0.0161
+xgboost,ids2018->ids2017,Brute Force,ACK Flag Count,-0.0151,-0.0613
+xgboost,ids2018->ids2017,Brute Force,URG Flag Count,0.0046,0.0021
+xgboost,ids2018->ids2017,Brute Force,ECE Flag Count,-0.0013,-0.0214
+xgboost,ids2018->ids2017,Brute Force,Down/Up Ratio,0.0006,-0.0055
+xgboost,ids2018->ids2017,Brute Force,Average Packet Size,-0.0095,0.0127
+xgboost,ids2018->ids2017,Brute Force,Init_Win_bytes_forward,0.1121,0.0775
+xgboost,ids2018->ids2017,Brute Force,Init_Win_bytes_backward,-0.0189,0.0812
+xgboost,ids2018->ids2017,Brute Force,act_data_pkt_fwd,0.004,0.0008
+xgboost,ids2018->ids2017,Brute Force,min_seg_size_forward,0.0016,0.0
+xgboost,ids2018->ids2017,Brute Force,Active Mean,-0.0038,-0.0039
+xgboost,ids2018->ids2017,Brute Force,Active Std,-0.003,-0.0008
+xgboost,ids2018->ids2017,Brute Force,Active Max,-0.0024,-0.0001
+xgboost,ids2018->ids2017,Brute Force,Active Min,0.0004,-0.0
+xgboost,ids2018->ids2017,Brute Force,Idle Mean,0.0092,-0.0252
+xgboost,ids2018->ids2017,Brute Force,Idle Std,-0.0066,-0.0178
+xgboost,ids2018->ids2017,Brute Force,Idle Max,0.0012,0.0001
+xgboost,ids2018->ids2017,Brute Force,Idle Min,-0.0079,-0.0017
+xgboost,ids2018->ids2017,Web Attack,Destination Port,0.0,-0.0008
+xgboost,ids2018->ids2017,Web Attack,Flow Duration,0.0019,0.0025
+xgboost,ids2018->ids2017,Web Attack,Total Fwd Packets,-0.01,-0.0021
+xgboost,ids2018->ids2017,Web Attack,Total Backward Packets,-0.0802,0.0301
+xgboost,ids2018->ids2017,Web Attack,Total Length of Fwd Packets,-0.0022,-0.0082
+xgboost,ids2018->ids2017,Web Attack,Total Length of Bwd Packets,-0.0616,0.0181
+xgboost,ids2018->ids2017,Web Attack,Fwd Packet Length Max,-0.0027,0.0056
+xgboost,ids2018->ids2017,Web Attack,Fwd Packet Length Min,0.0002,-0.0013
+xgboost,ids2018->ids2017,Web Attack,Fwd Packet Length Mean,-0.0344,0.0067
+xgboost,ids2018->ids2017,Web Attack,Fwd Packet Length Std,0.0125,-0.0013
+xgboost,ids2018->ids2017,Web Attack,Bwd Packet Length Max,0.0373,-0.0377
+xgboost,ids2018->ids2017,Web Attack,Bwd Packet Length Min,0.0043,-0.0095
+xgboost,ids2018->ids2017,Web Attack,Bwd Packet Length Mean,0.0038,-0.0191
+xgboost,ids2018->ids2017,Web Attack,Bwd Packet Length Std,0.0023,-0.0543
+xgboost,ids2018->ids2017,Web Attack,Flow Bytes/s,-0.017,-0.0058
+xgboost,ids2018->ids2017,Web Attack,Flow Packets/s,-0.0038,-0.0017
+xgboost,ids2018->ids2017,Web Attack,Flow IAT Mean,-0.0038,-0.0265
+xgboost,ids2018->ids2017,Web Attack,Flow IAT Std,0.1159,-0.0046
+xgboost,ids2018->ids2017,Web Attack,Flow IAT Max,-0.0028,-0.0298
+xgboost,ids2018->ids2017,Web Attack,Flow IAT Min,0.1026,-0.0268
+xgboost,ids2018->ids2017,Web Attack,Fwd IAT Total,0.0056,0.0007
+xgboost,ids2018->ids2017,Web Attack,Fwd IAT Mean,0.0005,-0.0215
+xgboost,ids2018->ids2017,Web Attack,Fwd IAT Std,0.0606,-0.0288
+xgboost,ids2018->ids2017,Web Attack,Fwd IAT Max,-0.0041,-0.0003
+xgboost,ids2018->ids2017,Web Attack,Fwd IAT Min,-0.0575,0.0409
+xgboost,ids2018->ids2017,Web Attack,Bwd IAT Total,-0.0209,0.0103
+xgboost,ids2018->ids2017,Web Attack,Bwd IAT Mean,0.0026,-0.0009
+xgboost,ids2018->ids2017,Web Attack,Bwd IAT Std,0.0055,-0.004
+xgboost,ids2018->ids2017,Web Attack,Bwd IAT Max,-0.0003,0.0012
+xgboost,ids2018->ids2017,Web Attack,Bwd IAT Min,0.0167,-0.0093
+xgboost,ids2018->ids2017,Web Attack,Fwd PSH Flags,-0.0014,0.0008
+xgboost,ids2018->ids2017,Web Attack,Fwd URG Flags,-0.0,-0.0
+xgboost,ids2018->ids2017,Web Attack,Fwd Header Length,0.0029,0.0
+xgboost,ids2018->ids2017,Web Attack,Bwd Header Length,-0.0106,0.0066
+xgboost,ids2018->ids2017,Web Attack,Fwd Packets/s,0.0224,-0.0244
+xgboost,ids2018->ids2017,Web Attack,Bwd Packets/s,-0.0077,-0.0048
+xgboost,ids2018->ids2017,Web Attack,Min Packet Length,-0.0032,-0.0034
+xgboost,ids2018->ids2017,Web Attack,Max Packet Length,-0.0224,0.0528
+xgboost,ids2018->ids2017,Web Attack,Packet Length Mean,-0.0175,-0.0039
+xgboost,ids2018->ids2017,Web Attack,Packet Length Std,-0.0222,0.0203
+xgboost,ids2018->ids2017,Web Attack,FIN Flag Count,0.0001,-0.0002
+xgboost,ids2018->ids2017,Web Attack,RST Flag Count,-0.0751,0.0972
+xgboost,ids2018->ids2017,Web Attack,PSH Flag Count,-0.0006,0.0009
+xgboost,ids2018->ids2017,Web Attack,ACK Flag Count,0.0331,0.0002
+xgboost,ids2018->ids2017,Web Attack,URG Flag Count,0.0004,-0.0003
+xgboost,ids2018->ids2017,Web Attack,ECE Flag Count,-0.0251,0.0306
+xgboost,ids2018->ids2017,Web Attack,Down/Up Ratio,0.0032,-0.0041
+xgboost,ids2018->ids2017,Web Attack,Average Packet Size,0.0038,-0.0064
+xgboost,ids2018->ids2017,Web Attack,Init_Win_bytes_forward,0.0438,0.061
+xgboost,ids2018->ids2017,Web Attack,Init_Win_bytes_backward,0.0393,-0.0007
+xgboost,ids2018->ids2017,Web Attack,act_data_pkt_fwd,-0.0029,0.0028
+xgboost,ids2018->ids2017,Web Attack,min_seg_size_forward,0.0,-0.0284
+xgboost,ids2018->ids2017,Web Attack,Active Mean,-0.0029,0.0022
+xgboost,ids2018->ids2017,Web Attack,Active Std,-0.0024,-0.0
+xgboost,ids2018->ids2017,Web Attack,Active Max,-0.0051,-0.0004
+xgboost,ids2018->ids2017,Web Attack,Active Min,-0.0015,-0.0004
+xgboost,ids2018->ids2017,Web Attack,Idle Mean,-0.0068,-0.0078
+xgboost,ids2018->ids2017,Web Attack,Idle Std,-0.0146,0.0019
+xgboost,ids2018->ids2017,Web Attack,Idle Max,0.0017,-0.0003
+xgboost,ids2018->ids2017,Web Attack,Idle Min,0.0004,-0.0134
+catboost,ids2017->ids2018,DoS,Destination Port,0.0,0.0
+catboost,ids2017->ids2018,DoS,Flow Duration,0.0141,-0.0194
+catboost,ids2017->ids2018,DoS,Total Fwd Packets,0.0024,-0.0171
+catboost,ids2017->ids2018,DoS,Total Backward Packets,-0.01,0.0143
+catboost,ids2017->ids2018,DoS,Total Length of Fwd Packets,0.0523,-0.0678
+catboost,ids2017->ids2018,DoS,Total Length of Bwd Packets,0.0001,-0.0004
+catboost,ids2017->ids2018,DoS,Fwd Packet Length Max,-0.0176,-0.1215
+catboost,ids2017->ids2018,DoS,Fwd Packet Length Min,0.0005,-0.0031
+catboost,ids2017->ids2018,DoS,Fwd Packet Length Mean,0.007,-0.114
+catboost,ids2017->ids2018,DoS,Fwd Packet Length Std,0.0035,0.0055
+catboost,ids2017->ids2018,DoS,Bwd Packet Length Max,0.0104,-0.0123
+catboost,ids2017->ids2018,DoS,Bwd Packet Length Min,-0.0,-0.0002
+catboost,ids2017->ids2018,DoS,Bwd Packet Length Mean,0.0282,-0.008
+catboost,ids2017->ids2018,DoS,Bwd Packet Length Std,-0.1569,0.2781
+catboost,ids2017->ids2018,DoS,Flow Bytes/s,0.0083,-0.0066
+catboost,ids2017->ids2018,DoS,Flow Packets/s,0.0171,-0.0049
+catboost,ids2017->ids2018,DoS,Flow IAT Mean,0.0126,-0.0057
+catboost,ids2017->ids2018,DoS,Flow IAT Std,0.022,-0.0022
+catboost,ids2017->ids2018,DoS,Flow IAT Max,0.0311,-0.0071
+catboost,ids2017->ids2018,DoS,Flow IAT Min,-0.0134,-0.0325
+catboost,ids2017->ids2018,DoS,Fwd IAT Total,0.0172,-0.0068
+catboost,ids2017->ids2018,DoS,Fwd IAT Mean,0.0063,-0.0056
+catboost,ids2017->ids2018,DoS,Fwd IAT Std,0.0252,0.0012
+catboost,ids2017->ids2018,DoS,Fwd IAT Max,0.0143,-0.0101
+catboost,ids2017->ids2018,DoS,Fwd IAT Min,-0.0704,0.1454
+catboost,ids2017->ids2018,DoS,Bwd IAT Total,-0.003,-0.0165
+catboost,ids2017->ids2018,DoS,Bwd IAT Mean,-0.0098,-0.0163
+catboost,ids2017->ids2018,DoS,Bwd IAT Std,-0.0013,-0.0029
+catboost,ids2017->ids2018,DoS,Bwd IAT Max,0.0005,-0.0055
+catboost,ids2017->ids2018,DoS,Bwd IAT Min,-0.028,0.0262
+catboost,ids2017->ids2018,DoS,Fwd PSH Flags,0.0006,-0.0021
+catboost,ids2017->ids2018,DoS,Fwd URG Flags,0.0,-0.0
+catboost,ids2017->ids2018,DoS,Fwd Header Length,0.0027,-0.0021
+catboost,ids2017->ids2018,DoS,Bwd Header Length,-0.0042,-0.0176
+catboost,ids2017->ids2018,DoS,Fwd Packets/s,0.0373,-0.0081
+catboost,ids2017->ids2018,DoS,Bwd Packets/s,0.0058,-0.0071
+catboost,ids2017->ids2018,DoS,Min Packet Length,0.0,-0.0
+catboost,ids2017->ids2018,DoS,Max Packet Length,0.0135,0.0024
+catboost,ids2017->ids2018,DoS,Packet Length Mean,0.0096,0.0084
+catboost,ids2017->ids2018,DoS,Packet Length Std,0.0225,0.0254
+catboost,ids2017->ids2018,DoS,FIN Flag Count,-0.005,-0.0116
+catboost,ids2017->ids2018,DoS,RST Flag Count,-0.0,-0.0
+catboost,ids2017->ids2018,DoS,PSH Flag Count,0.0024,-0.0037
+catboost,ids2017->ids2018,DoS,ACK Flag Count,-0.0019,-0.0104
+catboost,ids2017->ids2018,DoS,URG Flag Count,0.008,-0.0085
+catboost,ids2017->ids2018,DoS,ECE Flag Count,0.0,0.0
+catboost,ids2017->ids2018,DoS,Down/Up Ratio,-0.0004,-0.0029
+catboost,ids2017->ids2018,DoS,Average Packet Size,-0.0004,0.0021
+catboost,ids2017->ids2018,DoS,Init_Win_bytes_forward,-0.0009,-0.005
+catboost,ids2017->ids2018,DoS,Init_Win_bytes_backward,-0.0638,0.147
+catboost,ids2017->ids2018,DoS,act_data_pkt_fwd,0.0209,-0.0041
+catboost,ids2017->ids2018,DoS,min_seg_size_forward,0.0009,-0.0817
+catboost,ids2017->ids2018,DoS,Active Mean,-0.0005,-0.0032
+catboost,ids2017->ids2018,DoS,Active Std,-0.0075,0.007
+catboost,ids2017->ids2018,DoS,Active Max,0.0003,-0.0011
+catboost,ids2017->ids2018,DoS,Active Min,-0.014,0.0044
+catboost,ids2017->ids2018,DoS,Idle Mean,0.003,-0.0013
+catboost,ids2017->ids2018,DoS,Idle Std,0.0001,-0.0015
+catboost,ids2017->ids2018,DoS,Idle Max,0.0099,-0.0032
+catboost,ids2017->ids2018,DoS,Idle Min,-0.0018,-0.0057
+catboost,ids2017->ids2018,Bot,Destination Port,0.0024,-0.1752
+catboost,ids2017->ids2018,Bot,Flow Duration,-0.0106,0.0169
+catboost,ids2017->ids2018,Bot,Total Fwd Packets,-0.0002,0.001
+catboost,ids2017->ids2018,Bot,Total Backward Packets,-0.0021,0.0073
+catboost,ids2017->ids2018,Bot,Total Length of Fwd Packets,-0.0358,0.058
+catboost,ids2017->ids2018,Bot,Total Length of Bwd Packets,0.0002,0.0
+catboost,ids2017->ids2018,Bot,Fwd Packet Length Max,-0.0257,0.0366
+catboost,ids2017->ids2018,Bot,Fwd Packet Length Min,-0.0003,-0.0003
+catboost,ids2017->ids2018,Bot,Fwd Packet Length Mean,-0.0048,0.0091
+catboost,ids2017->ids2018,Bot,Fwd Packet Length Std,0.0008,-0.004
+catboost,ids2017->ids2018,Bot,Bwd Packet Length Max,0.0003,-0.0017
+catboost,ids2017->ids2018,Bot,Bwd Packet Length Min,-0.0,-0.0005
+catboost,ids2017->ids2018,Bot,Bwd Packet Length Mean,0.0,0.0
+catboost,ids2017->ids2018,Bot,Bwd Packet Length Std,-0.0238,0.0123
+catboost,ids2017->ids2018,Bot,Flow Bytes/s,-0.0103,0.0343
+catboost,ids2017->ids2018,Bot,Flow Packets/s,-0.0059,0.0058
+catboost,ids2017->ids2018,Bot,Flow IAT Mean,-0.005,-0.0008
+catboost,ids2017->ids2018,Bot,Flow IAT Std,-0.0034,0.0184
+catboost,ids2017->ids2018,Bot,Flow IAT Max,-0.0099,0.0132
+catboost,ids2017->ids2018,Bot,Flow IAT Min,0.0643,0.0265
+catboost,ids2017->ids2018,Bot,Fwd IAT Total,-0.0047,0.0099
+catboost,ids2017->ids2018,Bot,Fwd IAT Mean,0.0009,-0.0121
+catboost,ids2017->ids2018,Bot,Fwd IAT Std,0.0036,0.0061
+catboost,ids2017->ids2018,Bot,Fwd IAT Max,0.0039,0.0105
+catboost,ids2017->ids2018,Bot,Fwd IAT Min,-0.0012,0.0019
+catboost,ids2017->ids2018,Bot,Bwd IAT Total,-0.0002,0.0001
+catboost,ids2017->ids2018,Bot,Bwd IAT Mean,-0.0009,0.0075
+catboost,ids2017->ids2018,Bot,Bwd IAT Std,-0.0016,0.0123
+catboost,ids2017->ids2018,Bot,Bwd IAT Max,0.0026,-0.0049
+catboost,ids2017->ids2018,Bot,Bwd IAT Min,0.0049,0.0055
+catboost,ids2017->ids2018,Bot,Fwd PSH Flags,-0.0003,-0.0005
+catboost,ids2017->ids2018,Bot,Fwd URG Flags,-0.0,-0.0
+catboost,ids2017->ids2018,Bot,Fwd Header Length,0.0255,-0.0899
+catboost,ids2017->ids2018,Bot,Bwd Header Length,0.0037,0.0003
+catboost,ids2017->ids2018,Bot,Fwd Packets/s,-0.0161,0.0177
+catboost,ids2017->ids2018,Bot,Bwd Packets/s,0.0076,-0.0002
+catboost,ids2017->ids2018,Bot,Min Packet Length,0.0,-0.0017
+catboost,ids2017->ids2018,Bot,Max Packet Length,0.0,-0.0015
+catboost,ids2017->ids2018,Bot,Packet Length Mean,0.0003,-0.004
+catboost,ids2017->ids2018,Bot,Packet Length Std,0.0008,-0.0165
+catboost,ids2017->ids2018,Bot,FIN Flag Count,-0.002,0.0003
+catboost,ids2017->ids2018,Bot,RST Flag Count,0.0,-0.0
+catboost,ids2017->ids2018,Bot,PSH Flag Count,-0.0002,0.0012
+catboost,ids2017->ids2018,Bot,ACK Flag Count,-0.0005,0.0025
+catboost,ids2017->ids2018,Bot,URG Flag Count,0.0023,0.0005
+catboost,ids2017->ids2018,Bot,ECE Flag Count,0.0,0.0
+catboost,ids2017->ids2018,Bot,Down/Up Ratio,0.0001,-0.0178
+catboost,ids2017->ids2018,Bot,Average Packet Size,0.0049,0.0004
+catboost,ids2017->ids2018,Bot,Init_Win_bytes_forward,0.0,0.0
+catboost,ids2017->ids2018,Bot,Init_Win_bytes_backward,0.0283,0.0
+catboost,ids2017->ids2018,Bot,act_data_pkt_fwd,0.0035,0.0112
+catboost,ids2017->ids2018,Bot,min_seg_size_forward,0.0057,-0.0002
+catboost,ids2017->ids2018,Bot,Active Mean,-0.0,-0.0
+catboost,ids2017->ids2018,Bot,Active Std,-0.0001,0.0001
+catboost,ids2017->ids2018,Bot,Active Max,-0.0003,0.0007
+catboost,ids2017->ids2018,Bot,Active Min,-0.0003,0.0008
+catboost,ids2017->ids2018,Bot,Idle Mean,0.0003,0.0009
+catboost,ids2017->ids2018,Bot,Idle Std,-0.0002,0.0001
+catboost,ids2017->ids2018,Bot,Idle Max,-0.0016,0.002
+catboost,ids2017->ids2018,Bot,Idle Min,0.001,0.0
+catboost,ids2018->ids2017,DDoS,Destination Port,0.0,0.0
+catboost,ids2018->ids2017,DDoS,Flow Duration,0.0108,-0.0026
+catboost,ids2018->ids2017,DDoS,Total Fwd Packets,0.0182,0.0
+catboost,ids2018->ids2017,DDoS,Total Backward Packets,0.0158,-0.0052
+catboost,ids2018->ids2017,DDoS,Total Length of Fwd Packets,0.0,-0.0002
+catboost,ids2018->ids2017,DDoS,Total Length of Bwd Packets,0.0059,0.0011
+catboost,ids2018->ids2017,DDoS,Fwd Packet Length Max,0.0,-0.0001
+catboost,ids2018->ids2017,DDoS,Fwd Packet Length Min,-0.0001,-0.0002
+catboost,ids2018->ids2017,DDoS,Fwd Packet Length Mean,0.0032,-0.0009
+catboost,ids2018->ids2017,DDoS,Fwd Packet Length Std,-0.0128,0.0156
+catboost,ids2018->ids2017,DDoS,Bwd Packet Length Max,-0.0042,0.0051
+catboost,ids2018->ids2017,DDoS,Bwd Packet Length Min,0.0,-0.0
+catboost,ids2018->ids2017,DDoS,Bwd Packet Length Mean,-0.0007,0.0049
+catboost,ids2018->ids2017,DDoS,Bwd Packet Length Std,-0.0353,0.0236
+catboost,ids2018->ids2017,DDoS,Flow Bytes/s,0.0078,-0.0397
+catboost,ids2018->ids2017,DDoS,Flow Packets/s,-0.011,0.0019
+catboost,ids2018->ids2017,DDoS,Flow IAT Mean,-0.0069,-0.0017
+catboost,ids2018->ids2017,DDoS,Flow IAT Std,0.0759,-0.0126
+catboost,ids2018->ids2017,DDoS,Flow IAT Max,-0.0049,-0.0005
+catboost,ids2018->ids2017,DDoS,Flow IAT Min,0.0164,-0.0042
+catboost,ids2018->ids2017,DDoS,Fwd IAT Total,0.0071,-0.0013
+catboost,ids2018->ids2017,DDoS,Fwd IAT Mean,-0.0056,0.0061
+catboost,ids2018->ids2017,DDoS,Fwd IAT Std,0.0132,0.0
+catboost,ids2018->ids2017,DDoS,Fwd IAT Max,0.0054,-0.0019
+catboost,ids2018->ids2017,DDoS,Fwd IAT Min,-0.0029,-0.0541
+catboost,ids2018->ids2017,DDoS,Bwd IAT Total,0.001,-0.0043
+catboost,ids2018->ids2017,DDoS,Bwd IAT Mean,0.0016,-0.005
+catboost,ids2018->ids2017,DDoS,Bwd IAT Std,0.0082,0.0032
+catboost,ids2018->ids2017,DDoS,Bwd IAT Max,0.0014,-0.0035
+catboost,ids2018->ids2017,DDoS,Bwd IAT Min,0.0081,0.0013
+catboost,ids2018->ids2017,DDoS,Fwd PSH Flags,0.0001,-0.0
+catboost,ids2018->ids2017,DDoS,Fwd URG Flags,-0.0002,-0.0001
+catboost,ids2018->ids2017,DDoS,Fwd Header Length,0.005,-0.0
+catboost,ids2018->ids2017,DDoS,Bwd Header Length,0.0105,-0.0001
+catboost,ids2018->ids2017,DDoS,Fwd Packets/s,-0.0078,-0.0175
+catboost,ids2018->ids2017,DDoS,Bwd Packets/s,0.008,-0.0224
+catboost,ids2018->ids2017,DDoS,Min Packet Length,0.0007,-0.0003
+catboost,ids2018->ids2017,DDoS,Max Packet Length,0.0012,-0.0006
+catboost,ids2018->ids2017,DDoS,Packet Length Mean,0.0319,-0.0006
+catboost,ids2018->ids2017,DDoS,Packet Length Std,0.004,0.0
+catboost,ids2018->ids2017,DDoS,FIN Flag Count,-0.0003,-0.0001
+catboost,ids2018->ids2017,DDoS,RST Flag Count,-0.0375,0.102
+catboost,ids2018->ids2017,DDoS,PSH Flag Count,0.0045,-0.0394
+catboost,ids2018->ids2017,DDoS,ACK Flag Count,0.0093,-0.0316
+catboost,ids2018->ids2017,DDoS,URG Flag Count,0.0,-0.0001
+catboost,ids2018->ids2017,DDoS,ECE Flag Count,-0.0501,0.1257
+catboost,ids2018->ids2017,DDoS,Down/Up Ratio,0.0094,0.0155
+catboost,ids2018->ids2017,DDoS,Average Packet Size,0.0163,0.0098
+catboost,ids2018->ids2017,DDoS,Init_Win_bytes_forward,0.0084,-0.0048
+catboost,ids2018->ids2017,DDoS,Init_Win_bytes_backward,0.0001,0.0
+catboost,ids2018->ids2017,DDoS,act_data_pkt_fwd,0.0005,0.0065
+catboost,ids2018->ids2017,DDoS,min_seg_size_forward,-0.1578,0.0007
+catboost,ids2018->ids2017,DDoS,Active Mean,0.0025,-0.0
+catboost,ids2018->ids2017,DDoS,Active Std,0.0002,-0.0009
+catboost,ids2018->ids2017,DDoS,Active Max,0.0021,-0.0007
+catboost,ids2018->ids2017,DDoS,Active Min,0.0012,-0.0008
+catboost,ids2018->ids2017,DDoS,Idle Mean,0.0051,-0.0303
+catboost,ids2018->ids2017,DDoS,Idle Std,0.0002,-0.0008
+catboost,ids2018->ids2017,DDoS,Idle Max,0.0073,-0.005
+catboost,ids2018->ids2017,DDoS,Idle Min,0.0096,-0.0288
+catboost,ids2018->ids2017,DoS,Destination Port,0.0,0.0
+catboost,ids2018->ids2017,DoS,Flow Duration,0.0016,0.0257
+catboost,ids2018->ids2017,DoS,Total Fwd Packets,-0.0063,0.0292
+catboost,ids2018->ids2017,DoS,Total Backward Packets,0.0128,0.0133
+catboost,ids2018->ids2017,DoS,Total Length of Fwd Packets,-0.0016,0.0028
+catboost,ids2018->ids2017,DoS,Total Length of Bwd Packets,-0.0005,0.0078
+catboost,ids2018->ids2017,DoS,Fwd Packet Length Max,0.0011,0.0035
+catboost,ids2018->ids2017,DoS,Fwd Packet Length Min,-0.0004,-0.0001
+catboost,ids2018->ids2017,DoS,Fwd Packet Length Mean,0.0008,0.0146
+catboost,ids2018->ids2017,DoS,Fwd Packet Length Std,0.0028,-0.0219
+catboost,ids2018->ids2017,DoS,Bwd Packet Length Max,-0.0031,-0.0212
+catboost,ids2018->ids2017,DoS,Bwd Packet Length Min,-0.0,0.0
+catboost,ids2018->ids2017,DoS,Bwd Packet Length Mean,0.0007,-0.0028
+catboost,ids2018->ids2017,DoS,Bwd Packet Length Std,-0.0065,-0.0591
+catboost,ids2018->ids2017,DoS,Flow Bytes/s,0.006,0.0016
+catboost,ids2018->ids2017,DoS,Flow Packets/s,-0.0028,0.0016
+catboost,ids2018->ids2017,DoS,Flow IAT Mean,-0.0034,0.0071
+catboost,ids2018->ids2017,DoS,Flow IAT Std,-0.0101,0.0565
+catboost,ids2018->ids2017,DoS,Flow IAT Max,-0.005,0.0367
+catboost,ids2018->ids2017,DoS,Flow IAT Min,-0.0092,-0.0087
+catboost,ids2018->ids2017,DoS,Fwd IAT Total,0.0069,0.0126
+catboost,ids2018->ids2017,DoS,Fwd IAT Mean,-0.0138,0.0184
+catboost,ids2018->ids2017,DoS,Fwd IAT Std,-0.0094,0.0064
+catboost,ids2018->ids2017,DoS,Fwd IAT Max,-0.0003,0.0159
+catboost,ids2018->ids2017,DoS,Fwd IAT Min,-0.0272,0.0422
+catboost,ids2018->ids2017,DoS,Bwd IAT Total,0.0028,0.0024
+catboost,ids2018->ids2017,DoS,Bwd IAT Mean,0.0062,0.0045
+catboost,ids2018->ids2017,DoS,Bwd IAT Std,0.005,0.0221
+catboost,ids2018->ids2017,DoS,Bwd IAT Max,0.0004,0.0004
+catboost,ids2018->ids2017,DoS,Bwd IAT Min,0.0019,-0.0004
+catboost,ids2018->ids2017,DoS,Fwd PSH Flags,-0.0001,-0.0006
+catboost,ids2018->ids2017,DoS,Fwd URG Flags,-0.0001,-0.0002
+catboost,ids2018->ids2017,DoS,Fwd Header Length,-0.0153,0.0254
+catboost,ids2018->ids2017,DoS,Bwd Header Length,0.0083,0.0248
+catboost,ids2018->ids2017,DoS,Fwd Packets/s,-0.023,0.0318
+catboost,ids2018->ids2017,DoS,Bwd Packets/s,0.008,-0.0006
+catboost,ids2018->ids2017,DoS,Min Packet Length,-0.0002,0.0003
+catboost,ids2018->ids2017,DoS,Max Packet Length,0.0056,-0.0004
+catboost,ids2018->ids2017,DoS,Packet Length Mean,0.009,0.0133
+catboost,ids2018->ids2017,DoS,Packet Length Std,-0.0016,0.001
+catboost,ids2018->ids2017,DoS,FIN Flag Count,-0.0003,0.0002
+catboost,ids2018->ids2017,DoS,RST Flag Count,-0.0441,-0.0929
+catboost,ids2018->ids2017,DoS,PSH Flag Count,-0.0056,0.0028
+catboost,ids2018->ids2017,DoS,ACK Flag Count,0.0113,0.0005
+catboost,ids2018->ids2017,DoS,URG Flag Count,-0.0006,0.0002
+catboost,ids2018->ids2017,DoS,ECE Flag Count,-0.0394,-0.0803
+catboost,ids2018->ids2017,DoS,Down/Up Ratio,0.0087,-0.0008
+catboost,ids2018->ids2017,DoS,Average Packet Size,-0.0052,0.0269
+catboost,ids2018->ids2017,DoS,Init_Win_bytes_forward,0.0179,0.0067
+catboost,ids2018->ids2017,DoS,Init_Win_bytes_backward,0.0003,0.0002
+catboost,ids2018->ids2017,DoS,act_data_pkt_fwd,0.0051,0.001
+catboost,ids2018->ids2017,DoS,min_seg_size_forward,0.1265,-0.0028
+catboost,ids2018->ids2017,DoS,Active Mean,0.0001,0.0005
+catboost,ids2018->ids2017,DoS,Active Std,-0.0006,0.0006
+catboost,ids2018->ids2017,DoS,Active Max,0.0014,0.0015
+catboost,ids2018->ids2017,DoS,Active Min,0.0,0.0029
+catboost,ids2018->ids2017,DoS,Idle Mean,-0.0045,-0.0523
+catboost,ids2018->ids2017,DoS,Idle Std,-0.001,0.0014
+catboost,ids2018->ids2017,DoS,Idle Max,-0.0036,-0.0384
+catboost,ids2018->ids2017,DoS,Idle Min,-0.0066,-0.084
+catboost,ids2018->ids2017,Brute Force,Destination Port,0.0,0.0
+catboost,ids2018->ids2017,Brute Force,Flow Duration,0.0342,0.0
+catboost,ids2018->ids2017,Brute Force,Total Fwd Packets,0.0401,-0.0819
+catboost,ids2018->ids2017,Brute Force,Total Backward Packets,0.0004,0.0054
+catboost,ids2018->ids2017,Brute Force,Total Length of Fwd Packets,0.0002,-0.0036
+catboost,ids2018->ids2017,Brute Force,Total Length of Bwd Packets,0.0085,-0.0004
+catboost,ids2018->ids2017,Brute Force,Fwd Packet Length Max,0.0067,-0.0018
+catboost,ids2018->ids2017,Brute Force,Fwd Packet Length Min,-0.0007,0.0003
+catboost,ids2018->ids2017,Brute Force,Fwd Packet Length Mean,-0.0009,0.0015
+catboost,ids2018->ids2017,Brute Force,Fwd Packet Length Std,-0.0146,0.0147
+catboost,ids2018->ids2017,Brute Force,Bwd Packet Length Max,-0.0076,0.0077
+catboost,ids2018->ids2017,Brute Force,Bwd Packet Length Min,-0.0001,0.0001
+catboost,ids2018->ids2017,Brute Force,Bwd Packet Length Mean,-0.0119,0.0084
+catboost,ids2018->ids2017,Brute Force,Bwd Packet Length Std,-0.0095,0.002
+catboost,ids2018->ids2017,Brute Force,Flow Bytes/s,0.0141,0.0
+catboost,ids2018->ids2017,Brute Force,Flow Packets/s,0.0316,0.0
+catboost,ids2018->ids2017,Brute Force,Flow IAT Mean,0.0123,0.0
+catboost,ids2018->ids2017,Brute Force,Flow IAT Std,0.058,-0.0003
+catboost,ids2018->ids2017,Brute Force,Flow IAT Max,-0.0026,0.0027
+catboost,ids2018->ids2017,Brute Force,Flow IAT Min,-0.1257,0.1278
+catboost,ids2018->ids2017,Brute Force,Fwd IAT Total,0.0598,-0.0036
+catboost,ids2018->ids2017,Brute Force,Fwd IAT Mean,0.0453,0.0
+catboost,ids2018->ids2017,Brute Force,Fwd IAT Std,0.0552,-0.0014
+catboost,ids2018->ids2017,Brute Force,Fwd IAT Max,0.0325,-0.0
+catboost,ids2018->ids2017,Brute Force,Fwd IAT Min,-0.2283,0.2288
+catboost,ids2018->ids2017,Brute Force,Bwd IAT Total,0.0154,-0.0065
+catboost,ids2018->ids2017,Brute Force,Bwd IAT Mean,0.003,-0.0025
+catboost,ids2018->ids2017,Brute Force,Bwd IAT Std,0.0413,-0.0182
+catboost,ids2018->ids2017,Brute Force,Bwd IAT Max,0.0007,-0.0082
+catboost,ids2018->ids2017,Brute Force,Bwd IAT Min,0.003,-0.0007
+catboost,ids2018->ids2017,Brute Force,Fwd PSH Flags,0.0,0.0
+catboost,ids2018->ids2017,Brute Force,Fwd URG Flags,-0.0,-0.0
+catboost,ids2018->ids2017,Brute Force,Fwd Header Length,-0.0008,0.0037
+catboost,ids2018->ids2017,Brute Force,Bwd Header Length,0.0375,-0.0293
+catboost,ids2018->ids2017,Brute Force,Fwd Packets/s,0.0015,0.0
+catboost,ids2018->ids2017,Brute Force,Bwd Packets/s,0.0235,-0.0016
+catboost,ids2018->ids2017,Brute Force,Min Packet Length,-0.0068,0.0069
+catboost,ids2018->ids2017,Brute Force,Max Packet Length,-0.0075,0.0076
+catboost,ids2018->ids2017,Brute Force,Packet Length Mean,0.0,0.0
+catboost,ids2018->ids2017,Brute Force,Packet Length Std,0.0076,-0.0002
+catboost,ids2018->ids2017,Brute Force,FIN Flag Count,0.0003,-0.0002
+catboost,ids2018->ids2017,Brute Force,RST Flag Count,-0.0058,-0.1536
+catboost,ids2018->ids2017,Brute Force,PSH Flag Count,0.0191,-0.0522
+catboost,ids2018->ids2017,Brute Force,ACK Flag Count,0.0364,-0.0648
+catboost,ids2018->ids2017,Brute Force,URG Flag Count,-0.014,0.014
+catboost,ids2018->ids2017,Brute Force,ECE Flag Count,-0.0051,-0.2026
+catboost,ids2018->ids2017,Brute Force,Down/Up Ratio,-0.1095,0.1129
+catboost,ids2018->ids2017,Brute Force,Average Packet Size,-0.0013,0.0031
+catboost,ids2018->ids2017,Brute Force,Init_Win_bytes_forward,0.0493,0.0223
+catboost,ids2018->ids2017,Brute Force,Init_Win_bytes_backward,-0.0082,0.0085
+catboost,ids2018->ids2017,Brute Force,act_data_pkt_fwd,0.0115,-0.0115
+catboost,ids2018->ids2017,Brute Force,min_seg_size_forward,0.0002,0.0
+catboost,ids2018->ids2017,Brute Force,Active Mean,-0.0004,0.0004
+catboost,ids2018->ids2017,Brute Force,Active Std,-0.0011,-0.0005
+catboost,ids2018->ids2017,Brute Force,Active Max,-0.0,-0.0004
+catboost,ids2018->ids2017,Brute Force,Active Min,-0.0001,0.0001
+catboost,ids2018->ids2017,Brute Force,Idle Mean,-0.0177,0.0075
+catboost,ids2018->ids2017,Brute Force,Idle Std,-0.0002,-0.0003
+catboost,ids2018->ids2017,Brute Force,Idle Max,-0.0326,0.0383
+catboost,ids2018->ids2017,Brute Force,Idle Min,-0.0361,0.0218
+catboost,ids2018->ids2017,Web Attack,Destination Port,0.0,-0.0014
+catboost,ids2018->ids2017,Web Attack,Flow Duration,0.0153,-0.0026
+catboost,ids2018->ids2017,Web Attack,Total Fwd Packets,0.0031,-0.0026
+catboost,ids2018->ids2017,Web Attack,Total Backward Packets,0.0071,-0.0057
+catboost,ids2018->ids2017,Web Attack,Total Length of Fwd Packets,0.0014,0.0
+catboost,ids2018->ids2017,Web Attack,Total Length of Bwd Packets,0.0107,0.0006
+catboost,ids2018->ids2017,Web Attack,Fwd Packet Length Max,0.0,-0.0001
+catboost,ids2018->ids2017,Web Attack,Fwd Packet Length Min,-0.0005,0.0003
+catboost,ids2018->ids2017,Web Attack,Fwd Packet Length Mean,0.0209,0.0
+catboost,ids2018->ids2017,Web Attack,Fwd Packet Length Std,0.0005,0.001
+catboost,ids2018->ids2017,Web Attack,Bwd Packet Length Max,0.0047,0.0065
+catboost,ids2018->ids2017,Web Attack,Bwd Packet Length Min,-0.0012,0.001
+catboost,ids2018->ids2017,Web Attack,Bwd Packet Length Mean,-0.0091,0.0038
+catboost,ids2018->ids2017,Web Attack,Bwd Packet Length Std,-0.0148,-0.0043
+catboost,ids2018->ids2017,Web Attack,Flow Bytes/s,0.0001,-0.0014
+catboost,ids2018->ids2017,Web Attack,Flow Packets/s,0.012,-0.0156
+catboost,ids2018->ids2017,Web Attack,Flow IAT Mean,0.0115,-0.0083
+catboost,ids2018->ids2017,Web Attack,Flow IAT Std,0.0702,-0.0256
+catboost,ids2018->ids2017,Web Attack,Flow IAT Max,0.0001,-0.0071
+catboost,ids2018->ids2017,Web Attack,Flow IAT Min,0.0516,-0.0208
+catboost,ids2018->ids2017,Web Attack,Fwd IAT Total,0.0273,-0.0146
+catboost,ids2018->ids2017,Web Attack,Fwd IAT Mean,0.0038,-0.025
+catboost,ids2018->ids2017,Web Attack,Fwd IAT Std,0.0242,-0.0088
+catboost,ids2018->ids2017,Web Attack,Fwd IAT Max,0.0112,-0.0067
+catboost,ids2018->ids2017,Web Attack,Fwd IAT Min,-0.2403,0.239
+catboost,ids2018->ids2017,Web Attack,Bwd IAT Total,0.0003,-0.0168
+catboost,ids2018->ids2017,Web Attack,Bwd IAT Mean,-0.001,-0.0094
+catboost,ids2018->ids2017,Web Attack,Bwd IAT Std,-0.0012,-0.0264
+catboost,ids2018->ids2017,Web Attack,Bwd IAT Max,-0.0029,0.0007
+catboost,ids2018->ids2017,Web Attack,Bwd IAT Min,0.0008,0.0053
+catboost,ids2018->ids2017,Web Attack,Fwd PSH Flags,-0.0015,0.0014
+catboost,ids2018->ids2017,Web Attack,Fwd URG Flags,-0.0009,0.0009
+catboost,ids2018->ids2017,Web Attack,Fwd Header Length,0.0,-0.0
+catboost,ids2018->ids2017,Web Attack,Bwd Header Length,0.0002,-0.0053
+catboost,ids2018->ids2017,Web Attack,Fwd Packets/s,0.0145,-0.0086
+catboost,ids2018->ids2017,Web Attack,Bwd Packets/s,0.0036,-0.0027
+catboost,ids2018->ids2017,Web Attack,Min Packet Length,-0.0017,0.0017
+catboost,ids2018->ids2017,Web Attack,Max Packet Length,-0.0018,0.0155
+catboost,ids2018->ids2017,Web Attack,Packet Length Mean,-0.0068,0.0066
+catboost,ids2018->ids2017,Web Attack,Packet Length Std,0.0006,-0.0001
+catboost,ids2018->ids2017,Web Attack,FIN Flag Count,0.0001,-0.0003
+catboost,ids2018->ids2017,Web Attack,RST Flag Count,-0.1033,0.12
+catboost,ids2018->ids2017,Web Attack,PSH Flag Count,0.0147,-0.0182
+catboost,ids2018->ids2017,Web Attack,ACK Flag Count,0.1408,-0.0547
+catboost,ids2018->ids2017,Web Attack,URG Flag Count,0.0001,-0.0004
+catboost,ids2018->ids2017,Web Attack,ECE Flag Count,-0.1038,0.1184
+catboost,ids2018->ids2017,Web Attack,Down/Up Ratio,0.0013,-0.0055
+catboost,ids2018->ids2017,Web Attack,Average Packet Size,-0.026,0.0142
+catboost,ids2018->ids2017,Web Attack,Init_Win_bytes_forward,0.1013,-0.1197
+catboost,ids2018->ids2017,Web Attack,Init_Win_bytes_backward,0.0783,0.0044
+catboost,ids2018->ids2017,Web Attack,act_data_pkt_fwd,0.0,-0.0035
+catboost,ids2018->ids2017,Web Attack,min_seg_size_forward,0.0,-0.2076
+catboost,ids2018->ids2017,Web Attack,Active Mean,-0.0002,-0.0027
+catboost,ids2018->ids2017,Web Attack,Active Std,-0.002,0.0013
+catboost,ids2018->ids2017,Web Attack,Active Max,0.0001,-0.0047
+catboost,ids2018->ids2017,Web Attack,Active Min,-0.0002,-0.0007
+catboost,ids2018->ids2017,Web Attack,Idle Mean,-0.025,0.0191
+catboost,ids2018->ids2017,Web Attack,Idle Std,-0.0011,0.0002
+catboost,ids2018->ids2017,Web Attack,Idle Max,-0.0128,0.0153
+catboost,ids2018->ids2017,Web Attack,Idle Min,-0.0746,0.0603
+random_forest,ids2017->ids2018,DoS,Destination Port,0.001,0.0
+random_forest,ids2017->ids2018,DoS,Flow Duration,0.0317,-0.0011
+random_forest,ids2017->ids2018,DoS,Total Fwd Packets,0.0184,-0.0005
+random_forest,ids2017->ids2018,DoS,Total Backward Packets,0.0019,0.002
+random_forest,ids2017->ids2018,DoS,Total Length of Fwd Packets,0.0392,-0.0503
+random_forest,ids2017->ids2018,DoS,Total Length of Bwd Packets,0.03,0.0092
+random_forest,ids2017->ids2018,DoS,Fwd Packet Length Max,0.0082,-0.1902
+random_forest,ids2017->ids2018,DoS,Fwd Packet Length Min,0.0037,-0.0052
+random_forest,ids2017->ids2018,DoS,Fwd Packet Length Mean,0.0125,-0.0115
+random_forest,ids2017->ids2018,DoS,Fwd Packet Length Std,-0.0006,0.0071
+random_forest,ids2017->ids2018,DoS,Bwd Packet Length Max,0.0172,-0.0005
+random_forest,ids2017->ids2018,DoS,Bwd Packet Length Min,0.0,0.0
+random_forest,ids2017->ids2018,DoS,Bwd Packet Length Mean,0.0391,0.0002
+random_forest,ids2017->ids2018,DoS,Bwd Packet Length Std,-0.108,0.118
+random_forest,ids2017->ids2018,DoS,Flow Bytes/s,0.0022,-0.0018
+random_forest,ids2017->ids2018,DoS,Flow Packets/s,0.0309,-0.0014
+random_forest,ids2017->ids2018,DoS,Flow IAT Mean,0.0366,-0.0031
+random_forest,ids2017->ids2018,DoS,Flow IAT Std,0.0213,-0.0041
+random_forest,ids2017->ids2018,DoS,Flow IAT Max,0.0357,-0.004
+random_forest,ids2017->ids2018,DoS,Flow IAT Min,-0.0352,-0.0033
+random_forest,ids2017->ids2018,DoS,Fwd IAT Total,0.0287,-0.0002
+random_forest,ids2017->ids2018,DoS,Fwd IAT Mean,0.0262,-0.0015
+random_forest,ids2017->ids2018,DoS,Fwd IAT Std,0.0284,-0.0047
+random_forest,ids2017->ids2018,DoS,Fwd IAT Max,0.0312,-0.0013
+random_forest,ids2017->ids2018,DoS,Fwd IAT Min,-0.015,0.0339
+random_forest,ids2017->ids2018,DoS,Bwd IAT Total,0.0006,-0.0313
+random_forest,ids2017->ids2018,DoS,Bwd IAT Mean,0.0021,-0.0111
+random_forest,ids2017->ids2018,DoS,Bwd IAT Std,-0.0104,-0.0236
+random_forest,ids2017->ids2018,DoS,Bwd IAT Max,0.0022,-0.007
+random_forest,ids2017->ids2018,DoS,Bwd IAT Min,-0.0033,-0.0011
+random_forest,ids2017->ids2018,DoS,Fwd PSH Flags,-0.0325,-0.057
+random_forest,ids2017->ids2018,DoS,Fwd URG Flags,0.0,0.0
+random_forest,ids2017->ids2018,DoS,Fwd Header Length,0.0043,-0.0004
+random_forest,ids2017->ids2018,DoS,Bwd Header Length,0.0116,-0.0007
+random_forest,ids2017->ids2018,DoS,Fwd Packets/s,0.0253,-0.0013
+random_forest,ids2017->ids2018,DoS,Bwd Packets/s,0.0188,-0.0106
+random_forest,ids2017->ids2018,DoS,Min Packet Length,0.0004,-0.0055
+random_forest,ids2017->ids2018,DoS,Max Packet Length,0.0105,-0.0007
+random_forest,ids2017->ids2018,DoS,Packet Length Mean,0.0192,0.0009
+random_forest,ids2017->ids2018,DoS,Packet Length Std,0.0864,-0.003
+random_forest,ids2017->ids2018,DoS,FIN Flag Count,-0.04,-0.0046
+random_forest,ids2017->ids2018,DoS,RST Flag Count,0.0,0.0
+random_forest,ids2017->ids2018,DoS,PSH Flag Count,0.0014,0.002
+random_forest,ids2017->ids2018,DoS,ACK Flag Count,0.0012,-0.0116
+random_forest,ids2017->ids2018,DoS,URG Flag Count,-0.0087,-0.0005
+random_forest,ids2017->ids2018,DoS,ECE Flag Count,0.0,0.0
+random_forest,ids2017->ids2018,DoS,Down/Up Ratio,0.0004,-0.0222
+random_forest,ids2017->ids2018,DoS,Average Packet Size,0.0592,0.0003
+random_forest,ids2017->ids2018,DoS,Init_Win_bytes_forward,-0.0009,-0.0017
+random_forest,ids2017->ids2018,DoS,Init_Win_bytes_backward,-0.3316,0.3553
+random_forest,ids2017->ids2018,DoS,act_data_pkt_fwd,0.0143,0.0078
+random_forest,ids2017->ids2018,DoS,min_seg_size_forward,0.0003,-0.1419
+random_forest,ids2017->ids2018,DoS,Active Mean,0.0007,-0.005
+random_forest,ids2017->ids2018,DoS,Active Std,-0.0815,0.0778
+random_forest,ids2017->ids2018,DoS,Active Max,0.0004,-0.005
+random_forest,ids2017->ids2018,DoS,Active Min,-0.0004,-0.0035
+random_forest,ids2017->ids2018,DoS,Idle Mean,-0.0058,0.003
+random_forest,ids2017->ids2018,DoS,Idle Std,-0.0014,-0.0062
+random_forest,ids2017->ids2018,DoS,Idle Max,-0.0067,0.0047
+random_forest,ids2017->ids2018,DoS,Idle Min,-0.0216,0.018
+random_forest,ids2018->ids2017,DDoS,Destination Port,0.0,0.0
+random_forest,ids2018->ids2017,DDoS,Flow Duration,0.0002,-0.0015
+random_forest,ids2018->ids2017,DDoS,Total Fwd Packets,0.0798,0.0
+random_forest,ids2018->ids2017,DDoS,Total Backward Packets,0.0322,0.0
+random_forest,ids2018->ids2017,DDoS,Total Length of Fwd Packets,0.0293,0.0
+random_forest,ids2018->ids2017,DDoS,Total Length of Bwd Packets,0.0116,-0.0
+random_forest,ids2018->ids2017,DDoS,Fwd Packet Length Max,0.0,0.0
+random_forest,ids2018->ids2017,DDoS,Fwd Packet Length Min,-0.0061,0.0065
+random_forest,ids2018->ids2017,DDoS,Fwd Packet Length Mean,0.0008,0.0
+random_forest,ids2018->ids2017,DDoS,Fwd Packet Length Std,0.0158,0.0031
+random_forest,ids2018->ids2017,DDoS,Bwd Packet Length Max,-0.0085,0.0143
+random_forest,ids2018->ids2017,DDoS,Bwd Packet Length Min,-0.0004,0.0005
+random_forest,ids2018->ids2017,DDoS,Bwd Packet Length Mean,0.0151,0.0
+random_forest,ids2018->ids2017,DDoS,Bwd Packet Length Std,-0.048,-0.0017
+random_forest,ids2018->ids2017,DDoS,Flow Bytes/s,-0.0216,0.0351
+random_forest,ids2018->ids2017,DDoS,Flow Packets/s,0.0108,-0.0036
+random_forest,ids2018->ids2017,DDoS,Flow IAT Mean,0.0133,-0.0021
+random_forest,ids2018->ids2017,DDoS,Flow IAT Std,0.0415,-0.0258
+random_forest,ids2018->ids2017,DDoS,Flow IAT Max,0.0007,-0.0002
+random_forest,ids2018->ids2017,DDoS,Flow IAT Min,0.0235,-0.0107
+random_forest,ids2018->ids2017,DDoS,Fwd IAT Total,0.0002,-0.0011
+random_forest,ids2018->ids2017,DDoS,Fwd IAT Mean,0.0043,-0.0
+random_forest,ids2018->ids2017,DDoS,Fwd IAT Std,0.0435,0.0
+random_forest,ids2018->ids2017,DDoS,Fwd IAT Max,0.0013,-0.0002
+random_forest,ids2018->ids2017,DDoS,Fwd IAT Min,0.011,-0.0003
+random_forest,ids2018->ids2017,DDoS,Bwd IAT Total,0.0003,0.0
+random_forest,ids2018->ids2017,DDoS,Bwd IAT Mean,0.0022,-0.0
+random_forest,ids2018->ids2017,DDoS,Bwd IAT Std,-0.0001,-0.0001
+random_forest,ids2018->ids2017,DDoS,Bwd IAT Max,0.0005,0.0
+random_forest,ids2018->ids2017,DDoS,Bwd IAT Min,0.0127,-0.0
+random_forest,ids2018->ids2017,DDoS,Fwd PSH Flags,0.0002,-0.0006
+random_forest,ids2018->ids2017,DDoS,Fwd URG Flags,0.0,-0.0006
+random_forest,ids2018->ids2017,DDoS,Fwd Header Length,0.0105,-0.0004
+random_forest,ids2018->ids2017,DDoS,Bwd Header Length,0.0152,0.0
+random_forest,ids2018->ids2017,DDoS,Fwd Packets/s,0.0051,-0.003
+random_forest,ids2018->ids2017,DDoS,Bwd Packets/s,0.0084,-0.0498
+random_forest,ids2018->ids2017,DDoS,Min Packet Length,-0.0064,0.0073
+random_forest,ids2018->ids2017,DDoS,Max Packet Length,-0.0937,0.1038
+random_forest,ids2018->ids2017,DDoS,Packet Length Mean,-0.0865,0.1047
+random_forest,ids2018->ids2017,DDoS,Packet Length Std,-0.0007,0.0029
+random_forest,ids2018->ids2017,DDoS,FIN Flag Count,0.0001,-0.0003
+random_forest,ids2018->ids2017,DDoS,RST Flag Count,0.0677,-0.048
+random_forest,ids2018->ids2017,DDoS,PSH Flag Count,0.002,-0.0033
+random_forest,ids2018->ids2017,DDoS,ACK Flag Count,0.0233,-0.156
+random_forest,ids2018->ids2017,DDoS,URG Flag Count,0.0005,-0.0013
+random_forest,ids2018->ids2017,DDoS,ECE Flag Count,0.0591,-0.0494
+random_forest,ids2018->ids2017,DDoS,Down/Up Ratio,0.0038,-0.001
+random_forest,ids2018->ids2017,DDoS,Average Packet Size,-0.0605,0.0827
+random_forest,ids2018->ids2017,DDoS,Init_Win_bytes_forward,-0.1936,0.2375
+random_forest,ids2018->ids2017,DDoS,Init_Win_bytes_backward,0.0018,0.0
+random_forest,ids2018->ids2017,DDoS,act_data_pkt_fwd,-0.0746,0.0745
+random_forest,ids2018->ids2017,DDoS,min_seg_size_forward,0.0203,-0.2099
+random_forest,ids2018->ids2017,DDoS,Active Mean,0.0013,0.0
+random_forest,ids2018->ids2017,DDoS,Active Std,0.0007,-0.0001
+random_forest,ids2018->ids2017,DDoS,Active Max,0.0017,0.0
+random_forest,ids2018->ids2017,DDoS,Active Min,0.0011,0.0
+random_forest,ids2018->ids2017,DDoS,Idle Mean,0.0084,-0.0362
+random_forest,ids2018->ids2017,DDoS,Idle Std,0.0006,0.0
+random_forest,ids2018->ids2017,DDoS,Idle Max,0.0048,-0.0101
+random_forest,ids2018->ids2017,DDoS,Idle Min,0.0135,-0.0554
+random_forest,ids2018->ids2017,DoS,Destination Port,0.0,0.0
+random_forest,ids2018->ids2017,DoS,Flow Duration,0.0004,0.0023
+random_forest,ids2018->ids2017,DoS,Total Fwd Packets,-0.0877,0.1075
+random_forest,ids2018->ids2017,DoS,Total Backward Packets,0.0501,-0.0
+random_forest,ids2018->ids2017,DoS,Total Length of Fwd Packets,0.0048,-0.0019
+random_forest,ids2018->ids2017,DoS,Total Length of Bwd Packets,0.0397,0.0028
+random_forest,ids2018->ids2017,DoS,Fwd Packet Length Max,0.01,0.0
+random_forest,ids2018->ids2017,DoS,Fwd Packet Length Min,0.0004,-0.0004
+random_forest,ids2018->ids2017,DoS,Fwd Packet Length Mean,0.0039,-0.0001
+random_forest,ids2018->ids2017,DoS,Fwd Packet Length Std,0.0196,-0.0004
+random_forest,ids2018->ids2017,DoS,Bwd Packet Length Max,0.0142,0.0111
+random_forest,ids2018->ids2017,DoS,Bwd Packet Length Min,0.0008,0.0
+random_forest,ids2018->ids2017,DoS,Bwd Packet Length Mean,0.0413,-0.0001
+random_forest,ids2018->ids2017,DoS,Bwd Packet Length Std,-0.0236,-0.1381
+random_forest,ids2018->ids2017,DoS,Flow Bytes/s,0.0011,-0.0012
+random_forest,ids2018->ids2017,DoS,Flow Packets/s,0.0017,-0.0005
+random_forest,ids2018->ids2017,DoS,Flow IAT Mean,0.0015,-0.0
+random_forest,ids2018->ids2017,DoS,Flow IAT Std,0.0104,-0.0071
+random_forest,ids2018->ids2017,DoS,Flow IAT Max,-0.0023,0.0035
+random_forest,ids2018->ids2017,DoS,Flow IAT Min,0.0109,0.0147
+random_forest,ids2018->ids2017,DoS,Fwd IAT Total,0.0019,-0.0036
+random_forest,ids2018->ids2017,DoS,Fwd IAT Mean,0.0015,-0.005
+random_forest,ids2018->ids2017,DoS,Fwd IAT Std,0.0068,-0.0231
+random_forest,ids2018->ids2017,DoS,Fwd IAT Max,-0.001,0.0004
+random_forest,ids2018->ids2017,DoS,Fwd IAT Min,-0.0021,0.0082
+random_forest,ids2018->ids2017,DoS,Bwd IAT Total,0.0001,-0.0
+random_forest,ids2018->ids2017,DoS,Bwd IAT Mean,0.0006,-0.0003
+random_forest,ids2018->ids2017,DoS,Bwd IAT Std,0.0028,0.0014
+random_forest,ids2018->ids2017,DoS,Bwd IAT Max,-0.0006,0.001
+random_forest,ids2018->ids2017,DoS,Bwd IAT Min,0.0076,-0.0004
+random_forest,ids2018->ids2017,DoS,Fwd PSH Flags,-0.0006,-0.0011
+random_forest,ids2018->ids2017,DoS,Fwd URG Flags,-0.0008,0.0002
+random_forest,ids2018->ids2017,DoS,Fwd Header Length,0.0173,0.0002
+random_forest,ids2018->ids2017,DoS,Bwd Header Length,0.0209,0.0002
+random_forest,ids2018->ids2017,DoS,Fwd Packets/s,0.0013,-0.0007
+random_forest,ids2018->ids2017,DoS,Bwd Packets/s,0.0088,-0.0026
+random_forest,ids2018->ids2017,DoS,Min Packet Length,0.0005,-0.0013
+random_forest,ids2018->ids2017,DoS,Max Packet Length,0.0124,0.0001
+random_forest,ids2018->ids2017,DoS,Packet Length Mean,0.0041,0.0004
+random_forest,ids2018->ids2017,DoS,Packet Length Std,0.0314,0.0002
+random_forest,ids2018->ids2017,DoS,FIN Flag Count,-0.0,-0.0007
+random_forest,ids2018->ids2017,DoS,RST Flag Count,-0.0116,-0.1534
+random_forest,ids2018->ids2017,DoS,PSH Flag Count,0.0045,0.0003
+random_forest,ids2018->ids2017,DoS,ACK Flag Count,0.0603,-0.0255
+random_forest,ids2018->ids2017,DoS,URG Flag Count,-0.0033,0.0027
+random_forest,ids2018->ids2017,DoS,ECE Flag Count,-0.0148,-0.1582
+random_forest,ids2018->ids2017,DoS,Down/Up Ratio,0.0016,-0.0003
+random_forest,ids2018->ids2017,DoS,Average Packet Size,0.0023,0.0001
+random_forest,ids2018->ids2017,DoS,Init_Win_bytes_forward,-0.3298,0.4794
+random_forest,ids2018->ids2017,DoS,Init_Win_bytes_backward,0.0022,0.0
+random_forest,ids2018->ids2017,DoS,act_data_pkt_fwd,-0.0011,0.0024
+random_forest,ids2018->ids2017,DoS,min_seg_size_forward,0.0861,-0.0062
+random_forest,ids2018->ids2017,DoS,Active Mean,0.0007,-0.0
+random_forest,ids2018->ids2017,DoS,Active Std,0.0002,0.0001
+random_forest,ids2018->ids2017,DoS,Active Max,0.0007,0.0
+random_forest,ids2018->ids2017,DoS,Active Min,0.0008,-0.0001
+random_forest,ids2018->ids2017,DoS,Idle Mean,-0.0021,-0.0264
+random_forest,ids2018->ids2017,DoS,Idle Std,0.0007,-0.0002
+random_forest,ids2018->ids2017,DoS,Idle Max,-0.0025,-0.0207
+random_forest,ids2018->ids2017,DoS,Idle Min,-0.0048,-0.0597
+random_forest,ids2018->ids2017,Brute Force,Destination Port,0.0,0.0
+random_forest,ids2018->ids2017,Brute Force,Flow Duration,0.0306,0.0
+random_forest,ids2018->ids2017,Brute Force,Total Fwd Packets,-0.0176,0.0344
+random_forest,ids2018->ids2017,Brute Force,Total Backward Packets,-0.0881,0.0918
+random_forest,ids2018->ids2017,Brute Force,Total Length of Fwd Packets,0.0004,0.0
+random_forest,ids2018->ids2017,Brute Force,Total Length of Bwd Packets,-0.0106,0.012
+random_forest,ids2018->ids2017,Brute Force,Fwd Packet Length Max,0.0,0.0
+random_forest,ids2018->ids2017,Brute Force,Fwd Packet Length Min,-0.0028,0.0029
+random_forest,ids2018->ids2017,Brute Force,Fwd Packet Length Mean,0.0001,0.0
+random_forest,ids2018->ids2017,Brute Force,Fwd Packet Length Std,-0.0048,0.0051
+random_forest,ids2018->ids2017,Brute Force,Bwd Packet Length Max,-0.0236,0.0246
+random_forest,ids2018->ids2017,Brute Force,Bwd Packet Length Min,-0.0001,0.0001
+random_forest,ids2018->ids2017,Brute Force,Bwd Packet Length Mean,0.047,0.0029
+random_forest,ids2018->ids2017,Brute Force,Bwd Packet Length Std,-0.1524,0.1656
+random_forest,ids2018->ids2017,Brute Force,Flow Bytes/s,0.0588,0.0
+random_forest,ids2018->ids2017,Brute Force,Flow Packets/s,0.0459,0.0
+random_forest,ids2018->ids2017,Brute Force,Flow IAT Mean,0.0525,0.0
+random_forest,ids2018->ids2017,Brute Force,Flow IAT Std,0.0574,-0.0
+random_forest,ids2018->ids2017,Brute Force,Flow IAT Max,0.0285,0.0
+random_forest,ids2018->ids2017,Brute Force,Flow IAT Min,-0.0162,0.0187
+random_forest,ids2018->ids2017,Brute Force,Fwd IAT Total,0.0389,-0.0
+random_forest,ids2018->ids2017,Brute Force,Fwd IAT Mean,0.0541,0.0035
+random_forest,ids2018->ids2017,Brute Force,Fwd IAT Std,0.1037,-0.0009
+random_forest,ids2018->ids2017,Brute Force,Fwd IAT Max,0.0411,-0.0001
+random_forest,ids2018->ids2017,Brute Force,Fwd IAT Min,-0.0105,0.0126
+random_forest,ids2018->ids2017,Brute Force,Bwd IAT Total,0.0056,0.0
+random_forest,ids2018->ids2017,Brute Force,Bwd IAT Mean,0.026,-0.0069
+random_forest,ids2018->ids2017,Brute Force,Bwd IAT Std,-0.0233,0.0245
+random_forest,ids2018->ids2017,Brute Force,Bwd IAT Max,0.0076,0.0
+random_forest,ids2018->ids2017,Brute Force,Bwd IAT Min,0.0,0.0
+random_forest,ids2018->ids2017,Brute Force,Fwd PSH Flags,-0.0012,-0.0002
+random_forest,ids2018->ids2017,Brute Force,Fwd URG Flags,-0.0008,-0.0006
+random_forest,ids2018->ids2017,Brute Force,Fwd Header Length,-0.0358,0.0393
+random_forest,ids2018->ids2017,Brute Force,Bwd Header Length,0.0001,0.0005
+random_forest,ids2018->ids2017,Brute Force,Fwd Packets/s,0.0671,0.0
+random_forest,ids2018->ids2017,Brute Force,Bwd Packets/s,0.0779,0.0013
+random_forest,ids2018->ids2017,Brute Force,Min Packet Length,-0.0073,0.0076
+random_forest,ids2018->ids2017,Brute Force,Max Packet Length,-0.0014,0.0015
+random_forest,ids2018->ids2017,Brute Force,Packet Length Mean,0.0018,0.0
+random_forest,ids2018->ids2017,Brute Force,Packet Length Std,-0.0001,0.0003
+random_forest,ids2018->ids2017,Brute Force,FIN Flag Count,0.0001,-0.0001
+random_forest,ids2018->ids2017,Brute Force,RST Flag Count,-0.0418,-0.1788
+random_forest,ids2018->ids2017,Brute Force,PSH Flag Count,0.0051,-0.0447
+random_forest,ids2018->ids2017,Brute Force,ACK Flag Count,0.0338,-0.4186
+random_forest,ids2018->ids2017,Brute Force,URG Flag Count,0.0014,-0.0082
+random_forest,ids2018->ids2017,Brute Force,ECE Flag Count,-0.0452,-0.0993
+random_forest,ids2018->ids2017,Brute Force,Down/Up Ratio,-0.0197,0.0171
+random_forest,ids2018->ids2017,Brute Force,Average Packet Size,0.0013,0.0
+random_forest,ids2018->ids2017,Brute Force,Init_Win_bytes_forward,-0.1733,0.178
+random_forest,ids2018->ids2017,Brute Force,Init_Win_bytes_backward,0.0127,0.0496
+random_forest,ids2018->ids2017,Brute Force,act_data_pkt_fwd,-0.0178,0.0187
+random_forest,ids2018->ids2017,Brute Force,min_seg_size_forward,0.0002,0.0
+random_forest,ids2018->ids2017,Brute Force,Active Mean,0.0002,0.0
+random_forest,ids2018->ids2017,Brute Force,Active Std,0.0011,-0.0002
+random_forest,ids2018->ids2017,Brute Force,Active Max,0.0,0.0
+random_forest,ids2018->ids2017,Brute Force,Active Min,0.0001,-0.0
+random_forest,ids2018->ids2017,Brute Force,Idle Mean,-0.0344,0.0101
+random_forest,ids2018->ids2017,Brute Force,Idle Std,0.0023,-0.0002
+random_forest,ids2018->ids2017,Brute Force,Idle Max,-0.0302,0.0306
+random_forest,ids2018->ids2017,Brute Force,Idle Min,-0.0442,0.006
+random_forest,ids2018->ids2017,Web Attack,Destination Port,0.0,-0.0077
+random_forest,ids2018->ids2017,Web Attack,Flow Duration,-0.0331,0.0404
+random_forest,ids2018->ids2017,Web Attack,Total Fwd Packets,-0.0044,0.0055
+random_forest,ids2018->ids2017,Web Attack,Total Backward Packets,0.0272,0.0209
+random_forest,ids2018->ids2017,Web Attack,Total Length of Fwd Packets,-0.0023,0.0026
+random_forest,ids2018->ids2017,Web Attack,Total Length of Bwd Packets,-0.1008,0.1162
+random_forest,ids2018->ids2017,Web Attack,Fwd Packet Length Max,0.0,0.0
+random_forest,ids2018->ids2017,Web Attack,Fwd Packet Length Min,0.0004,-0.0004
+random_forest,ids2018->ids2017,Web Attack,Fwd Packet Length Mean,0.0,0.0
+random_forest,ids2018->ids2017,Web Attack,Fwd Packet Length Std,0.0083,-0.0045
+random_forest,ids2018->ids2017,Web Attack,Bwd Packet Length Max,0.0312,-0.0059
+random_forest,ids2018->ids2017,Web Attack,Bwd Packet Length Min,0.0,-0.0
+random_forest,ids2018->ids2017,Web Attack,Bwd Packet Length Mean,0.0526,0.0
+random_forest,ids2018->ids2017,Web Attack,Bwd Packet Length Std,0.0644,-0.0436
+random_forest,ids2018->ids2017,Web Attack,Flow Bytes/s,0.0084,-0.0
+random_forest,ids2018->ids2017,Web Attack,Flow Packets/s,0.0209,0.0002
+random_forest,ids2018->ids2017,Web Attack,Flow IAT Mean,0.023,0.0011
+random_forest,ids2018->ids2017,Web Attack,Flow IAT Std,0.0283,0.0187
+random_forest,ids2018->ids2017,Web Attack,Flow IAT Max,0.0085,0.0046
+random_forest,ids2018->ids2017,Web Attack,Flow IAT Min,0.0067,-0.0182
+random_forest,ids2018->ids2017,Web Attack,Fwd IAT Total,-0.0476,0.0178
+random_forest,ids2018->ids2017,Web Attack,Fwd IAT Mean,0.0051,0.0006
+random_forest,ids2018->ids2017,Web Attack,Fwd IAT Std,0.0446,0.0052
+random_forest,ids2018->ids2017,Web Attack,Fwd IAT Max,-0.011,0.0137
+random_forest,ids2018->ids2017,Web Attack,Fwd IAT Min,0.0001,-0.0185
+random_forest,ids2018->ids2017,Web Attack,Bwd IAT Total,-0.004,0.0037
+random_forest,ids2018->ids2017,Web Attack,Bwd IAT Mean,-0.0012,0.0012
+random_forest,ids2018->ids2017,Web Attack,Bwd IAT Std,0.002,-0.0027
+random_forest,ids2018->ids2017,Web Attack,Bwd IAT Max,0.0,-0.0
+random_forest,ids2018->ids2017,Web Attack,Bwd IAT Min,-0.0077,0.0077
+random_forest,ids2018->ids2017,Web Attack,Fwd PSH Flags,0.0007,-0.0009
+random_forest,ids2018->ids2017,Web Attack,Fwd URG Flags,0.0006,-0.0003
+random_forest,ids2018->ids2017,Web Attack,Fwd Header Length,0.0016,-0.0105
+random_forest,ids2018->ids2017,Web Attack,Bwd Header Length,0.0208,0.0064
+random_forest,ids2018->ids2017,Web Attack,Fwd Packets/s,0.0208,0.0023
+random_forest,ids2018->ids2017,Web Attack,Bwd Packets/s,0.0267,0.0025
+random_forest,ids2018->ids2017,Web Attack,Min Packet Length,0.0006,-0.0016
+random_forest,ids2018->ids2017,Web Attack,Max Packet Length,0.0009,0.0
+random_forest,ids2018->ids2017,Web Attack,Packet Length Mean,-0.0048,0.0049
+random_forest,ids2018->ids2017,Web Attack,Packet Length Std,0.0281,-0.0005
+random_forest,ids2018->ids2017,Web Attack,FIN Flag Count,-0.0001,-0.0016
+random_forest,ids2018->ids2017,Web Attack,RST Flag Count,-0.1363,0.1511
+random_forest,ids2018->ids2017,Web Attack,PSH Flag Count,0.0467,0.0033
+random_forest,ids2018->ids2017,Web Attack,ACK Flag Count,0.0693,-0.1546
+random_forest,ids2018->ids2017,Web Attack,URG Flag Count,0.0009,-0.0008
+random_forest,ids2018->ids2017,Web Attack,ECE Flag Count,-0.1025,0.1199
+random_forest,ids2018->ids2017,Web Attack,Down/Up Ratio,0.0012,0.0003
+random_forest,ids2018->ids2017,Web Attack,Average Packet Size,-0.0003,0.0003
+random_forest,ids2018->ids2017,Web Attack,Init_Win_bytes_forward,-0.1099,0.1215
+random_forest,ids2018->ids2017,Web Attack,Init_Win_bytes_backward,-0.0068,0.0368
+random_forest,ids2018->ids2017,Web Attack,act_data_pkt_fwd,0.0032,0.0022
+random_forest,ids2018->ids2017,Web Attack,min_seg_size_forward,0.0,-0.3235
+random_forest,ids2018->ids2017,Web Attack,Active Mean,-0.0,-0.0001
+random_forest,ids2018->ids2017,Web Attack,Active Std,-0.0008,-0.0001
+random_forest,ids2018->ids2017,Web Attack,Active Max,-0.0,-0.0009
+random_forest,ids2018->ids2017,Web Attack,Active Min,-0.0,0.0
+random_forest,ids2018->ids2017,Web Attack,Idle Mean,0.0037,-0.0337
+random_forest,ids2018->ids2017,Web Attack,Idle Std,0.0008,-0.0027
+random_forest,ids2018->ids2017,Web Attack,Idle Max,0.0084,-0.0194
+random_forest,ids2018->ids2017,Web Attack,Idle Min,0.0072,-0.0588

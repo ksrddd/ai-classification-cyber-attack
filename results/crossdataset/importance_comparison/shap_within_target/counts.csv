@@ -1,0 +1,241 @@
+model,direction,seed,class,n_attack,n_missed,n_caught_tgt,n_other_attack
+lightgbm,ids2017->ids2018,42,DDoS,6081,6081,0,0
+lightgbm,ids2017->ids2018,42,DoS,1539,1260,279,0
+lightgbm,ids2017->ids2018,42,Brute Force,738,738,0,0
+lightgbm,ids2017->ids2018,42,Bot,1133,8,1125,0
+lightgbm,ids2017->ids2018,42,Infiltration,1093,1093,0,0
+lightgbm,ids2017->ids2018,42,Web Attack,257,257,0,0
+lightgbm,ids2017->ids2018,43,DDoS,6081,6081,0,0
+lightgbm,ids2017->ids2018,43,DoS,1539,1257,282,0
+lightgbm,ids2017->ids2018,43,Brute Force,738,738,0,0
+lightgbm,ids2017->ids2018,43,Bot,1133,1133,0,0
+lightgbm,ids2017->ids2018,43,Infiltration,1093,1093,0,0
+lightgbm,ids2017->ids2018,43,Web Attack,257,257,0,0
+lightgbm,ids2017->ids2018,44,DDoS,6081,6081,0,0
+lightgbm,ids2017->ids2018,44,DoS,1539,1264,275,0
+lightgbm,ids2017->ids2018,44,Brute Force,738,738,0,0
+lightgbm,ids2017->ids2018,44,Bot,1133,1133,0,0
+lightgbm,ids2017->ids2018,44,Infiltration,1093,1093,0,0
+lightgbm,ids2017->ids2018,44,Web Attack,257,257,0,0
+lightgbm,ids2017->ids2018,45,DDoS,6081,6081,0,0
+lightgbm,ids2017->ids2018,45,DoS,1539,1256,283,0
+lightgbm,ids2017->ids2018,45,Brute Force,738,738,0,0
+lightgbm,ids2017->ids2018,45,Bot,1133,1133,0,0
+lightgbm,ids2017->ids2018,45,Infiltration,1093,1092,0,1
+lightgbm,ids2017->ids2018,45,Web Attack,257,257,0,0
+lightgbm,ids2017->ids2018,46,DDoS,6081,6081,0,0
+lightgbm,ids2017->ids2018,46,DoS,1539,1262,277,0
+lightgbm,ids2017->ids2018,46,Brute Force,738,738,0,0
+lightgbm,ids2017->ids2018,46,Bot,1133,1133,0,0
+lightgbm,ids2017->ids2018,46,Infiltration,1093,1093,0,0
+lightgbm,ids2017->ids2018,46,Web Attack,257,257,0,0
+lightgbm,ids2018->ids2017,42,DDoS,4600,4467,2,131
+lightgbm,ids2018->ids2017,42,DoS,6961,3920,1113,1928
+lightgbm,ids2018->ids2017,42,Brute Force,2745,21,2724,0
+lightgbm,ids2018->ids2017,42,Bot,584,122,462,0
+lightgbm,ids2018->ids2017,42,Infiltration,10,10,0,0
+lightgbm,ids2018->ids2017,42,Web Attack,643,596,27,20
+lightgbm,ids2018->ids2017,43,DDoS,4600,4597,2,1
+lightgbm,ids2018->ids2017,43,DoS,6961,4802,1314,845
+lightgbm,ids2018->ids2017,43,Brute Force,2745,465,2280,0
+lightgbm,ids2018->ids2017,43,Bot,584,75,509,0
+lightgbm,ids2018->ids2017,43,Infiltration,10,10,0,0
+lightgbm,ids2018->ids2017,43,Web Attack,643,597,26,20
+lightgbm,ids2018->ids2017,44,DDoS,4600,4597,2,1
+lightgbm,ids2018->ids2017,44,DoS,6961,5424,1446,91
+lightgbm,ids2018->ids2017,44,Brute Force,2745,18,2727,0
+lightgbm,ids2018->ids2017,44,Bot,584,133,451,0
+lightgbm,ids2018->ids2017,44,Infiltration,10,10,0,0
+lightgbm,ids2018->ids2017,44,Web Attack,643,595,27,21
+lightgbm,ids2018->ids2017,45,DDoS,4600,4588,2,10
+lightgbm,ids2018->ids2017,45,DoS,6961,4505,1287,1169
+lightgbm,ids2018->ids2017,45,Brute Force,2745,20,2725,0
+lightgbm,ids2018->ids2017,45,Bot,584,103,481,0
+lightgbm,ids2018->ids2017,45,Infiltration,10,10,0,0
+lightgbm,ids2018->ids2017,45,Web Attack,643,599,25,19
+lightgbm,ids2018->ids2017,46,DDoS,4600,4597,2,1
+lightgbm,ids2018->ids2017,46,DoS,6961,5265,1539,157
+lightgbm,ids2018->ids2017,46,Brute Force,2745,18,2727,0
+lightgbm,ids2018->ids2017,46,Bot,584,116,468,0
+lightgbm,ids2018->ids2017,46,Infiltration,10,10,0,0
+lightgbm,ids2018->ids2017,46,Web Attack,643,596,26,21
+xgboost,ids2017->ids2018,42,DDoS,6081,6081,0,0
+xgboost,ids2017->ids2018,42,DoS,1539,1300,239,0
+xgboost,ids2017->ids2018,42,Brute Force,738,738,0,0
+xgboost,ids2017->ids2018,42,Bot,1133,1133,0,0
+xgboost,ids2017->ids2018,42,Infiltration,1093,1093,0,0
+xgboost,ids2017->ids2018,42,Web Attack,257,257,0,0
+xgboost,ids2017->ids2018,43,DDoS,6081,6081,0,0
+xgboost,ids2017->ids2018,43,DoS,1539,1274,265,0
+xgboost,ids2017->ids2018,43,Brute Force,738,738,0,0
+xgboost,ids2017->ids2018,43,Bot,1133,1133,0,0
+xgboost,ids2017->ids2018,43,Infiltration,1093,1093,0,0
+xgboost,ids2017->ids2018,43,Web Attack,257,257,0,0
+xgboost,ids2017->ids2018,44,DDoS,6081,6081,0,0
+xgboost,ids2017->ids2018,44,DoS,1539,1277,262,0
+xgboost,ids2017->ids2018,44,Brute Force,738,738,0,0
+xgboost,ids2017->ids2018,44,Bot,1133,1133,0,0
+xgboost,ids2017->ids2018,44,Infiltration,1093,1093,0,0
+xgboost,ids2017->ids2018,44,Web Attack,257,257,0,0
+xgboost,ids2017->ids2018,45,DDoS,6081,6081,0,0
+xgboost,ids2017->ids2018,45,DoS,1539,1301,238,0
+xgboost,ids2017->ids2018,45,Brute Force,738,738,0,0
+xgboost,ids2017->ids2018,45,Bot,1133,64,1069,0
+xgboost,ids2017->ids2018,45,Infiltration,1093,1093,0,0
+xgboost,ids2017->ids2018,45,Web Attack,257,257,0,0
+xgboost,ids2017->ids2018,46,DDoS,6081,6081,0,0
+xgboost,ids2017->ids2018,46,DoS,1539,1299,240,0
+xgboost,ids2017->ids2018,46,Brute Force,738,738,0,0
+xgboost,ids2017->ids2018,46,Bot,1133,1133,0,0
+xgboost,ids2017->ids2018,46,Infiltration,1093,1093,0,0
+xgboost,ids2017->ids2018,46,Web Attack,257,257,0,0
+xgboost,ids2018->ids2017,42,DDoS,4600,4470,129,1
+xgboost,ids2018->ids2017,42,DoS,6961,5268,1479,214
+xgboost,ids2018->ids2017,42,Brute Force,2745,101,2644,0
+xgboost,ids2018->ids2017,42,Bot,584,584,0,0
+xgboost,ids2018->ids2017,42,Infiltration,10,10,0,0
+xgboost,ids2018->ids2017,42,Web Attack,643,601,18,24
+xgboost,ids2018->ids2017,43,DDoS,4600,4495,102,3
+xgboost,ids2018->ids2017,43,DoS,6961,1721,4869,371
+xgboost,ids2018->ids2017,43,Brute Force,2745,60,2683,2
+xgboost,ids2018->ids2017,43,Bot,584,584,0,0
+xgboost,ids2018->ids2017,43,Infiltration,10,10,0,0
+xgboost,ids2018->ids2017,43,Web Attack,643,594,16,33
+xgboost,ids2018->ids2017,44,DDoS,4600,4564,34,2
+xgboost,ids2018->ids2017,44,DoS,6961,2384,4345,232
+xgboost,ids2018->ids2017,44,Brute Force,2745,58,2687,0
+xgboost,ids2018->ids2017,44,Bot,584,584,0,0
+xgboost,ids2018->ids2017,44,Infiltration,10,10,0,0
+xgboost,ids2018->ids2017,44,Web Attack,643,598,15,30
+xgboost,ids2018->ids2017,45,DDoS,4600,4360,239,1
+xgboost,ids2018->ids2017,45,DoS,6961,2467,4435,59
+xgboost,ids2018->ids2017,45,Brute Force,2745,21,2724,0
+xgboost,ids2018->ids2017,45,Bot,584,584,0,0
+xgboost,ids2018->ids2017,45,Infiltration,10,10,0,0
+xgboost,ids2018->ids2017,45,Web Attack,643,595,15,33
+xgboost,ids2018->ids2017,46,DDoS,4600,4581,18,1
+xgboost,ids2018->ids2017,46,DoS,6961,5089,1644,228
+xgboost,ids2018->ids2017,46,Brute Force,2745,2634,111,0
+xgboost,ids2018->ids2017,46,Bot,584,584,0,0
+xgboost,ids2018->ids2017,46,Infiltration,10,10,0,0
+xgboost,ids2018->ids2017,46,Web Attack,643,603,15,25
+catboost,ids2017->ids2018,42,DDoS,6081,6081,0,0
+catboost,ids2017->ids2018,42,DoS,1539,1292,247,0
+catboost,ids2017->ids2018,42,Brute Force,738,738,0,0
+catboost,ids2017->ids2018,42,Bot,1133,115,1018,0
+catboost,ids2017->ids2018,42,Infiltration,1093,1093,0,0
+catboost,ids2017->ids2018,42,Web Attack,257,257,0,0
+catboost,ids2017->ids2018,43,DDoS,6081,6081,0,0
+catboost,ids2017->ids2018,43,DoS,1539,1292,247,0
+catboost,ids2017->ids2018,43,Brute Force,738,738,0,0
+catboost,ids2017->ids2018,43,Bot,1133,634,499,0
+catboost,ids2017->ids2018,43,Infiltration,1093,1093,0,0
+catboost,ids2017->ids2018,43,Web Attack,257,257,0,0
+catboost,ids2017->ids2018,44,DDoS,6081,6081,0,0
+catboost,ids2017->ids2018,44,DoS,1539,1287,252,0
+catboost,ids2017->ids2018,44,Brute Force,738,738,0,0
+catboost,ids2017->ids2018,44,Bot,1133,9,1124,0
+catboost,ids2017->ids2018,44,Infiltration,1093,1093,0,0
+catboost,ids2017->ids2018,44,Web Attack,257,257,0,0
+catboost,ids2017->ids2018,45,DDoS,6081,6081,0,0
+catboost,ids2017->ids2018,45,DoS,1539,1280,259,0
+catboost,ids2017->ids2018,45,Brute Force,738,738,0,0
+catboost,ids2017->ids2018,45,Bot,1133,410,723,0
+catboost,ids2017->ids2018,45,Infiltration,1093,1093,0,0
+catboost,ids2017->ids2018,45,Web Attack,257,257,0,0
+catboost,ids2017->ids2018,46,DDoS,6081,6081,0,0
+catboost,ids2017->ids2018,46,DoS,1539,1277,262,0
+catboost,ids2017->ids2018,46,Brute Force,738,738,0,0
+catboost,ids2017->ids2018,46,Bot,1133,486,647,0
+catboost,ids2017->ids2018,46,Infiltration,1093,1093,0,0
+catboost,ids2017->ids2018,46,Web Attack,257,257,0,0
+catboost,ids2018->ids2017,42,DDoS,4600,4591,9,0
+catboost,ids2018->ids2017,42,DoS,6961,3280,3677,4
+catboost,ids2018->ids2017,42,Brute Force,2745,2644,99,2
+catboost,ids2018->ids2017,42,Bot,584,584,0,0
+catboost,ids2018->ids2017,42,Infiltration,10,10,0,0
+catboost,ids2018->ids2017,42,Web Attack,643,609,1,33
+catboost,ids2018->ids2017,43,DDoS,4600,4584,16,0
+catboost,ids2018->ids2017,43,DoS,6961,3247,3707,7
+catboost,ids2018->ids2017,43,Brute Force,2745,2628,106,11
+catboost,ids2018->ids2017,43,Bot,584,584,0,0
+catboost,ids2018->ids2017,43,Infiltration,10,10,0,0
+catboost,ids2018->ids2017,43,Web Attack,643,598,1,44
+catboost,ids2018->ids2017,44,DDoS,4600,4597,3,0
+catboost,ids2018->ids2017,44,DoS,6961,3236,3718,7
+catboost,ids2018->ids2017,44,Brute Force,2745,2635,104,6
+catboost,ids2018->ids2017,44,Bot,584,584,0,0
+catboost,ids2018->ids2017,44,Infiltration,10,10,0,0
+catboost,ids2018->ids2017,44,Web Attack,643,599,1,43
+catboost,ids2018->ids2017,45,DDoS,4600,4597,3,0
+catboost,ids2018->ids2017,45,DoS,6961,3210,3744,7
+catboost,ids2018->ids2017,45,Brute Force,2745,2636,101,8
+catboost,ids2018->ids2017,45,Bot,584,584,0,0
+catboost,ids2018->ids2017,45,Infiltration,10,10,0,0
+catboost,ids2018->ids2017,45,Web Attack,643,608,1,34
+catboost,ids2018->ids2017,46,DDoS,4600,4597,3,0
+catboost,ids2018->ids2017,46,DoS,6961,3209,3745,7
+catboost,ids2018->ids2017,46,Brute Force,2745,2629,105,11
+catboost,ids2018->ids2017,46,Bot,584,584,0,0
+catboost,ids2018->ids2017,46,Infiltration,10,10,0,0
+catboost,ids2018->ids2017,46,Web Attack,643,601,3,39
+random_forest,ids2017->ids2018,42,DDoS,6081,6081,0,0
+random_forest,ids2017->ids2018,42,DoS,1539,1299,240,0
+random_forest,ids2017->ids2018,42,Brute Force,738,738,0,0
+random_forest,ids2017->ids2018,42,Bot,1133,1133,0,0
+random_forest,ids2017->ids2018,42,Infiltration,1093,1093,0,0
+random_forest,ids2017->ids2018,42,Web Attack,257,257,0,0
+random_forest,ids2017->ids2018,43,DDoS,6081,6081,0,0
+random_forest,ids2017->ids2018,43,DoS,1539,1299,240,0
+random_forest,ids2017->ids2018,43,Brute Force,738,738,0,0
+random_forest,ids2017->ids2018,43,Bot,1133,1133,0,0
+random_forest,ids2017->ids2018,43,Infiltration,1093,1093,0,0
+random_forest,ids2017->ids2018,43,Web Attack,257,257,0,0
+random_forest,ids2017->ids2018,44,DDoS,6081,6081,0,0
+random_forest,ids2017->ids2018,44,DoS,1539,1299,240,0
+random_forest,ids2017->ids2018,44,Brute Force,738,738,0,0
+random_forest,ids2017->ids2018,44,Bot,1133,1133,0,0
+random_forest,ids2017->ids2018,44,Infiltration,1093,1093,0,0
+random_forest,ids2017->ids2018,44,Web Attack,257,257,0,0
+random_forest,ids2017->ids2018,45,DDoS,6081,6081,0,0
+random_forest,ids2017->ids2018,45,DoS,1539,1297,242,0
+random_forest,ids2017->ids2018,45,Brute Force,738,738,0,0
+random_forest,ids2017->ids2018,45,Bot,1133,1133,0,0
+random_forest,ids2017->ids2018,45,Infiltration,1093,1093,0,0
+random_forest,ids2017->ids2018,45,Web Attack,257,257,0,0
+random_forest,ids2017->ids2018,46,DDoS,6081,6081,0,0
+random_forest,ids2017->ids2018,46,DoS,1539,1299,240,0
+random_forest,ids2017->ids2018,46,Brute Force,738,738,0,0
+random_forest,ids2017->ids2018,46,Bot,1133,1133,0,0
+random_forest,ids2017->ids2018,46,Infiltration,1093,1093,0,0
+random_forest,ids2017->ids2018,46,Web Attack,257,257,0,0
+random_forest,ids2018->ids2017,42,DDoS,4600,3957,3,640
+random_forest,ids2018->ids2017,42,DoS,6961,1022,897,5042
+random_forest,ids2018->ids2017,42,Brute Force,2745,2739,5,1
+random_forest,ids2018->ids2017,42,Bot,584,584,0,0
+random_forest,ids2018->ids2017,42,Infiltration,10,10,0,0
+random_forest,ids2018->ids2017,42,Web Attack,643,598,27,18
+random_forest,ids2018->ids2017,43,DDoS,4600,3500,3,1097
+random_forest,ids2018->ids2017,43,DoS,6961,1034,899,5028
+random_forest,ids2018->ids2017,43,Brute Force,2745,2728,16,1
+random_forest,ids2018->ids2017,43,Bot,584,584,0,0
+random_forest,ids2018->ids2017,43,Infiltration,10,10,0,0
+random_forest,ids2018->ids2017,43,Web Attack,643,599,24,20
+random_forest,ids2018->ids2017,44,DDoS,4600,3956,3,641
+random_forest,ids2018->ids2017,44,DoS,6961,1100,901,4960
+random_forest,ids2018->ids2017,44,Brute Force,2745,2732,12,1
+random_forest,ids2018->ids2017,44,Bot,584,584,0,0
+random_forest,ids2018->ids2017,44,Infiltration,10,10,0,0
+random_forest,ids2018->ids2017,44,Web Attack,643,599,26,18
+random_forest,ids2018->ids2017,45,DDoS,4600,3923,3,674
+random_forest,ids2018->ids2017,45,DoS,6961,1053,903,5005
+random_forest,ids2018->ids2017,45,Brute Force,2745,2736,8,1
+random_forest,ids2018->ids2017,45,Bot,584,584,0,0
+random_forest,ids2018->ids2017,45,Infiltration,10,10,0,0
+random_forest,ids2018->ids2017,45,Web Attack,643,598,27,18
+random_forest,ids2018->ids2017,46,DDoS,4600,3909,3,688
+random_forest,ids2018->ids2017,46,DoS,6961,1002,880,5079
+random_forest,ids2018->ids2017,46,Brute Force,2745,2737,7,1
+random_forest,ids2018->ids2017,46,Bot,584,584,0,0
+random_forest,ids2018->ids2017,46,Infiltration,10,10,0,0
+random_forest,ids2018->ids2017,46,Web Attack,643,598,27,18

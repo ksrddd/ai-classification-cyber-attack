@@ -1,0 +1,191 @@
+13:09:26 pre-registration sha256 3d09753576ce9527f8569d8851937b874ccb2e159996c90d4d7b9c69933c2347
+13:09:28 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+13:09:29 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+13:09:47 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+13:09:48 sampled 300000 rows (target 300000) across 7 classes with seed 42
+13:09:48 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+13:10:16 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+18:49:31 pre-registration sha256 3d09753576ce9527f8569d8851937b874ccb2e159996c90d4d7b9c69933c2347
+18:49:33 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+18:49:33 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+18:49:46 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+18:49:46 sampled 300000 rows (target 300000) across 7 classes with seed 42
+18:49:46 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+18:50:03 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+18:52:21 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+18:52:21 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+18:52:23 sampled 300000 rows (target 300000) across 7 classes with seed 42
+18:52:23 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+18:52:23 rows: 2017 300000, 2018 300000
+18:52:23 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+18:52:24 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+18:52:24 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:52:24 Preprocessor fitted: 69 features, scaler=standard
+18:52:45   lightgbm ids2017->ids2018 seed 42 done (22s, caught in target {'DDoS': 0, 'DoS': 279, 'Brute Force': 0, 'Bot': 1125, 'Infiltration': 0, 'Web Attack': 0})
+18:52:45 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:52:46 Preprocessor fitted: 69 features, scaler=standard
+18:53:05   lightgbm ids2017->ids2018 seed 43 done (20s, caught in target {'DDoS': 0, 'DoS': 282, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+18:53:05 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:53:05 Preprocessor fitted: 69 features, scaler=standard
+18:53:32   lightgbm ids2017->ids2018 seed 44 done (27s, caught in target {'DDoS': 0, 'DoS': 275, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+18:53:33 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:53:33 Preprocessor fitted: 69 features, scaler=standard
+18:54:06   lightgbm ids2017->ids2018 seed 45 done (33s, caught in target {'DDoS': 0, 'DoS': 283, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+18:54:06 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:54:06 Preprocessor fitted: 69 features, scaler=standard
+18:54:25   lightgbm ids2017->ids2018 seed 46 done (20s, caught in target {'DDoS': 0, 'DoS': 277, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+18:54:25 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:54:26 Preprocessor fitted: 69 features, scaler=standard
+18:54:53   lightgbm ids2018->ids2017 seed 42 done (28s, caught in target {'DDoS': 2, 'DoS': 1113, 'Brute Force': 2724, 'Bot': 462, 'Infiltration': 0, 'Web Attack': 27})
+18:54:53 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:54:53 Preprocessor fitted: 69 features, scaler=standard
+18:55:24   lightgbm ids2018->ids2017 seed 43 done (31s, caught in target {'DDoS': 2, 'DoS': 1314, 'Brute Force': 2280, 'Bot': 509, 'Infiltration': 0, 'Web Attack': 26})
+18:55:24 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:55:25 Preprocessor fitted: 69 features, scaler=standard
+18:55:46   lightgbm ids2018->ids2017 seed 44 done (22s, caught in target {'DDoS': 2, 'DoS': 1446, 'Brute Force': 2727, 'Bot': 451, 'Infiltration': 0, 'Web Attack': 27})
+18:55:46 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:55:47 Preprocessor fitted: 69 features, scaler=standard
+18:56:08   lightgbm ids2018->ids2017 seed 45 done (21s, caught in target {'DDoS': 2, 'DoS': 1287, 'Brute Force': 2725, 'Bot': 481, 'Infiltration': 0, 'Web Attack': 25})
+18:56:08 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:56:08 Preprocessor fitted: 69 features, scaler=standard
+18:56:29   lightgbm ids2018->ids2017 seed 46 done (21s, caught in target {'DDoS': 2, 'DoS': 1539, 'Brute Force': 2727, 'Bot': 468, 'Infiltration': 0, 'Web Attack': 26})
+18:56:31 lightgbm: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+18:56:31 done -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_within_target
+18:56:35 pre-registration sha256 3d09753576ce9527f8569d8851937b874ccb2e159996c90d4d7b9c69933c2347
+18:56:36 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+18:56:37 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+18:56:48 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+18:56:48 sampled 300000 rows (target 300000) across 7 classes with seed 42
+18:56:48 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+18:57:02 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+18:58:48 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+18:58:48 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+18:58:50 sampled 300000 rows (target 300000) across 7 classes with seed 42
+18:58:50 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+18:58:50 rows: 2017 300000, 2018 300000
+18:58:50 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+18:58:51 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+18:58:51 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:58:51 Preprocessor fitted: 69 features, scaler=standard
+18:59:16   xgboost ids2017->ids2018 seed 42 done (25s, caught in target {'DDoS': 0, 'DoS': 239, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+18:59:16 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:59:16 Preprocessor fitted: 69 features, scaler=standard
+18:59:40   xgboost ids2017->ids2018 seed 43 done (25s, caught in target {'DDoS': 0, 'DoS': 265, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+18:59:40 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:59:41 Preprocessor fitted: 69 features, scaler=standard
+19:00:05   xgboost ids2017->ids2018 seed 44 done (25s, caught in target {'DDoS': 0, 'DoS': 262, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+19:00:05 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:00:05 Preprocessor fitted: 69 features, scaler=standard
+19:00:30   xgboost ids2017->ids2018 seed 45 done (25s, caught in target {'DDoS': 0, 'DoS': 238, 'Brute Force': 0, 'Bot': 1069, 'Infiltration': 0, 'Web Attack': 0})
+19:00:30 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:00:30 Preprocessor fitted: 69 features, scaler=standard
+19:00:55   xgboost ids2017->ids2018 seed 46 done (25s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+19:00:55 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:00:55 Preprocessor fitted: 69 features, scaler=standard
+19:01:23   xgboost ids2018->ids2017 seed 42 done (29s, caught in target {'DDoS': 129, 'DoS': 1479, 'Brute Force': 2644, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 18})
+19:01:24 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:01:24 Preprocessor fitted: 69 features, scaler=standard
+19:01:51   xgboost ids2018->ids2017 seed 43 done (27s, caught in target {'DDoS': 102, 'DoS': 4869, 'Brute Force': 2683, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 16})
+19:01:51 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:01:51 Preprocessor fitted: 69 features, scaler=standard
+19:02:19   xgboost ids2018->ids2017 seed 44 done (28s, caught in target {'DDoS': 34, 'DoS': 4345, 'Brute Force': 2687, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 15})
+19:02:19 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:02:19 Preprocessor fitted: 69 features, scaler=standard
+19:02:47   xgboost ids2018->ids2017 seed 45 done (28s, caught in target {'DDoS': 239, 'DoS': 4435, 'Brute Force': 2724, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 15})
+19:02:47 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:02:47 Preprocessor fitted: 69 features, scaler=standard
+19:03:14   xgboost ids2018->ids2017 seed 46 done (27s, caught in target {'DDoS': 18, 'DoS': 1644, 'Brute Force': 111, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 15})
+19:03:16 xgboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+19:03:16 done -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_within_target
+19:03:20 pre-registration sha256 3d09753576ce9527f8569d8851937b874ccb2e159996c90d4d7b9c69933c2347
+19:03:21 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+19:03:21 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+19:03:31 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+19:03:31 sampled 300000 rows (target 300000) across 7 classes with seed 42
+19:03:31 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+19:03:45 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+19:05:27 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+19:05:27 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+19:05:29 sampled 300000 rows (target 300000) across 7 classes with seed 42
+19:05:29 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+19:05:29 rows: 2017 300000, 2018 300000
+19:05:29 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+19:05:29 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+19:05:30 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:05:30 Preprocessor fitted: 69 features, scaler=standard
+19:07:05   catboost ids2017->ids2018 seed 42 done (95s, caught in target {'DDoS': 0, 'DoS': 247, 'Brute Force': 0, 'Bot': 1018, 'Infiltration': 0, 'Web Attack': 0})
+19:07:05 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:07:05 Preprocessor fitted: 69 features, scaler=standard
+19:08:38   catboost ids2017->ids2018 seed 43 done (93s, caught in target {'DDoS': 0, 'DoS': 247, 'Brute Force': 0, 'Bot': 499, 'Infiltration': 0, 'Web Attack': 0})
+19:08:38 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:08:39 Preprocessor fitted: 69 features, scaler=standard
+19:10:10   catboost ids2017->ids2018 seed 44 done (92s, caught in target {'DDoS': 0, 'DoS': 252, 'Brute Force': 0, 'Bot': 1124, 'Infiltration': 0, 'Web Attack': 0})
+19:10:10 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:10:10 Preprocessor fitted: 69 features, scaler=standard
+19:11:42   catboost ids2017->ids2018 seed 45 done (92s, caught in target {'DDoS': 0, 'DoS': 259, 'Brute Force': 0, 'Bot': 723, 'Infiltration': 0, 'Web Attack': 0})
+19:11:42 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:11:42 Preprocessor fitted: 69 features, scaler=standard
+19:13:14   catboost ids2017->ids2018 seed 46 done (92s, caught in target {'DDoS': 0, 'DoS': 262, 'Brute Force': 0, 'Bot': 647, 'Infiltration': 0, 'Web Attack': 0})
+19:13:14 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:13:14 Preprocessor fitted: 69 features, scaler=standard
+19:14:47   catboost ids2018->ids2017 seed 42 done (93s, caught in target {'DDoS': 9, 'DoS': 3677, 'Brute Force': 99, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 1})
+19:14:47 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:14:47 Preprocessor fitted: 69 features, scaler=standard
+19:16:23   catboost ids2018->ids2017 seed 43 done (96s, caught in target {'DDoS': 16, 'DoS': 3707, 'Brute Force': 106, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 1})
+19:16:23 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:16:23 Preprocessor fitted: 69 features, scaler=standard
+19:17:55   catboost ids2018->ids2017 seed 44 done (92s, caught in target {'DDoS': 3, 'DoS': 3718, 'Brute Force': 104, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 1})
+19:17:55 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:17:55 Preprocessor fitted: 69 features, scaler=standard
+19:19:28   catboost ids2018->ids2017 seed 45 done (93s, caught in target {'DDoS': 3, 'DoS': 3744, 'Brute Force': 101, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 1})
+19:19:28 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:19:28 Preprocessor fitted: 69 features, scaler=standard
+19:21:01   catboost ids2018->ids2017 seed 46 done (93s, caught in target {'DDoS': 3, 'DoS': 3745, 'Brute Force': 105, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 3})
+19:21:03 catboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+19:21:03 done -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_within_target
+19:21:07 pre-registration sha256 3d09753576ce9527f8569d8851937b874ccb2e159996c90d4d7b9c69933c2347
+19:21:09 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+19:21:09 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+19:21:21 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+19:21:21 sampled 300000 rows (target 300000) across 7 classes with seed 42
+19:21:21 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+19:21:35 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+19:23:17 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+19:23:17 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+19:23:19 sampled 300000 rows (target 300000) across 7 classes with seed 42
+19:23:19 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+19:23:19 rows: 2017 300000, 2018 300000
+19:23:19 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180002, 'n_calibration': 30000, 'n_test': 89998}
+19:23:19 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 180000, 'n_calibration': 29998, 'n_test': 90002}
+19:23:20 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:23:20 Preprocessor fitted: 69 features, scaler=standard
+19:23:44   random_forest ids2017->ids2018 seed 42 done (24s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+19:23:44 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:23:44 Preprocessor fitted: 69 features, scaler=standard
+19:24:08   random_forest ids2017->ids2018 seed 43 done (24s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+19:24:08 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:24:08 Preprocessor fitted: 69 features, scaler=standard
+19:24:32   random_forest ids2017->ids2018 seed 44 done (24s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+19:24:32 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:24:32 Preprocessor fitted: 69 features, scaler=standard
+19:24:56   random_forest ids2017->ids2018 seed 45 done (24s, caught in target {'DDoS': 0, 'DoS': 242, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+19:24:57 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:24:57 Preprocessor fitted: 69 features, scaler=standard
+19:25:21   random_forest ids2017->ids2018 seed 46 done (24s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+19:25:21 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:25:21 Preprocessor fitted: 69 features, scaler=standard
+19:32:05   random_forest ids2018->ids2017 seed 42 done (404s, caught in target {'DDoS': 3, 'DoS': 897, 'Brute Force': 5, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 27})
+19:32:05 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:32:05 Preprocessor fitted: 69 features, scaler=standard
+19:38:49   random_forest ids2018->ids2017 seed 43 done (404s, caught in target {'DDoS': 3, 'DoS': 899, 'Brute Force': 16, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 24})
+19:38:50 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:38:50 Preprocessor fitted: 69 features, scaler=standard
+19:45:30   random_forest ids2018->ids2017 seed 44 done (400s, caught in target {'DDoS': 3, 'DoS': 901, 'Brute Force': 12, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 26})
+19:45:30 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:45:30 Preprocessor fitted: 69 features, scaler=standard
+20:06:50   random_forest ids2018->ids2017 seed 45 done (1280s, caught in target {'DDoS': 3, 'DoS': 903, 'Brute Force': 8, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 27})
+20:06:51 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+20:06:51 Preprocessor fitted: 69 features, scaler=standard
+20:33:42   random_forest ids2018->ids2017 seed 46 done (1612s, caught in target {'DDoS': 3, 'DoS': 880, 'Brute Force': 7, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 27})
+20:33:48 random_forest: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+20:33:48 done -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_within_target
