@@ -1,0 +1,31 @@
+source_file,class,raw_label,cluster,n_train,n_test
+Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv,BENIGN,BENIGN,1,66547,28521
+Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv,DDoS,DDoS,1,89609,38405
+Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv,BENIGN,BENIGN,1,85092,36468
+Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv,PortScan,PortScan,1,7,0
+Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv,PortScan,PortScan,2,334,0
+Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv,PortScan,PortScan,3,63144,27209
+Friday-WorkingHours-Morning.pcap_ISCX.csv,BENIGN,BENIGN,1,124695,53441
+Friday-WorkingHours-Morning.pcap_ISCX.csv,Bot,Bot,1,2,0
+Friday-WorkingHours-Morning.pcap_ISCX.csv,Bot,Bot,2,1361,585
+Monday-WorkingHours.pcap_ISCX.csv,BENIGN,BENIGN,1,344823,147782
+Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv,BENIGN,BENIGN,1,169682,72722
+Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv,Infiltration,Infiltration,1,18,0
+Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv,Infiltration,Infiltration,2,7,11
+Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv,BENIGN,BENIGN,1,106619,45695
+Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv,Web Attack,Web Attack Brute Force,1,1470,0
+Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv,Web Attack,Web Attack XSS,1,30,622
+Tuesday-WorkingHours.pcap_ISCX.csv,BENIGN,BENIGN,1,278121,119196
+Tuesday-WorkingHours.pcap_ISCX.csv,Brute Force,FTP-Patator,1,5917,0
+Tuesday-WorkingHours.pcap_ISCX.csv,Brute Force,FTP-Patator,2,14,0
+Tuesday-WorkingHours.pcap_ISCX.csv,Brute Force,SSH-Patator,1,474,1211
+Wednesday-workingHours.pcap_ISCX.csv,BENIGN,BENIGN,1,274995,117855
+Wednesday-workingHours.pcap_ISCX.csv,DoS,DoS Hulk,1,125009,47837
+Wednesday-workingHours.pcap_ISCX.csv,DoS,DoS Slowhttptest,1,5228,0
+Wednesday-workingHours.pcap_ISCX.csv,DoS,DoS slowloris,1,5374,0
+Wednesday-workingHours.pcap_ISCX.csv,Heartbleed,Heartbleed,1,7,4
+Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv,Web Attack,Web Attack Sql Injection,1,0,21
+Tuesday-WorkingHours.pcap_ISCX.csv,Brute Force,SSH-Patator,3,0,1534
+Wednesday-workingHours.pcap_ISCX.csv,DoS,DoS GoldenEye,1,0,1116
+Wednesday-workingHours.pcap_ISCX.csv,DoS,DoS GoldenEye,2,0,6
+Wednesday-workingHours.pcap_ISCX.csv,DoS,DoS GoldenEye,3,0,9160

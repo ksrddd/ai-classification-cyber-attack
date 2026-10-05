@@ -1,0 +1,17 @@
+source_file,class,n_rows_in_capture,n,n_train,n_test,first_pos,train_last_pos,test_first_pos,last_pos,published
+Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv,BENIGN,225745,95068,66547,28521,0.0,0.8643,0.8643,1.0,
+Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv,DDoS,225745,128014,89609,38405,0.0836,0.6247,0.6247,0.8751,DDoS 15:56-16:16
+Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv,BENIGN,286467,121560,85092,36468,0.0,0.5161,0.5162,1.0,
+Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv,PortScan,286467,90694,63485,27209,0.0051,0.6457,0.6457,0.9742,PortScan 13:55-15:29
+Friday-WorkingHours-Morning.pcap_ISCX.csv,BENIGN,191033,178136,124695,53441,0.0,0.6977,0.6977,1.0,
+Friday-WorkingHours-Morning.pcap_ISCX.csv,Bot,191033,1948,1363,585,0.126,0.6033,0.6033,0.9999,Bot 10:02-11:02
+Monday-WorkingHours.pcap_ISCX.csv,BENIGN,529918,492605,344823,147782,0.0,0.6826,0.6826,1.0,
+Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv,BENIGN,288602,242404,169682,72722,0.0,0.7078,0.7079,1.0,
+Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv,Infiltration,288602,36,25,11,0.23,0.5227,0.5544,0.7786,Infiltration 14:19-15:45
+Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv,BENIGN,170366,152314,106619,45695,0.0,0.7016,0.7016,1.0,
+Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv,Web Attack,170366,2143,1500,643,0.0742,0.4258,0.4259,0.5476,Web Attack Brute Force 09:20-10:00; Web Attack XSS 10:15-10:35; Web Attack Sql Injection 10:40-10:42
+Tuesday-WorkingHours.pcap_ISCX.csv,BENIGN,445909,397317,278121,119196,0.0,0.6891,0.6891,1.0,
+Tuesday-WorkingHours.pcap_ISCX.csv,Brute Force,445909,9150,6405,2745,0.0254,0.3928,0.3928,0.9998,FTP-Patator 09:20-10:20; SSH-Patator 14:00-15:00
+Wednesday-workingHours.pcap_ISCX.csv,BENIGN,692703,392850,274995,117855,0.0,0.7874,0.7874,1.0,
+Wednesday-workingHours.pcap_ISCX.csv,DoS,692703,193730,135611,58119,0.0095,0.3578,0.3578,1.0,DoS slowloris 09:47-10:10; DoS Slowhttptest 10:14-10:35; DoS Hulk 10:43-11:00; DoS GoldenEye 11:10-11:23
+Wednesday-workingHours.pcap_ISCX.csv,Heartbleed,692703,11,7,4,0.862,0.8626,0.8629,0.863,Heartbleed 15:12-15:32

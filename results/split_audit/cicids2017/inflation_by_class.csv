@@ -1,0 +1,99 @@
+run,model,class,inflation_contribution,chronological_f1,random_f1
+protocol_v1,catboost,Benign,0.0035,0.9749,0.9995
+protocol_v1,lightgbm,Benign,0.0037,0.9738,0.9995
+protocol_v1,logistic_regression,Benign,0.0033,0.9616,0.9849
+protocol_v1,mlp,Benign,0.0047,0.9609,0.9935
+protocol_v1,random_forest,Benign,0.004,0.9709,0.9989
+protocol_v1,stacking,Benign,0.0036,0.9743,0.9994
+protocol_v1,xgboost,Benign,0.0036,0.974,0.9995
+protocol_v1,catboost,DDoS,0.0001,0.9986,0.9995
+protocol_v1,lightgbm,DDoS,0.0001,0.9992,0.9997
+protocol_v1,logistic_regression,DDoS,0.0029,0.9622,0.9826
+protocol_v1,mlp,DDoS,0.0003,0.9898,0.9917
+protocol_v1,random_forest,DDoS,0.0002,0.9978,0.9989
+protocol_v1,stacking,DDoS,0.0001,0.999,0.9996
+protocol_v1,xgboost,DDoS,0.0,0.9993,0.9996
+protocol_v1,catboost,DoS,0.0055,0.96,0.9983
+protocol_v1,lightgbm,DoS,0.0077,0.9441,0.9983
+protocol_v1,logistic_regression,DoS,0.011,0.866,0.9428
+protocol_v1,mlp,DoS,0.0258,0.7947,0.9754
+protocol_v1,random_forest,DoS,0.0121,0.9108,0.9958
+protocol_v1,stacking,DoS,0.0074,0.9451,0.9972
+protocol_v1,xgboost,DoS,0.0074,0.9462,0.9983
+protocol_v1,catboost,Brute Force,0.1425,0.0015,0.9993
+protocol_v1,lightgbm,Brute Force,0.1428,0.0,0.9995
+protocol_v1,logistic_regression,Brute Force,0.1376,0.0043,0.9674
+protocol_v1,mlp,Brute Force,0.14,0.0021,0.9821
+protocol_v1,random_forest,Brute Force,0.1427,0.0,0.9992
+protocol_v1,stacking,Brute Force,0.1428,0.0,0.9995
+protocol_v1,xgboost,Brute Force,0.1428,0.0,0.9996
+protocol_v1,catboost,Bot,0.0992,0.2673,0.9619
+protocol_v1,lightgbm,Bot,0.0988,0.2617,0.9535
+protocol_v1,logistic_regression,Bot,0.0051,0.0,0.036
+protocol_v1,mlp,Bot,0.086,0.1422,0.7442
+protocol_v1,random_forest,Bot,0.0972,0.2536,0.9337
+protocol_v1,stacking,Bot,0.0978,0.265,0.9497
+protocol_v1,xgboost,Bot,0.0997,0.2629,0.9605
+protocol_v1,catboost,Infiltration,-0.0004,0.8366,0.8336
+protocol_v1,lightgbm,Infiltration,-0.0148,1.0,0.8967
+protocol_v1,logistic_regression,Infiltration,0.0444,0.0,0.3111
+protocol_v1,mlp,Infiltration,0.0572,0.284,0.6842
+protocol_v1,random_forest,Infiltration,0.0307,0.5685,0.7832
+protocol_v1,stacking,Infiltration,-0.0169,0.9895,0.8714
+protocol_v1,xgboost,Infiltration,-0.0207,1.0,0.8548
+protocol_v1,catboost,Web Attack,0.0047,0.9613,0.9943
+protocol_v1,lightgbm,Web Attack,0.0067,0.9487,0.9956
+protocol_v1,logistic_regression,Web Attack,0.0032,0.041,0.0636
+protocol_v1,mlp,Web Attack,0.0024,0.783,0.7995
+protocol_v1,random_forest,Web Attack,0.0046,0.9546,0.9865
+protocol_v1,stacking,Web Attack,0.0052,0.9576,0.994
+protocol_v1,xgboost,Web Attack,0.0082,0.9377,0.9952
+protocol_v2,catboost,Benign,0.0035,0.9749,0.9995
+protocol_v2,lightgbm,Benign,0.0037,0.9738,0.9995
+protocol_v2,logistic_regression,Benign,0.0034,0.9613,0.985
+protocol_v2,mlp,Benign,0.0047,0.9607,0.9937
+protocol_v2,random_forest,Benign,0.004,0.9709,0.9989
+protocol_v2,stacking,Benign,0.0035,0.9749,0.9993
+protocol_v2,xgboost,Benign,0.0036,0.9745,0.9995
+protocol_v2,catboost,DDoS,0.0001,0.9986,0.9995
+protocol_v2,lightgbm,DDoS,0.0001,0.9992,0.9997
+protocol_v2,logistic_regression,DDoS,0.003,0.9616,0.9828
+protocol_v2,mlp,DDoS,0.0005,0.9873,0.9906
+protocol_v2,random_forest,DDoS,0.0002,0.9978,0.9989
+protocol_v2,stacking,DDoS,0.0001,0.9991,0.9997
+protocol_v2,xgboost,DDoS,0.0001,0.9992,0.9997
+protocol_v2,catboost,DoS,0.0055,0.9599,0.9983
+protocol_v2,lightgbm,DoS,0.0077,0.9441,0.9983
+protocol_v2,logistic_regression,DoS,0.011,0.8662,0.9429
+protocol_v2,mlp,DoS,0.0274,0.7883,0.9799
+protocol_v2,random_forest,DoS,0.0121,0.9108,0.9958
+protocol_v2,stacking,DoS,0.0066,0.9509,0.9973
+protocol_v2,xgboost,DoS,0.0068,0.9511,0.9984
+protocol_v2,catboost,Brute Force,0.1426,0.0013,0.9994
+protocol_v2,lightgbm,Brute Force,0.1428,0.0,0.9995
+protocol_v2,logistic_regression,Brute Force,0.1376,0.0043,0.9678
+protocol_v2,mlp,Brute Force,0.1398,0.0021,0.9806
+protocol_v2,random_forest,Brute Force,0.1427,0.0,0.9992
+protocol_v2,stacking,Brute Force,0.1428,0.0,0.9995
+protocol_v2,xgboost,Brute Force,0.1428,0.0,0.9997
+protocol_v2,catboost,Bot,0.0993,0.2669,0.9617
+protocol_v2,lightgbm,Bot,0.0988,0.2617,0.9535
+protocol_v2,logistic_regression,Bot,0.0052,0.0,0.0366
+protocol_v2,mlp,Bot,0.0837,0.1574,0.7436
+protocol_v2,random_forest,Bot,0.0972,0.2536,0.9337
+protocol_v2,stacking,Bot,0.0972,0.2655,0.9461
+protocol_v2,xgboost,Bot,0.0989,0.2618,0.9539
+protocol_v2,catboost,Infiltration,-0.0023,0.8497,0.8336
+protocol_v2,lightgbm,Infiltration,-0.0148,1.0,0.8967
+protocol_v2,logistic_regression,Infiltration,0.043,0.0,0.301
+protocol_v2,mlp,Infiltration,0.0354,0.3875,0.6351
+protocol_v2,random_forest,Infiltration,0.0307,0.5685,0.7832
+protocol_v2,stacking,Infiltration,-0.0021,0.9006,0.8861
+protocol_v2,xgboost,Infiltration,-0.0065,0.9006,0.8548
+protocol_v2,catboost,Web Attack,0.0047,0.9612,0.9943
+protocol_v2,lightgbm,Web Attack,0.0067,0.9487,0.9956
+protocol_v2,logistic_regression,Web Attack,0.0025,0.0414,0.0588
+protocol_v2,mlp,Web Attack,-0.0031,0.8189,0.7972
+protocol_v2,random_forest,Web Attack,0.0046,0.9546,0.9865
+protocol_v2,stacking,Web Attack,0.0045,0.9624,0.9937
+protocol_v2,xgboost,Web Attack,0.009,0.9328,0.9955

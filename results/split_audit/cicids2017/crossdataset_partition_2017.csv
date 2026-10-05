@@ -1,0 +1,27 @@
+mode,class,raw_label,n_train,n_calibration,n_test
+chronological,Benign,BENIGN,148914,24819,74455
+chronological,Bot,Bot,1169,195,584
+chronological,Brute Force,FTP-Patator,5490,441,0
+chronological,DDoS,DDoS,9199,1533,4600
+chronological,DoS,DoS Hulk,12643,2320,5735
+chronological,DoS,DoS Slowhttptest,597,0,0
+chronological,DoS,DoS slowloris,682,0,0
+chronological,Infiltration,Infiltration,22,4,10
+chronological,Web Attack,Web Attack Brute Force,1286,184,0
+chronological,Brute Force,SSH-Patator,0,474,2745
+chronological,Web Attack,Web Attack XSS,0,30,622
+chronological,DoS,DoS GoldenEye,0,0,1226
+chronological,Web Attack,Web Attack Sql Injection,0,0,21
+random,Benign,BENIGN,148913,24819,74456
+random,Bot,Bot,1169,195,584
+random,Brute Force,FTP-Patator,3576,589,1766
+random,Brute Force,SSH-Patator,1914,326,979
+random,DDoS,DDoS,9199,1533,4600
+random,DoS,DoS GoldenEye,750,129,347
+random,DoS,DoS Hulk,12417,2063,6218
+random,DoS,DoS Slowhttptest,344,66,187
+random,DoS,DoS slowloris,411,62,209
+random,Infiltration,Infiltration,22,4,10
+random,Web Attack,Web Attack Brute Force,872,155,443
+random,Web Attack,Web Attack Sql Injection,14,4,3
+random,Web Attack,Web Attack XSS,400,55,197

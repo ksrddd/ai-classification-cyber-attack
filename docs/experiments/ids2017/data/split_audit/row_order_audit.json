@@ -1,0 +1,1081 @@
+{
+  "order_basis": "csv_row_index",
+  "gap_fraction": 0.05,
+  "captures": {
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv": {
+      "n_rows": 225745,
+      "max_flow_duration_s": 119.999937,
+      "labels": {
+        "BENIGN": {
+          "n": 97718,
+          "min": 0.0,
+          "p05": 0.021643321638670353,
+          "median": 0.6082930221844213,
+          "p95": 0.9783566783613297,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 97718,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.1713885,
+                "p95": 98.06904214999999,
+                "max": 119.999937
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.32696125585869545,
+                "init_win_forward_median": 229.0,
+                "init_win_backward_median": 0.0
+              }
+            }
+          ]
+        },
+        "DDoS": {
+          "n": 128027,
+          "min": 0.08364784889077893,
+          "p05": 0.1174440959671132,
+          "median": 0.4655317527819123,
+          "p95": 0.8345369090651357,
+          "max": 0.8750708767453399,
+          "clusters": [
+            {
+              "n": 128027,
+              "first": 0.08364784889077893,
+              "last": 0.8750708767453399,
+              "flow_duration_s": {
+                "median": 1.878978,
+                "p95": 91.5431033,
+                "max": 103.941558
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 0.999976567442805,
+                "init_win_forward_median": 256.0,
+                "init_win_backward_median": 229.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv": {
+      "n_rows": 286467,
+      "max_flow_duration_s": 119.999949,
+      "labels": {
+        "BENIGN": {
+          "n": 127537,
+          "min": 0.0,
+          "p05": 0.0222846690357669,
+          "median": 0.22390091668819337,
+          "p95": 0.977739766673881,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 127537,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.030964,
+                "p95": 115.5276316,
+                "max": 119.999949
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.45935689250962464,
+                "init_win_forward_median": 52.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        },
+        "PortScan": {
+          "n": 158930,
+          "min": 0.005107063316414514,
+          "p05": 0.3331161464187722,
+          "median": 0.5916426382188462,
+          "p95": 0.9376943511620924,
+          "max": 0.9742447620310962,
+          "clusters": [
+            {
+              "n": 7,
+              "first": 0.005107063316414514,
+              "last": 0.005313021440589808,
+              "flow_duration_s": {
+                "median": 5.018079,
+                "p95": 5.2777405,
+                "max": 5.386396
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 243.0
+              }
+            },
+            {
+              "n": 365,
+              "first": 0.12612666075555215,
+              "last": 0.19965720190179637,
+              "flow_duration_s": {
+                "median": 0.000659,
+                "p95": 0.1043198000000001,
+                "max": 6.008524
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 0.29315068493150687,
+                "init_win_forward_median": 1024.0,
+                "init_win_backward_median": 227.0
+              }
+            },
+            {
+              "n": 158558,
+              "first": 0.30576752564004106,
+              "last": 0.9742447620310962,
+              "flow_duration_s": {
+                "median": 4.7e-05,
+                "p95": 8.9e-05,
+                "max": 119.809735
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 0.001633471663366087,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 0.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Friday-WorkingHours-Morning.pcap_ISCX.csv": {
+      "n_rows": 191033,
+      "max_flow_duration_s": 119.999993,
+      "labels": {
+        "BENIGN": {
+          "n": 189067,
+          "min": 0.0,
+          "p05": 0.04948542652539889,
+          "median": 0.4964874994765275,
+          "p95": 0.9494938020855144,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 189067,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.031085,
+                "p95": 115.26293559999999,
+                "max": 119.999993
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.47748681684270655,
+                "init_win_forward_median": -1.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        },
+        "Bot": {
+          "n": 1966,
+          "min": 0.12601030193894217,
+          "p05": 0.3620558335776205,
+          "median": 0.5876842623225429,
+          "p95": 0.986299415804682,
+          "max": 0.9999476527492777,
+          "clusters": [
+            {
+              "n": 2,
+              "first": 0.12601030193894217,
+              "last": 0.1291773106076469,
+              "flow_duration_s": {
+                "median": 30.1302655,
+                "p95": 57.19540255,
+                "max": 60.20264
+              },
+              "signature": {
+                "top_destination_port": 8080,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 14718.5,
+                "init_win_backward_median": 110.0
+              }
+            },
+            {
+              "n": 1964,
+              "first": 0.2951128606725575,
+              "last": 0.9999476527492777,
+              "flow_duration_s": {
+                "median": 0.0707555,
+                "p95": 1.0294330999999999,
+                "max": 61.003896
+              },
+              "signature": {
+                "top_destination_port": 8080,
+                "top_destination_port_share": 0.6410386965376782,
+                "init_win_forward_median": 8192.0,
+                "init_win_backward_median": 237.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Monday-WorkingHours.pcap_ISCX.csv": {
+      "n_rows": 529918,
+      "max_flow_duration_s": 119.999987,
+      "labels": {
+        "BENIGN": {
+          "n": 529918,
+          "min": 0.0,
+          "p05": 0.05,
+          "median": 0.5,
+          "p95": 0.95,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 529918,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.031303,
+                "p95": 102.21531709999974,
+                "max": 119.999987
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.4051079600994871,
+                "init_win_forward_median": 115.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv": {
+      "n_rows": 288602,
+      "max_flow_duration_s": 119.999936,
+      "labels": {
+        "BENIGN": {
+          "n": 288566,
+          "min": 0.0,
+          "p05": 0.04999376301537417,
+          "median": 0.5000173249572939,
+          "p95": 0.9500062369846258,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 288566,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.000306,
+                "p95": 99.49129425000001,
+                "max": 119.999936
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.3441535038777957,
+                "init_win_forward_median": 351.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        },
+        "Infiltration": {
+          "n": 36,
+          "min": 0.23001652800925845,
+          "p05": 0.24787942522721684,
+          "median": 0.352613123308651,
+          "p95": 0.7455232310352355,
+          "max": 0.7786043707402261,
+          "clusters": [
+            {
+              "n": 18,
+              "first": 0.23001652800925845,
+              "last": 0.30607309052983184,
+              "flow_duration_s": {
+                "median": 101.5599685,
+                "p95": 119.99404439999999,
+                "max": 119.99518
+              },
+              "signature": {
+                "top_destination_port": 444,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 3294.0,
+                "init_win_backward_median": 3294.0
+              }
+            },
+            {
+              "n": 18,
+              "first": 0.39915315608747026,
+              "last": 0.7786043707402261,
+              "flow_duration_s": {
+                "median": 89.57159999999999,
+                "p95": 112.38417449999999,
+                "max": 117.923038
+              },
+              "signature": {
+                "top_destination_port": 444,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 255.0,
+                "init_win_backward_median": 1452.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv": {
+      "n_rows": 170366,
+      "max_flow_duration_s": 119.999993,
+      "labels": {
+        "BENIGN": {
+          "n": 168186,
+          "min": 0.0,
+          "p05": 0.04936019722360814,
+          "median": 0.506274763008834,
+          "p95": 0.9506398027763918,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 168186,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.031213,
+                "p95": 115.63760775,
+                "max": 119.999993
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.45512111590738824,
+                "init_win_forward_median": 29.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        },
+        "Web Attack Brute Force": {
+          "n": 1507,
+          "min": 0.0741760338097614,
+          "p05": 0.11821618290141754,
+          "median": 0.24050127667067767,
+          "p95": 0.35544213893698823,
+          "max": 0.3661139318521997,
+          "clusters": [
+            {
+              "n": 1507,
+              "first": 0.0741760338097614,
+              "last": 0.3661139318521997,
+              "flow_duration_s": {
+                "median": 5.552319,
+                "p95": 9.852577,
+                "max": 35.45196
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 28960.0
+              }
+            }
+          ]
+        },
+        "Web Attack XSS": {
+          "n": 652,
+          "min": 0.4234085639656033,
+          "p05": 0.4262865025093182,
+          "median": 0.46393038476212833,
+          "p95": 0.5028265782290964,
+          "max": 0.5052504915915828,
+          "clusters": [
+            {
+              "n": 652,
+              "first": 0.4234085639656033,
+              "last": 0.5052504915915828,
+              "flow_duration_s": {
+                "median": 5.3989095,
+                "p95": 5.9776497,
+                "max": 70.203058
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 28960.0
+              }
+            }
+          ]
+        },
+        "Web Attack Sql Injection": {
+          "n": 21,
+          "min": 0.5299973586123911,
+          "p05": 0.5302027998708655,
+          "median": 0.5374988994218296,
+          "p95": 0.5473072520764242,
+          "max": 0.5475655210870778,
+          "clusters": [
+            {
+              "n": 21,
+              "first": 0.5299973586123911,
+              "last": 0.5475655210870778,
+              "flow_duration_s": {
+                "median": 5.006127,
+                "p95": 5.069927,
+                "max": 5.086516
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 235.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Tuesday-WorkingHours.pcap_ISCX.csv": {
+      "n_rows": 445909,
+      "max_flow_duration_s": 119.999977,
+      "labels": {
+        "BENIGN": {
+          "n": 432074,
+          "min": 0.0,
+          "p05": 0.052721525516474264,
+          "median": 0.508955883276371,
+          "p95": 0.9506924074024238,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 432074,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.031286,
+                "p95": 114.92051944999996,
+                "max": 119.999977
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.44191272791234837,
+                "init_win_forward_median": 61.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        },
+        "FTP-Patator": {
+          "n": 7938,
+          "min": 0.02544695318316783,
+          "p05": 0.032925738044619075,
+          "median": 0.08935363348493411,
+          "p95": 0.14518275070193853,
+          "max": 0.36327448711393384,
+          "clusters": [
+            {
+              "n": 7921,
+              "first": 0.02544695318316783,
+              "last": 0.15891618898965706,
+              "flow_duration_s": {
+                "median": 4.00819,
+                "p95": 9.744636,
+                "max": 10.780124
+              },
+              "signature": {
+                "top_destination_port": 21,
+                "top_destination_port_share": 0.9998737533139755,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 227.0
+              }
+            },
+            {
+              "n": 17,
+              "first": 0.3631354449796819,
+              "last": 0.36327448711393384,
+              "flow_duration_s": {
+                "median": 9.759983,
+                "p95": 9.805211,
+                "max": 9.811139
+              },
+              "signature": {
+                "top_destination_port": 21,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 227.0
+              }
+            }
+          ]
+        },
+        "SSH-Patator": {
+          "n": 5897,
+          "min": 0.36327897234407097,
+          "p05": 0.37210366263892997,
+          "median": 0.46814141033576434,
+          "p95": 0.9623415592454049,
+          "max": 0.9997959220287593,
+          "clusters": [
+            {
+              "n": 2973,
+              "first": 0.36327897234407097,
+              "last": 0.46861235950016594,
+              "flow_duration_s": {
+                "median": 1.904571,
+                "p95": 13.3982914,
+                "max": 119.816717
+              },
+              "signature": {
+                "top_destination_port": 22,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 247.0
+              }
+            },
+            {
+              "n": 1,
+              "first": 0.5284610278353382,
+              "last": 0.5284610278353382,
+              "flow_duration_s": {
+                "median": 6.5e-05,
+                "p95": 6.5e-05,
+                "max": 6.5e-05
+              },
+              "signature": {
+                "top_destination_port": 22,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 259.0,
+                "init_win_backward_median": 247.0
+              }
+            },
+            {
+              "n": 2923,
+              "first": 0.6220251711115298,
+              "last": 0.9997959220287593,
+              "flow_duration_s": {
+                "median": 10.268284,
+                "p95": 13.632873,
+                "max": 19.582015
+              },
+              "signature": {
+                "top_destination_port": 22,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 247.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Wednesday-workingHours.pcap_ISCX.csv": {
+      "n_rows": 692703,
+      "max_flow_duration_s": 119.999998,
+      "labels": {
+        "BENIGN": {
+          "n": 440031,
+          "min": 0.0,
+          "p05": 0.03176329792609232,
+          "median": 0.6691290049689477,
+          "p95": 0.9665216788748986,
+          "max": 1.0,
+          "clusters": [
+            {
+              "n": 440031,
+              "first": 0.0,
+              "last": 1.0,
+              "flow_duration_s": {
+                "median": 0.031047,
+                "p95": 115.30031650000001,
+                "max": 119.999998
+              },
+              "signature": {
+                "top_destination_port": 53,
+                "top_destination_port_share": 0.4443573293699762,
+                "init_win_forward_median": 60.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        },
+        "DoS slowloris": {
+          "n": 5796,
+          "min": 0.009467274527863353,
+          "p05": 0.04194408273687675,
+          "median": 0.07271886034687355,
+          "p95": 0.09956842913691602,
+          "max": 0.10000404214221989,
+          "clusters": [
+            {
+              "n": 5796,
+              "first": 0.009467274527863353,
+              "last": 0.10000404214221989,
+              "flow_duration_s": {
+                "median": 97.082009,
+                "p95": 108.00204575,
+                "max": 119.046064
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 0.0
+              }
+            }
+          ]
+        },
+        "DoS Slowhttptest": {
+          "n": 5499,
+          "min": 0.10000692938666267,
+          "p05": 0.10041099924642921,
+          "median": 0.10401009380657195,
+          "p95": 0.10767126412223438,
+          "max": 0.10806811587089397,
+          "clusters": [
+            {
+              "n": 5499,
+              "first": 0.10000692938666267,
+              "last": 0.10806811587089397,
+              "flow_duration_s": {
+                "median": 63.117636,
+                "p95": 109.9101971,
+                "max": 119.800736
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": -1.0
+              }
+            }
+          ]
+        },
+        "DoS Hulk": {
+          "n": 231073,
+          "min": 0.10806955949311536,
+          "p05": 0.1250965061454998,
+          "median": 0.28396915268037337,
+          "p95": 0.4553955380524381,
+          "max": 0.47788515119055525,
+          "clusters": [
+            {
+              "n": 231073,
+              "first": 0.10806955949311536,
+              "last": 0.47788515119055525,
+              "flow_duration_s": {
+                "median": 84.92919,
+                "p95": 100.6037394,
+                "max": 119.968626
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 251.0,
+                "init_win_backward_median": 235.0
+              }
+            }
+          ]
+        },
+        "DoS GoldenEye": {
+          "n": 10293,
+          "min": 0.4778865948127766,
+          "p05": 0.47897248744770476,
+          "median": 0.8558312232388531,
+          "p95": 0.9856177692571987,
+          "max": 0.9999913382666716,
+          "clusters": [
+            {
+              "n": 1118,
+              "first": 0.4778865948127766,
+              "last": 0.48017473603367683,
+              "flow_duration_s": {
+                "median": 17.4944505,
+                "p95": 24.49638965,
+                "max": 73.588104
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 235.0
+              }
+            },
+            {
+              "n": 6,
+              "first": 0.5956168742114214,
+              "last": 0.5956702882336127,
+              "flow_duration_s": {
+                "median": 11.115779,
+                "p95": 11.33236575,
+                "max": 11.40345
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 235.0
+              }
+            },
+            {
+              "n": 9169,
+              "first": 0.7438465602813331,
+              "last": 0.9999913382666716,
+              "flow_duration_s": {
+                "median": 11.505348,
+                "p95": 100.921775,
+                "max": 119.634581
+              },
+              "signature": {
+                "top_destination_port": 80,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 29200.0,
+                "init_win_backward_median": 235.0
+              }
+            }
+          ]
+        },
+        "Heartbleed": {
+          "n": 11,
+          "min": 0.8620301370574937,
+          "p05": 0.8620626185574749,
+          "median": 0.8625787135016212,
+          "p95": 0.8630247927680301,
+          "max": 0.8630334545013585,
+          "clusters": [
+            {
+              "n": 11,
+              "first": 0.8620301370574937,
+              "last": 0.8630334545013585,
+              "flow_duration_s": {
+                "median": 119.261118,
+                "p95": 119.3011745,
+                "max": 119.302728
+              },
+              "signature": {
+                "top_destination_port": 444,
+                "top_destination_port_share": 1.0,
+                "init_win_forward_median": 235.0,
+                "init_win_backward_median": 235.0
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "published_order": {
+    "in_pipeline_check": {
+      "valid": true,
+      "pairs_checked": 1
+    },
+    "seven_pair_check": {
+      "valid": true,
+      "pairs_checked": 7,
+      "violations": []
+    },
+    "chance_of_passing_by_luck": 0.0006944444444444444,
+    "pairs": [
+      {
+        "source_file": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "earlier": "Web Attack Brute Force",
+        "later": "Web Attack XSS",
+        "adjacent": true,
+        "published_gap_minutes": 15,
+        "earlier_rows": 1507,
+        "later_rows": 652,
+        "median_earlier": 0.24050127667067767,
+        "median_later": 0.4639303847621284,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "earlier": "Web Attack Brute Force",
+        "later": "Web Attack Sql Injection",
+        "adjacent": false,
+        "published_gap_minutes": 40,
+        "earlier_rows": 1507,
+        "later_rows": 21,
+        "median_earlier": 0.24050127667067767,
+        "median_later": 0.5374988994218296,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "earlier": "Web Attack XSS",
+        "later": "Web Attack Sql Injection",
+        "adjacent": true,
+        "published_gap_minutes": 5,
+        "earlier_rows": 652,
+        "later_rows": 21,
+        "median_earlier": 0.4639303847621284,
+        "median_later": 0.5374988994218296,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Tuesday-WorkingHours.pcap_ISCX.csv",
+        "earlier": "FTP-Patator",
+        "later": "SSH-Patator",
+        "adjacent": true,
+        "published_gap_minutes": 220,
+        "earlier_rows": 7938,
+        "later_rows": 5897,
+        "median_earlier": 0.08935363348493411,
+        "median_later": 0.46814141033576434,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS slowloris",
+        "later": "DoS Slowhttptest",
+        "adjacent": true,
+        "published_gap_minutes": 4,
+        "earlier_rows": 5796,
+        "later_rows": 5499,
+        "median_earlier": 0.07271886034687355,
+        "median_later": 0.10401009380657195,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS slowloris",
+        "later": "DoS Hulk",
+        "adjacent": false,
+        "published_gap_minutes": 33,
+        "earlier_rows": 5796,
+        "later_rows": 231073,
+        "median_earlier": 0.07271886034687355,
+        "median_later": 0.28396915268037337,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS slowloris",
+        "later": "DoS GoldenEye",
+        "adjacent": false,
+        "published_gap_minutes": 60,
+        "earlier_rows": 5796,
+        "later_rows": 10293,
+        "median_earlier": 0.07271886034687355,
+        "median_later": 0.8558312232388531,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS slowloris",
+        "later": "Heartbleed",
+        "adjacent": false,
+        "published_gap_minutes": 302,
+        "earlier_rows": 5796,
+        "later_rows": 11,
+        "median_earlier": 0.07271886034687355,
+        "median_later": 0.8625787135016212,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS Slowhttptest",
+        "later": "DoS Hulk",
+        "adjacent": true,
+        "published_gap_minutes": 8,
+        "earlier_rows": 5499,
+        "later_rows": 231073,
+        "median_earlier": 0.10401009380657195,
+        "median_later": 0.28396915268037337,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS Slowhttptest",
+        "later": "DoS GoldenEye",
+        "adjacent": false,
+        "published_gap_minutes": 35,
+        "earlier_rows": 5499,
+        "later_rows": 10293,
+        "median_earlier": 0.10401009380657195,
+        "median_later": 0.8558312232388531,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS Slowhttptest",
+        "later": "Heartbleed",
+        "adjacent": false,
+        "published_gap_minutes": 277,
+        "earlier_rows": 5499,
+        "later_rows": 11,
+        "median_earlier": 0.10401009380657195,
+        "median_later": 0.8625787135016212,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS Hulk",
+        "later": "DoS GoldenEye",
+        "adjacent": true,
+        "published_gap_minutes": 10,
+        "earlier_rows": 231073,
+        "later_rows": 10293,
+        "median_earlier": 0.28396915268037337,
+        "median_later": 0.8558312232388531,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS Hulk",
+        "later": "Heartbleed",
+        "adjacent": false,
+        "published_gap_minutes": 252,
+        "earlier_rows": 231073,
+        "later_rows": 11,
+        "median_earlier": 0.28396915268037337,
+        "median_later": 0.8625787135016212,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 0,
+        "later_rows_before_last_earlier": 0,
+        "inverted_pairs_share": 0.0,
+        "earlier_rows_after_first_later_share": 0.0
+      },
+      {
+        "source_file": "Wednesday-workingHours.pcap_ISCX.csv",
+        "earlier": "DoS GoldenEye",
+        "later": "Heartbleed",
+        "adjacent": true,
+        "published_gap_minutes": 229,
+        "earlier_rows": 10293,
+        "later_rows": 11,
+        "median_earlier": 0.8558312232388531,
+        "median_later": 0.8625787135016212,
+        "median_ordered": true,
+        "earlier_rows_after_first_later": 4939,
+        "later_rows_before_last_earlier": 11,
+        "inverted_pairs_share": 0.47798592158836983,
+        "earlier_rows_after_first_later_share": 0.47984066841542794,
+        "out_of_order_rows_flow_duration_s": {
+          "median": 11.470353,
+          "p95": 100.5331541,
+          "max": 107.82201
+        }
+      }
+    ]
+  },
+  "row_index_integrity": {
+    "columns": [
+      "Destination Port",
+      "Flow Duration",
+      "Total Fwd Packets"
+    ],
+    "rows_compared": 2497980,
+    "rows_mismatched": 0,
+    "rows_out_of_range": 0,
+    "duplicate_row_indexes": 0,
+    "raw_rows_total": 2830743
+  },
+  "manifest_split": {
+    "manifest_reproduced": true,
+    "mismatches": [],
+    "train_rows": 1748579,
+    "test_rows": 749401,
+    "overlap_per_capture": {
+      "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv": {
+        "first_test_pos": 0.6247,
+        "train_rows": 156156,
+        "train_rows_after_first_test": 16314,
+        "share_of_train_rows": 0.10447245062629679
+      },
+      "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv": {
+        "first_test_pos": 0.5162,
+        "train_rows": 148577,
+        "train_rows_after_first_test": 26124,
+        "share_of_train_rows": 0.17582802183379662
+      },
+      "Friday-WorkingHours-Morning.pcap_ISCX.csv": {
+        "first_test_pos": 0.6033,
+        "train_rows": 126058,
+        "train_rows_after_first_test": 16837,
+        "share_of_train_rows": 0.13356550159450412
+      },
+      "Monday-WorkingHours.pcap_ISCX.csv": {
+        "first_test_pos": 0.6826,
+        "train_rows": 344823,
+        "train_rows_after_first_test": 0,
+        "share_of_train_rows": 0.0
+      },
+      "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv": {
+        "first_test_pos": 0.5544,
+        "train_rows": 169707,
+        "train_rows_after_first_test": 31594,
+        "share_of_train_rows": 0.1861679247173069
+      },
+      "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv": {
+        "first_test_pos": 0.4259,
+        "train_rows": 108119,
+        "train_rows_after_first_test": 41834,
+        "share_of_train_rows": 0.38692551725413665
+      },
+      "Tuesday-WorkingHours.pcap_ISCX.csv": {
+        "first_test_pos": 0.3928,
+        "train_rows": 284526,
+        "train_rows_after_first_test": 120009,
+        "share_of_train_rows": 0.42178570675439153
+      },
+      "Wednesday-workingHours.pcap_ISCX.csv": {
+        "first_test_pos": 0.3578,
+        "train_rows": 410613,
+        "train_rows_after_first_test": 207225,
+        "share_of_train_rows": 0.5046722826603152
+      }
+    }
+  }
+}
