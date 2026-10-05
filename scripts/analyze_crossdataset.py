@@ -1,6 +1,6 @@
 """Turn a cross-dataset run into the tables the write-up needs.
 
-Four questions, in the order they have to be answered:
+Five questions, in the order they have to be answered:
 
 1. **How much does the split inflate the within-dataset ceiling?**
    The protocol splits at random, which lets flows from the same attack window
@@ -18,6 +18,12 @@ Four questions, in the order they have to be answered:
 4. **Which classes survive the crossing?** A macro average over seven classes
    hides that one of them may be carrying all of it.
 
+5. **What are the scores themselves?** Recovered percent is a ratio against each
+   model's own ceiling, so it ranks a model with a low ceiling above one that
+   scores higher in absolute terms. ``scorecard_table`` keeps the macro-F1 --
+   mean, standard deviation and range over the seeds -- for the transfer cells
+   and for the ceiling cells, with recovered percent beside it.
+
 Every figure is a mean over the protocol's five seeds with the spread beside
 it. A gap of 0.5 means nothing if the seed-to-seed spread is 0.4.
 """
@@ -27,6 +33,7 @@ import argparse
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -35,6 +42,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from src.crossdataset.labels import SHARED_CLASSES  # noqa: E402
 
 METRIC = "f1_macro_all"
+#: ``scorecard_table`` is always macro-F1, so it does not follow ``--metric``.
+MACRO_F1 = "f1_macro_all"
 
 
 def _agg(df: pd.DataFrame, keys: list[str], metric: str) -> pd.DataFrame:
@@ -77,6 +86,53 @@ def gap_table(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     return out[cols].round(4)
 
 
+def scorecard_table(df: pd.DataFrame) -> pd.DataFrame:
+    """Macro-F1 mean, spread and range for every cell of the 2x2 transfer matrix.
+
+    ``gap_table`` reports recovered percent, a ratio against each model's own
+    ceiling and floor: two models with very different ceilings can post the same
+    percentage on very different scores, and a model with a weak ceiling can top
+    the ranking while scoring below a stronger one. This table keeps the score
+    itself, for the ceiling cells (``train == test``) as well as the transfer
+    cells, with recovered percent beside it. ``recovered_pct`` is read from
+    ``gap_table`` rather than recomputed, so the two files cannot disagree.
+
+    Always macro-F1, whatever ``--metric`` the other tables were built with: the
+    column names say so. ``f1_macro`` averages every class present in the test
+    split, ``f1_macro_measurable`` only those with at least ``MEASURABLE_MIN``
+    (``scripts/run_crossdataset.py``) test rows -- the project reports both,
+    since a class with ten test rows weighs as much as one with ten thousand.
+
+    ``f1_macro_sd`` is the sample standard deviation over seeds (``ddof=1``, as
+    in ``gap_table``). It is only as wide as what the seed moves. The corpora
+    are drawn once, so under the chronological split the partition is fixed and
+    the seed reaches the model's initialisation alone; a model with no random
+    component (logistic regression) therefore reports exactly 0, which means
+    "nothing varied", not "stable". Under the random split the seed also moves
+    the partition. Neither includes the variance of the 300,000-row draw.
+    """
+    keys = ["mode", "train", "test", "model"]
+    card = (
+        df.groupby(keys)
+        .agg(
+            n_seeds=("seed", "nunique"),
+            f1_macro=(MACRO_F1, "mean"),
+            f1_macro_sd=(MACRO_F1, "std"),
+            f1_macro_min=(MACRO_F1, "min"),
+            f1_macro_max=(MACRO_F1, "max"),
+            f1_macro_measurable=("f1_macro_measurable", "mean"),
+            f1_macro_measurable_sd=("f1_macro_measurable", "std"),
+            baseline_f1_macro=("baseline_f1_macro", "mean"),
+        )
+        .reset_index()
+    )
+    card.insert(4, "role", np.where(card["train"] == card["test"], "ceiling", "transfer"))
+
+    recovered = gap_table(df, MACRO_F1)[keys + ["recovered_pct"]]
+    card = card.merge(recovered, on=keys, how="left")
+    return card.round(4)
+
+
 def per_class_table(df: pd.DataFrame) -> pd.DataFrame:
     """Mean per-class F1 for every direction, plus the test support."""
     f1_cols = [f"f1__{c}" for c in SHARED_CLASSES if f"f1__{c}" in df.columns]
@@ -100,10 +156,12 @@ def main(argv: list[str] | None = None) -> int:
 
     leak = leakage_table(df, args.metric)
     gaps = gap_table(df, args.metric)
+    card = scorecard_table(df)
     per_class, support = per_class_table(df)
 
     leak.to_csv(run_dir / "summary_leakage.csv", index=False)
     gaps.to_csv(run_dir / "summary_gap.csv", index=False)
+    card.to_csv(run_dir / "summary_macro_f1.csv", index=False)
     per_class.to_csv(run_dir / "summary_per_class.csv", index=False)
     support.to_csv(run_dir / "summary_support.csv", index=False)
 
@@ -113,12 +171,15 @@ def main(argv: list[str] | None = None) -> int:
     print("\n=== transfer gap ===")
     print(gaps.sort_values(["mode", "train", "recovered_pct"],
                            ascending=[True, True, False]).to_string(index=False))
+    print("\n=== macro-F1 mean, sd and recovered percent, per cell ===")
+    print(card.sort_values(["mode", "train", "test", "f1_macro"],
+                           ascending=[True, True, True, False]).to_string(index=False))
     print("\n=== per-class F1 (transfer directions only) ===")
     tr = per_class[per_class.train != per_class.test]
     print(tr.to_string(index=False))
     print("\n=== test support ===")
     print(support.to_string(index=False))
-    print(f"\nwrote 4 summary CSVs to {run_dir}")
+    print(f"\nwrote 5 summary CSVs to {run_dir}")
     return 0
 
 
