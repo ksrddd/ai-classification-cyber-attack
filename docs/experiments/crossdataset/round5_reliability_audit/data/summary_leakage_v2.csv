@@ -1,0 +1,15 @@
+test,model,chronological,random,inflation
+ids2017,catboost,0.7161,0.9694,0.2534
+ids2017,lightgbm,0.7325,0.9775,0.245
+ids2017,logistic_regression,0.405,0.6107,0.2057
+ids2017,mlp,0.586,0.8744,0.2884
+ids2017,random_forest,0.6652,0.9566,0.2914
+ids2017,stacking,0.7219,0.9745,0.2526
+ids2017,xgboost,0.7172,0.9716,0.2545
+ids2018,catboost,0.848,0.859,0.0111
+ids2018,lightgbm,0.8596,0.8696,0.01
+ids2018,logistic_regression,0.7511,0.7775,0.0264
+ids2018,mlp,0.8228,0.8206,-0.0022
+ids2018,random_forest,0.8412,0.8624,0.0212
+ids2018,stacking,0.8283,0.8388,0.0106
+ids2018,xgboost,0.8539,0.8674,0.0135
