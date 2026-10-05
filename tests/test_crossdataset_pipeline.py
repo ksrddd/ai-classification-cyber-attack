@@ -197,18 +197,32 @@ def test_partitions_are_disjoint_and_complete(splitter: str) -> None:
         else chronological_split(y, order, seed=3)
     )
 
-    everything = np.concatenate([part.train, part.calibration, part.test])
+    everything = np.concatenate([part.train, part.test])
     assert sorted(everything.tolist()) == list(range(1000))
 
 
-def test_random_split_hits_the_sixty_ten_thirty_shape() -> None:
+@pytest.mark.parametrize("splitter", ["random", "chronological"])
+def test_split_hits_the_seventy_thirty_shape(splitter: str) -> None:
     y = pd.Series(["Benign"] * 1000)
 
-    part = random_split(y, seed=42)
+    part = (
+        random_split(y, seed=42)
+        if splitter == "random"
+        else chronological_split(y, pd.Series(range(1000)), seed=42)
+    )
 
-    assert len(part.train) == pytest.approx(600, abs=2)
-    assert len(part.calibration) == pytest.approx(100, abs=2)
+    assert len(part.train) == pytest.approx(700, abs=2)
     assert len(part.test) == pytest.approx(300, abs=2)
+    assert not hasattr(part, "calibration")
+
+
+def test_a_class_of_two_rows_still_reaches_test() -> None:
+    y = pd.Series(["Benign"] * 20 + ["Rare"] * 2)
+
+    part = random_split(y, seed=0)
+
+    assert "Rare" in set(y.iloc[part.train])
+    assert "Rare" in set(y.iloc[part.test])
 
 
 def test_random_split_varies_with_seed() -> None:

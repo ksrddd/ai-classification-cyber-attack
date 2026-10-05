@@ -1,7 +1,7 @@
 """Run the four train/test dataset combinations under the shared protocol.
 
 Protocol: 77 shared features, 7 shared classes, 300,000 rows per dataset,
-train 60 / calibration 10 / test 30, repeated over five seeds. Both split modes
+train 70 / test 30, repeated over five seeds. Both split modes
 are run -- ``random`` because it is the protocol's own and makes our numbers
 comparable with the advisor's, ``chronological`` because it is the one that does
 not let a model see the back half of an attack window while being scored on the
@@ -47,6 +47,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from src.crossdataset.labels import SHARED_CLASSES  # noqa: E402
 from src.crossdataset.loaders import Corpus, load_ids2017, load_ids2018  # noqa: E402
 from src.crossdataset.splits import (  # noqa: E402
+    TEST_FRAC,
+    TRAIN_FRAC,
     Partition,
     chronological_split,
     random_split,
@@ -228,6 +230,13 @@ def main(argv: list[str] | None = None) -> int:
 
     (out_dir / "corpora.json").write_text(
         json.dumps({k: v.as_dict() for k, v in corpora.items()}, indent=2),
+        encoding="utf-8",
+    )
+    (out_dir / "split.json").write_text(
+        json.dumps(
+            {"shape": f"{TRAIN_FRAC:.0%}/{TEST_FRAC:.0%}".replace("%", ""), "modes": args.modes},
+            indent=2,
+        ),
         encoding="utf-8",
     )
 

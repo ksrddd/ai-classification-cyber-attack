@@ -21,6 +21,7 @@ Three incompatible layouts exist in ``results/``:
         summary_per_class.csv        per-class F1 for all four combinations
         summary_support.csv          test rows per class, per corpus
         corpora.json                 what entered the run, per corpus
+        split.json                   train/test shape (absent = legacy 60/10/30)
 
     Audits (``results/crossdataset/<audit>/``)
         findings.json + ranking.csv  adversarial validation
@@ -523,6 +524,9 @@ def _load_crossdataset(bundle_id: str, path: Path) -> Bundle:
     leakage = _read_csv(path / "summary_leakage.csv")
     support = _read_csv(path / "summary_support.csv")
     corpora = _read_json(path / "corpora.json")
+    # Runs made before the calibration part was dropped carry no split.json and
+    # were all 60/10/30, so that is what an absent file means.
+    shape = _read_json(path / "split.json").get("shape") or "60/10/30"
 
     modes = sorted({str(r["mode"]) for r in gap if r.get("mode")})
     models = sorted({str(r["model"]) for r in gap if r.get("model")})
@@ -538,7 +542,7 @@ def _load_crossdataset(bundle_id: str, path: Path) -> Bundle:
         classes=classes,
         run={
             "run_name": path.name,
-            "split_protocol": "60/10/30, " + " + ".join(modes) if modes else None,
+            "split_protocol": f"{shape}, " + " + ".join(modes) if modes else None,
             "random_state": None,
             "n_train": None,
             "n_test": None,

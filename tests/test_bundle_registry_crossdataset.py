@@ -116,6 +116,18 @@ def test_underscore_runs_are_never_offered(tmp_path: Path, depth: str) -> None:
     assert _discover(tmp_path) == {}
 
 
+def test_split_shape_is_read_from_the_run_and_defaults_to_the_legacy_one(tmp_path: Path) -> None:
+    """A run without split.json predates the calibration part being dropped."""
+    path = _write_run(tmp_path)
+    legacy = load_bundle("crossdataset/protocol_v1", tmp_path).run["split_protocol"]
+    (path / "split.json").write_text(json.dumps({"shape": "70/30"}), encoding="utf-8")
+
+    current = load_bundle("crossdataset/protocol_v1", tmp_path).run["split_protocol"]
+
+    assert legacy.startswith("60/10/30")
+    assert current.startswith("70/30")
+
+
 def test_models_stays_empty(tmp_path: Path) -> None:
     """The central contract: no per-model metric row is invented.
 
