@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>Hyperparameters และ Preprocessing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 16mm 14mm 16mm 14mm; }
+  :root { --ink:#1b1f24; --muted:#5a6572; --line:#d5dbe1; --accent:#1f5f8b; --soft:#eef4f9; --warn:#fff5e0; --warnline:#e0a100; }
+  * { box-sizing: border-box; }
+  body { font-family: "Sarabun","Leelawadee UI","Tahoma",sans-serif; color: var(--ink); background:#fff; font-size: 10.5pt; line-height: 1.55; margin: 0; }
+  h1 { font-size: 19pt; margin: 0 0 2mm; color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 6mm; font-size: 10pt; }
+  h2 { font-size: 14pt; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 1mm; margin: 7mm 0 3mm; }
+  h3 { font-size: 11.5pt; margin: 4mm 0 1.5mm; }
+  code, pre { font-family: "JetBrains Mono", Consolas, monospace; font-size: 8.8pt; }
+  code { background: var(--soft); padding: 0 3px; border-radius: 3px; }
+  pre { background: var(--soft); padding: 3mm; border-radius: 4px; margin: 2mm 0; white-space: pre-wrap; }
+  ol, ul { margin: 1mm 0 2mm; padding-left: 6mm; }
+  li { margin: 0.6mm 0; }
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm; font-size: 9pt; page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  th, td { border: 1px solid var(--line); padding: 1.6mm 2mm; vertical-align: top; text-align: left; }
+  th { background: var(--accent); color: #fff; font-weight: 600; }
+  tbody tr:nth-child(even) td { background: #f7f9fb; }
+  td.best { background: #e8f5ec !important; font-weight: 600; }
+  .note { background: var(--warn); border-left: 4px solid var(--warnline); padding: 2.5mm 3.5mm; margin: 3mm 0; border-radius: 3px; }
+  .info { background: var(--soft); border-left: 4px solid var(--accent); padding: 2.5mm 3.5mm; margin: 3mm 0; border-radius: 3px; }
+  .src { color: var(--muted); font-size: 8.5pt; }
+  .keep { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<h1>สรุป Preprocessing และ Hyperparameters</h1>
+<p class="sub">AI Classification of Cyber Attacks — CICIDS2017 (2,497,980 แถว, 9 คลาส, temporal split 70/30)<br>
+อ้างอิงจากโค้ด <code>train.py</code> และผลรัน <code>results/cicids2017_temporal_v1/</code> · จัดทำ 28 ก.ย. 2026</p>
+
+<h2>1. Preprocessing</h2>
+
+<h3>1.1 การทำความสะอาดข้อมูล (ทำทีละไฟล์ CSV)</h3>
+<p class="src">ที่มา: <code>train.py</code> ฟังก์ชัน <code>_clean_one_frame</code></p>
+<ol>
+  <li>ตัดช่องว่างหน้า/หลังชื่อคอลัมน์ (ไฟล์ CICIDS2017 มีช่องว่างนำหน้าชื่อ)</li>
+  <li>บันทึก <code>_row_index</code> (ตำแหน่งแถวในไฟล์ CSV ดิบ) <b>ก่อน</b>ลบแถวใด ๆ เพื่อใช้เป็นตัวเรียงลำดับเวลาของ split</li>
+  <li>เปลี่ยนชื่อ <code>Fwd Pkts/s</code> → <code>Fwd Packets/s</code> และ <code>Bwd Pkts/s</code> → <code>Bwd Packets/s</code></li>
+  <li>ลบคอลัมน์ซ้ำ <code>Fwd Header Length.1</code></li>
+  <li>ลบคอลัมน์ที่ทำให้ข้อมูลรั่ว (ถ้ามี): <code>Flow ID</code>, <code>Source/Destination IP</code>, <code>Src/Dst IP</code>, <code>Source Port</code>, <code>Src Port</code>, <code>Timestamp</code></li>
+  <li>ลบคอลัมน์ <code>Protocol</code></li>
+  <li>ลบแถวที่เป็น header เสีย (ค่า label เท่ากับ <code>"Label"</code>)</li>
+  <li>แปลง label ด้วย <code>normalize_label</code> จาก 15 label ดิบ เหลือ 9 คลาส: BENIGN, DoS, DDoS, PortScan, Bot, Web Attack, Brute Force, Infiltration, Heartbleed — แถวที่แปลงได้ <code>Other</code> จะถูกลบ</li>
+  <li>บังคับทุก feature เป็นตัวเลข (<code>pd.to_numeric(errors="coerce")</code>) แล้วแปลงเป็น <code>float32</code></li>
+  <li>แปลงค่า <code>±Inf</code> เป็น <code>NaN</code> แล้วลบแถวที่มี NaN</li>
+</ol>
+
+<h3>1.2 หลังรวมทุกไฟล์</h3>
+<p class="src">ที่มา: <code>load_and_clean_cached</code></p>
+<ul>
+  <li>ตรวจว่ามีครบ 8 capture file — ถ้าขาดจะหยุดทำงาน เพราะแต่ละคลาสอยู่ในไฟล์เดียว ขาดไฟล์คือคลาสหายทั้งคลาส</li>
+  <li>เพิ่ม metadata <code>source_file</code>, <code>dataset_id</code>, <code>capture_window</code> (ไม่ป้อนเข้าโมเดล)</li>
+  <li>ลบแถวที่ซ้ำกันทุกคอลัมน์ข้ามไฟล์ (ไม่นับคอลัมน์ metadata)</li>
+  <li>cache ไว้ที่ <code>data/processed/cicids2017_clean.parquet</code> (2,497,980 แถว)</li>
+</ul>
+
+<h3>1.3 การแบ่ง Train / Test</h3>
+<ul>
+  <li>ตรวจลำดับเวลาของ <code>_row_index</code> เทียบกับตารางโจมตีที่ CIC เผยแพร่ (<code>validate_capture_chronology</code>)</li>
+  <li>แบ่งตามเวลา <b>70/30 ภายในแต่ละกลุ่ม (ไฟล์, คลาส)</b> (<code>temporal_source_split</code>) โดยทุกคลาสมีอย่างน้อย 3 แถวใน test (<code>min_test_per_class=3</code>)</li>
+  <li>ตรวจจำนวนแถวต่อคลาสเทียบกับ manifest <code>configs/splits/cicids2017_temporal_70_30.json</code> — ไม่ตรงจะหยุดทำงาน</li>
+  <li>ไม่มีชุด calibration (<code>threshold_validation_size = 0.0</code>)</li>
+  <li><code>LabelEncoder</code> เข้ารหัส label หลังแบ่งข้อมูลแล้ว</li>
+</ul>
+
+<div class="keep">
+<h3>1.4 Pipeline ภายในโมเดล</h3>
+<p>ทุกโมเดลใช้โครงเดียวกัน และ fit ใหม่ทุก CV fold จึงไม่มีข้อมูลรั่วจาก test/validation</p>
+<pre>SimpleImputer(strategy="median") → StandardScaler() → [sampler ถ้าเลือก] → classifier</pre>
+</div>
+
+<h3>1.5 การจัดการคลาสไม่สมดุล</h3>
+<p>ค่าเริ่มต้น <code>imbalance_strategy = "class_weight"</code> ใช้กับทุกโมเดลเหมือนกัน:</p>
+<table>
+  <thead><tr><th style="width:38%">โมเดล</th><th>วิธีถ่วงน้ำหนัก</th></tr></thead>
+  <tbody>
+    <tr><td>Random Forest</td><td><code>class_weight="balanced_subsample"</code></td></tr>
+    <tr><td>LightGBM, Logistic Regression, meta-learner ของ Stacking</td><td><code>class_weight="balanced"</code></td></tr>
+    <tr><td>CatBoost</td><td><code>auto_class_weights="Balanced"</code></td></tr>
+    <tr><td>XGBoost, MLP</td><td>ไม่มีพารามิเตอร์นี้ จึงใช้ wrapper <code>BalancedXGBClassifier</code> / <code>BalancedMLPClassifier</code> ที่คำนวณ <code>compute_sample_weight("balanced")</code> ภายในแต่ละ fold</td></tr>
+  </tbody>
+</table>
+<p>ทางเลือกอื่น: <code>targeted</code>, <code>random_over</code>, <code>borderline_smote</code>, <code>smoteenn</code> (k_neighbors=5) — รันภายใน pipeline</p>
+
+<div class="note"><b>ข้อสังเกต:</b> <code>subsample_n</code> ใน CONFIG และใน preset ถูกอ่านไปใช้แค่ในโหมด <code>--smoke</code> และในรายงานเท่านั้น ในเส้นทาง temporal ข้อมูลที่ใช้คือทั้ง corpus หลังทำความสะอาด โดยไม่มีการ subsample</div>
+
+<h2>2. การค้นหา Hyperparameter</h2>
+<table class="keep">
+  <thead><tr><th style="width:30%">รายการ</th><th>ค่า</th></tr></thead>
+  <tbody>
+    <tr><td>วิธี</td><td><code>RandomizedSearchCV</code>, <code>refit=False</code> แล้วนำ best params ไป fit ใหม่บน train ทั้งหมด</td></tr>
+    <tr><td>Objective</td><td><code>f1_macro</code> (ให้น้ำหนักทุกคลาสโจมตีเท่ากัน)</td></tr>
+    <tr><td>CV</td><td><code>StratifiedKFold(n_splits=5, shuffle=True, random_state=42)</code></td></tr>
+    <tr><td>ขนาด search space</td><td>144 ชุด เท่ากันทุกโมเดล (<code>HP_SEARCH_SPACE_SIZE</code>)</td></tr>
+    <tr><td>Preset <code>32gb</code> (ใช้ในรันนี้)</td><td><code>n_iter=20</code> (≈13.9% ของ space), HP subset 200,000 แถว, <code>n_jobs=2</code></td></tr>
+    <tr><td>HP subset</td><td>เก็บทุกแถวของคลาสที่มี ≤200 แถว ส่วนคลาสอื่นสุ่มตามสัดส่วน (<code>_hp_subset</code>)</td></tr>
+    <tr><td>ไม่ค้นหา</td><td><code>class_weight</code> และ <code>max_iter</code> (ตามกฎของโปรเจกต์)</td></tr>
+    <tr><td>Seed</td><td><code>random_state = 42</code> ทุกที่</td></tr>
+  </tbody>
+</table>
+
+<h2 style="page-break-before: always; margin-top: 0">3. Hyperparameters ต่อโมเดล</h2>
+<table>
+  <thead><tr><th style="width:13%">โมเดล</th><th style="width:25%">ค่าคงที่ (ไม่ได้ tune)</th><th style="width:36%">Search grid</th><th>Best (รัน temporal_v1)</th></tr></thead>
+  <tbody>
+    <tr><td><b>Random Forest</b></td><td>n_jobs=-1</td>
+      <td>n_estimators [200, 300, 400, 500]<br>max_depth [None, 20, 30, 40]<br>min_samples_split [2, 5, 10]<br>min_samples_leaf [1, 2, 4]</td>
+      <td class="best">n_estimators=300<br>max_depth=30<br>min_samples_split=2<br>min_samples_leaf=1</td></tr>
+    <tr><td><b>XGBoost</b></td><td>colsample_bytree=0.9, tree_method=hist, objective=multi:softprob, eval_metric=mlogloss, device=cuda</td>
+      <td>n_estimators [200, 400, 600, 800]<br>max_depth [6, 8, 10]<br>learning_rate [0.03, 0.05, 0.1, 0.15]<br>subsample [0.8, 0.9, 1.0]</td>
+      <td class="best">n_estimators=800<br>max_depth=10<br>learning_rate=0.05<br>subsample=0.8</td></tr>
+    <tr><td><b>LightGBM</b></td><td>feature_fraction=1.0, bagging_fraction=1.0, bagging_freq=0, min_split_gain=0, force_col_wise</td>
+      <td>n_estimators [400, 600, 800, 1000]<br>num_leaves [63, 127, 255]<br>learning_rate [0.03, 0.05, 0.1, 0.15]<br>min_child_samples [1, 2, 5]</td>
+      <td class="best">n_estimators=1000<br>num_leaves=127<br>learning_rate=0.1<br>min_child_samples=1</td></tr>
+    <tr><td><b>CatBoost</b></td><td>verbose=0, task_type=GPU</td>
+      <td>iterations [300, 400, 500, 600]<br>depth [6, 8, 10]<br>learning_rate [0.03, 0.05, 0.1, 0.15]<br>l2_leaf_reg [1, 3, 5]</td>
+      <td class="best">iterations=500<br>depth=6<br>learning_rate=0.15<br>l2_leaf_reg=1</td></tr>
+    <tr><td><b>MLP</b></td><td>activation=relu, solver=adam, max_iter=500, early_stopping (validation 0.1, patience 20)</td>
+      <td>hidden_layer_sizes [(128,64), (256,128,64), (256,128,64,32), (512,256,128)]<br>alpha [1e-5, 1e-4, 1e-3]<br>learning_rate_init [0.0005, 0.001, 0.003, 0.005]<br>batch_size [256, 512, 1024]</td>
+      <td class="best">hidden=(256,128,64,32)<br>alpha=1e-4<br>learning_rate_init=0.0005<br>batch_size=256</td></tr>
+    <tr><td><b>Logistic Regression</b></td><td>solver=lbfgs, max_iter=2000</td>
+      <td>C 24 ค่า (0.001 – 500)<br>tol [1e-4, 5e-4, 1e-3]<br>fit_intercept [True, False]</td>
+      <td class="best">C=300<br>tol=1e-4<br>fit_intercept=True</td></tr>
+    <tr><td><b>Stacking</b></td><td colspan="2">ไม่ tune — StackingClassifier ต้อง refit base estimator ทุกตัวต่อ 1 candidate จึงรายงานเป็น untuned แทนการให้งบค้นหาที่น้อยกว่าและไม่ยุติธรรม (<code>HP_UNTUNED_MODELS</code>)</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<div class="keep">
+<h3>รายละเอียด Stacking</h3>
+<table>
+  <thead><tr><th style="width:22%">ส่วนประกอบ</th><th>ค่า</th></tr></thead>
+  <tbody>
+    <tr><td>Base: LightGBM</td><td>n_estimators=300, num_leaves=63, learning_rate=0.05, feature_fraction=0.9, bagging_fraction=0.9, bagging_freq=5</td></tr>
+    <tr><td>Base: XGBoost</td><td>n_estimators=200, max_depth=8, learning_rate=0.1, subsample=0.9, colsample_bytree=0.9</td></tr>
+    <tr><td>Base: Random Forest</td><td>n_estimators=200</td></tr>
+    <tr><td>Meta-learner</td><td>LogisticRegression(C=1.0, solver=lbfgs, max_iter=1000)</td></tr>
+    <tr><td>การรวม</td><td>cv=5, stack_method="predict_proba", passthrough=False</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="keep">
+<h3>ค่าเริ่มต้นก่อน tune (ใน <code>build_pipeline</code>)</h3>
+<table>
+  <thead><tr><th style="width:22%">โมเดล</th><th>ค่าเริ่มต้น</th></tr></thead>
+  <tbody>
+    <tr><td>Random Forest</td><td>n_estimators=400, max_depth=None, min_samples_split=2</td></tr>
+    <tr><td>XGBoost</td><td>n_estimators=400, max_depth=8, learning_rate=0.1, subsample=0.9</td></tr>
+    <tr><td>LightGBM</td><td>n_estimators=600, num_leaves=127, learning_rate=0.05, min_child_samples=1</td></tr>
+    <tr><td>CatBoost</td><td>iterations=400, depth=8, learning_rate=0.05</td></tr>
+    <tr><td>MLP</td><td>hidden=(256,128,64), alpha=1e-4, learning_rate_init=0.001</td></tr>
+    <tr><td>Logistic Regression</td><td>C=1.0, tol=1e-3</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="info"><b>จุดที่ควรเขียนในรายงาน:</b> LightGBM ตั้ง <code>min_child_samples=1</code> และปิดการสุ่ม bagging ทั้งสองอย่างตั้งใจไว้ เพราะ Heartbleed มีแค่ 7–8 แถวใน train (1–2 แถวต่อ fold) ถ้าใช้ค่า default คือ 20 โมเดลจะสร้าง leaf ให้คลาสนี้ไม่ได้ และ CV เคยแกว่งเป็นสองกลุ่ม (bimodal: 0.18, 0.09, 0.99, 0.34, 0.99) ตามที่คอมเมนต์ในโค้ดบันทึกไว้</div>
+
+</body>
+</html>
