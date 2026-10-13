@@ -82,14 +82,20 @@ def clean(
     rows_in = len(df)
     out = df.copy()
 
-    numeric = out[feature_cols].apply(pd.to_numeric, errors="coerce")
-    non_finite_mask = ~np.isfinite(numeric.to_numpy(dtype="float64", na_value=np.nan))
-    non_finite_values = int(non_finite_mask.sum())
-    out[feature_cols] = numeric.replace([np.inf, -np.inf], np.nan)
+    # One column at a time: the same values as converting the whole block, but
+    # without a float64 copy of every feature at once (7 GB on 11.4M rows).
+    non_finite_values = 0
+    keep = np.ones(rows_in, dtype=bool)
+    for col in feature_cols:
+        numeric = pd.to_numeric(out[col], errors="coerce")
+        finite = np.isfinite(numeric.to_numpy(dtype="float64", na_value=np.nan))
+        non_finite_values += int((~finite).sum())
+        keep &= finite
+        out[col] = numeric if finite.all() else numeric.replace([np.inf, -np.inf], np.nan)
 
-    keep = ~out[feature_cols].isna().any(axis=1)
     rows_dropped_non_finite = int((~keep).sum())
-    out = out.loc[keep]
+    if rows_dropped_non_finite:
+        out = out.loc[keep]
 
     before_dedup = len(out)
     out = out.drop_duplicates(subset=[*feature_cols, label_col])

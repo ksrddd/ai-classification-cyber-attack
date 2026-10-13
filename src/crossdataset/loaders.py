@@ -121,7 +121,9 @@ def _finish(
     keep = mapped.notna().to_numpy()
     dropped_unmapped = int((~keep).sum())
 
-    work = frame.loc[keep, feature_cols].copy()
+    # Copy-on-write keeps frame safe either way; skipping the boolean take when
+    # every row is kept avoids a second full copy of the corpus.
+    work = frame[feature_cols] if keep.all() else frame.loc[keep, feature_cols]
     work[LABEL_COL] = mapped[keep].to_numpy()
     work["_order"] = order_key[keep].to_numpy()
     work["_group"] = group[keep].to_numpy()
@@ -248,12 +250,20 @@ def load_ids2018(
     ts = pd.to_datetime(df["Timestamp"], format="mixed", dayfirst=True, errors="coerce")
     if ts.isna().any():
         raise ValueError(f"{int(ts.isna().sum())} unparseable timestamp(s) in 2018")
+    labels = df[LABEL_COL].astype(str)
+    frame = to_canonical(df, "ids2018", keep_dst_port=keep_dst_port)
+    del df  # frees the Timestamp and Label strings; frame shares only the features
+    order_key = ts.astype("int64")
+    # same strings as ts.dt.date.astype(str), without one date object per row
+    day = ts.dt.normalize()
+    group = day.map({d: str(d.date()) for d in day.unique()})
+    del ts, day
     return _finish(
         "ids2018",
-        to_canonical(df, "ids2018", keep_dst_port=keep_dst_port),
-        df[LABEL_COL].astype(str),
-        ts.astype("int64"),
-        ts.dt.date.astype(str),
+        frame,
+        labels,
+        order_key,
+        group,
         "Timestamp",
         keep_dst_port=keep_dst_port,
         target=target,
