@@ -114,11 +114,34 @@ export async function getCompare(opts?: RequestInit) {
   return get<Record<string, ModelMetrics>>("/api/compare", opts ?? STATIC_OPTS);
 }
 
-export async function getShap(name: string) {
-  return get<{
-    overall: [string, number][];
-    per_class: Record<string, [string, number][]>;
-  }>(`/api/shap/${name}`);
+/** Without a bundle the API reads the published run. */
+/**
+ * `overall` / `per_class` are raw mean |SHAP| and exist in every payload. The
+ * rest comes only from class-stratified, multi-seed runs: share rows are
+ * [feature, mean share, sd share, in top 10 on every seed].
+ */
+export type ShapPayload = {
+  overall: [string, number][];
+  per_class: Record<string, [string, number][]>;
+  overall_share?: [string, number, number, boolean][];
+  per_class_share?: Record<string, [string, number, number, boolean][]>;
+  per_class_n?: Record<string, number>;
+  /** Rows available per class: locked test rows plus unseen raw-corpus rows. */
+  per_class_pool?: Record<string, { test: number; supplementary: number }>;
+  /** Mean probability the model gives a class on its own rows, and recall. */
+  per_class_confidence?: Record<string, { mean_proba: number; recall: number }>;
+  units?: string;
+  explainer?: string;
+  seeds?: number[];
+  stability?: {
+    overall: Record<string, number | null>;
+    per_class: Record<string, Record<string, number | null>>;
+  };
+};
+
+export async function getShap(name: string, bundle?: string) {
+  const query = bundle ? `?bundle=${encodeURIComponent(bundle)}` : "";
+  return get<ShapPayload>(`/api/shap/${name}${query}`);
 }
 
 export function figureUrl(filename: string) {

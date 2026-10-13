@@ -308,20 +308,27 @@ def get_run():
 # SHAP
 # ---------------------------------------------------------------------------
 
+def _shap_root(bundle: str | None) -> Path:
+    """SHAP directory of the picked bundle, or of the published run without one."""
+    if bundle is None:
+        return published_run_dir() / "shap"
+    return load_bundle(_resolve(bundle)).path / "shap"
+
+
 @app.get("/api/shap/{name}")
-def get_shap(name: str):
+def get_shap(name: str, bundle: str | None = None):
     name = _safe_component(name)
-    p = published_run_dir() / "shap" / name / "top_features.json"
+    p = _shap_root(bundle) / name / "top_features.json"
     if not p.exists():
         raise HTTPException(404, f"No SHAP for {name}")
     return json.loads(p.read_text())
 
 
 @app.get("/api/shap/{name}/figures/{filename}")
-def get_shap_figure(name: str, filename: str):
+def get_shap_figure(name: str, filename: str, bundle: str | None = None):
     name = _safe_component(name)
     filename = _safe_component(filename)
-    p = published_run_dir() / "shap" / name / filename
+    p = _shap_root(bundle) / name / filename
     if not p.exists():
         raise HTTPException(404, f"No SHAP figure {filename} for {name}")
     return FileResponse(str(p))
