@@ -79,86 +79,92 @@
     "lightgbm": {
       "consensus": {
         "overall": "not supported",
-        "n_eligible": 2,
+        "n_eligible": 4,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
-          "ids2018->ids2017 DoS": "not supported"
+          "ids2017->ids2018 Brute Force": "not supported",
+          "ids2018->ids2017 DoS": "not supported",
+          "ids2018->ids2017 Bot": "not supported"
         }
       },
       "shap": {
         "overall": "not supported",
-        "n_eligible": 2,
+        "n_eligible": 4,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
-          "ids2018->ids2017 DoS": "not supported"
+          "ids2017->ids2018 Brute Force": "not supported",
+          "ids2018->ids2017 DoS": "not supported",
+          "ids2018->ids2017 Bot": "not supported"
         }
       },
       "perm": {
         "overall": "not supported",
-        "n_eligible": 2,
+        "n_eligible": 4,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
-          "ids2018->ids2017 DoS": "not supported"
+          "ids2017->ids2018 Brute Force": "not supported",
+          "ids2018->ids2017 DoS": "not supported",
+          "ids2018->ids2017 Bot": "not supported"
         }
       },
-      "minutes": 4.1
+      "minutes": 0.0
     },
     "xgboost": {
       "consensus": {
         "overall": "not supported",
-        "n_eligible": 2,
+        "n_eligible": 3,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DDoS": "not supported",
           "ids2018->ids2017 DoS": "not supported"
         }
       },
       "shap": {
         "overall": "not supported",
-        "n_eligible": 2,
+        "n_eligible": 3,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DDoS": "not supported",
           "ids2018->ids2017 DoS": "not supported"
         }
       },
       "perm": {
         "overall": "not supported",
-        "n_eligible": 2,
+        "n_eligible": 3,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
+          "ids2018->ids2017 DDoS": "not supported",
           "ids2018->ids2017 DoS": "not supported"
         }
       },
-      "minutes": 4.4
+      "minutes": 0.0
     },
     "catboost": {
       "consensus": {
         "overall": "not supported",
-        "n_eligible": 3,
+        "n_eligible": 2,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
-          "ids2018->ids2017 DoS": "not supported",
-          "ids2018->ids2017 Brute Force": "not supported"
+          "ids2018->ids2017 DoS": "not supported"
         }
       },
       "shap": {
         "overall": "not supported",
-        "n_eligible": 3,
+        "n_eligible": 2,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
-          "ids2018->ids2017 DoS": "not supported",
-          "ids2018->ids2017 Brute Force": "not supported"
+          "ids2018->ids2017 DoS": "not supported"
         }
       },
       "perm": {
         "overall": "not supported",
-        "n_eligible": 3,
+        "n_eligible": 2,
         "per_cell": {
           "ids2017->ids2018 DoS": "not supported",
-          "ids2018->ids2017 DoS": "not supported",
-          "ids2018->ids2017 Brute Force": "not supported"
+          "ids2018->ids2017 DoS": "not supported"
         }
       },
-      "minutes": 15.6
+      "minutes": 0.0
     },
     "random_forest": {
       "consensus": {
@@ -185,7 +191,7 @@
           "ids2018->ids2017 DoS": "not supported"
         }
       },
-      "minutes": 70.5
+      "minutes": 0.0
     }
   }
 }

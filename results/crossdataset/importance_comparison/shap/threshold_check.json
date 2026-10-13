@@ -4,12 +4,12 @@
     "5": {
       "dataset_side_agreement": 0.8,
       "lightgbm": {
-        "kappa": 0.524,
-        "attack_side_agreement": 0.95
+        "kappa": 0.495,
+        "attack_side_agreement": 0.933
       },
       "logistic_regression": {
-        "kappa": 0.486,
-        "attack_side_agreement": 0.85
+        "kappa": 0.458,
+        "attack_side_agreement": 0.817
       }
     },
     "10": {

@@ -1,0 +1,179 @@
+== ids2017_to_ids2018_seed42.log
+05:18:40 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:18:40 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:18:51 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:18:51 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:18:51 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:19:04 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:20:33 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:20:33 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:20:34 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:20:34 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:20:34 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:20:34 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:20:35 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:20:35 Preprocessor fitted: 69 features, scaler=standard
+05:21:16   random_forest ids2017->ids2018 seed 42 done (41s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+05:21:16 job done: ids2017->ids2018 seed 42 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2017_to_ids2018_seed42.joblib
+
+== ids2017_to_ids2018_seed43.log
+05:21:41 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:21:41 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:21:52 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:21:52 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:21:52 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:22:05 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:23:27 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:23:27 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:23:28 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:23:28 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:23:28 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:23:29 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:23:29 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:23:29 Preprocessor fitted: 69 features, scaler=standard
+05:24:07   random_forest ids2017->ids2018 seed 43 done (38s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+05:24:07 job done: ids2017->ids2018 seed 43 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2017_to_ids2018_seed43.joblib
+
+== ids2017_to_ids2018_seed44.log
+05:24:41 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:24:41 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:24:51 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:24:51 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:24:51 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:25:04 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:26:25 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:26:25 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:26:26 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:26:26 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:26:26 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:26:26 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:26:27 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:26:27 Preprocessor fitted: 69 features, scaler=standard
+05:27:05   random_forest ids2017->ids2018 seed 44 done (39s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+05:27:05 job done: ids2017->ids2018 seed 44 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2017_to_ids2018_seed44.joblib
+
+== ids2017_to_ids2018_seed45.log
+05:27:40 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:27:41 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:27:51 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:27:51 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:27:51 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:28:04 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:29:26 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:29:26 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:29:27 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:29:27 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:29:28 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:29:28 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:29:28 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:29:28 Preprocessor fitted: 69 features, scaler=standard
+05:30:07   random_forest ids2017->ids2018 seed 45 done (39s, caught in target {'DDoS': 0, 'DoS': 242, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+05:30:07 job done: ids2017->ids2018 seed 45 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2017_to_ids2018_seed45.joblib
+
+== ids2017_to_ids2018_seed46.log
+05:30:41 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:30:41 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:30:51 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:30:52 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:30:52 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:31:04 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:32:27 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:32:27 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:32:28 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:32:28 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:32:28 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:32:28 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:32:28 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:32:29 Preprocessor fitted: 69 features, scaler=standard
+05:33:07   random_forest ids2017->ids2018 seed 46 done (39s, caught in target {'DDoS': 0, 'DoS': 240, 'Brute Force': 0, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 0})
+05:33:07 job done: ids2017->ids2018 seed 46 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2017_to_ids2018_seed46.joblib
+
+== ids2018_to_ids2017_seed42.log
+05:03:49 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:03:49 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:04:01 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:04:01 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:04:01 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:04:14 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:05:45 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:05:45 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:05:46 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:05:46 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:05:46 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:05:46 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:05:47 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:05:47 Preprocessor fitted: 69 features, scaler=standard
+05:16:43   random_forest ids2018->ids2017 seed 42 done (656s, caught in target {'DDoS': 3, 'DoS': 947, 'Brute Force': 5, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 25})
+05:16:43 job done: ids2018->ids2017 seed 42 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2018_to_ids2017_seed42.joblib
+
+== ids2018_to_ids2017_seed43.log
+05:06:41 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:06:42 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:06:53 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:06:53 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:06:53 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:07:06 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:08:35 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:08:35 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:08:36 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:08:36 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:08:36 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:08:36 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:08:37 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:08:37 Preprocessor fitted: 69 features, scaler=standard
+05:15:10   random_forest ids2018->ids2017 seed 43 done (394s, caught in target {'DDoS': 3, 'DoS': 526, 'Brute Force': 5, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 25})
+05:15:10 job done: ids2018->ids2017 seed 43 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2018_to_ids2017_seed43.joblib
+
+== ids2018_to_ids2017_seed44.log
+05:09:41 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:09:41 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:09:53 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:09:53 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:09:53 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:10:06 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:11:37 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:11:37 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:11:38 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:11:38 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:11:39 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:11:39 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:11:39 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:11:39 Preprocessor fitted: 69 features, scaler=standard
+05:21:37   random_forest ids2018->ids2017 seed 44 done (598s, caught in target {'DDoS': 3, 'DoS': 894, 'Brute Force': 5, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 27})
+05:21:37 job done: ids2018->ids2017 seed 44 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2018_to_ids2017_seed44.joblib
+
+== ids2018_to_ids2017_seed45.log
+05:57:40 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+05:57:40 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+05:57:51 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+05:57:51 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:57:51 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+05:58:03 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+05:59:29 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+05:59:29 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+05:59:30 sampled 300000 rows (target 300000) across 7 classes with seed 42
+05:59:30 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+05:59:30 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+05:59:30 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+05:59:31 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+05:59:31 Preprocessor fitted: 69 features, scaler=standard
+06:07:50   random_forest ids2018->ids2017 seed 45 done (500s, caught in target {'DDoS': 3, 'DoS': 787, 'Brute Force': 5, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 23})
+06:07:50 job done: ids2018->ids2017 seed 45 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2018_to_ids2017_seed45.joblib
+
+== ids2018_to_ids2017_seed46.log
+14:26:43 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+14:26:43 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+14:26:53 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+14:26:54 sampled 300000 rows (target 300000) across 7 classes with seed 42
+14:26:54 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+14:27:06 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+14:28:29 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+14:28:29 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+14:28:30 sampled 300000 rows (target 300000) across 7 classes with seed 42
+14:28:31 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+14:28:31 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+14:28:31 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+14:28:31 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+14:28:31 Preprocessor fitted: 69 features, scaler=standard
+14:35:41   random_forest ids2018->ids2017 seed 46 done (430s, caught in target {'DDoS': 3, 'DoS': 680, 'Brute Force': 5, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 27})
+14:35:41 job done: ids2018->ids2017 seed 46 -> C:\Users\petgo\AppData\Local\Temp\claude\D--Projects-Senior-Project-ai-classification-cyber-attack\e9ec9802-c256-4a55-b38e-9e25e1caf042\scratchpad\par\wt_rf_jobs\ids2018_to_ids2017_seed46.joblib

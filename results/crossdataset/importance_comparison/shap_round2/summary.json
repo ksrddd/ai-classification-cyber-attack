@@ -81,6 +81,7 @@
       "per_class": {
         "DDoS": "not supported",
         "DoS": "not supported",
+        "Brute Force": "not supported",
         "Web Attack": "not supported"
       }
     },
@@ -89,6 +90,7 @@
       "per_class": {
         "DDoS": "not supported",
         "DoS": "not supported",
+        "Brute Force": "not supported",
         "Web Attack": "not supported"
       }
     },
@@ -97,9 +99,10 @@
       "per_class": {
         "DDoS": "not supported",
         "DoS": "not supported",
+        "Brute Force": "not supported",
         "Web Attack": "not supported"
       }
     }
   },
-  "minutes": 8.6
+  "minutes": 12.9
 }

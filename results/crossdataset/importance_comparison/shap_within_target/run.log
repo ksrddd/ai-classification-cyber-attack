@@ -189,3 +189,9 @@
 20:33:42   random_forest ids2018->ids2017 seed 46 done (1612s, caught in target {'DDoS': 3, 'DoS': 880, 'Brute Force': 7, 'Bot': 0, 'Infiltration': 0, 'Web Attack': 27})
 20:33:48 random_forest: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
 20:33:48 done -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_within_target
+14:36:56 pre-registration sha256 3d09753576ce9527f8569d8851937b874ccb2e159996c90d4d7b9c69933c2347
+14:36:58 lightgbm: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+14:37:00 xgboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+14:37:02 catboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+14:37:04 random_forest: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+14:37:04 done -> D:\Projects\Senior Project\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_within_target

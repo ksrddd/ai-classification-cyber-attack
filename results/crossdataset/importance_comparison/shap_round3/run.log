@@ -224,3 +224,77 @@
 06:56:35 Part B random_forest: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
 06:56:35 round 3 overall (consensus): not supported {'xgboost': 'not supported', 'catboost': 'not supported', 'random_forest': 'not supported'}
 06:56:35 done in 321.6 min -> C:\Users\ks\Documents\GitHub\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_round3
+15:29:03 pre-registration sha256 75665718988da1df11133b1e40a23dcac64d606dfcb057084f207cdb38f05016
+15:29:04 models ['random_forest', 'xgboost', 'catboost'] | seeds [42, 43, 44, 45, 46] | feature sets {'consensus': 13, 'shap': 26, 'perm': 18}
+15:29:05 ids2017 -> canonical schema: 77 feature(s), Destination Port kept
+15:29:05 ids2017: dropping 90705 row(s) in 2 unmapped class(es): Heartbleed, PortScan
+15:29:22 clean: 2407275 -> 2407275 rows (100.00% kept); dropped 0 non-finite, 0 duplicate
+15:29:22 sampled 300000 rows (target 300000) across 7 classes with seed 42
+15:29:22 ids2017 ready: {'name': 'ids2017', 'n_rows': 300000, 'n_features': 77, 'order_basis': '_row_index', 'dropped_unmapped_rows': 90705, 'cleaning': {'rows_in': 2407275, 'rows_out': 2407275, 'rows_dropped': 0, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 0, 'kept_fraction': 1.0}, 'class_counts': {'Benign': 248188, 'DoS': 23203, 'DDoS': 15332, 'Brute Force': 9150, 'Web Attack': 2143, 'Bot': 1948, 'Infiltration': 36}}
+15:29:42 ids2018 -> canonical schema: 77 feature(s), Destination Port kept
+15:32:43 clean: 11445955 -> 11445942 rows (100.00% kept); dropped 0 non-finite, 13 duplicate
+15:32:43 ids2018: 13 row(s) became duplicates once labels collapsed to the shared seven
+15:32:45 sampled 300000 rows (target 300000) across 7 classes with seed 42
+15:32:45 ids2018 ready: {'name': 'ids2018', 'n_rows': 300000, 'n_features': 77, 'order_basis': 'Timestamp', 'dropped_unmapped_rows': 0, 'cleaning': {'rows_in': 11445955, 'rows_out': 11445942, 'rows_dropped': 13, 'non_finite_values': 0, 'rows_dropped_non_finite': 0, 'rows_dropped_duplicate': 13, 'kept_fraction': 0.999999}, 'class_counts': {'Benign': 263858, 'DDoS': 20272, 'DoS': 5132, 'Bot': 3778, 'Infiltration': 3642, 'Brute Force': 2459, 'Web Attack': 859}}
+15:32:45 rows: 2017 300000, 2018 300000
+15:32:45 Part A: random_forest
+15:32:47 Preprocessor fitted: 60 features, scaler=standard
+15:38:22   attack side random_forest        ids2017  seed 42 done (SHAP 313s)
+15:38:23 Preprocessor fitted: 60 features, scaler=standard
+15:43:10   attack side random_forest        ids2017  seed 43 done (SHAP 267s)
+15:43:11 Preprocessor fitted: 60 features, scaler=standard
+15:46:38   attack side random_forest        ids2017  seed 44 done (SHAP 187s)
+15:46:38 Preprocessor fitted: 60 features, scaler=standard
+15:50:13   attack side random_forest        ids2017  seed 45 done (SHAP 191s)
+15:50:14 Preprocessor fitted: 60 features, scaler=standard
+15:53:38   attack side random_forest        ids2017  seed 46 done (SHAP 184s)
+15:53:39 Preprocessor fitted: 60 features, scaler=standard
+16:12:42   attack side random_forest        ids2018  seed 42 done (SHAP 1116s)
+16:12:43 Preprocessor fitted: 60 features, scaler=standard
+16:32:31   attack side random_forest        ids2018  seed 43 done (SHAP 1151s)
+16:32:32 Preprocessor fitted: 60 features, scaler=standard
+16:52:08   attack side random_forest        ids2018  seed 44 done (SHAP 1147s)
+16:52:09 Preprocessor fitted: 60 features, scaler=standard
+17:16:07   attack side random_forest        ids2018  seed 45 done (SHAP 1406s)
+17:16:07 Preprocessor fitted: 60 features, scaler=standard
+17:35:37   attack side random_forest        ids2018  seed 46 done (SHAP 1142s)
+17:35:37 Part A random_forest: kappa vs LightGBM 0.626, spearman {'ids2017': 0.6993, 'ids2018': 0.8187}
+17:35:37 Part B: random_forest
+17:35:37 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210000, 'n_test': 90000}
+17:35:37 chronological split: {'mode': 'chronological', 'seed': 0, 'n_train': 210003, 'n_test': 89997}
+17:35:37 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+17:35:38 Preprocessor fitted: 69 features, scaler=standard
+17:46:34   random_forest 2017->2018 seed 42 done (657s, 10600 missed attacks)
+17:46:35 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+17:46:35 Preprocessor fitted: 69 features, scaler=standard
+17:57:21   random_forest 2017->2018 seed 43 done (647s, 10600 missed attacks)
+17:57:22 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+17:57:22 Preprocessor fitted: 69 features, scaler=standard
+18:08:21   random_forest 2017->2018 seed 44 done (660s, 10600 missed attacks)
+18:08:22 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:08:22 Preprocessor fitted: 69 features, scaler=standard
+18:19:07   random_forest 2017->2018 seed 45 done (645s, 10598 missed attacks)
+18:19:08 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:19:08 Preprocessor fitted: 69 features, scaler=standard
+18:29:50   random_forest 2017->2018 seed 46 done (643s, 10600 missed attacks)
+18:29:51 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+18:29:51 Preprocessor fitted: 69 features, scaler=standard
+19:53:19   random_forest 2018->2017 seed 42 done (5009s, 8963 missed attacks)
+19:53:20 Dropping 8 uninformative column(s) (all-NaN or constant on train): Bwd Avg Bulk Rate, Bwd Avg Bytes/Bulk, Bwd Avg Packets/Bulk, Bwd PSH Flags, Bwd URG Flags, Fwd Avg Bulk Rate, Fwd Avg Bytes/Bulk, Fwd Avg Packets/Bulk
+19:53:20 Preprocessor fitted: 69 features, scaler=standard
+14:36:44 pre-registration sha256 75665718988da1df11133b1e40a23dcac64d606dfcb057084f207cdb38f05016
+14:36:44 models ['random_forest', 'xgboost', 'catboost'] | seeds [42, 43, 44, 45, 46] | feature sets {'consensus': 13, 'shap': 26, 'perm': 18}
+14:36:44 Part A random_forest: kappa vs LightGBM 0.626, spearman {'ids2017': 0.6993, 'ids2018': 0.8187}
+14:36:44 Part A random_forest rebuilt from part_a_roles.csv
+14:36:44 loaded 20 SHAP blocks from D:\Projects\Senior Project\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_round3\blocks_random_forest.joblib
+14:36:47 Part B random_forest: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+14:36:47 Part A xgboost: kappa vs LightGBM 0.876, spearman {'ids2017': 0.8847, 'ids2018': 0.9055}
+14:36:47 Part A xgboost rebuilt from part_a_roles.csv
+14:36:48 loaded 20 SHAP blocks from D:\Projects\Senior Project\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_round3\blocks_xgboost.joblib
+14:36:50 Part B xgboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+14:36:50 Part A catboost: kappa vs LightGBM 0.770, spearman {'ids2017': 0.8662, 'ids2018': 0.8566}
+14:36:50 Part A catboost rebuilt from part_a_roles.csv
+14:36:50 loaded 20 SHAP blocks from D:\Projects\Senior Project\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_round3\blocks_catboost.joblib
+14:36:53 Part B catboost: {'consensus': 'not supported', 'shap': 'not supported', 'perm': 'not supported'}
+14:36:53 round 3 overall (consensus): not supported {'random_forest': 'not supported', 'xgboost': 'not supported', 'catboost': 'not supported'}
+14:36:53 done in 0.1 min -> D:\Projects\Senior Project\ai-classification-cyber-attack\results\crossdataset\importance_comparison\shap_round3

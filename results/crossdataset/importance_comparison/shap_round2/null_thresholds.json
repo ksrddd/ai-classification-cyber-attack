@@ -1,7 +1,7 @@
 {
   "note": "descriptive only; verdicts come from null_test.csv (2,000 draws, seed 2026)",
   "direction": "ids2017->ids2018",
-  "decision_quantile": 0.9833333333333333,
+  "decision_quantile": 0.9875,
   "seed": 2027,
   "tolerance": 0.002,
   "history": [
@@ -11,27 +11,27 @@
     },
     {
       "draws": 5000,
-      "max_change": 0.00833926942597868
+      "max_change": 0.0088224405178573
     },
     {
       "draws": 10000,
-      "max_change": 0.0072500272855239856
+      "max_change": 0.007133088885197536
     },
     {
       "draws": 20000,
-      "max_change": 0.007823475284748138
+      "max_change": 0.00665049672565049
     },
     {
       "draws": 50000,
-      "max_change": 0.003128809651530784
+      "max_change": 0.003368558160358359
     },
     {
       "draws": 100000,
-      "max_change": 0.0030368513360371496
+      "max_change": 0.0023178273045675046
     },
     {
       "draws": 200000,
-      "max_change": 0.0012737676897779937
+      "max_change": 0.0031252866808941238
     }
   ]
 }

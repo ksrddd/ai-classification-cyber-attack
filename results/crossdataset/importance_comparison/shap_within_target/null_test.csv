@@ -1,145 +1,145 @@
 model,set,set_size,direction,class,min_missed,min_caught_tgt,eligible,G_within,G_old,G_dataset,null_mean,null_95,p
-lightgbm,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,-0.021,,,,
-lightgbm,consensus,13,ids2017->ids2018,DoS,1256,275,True,-0.1293,0.0663,0.1956,-0.002,0.146,0.901
-lightgbm,consensus,13,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-lightgbm,consensus,13,ids2017->ids2018,Bot,8,0,False,,-0.0114,,,,
-lightgbm,consensus,13,ids2017->ids2018,Infiltration,1092,0,False,,0.0089,,,,
-lightgbm,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,-0.0122,,,,
-lightgbm,consensus,13,ids2018->ids2017,DDoS,4467,2,False,-0.1516,0.1897,0.3413,0.0044,0.2194,0.8666
-lightgbm,consensus,13,ids2018->ids2017,DoS,3920,1113,True,-0.0428,0.0353,0.0782,0.0036,0.167,0.7041
-lightgbm,consensus,13,ids2018->ids2017,Brute Force,18,2280,False,0.0131,0.0156,0.0025,-0.0001,0.0573,0.3878
-lightgbm,consensus,13,ids2018->ids2017,Bot,75,451,False,-0.0548,0.3077,0.3625,0.0013,0.0865,0.8321
-lightgbm,consensus,13,ids2018->ids2017,Infiltration,10,0,False,,-0.006,,,,
-lightgbm,consensus,13,ids2018->ids2017,Web Attack,595,25,False,0.072,0.2583,0.1863,-0.0042,0.2493,0.3168
-lightgbm,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.1385,,,,
-lightgbm,shap,26,ids2017->ids2018,DoS,1256,275,True,0.0872,0.1348,0.0476,-0.0,0.1825,0.2309
-lightgbm,shap,26,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-lightgbm,shap,26,ids2017->ids2018,Bot,8,0,False,,0.0497,,,,
-lightgbm,shap,26,ids2017->ids2018,Infiltration,1092,0,False,,0.2235,,,,
-lightgbm,shap,26,ids2017->ids2018,Web Attack,257,0,False,,-0.0543,,,,
-lightgbm,shap,26,ids2018->ids2017,DDoS,4467,2,False,-0.0961,0.3413,0.4374,-0.0055,0.2607,0.6972
-lightgbm,shap,26,ids2018->ids2017,DoS,3920,1113,True,0.065,0.0997,0.0347,-0.004,0.2003,0.3123
-lightgbm,shap,26,ids2018->ids2017,Brute Force,18,2280,False,-0.0127,0.0244,0.0372,0.0009,0.0764,0.6132
-lightgbm,shap,26,ids2018->ids2017,Bot,75,451,False,-0.0115,0.1231,0.1345,0.0003,0.1104,0.5617
-lightgbm,shap,26,ids2018->ids2017,Infiltration,10,0,False,,-0.0607,,,,
-lightgbm,shap,26,ids2018->ids2017,Web Attack,595,25,False,-0.0132,0.2179,0.231,0.0009,0.3115,0.5327
-lightgbm,perm,18,ids2017->ids2018,DDoS,6081,0,False,,-0.0759,,,,
-lightgbm,perm,18,ids2017->ids2018,DoS,1256,275,True,-0.1583,0.0541,0.2124,0.0021,0.1663,0.9355
-lightgbm,perm,18,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-lightgbm,perm,18,ids2017->ids2018,Bot,8,0,False,,-0.0653,,,,
-lightgbm,perm,18,ids2017->ids2018,Infiltration,1092,0,False,,0.0001,,,,
-lightgbm,perm,18,ids2017->ids2018,Web Attack,257,0,False,,-0.0984,,,,
-lightgbm,perm,18,ids2018->ids2017,DDoS,4467,2,False,-0.1452,0.1967,0.3418,0.0018,0.2422,0.8266
-lightgbm,perm,18,ids2018->ids2017,DoS,3920,1113,True,-0.0439,-0.032,0.0119,0.0004,0.1779,0.6667
-lightgbm,perm,18,ids2018->ids2017,Brute Force,18,2280,False,-0.0139,0.1082,0.1221,-0.0014,0.0664,0.6277
-lightgbm,perm,18,ids2018->ids2017,Bot,75,451,False,-0.0258,0.3016,0.3274,0.0003,0.0962,0.6732
-lightgbm,perm,18,ids2018->ids2017,Infiltration,10,0,False,,0.1107,,,,
-lightgbm,perm,18,ids2018->ids2017,Web Attack,595,25,False,-0.008,0.1775,0.1855,0.0003,0.2699,0.5332
-xgboost,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,-0.0737,,,,
-xgboost,consensus,13,ids2017->ids2018,DoS,1274,238,True,-0.0872,0.0968,0.184,0.0007,0.1357,0.8156
-xgboost,consensus,13,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-xgboost,consensus,13,ids2017->ids2018,Bot,64,0,False,,-0.074,,,,
-xgboost,consensus,13,ids2017->ids2018,Infiltration,1093,0,False,,0.082,,,,
-xgboost,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,-0.0118,,,,
-xgboost,consensus,13,ids2018->ids2017,DDoS,4360,18,False,-0.0666,0.1028,0.1694,-0.0002,0.1269,0.8271
-xgboost,consensus,13,ids2018->ids2017,DoS,1721,1479,True,0.0241,0.0392,0.0151,-0.0,0.041,0.1599
-xgboost,consensus,13,ids2018->ids2017,Brute Force,21,111,False,0.1263,0.2113,0.085,-0.0009,0.117,0.0355
-xgboost,consensus,13,ids2018->ids2017,Bot,584,0,False,,0.2248,,,,
-xgboost,consensus,13,ids2018->ids2017,Infiltration,10,0,False,,-0.0743,,,,
-xgboost,consensus,13,ids2018->ids2017,Web Attack,594,15,False,0.0477,0.1693,0.1215,-0.0001,0.1614,0.3058
-xgboost,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.1384,,,,
-xgboost,shap,26,ids2017->ids2018,DoS,1274,238,True,0.0897,0.1823,0.0926,-0.0033,0.1776,0.2114
-xgboost,shap,26,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-xgboost,shap,26,ids2017->ids2018,Bot,64,0,False,,0.0156,,,,
-xgboost,shap,26,ids2017->ids2018,Infiltration,1093,0,False,,0.2225,,,,
-xgboost,shap,26,ids2017->ids2018,Web Attack,257,0,False,,0.0198,,,,
-xgboost,shap,26,ids2018->ids2017,DDoS,4360,18,False,-0.1507,0.1735,0.3242,-0.0017,0.1453,0.9585
-xgboost,shap,26,ids2018->ids2017,DoS,1721,1479,True,0.013,0.0232,0.0102,0.0003,0.0454,0.3438
-xgboost,shap,26,ids2018->ids2017,Brute Force,21,111,False,0.0121,0.1637,0.1516,0.001,0.1256,0.4413
-xgboost,shap,26,ids2018->ids2017,Bot,584,0,False,,0.2245,,,,
-xgboost,shap,26,ids2018->ids2017,Infiltration,10,0,False,,-0.0863,,,,
-xgboost,shap,26,ids2018->ids2017,Web Attack,594,15,False,0.0041,0.1037,0.0995,-0.0032,0.2013,0.4653
-xgboost,perm,18,ids2017->ids2018,DDoS,6081,0,False,,-0.1073,,,,
-xgboost,perm,18,ids2017->ids2018,DoS,1274,238,True,-0.077,0.0975,0.1745,-0.0015,0.1509,0.7636
-xgboost,perm,18,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-xgboost,perm,18,ids2017->ids2018,Bot,64,0,False,,-0.1001,,,,
-xgboost,perm,18,ids2017->ids2018,Infiltration,1093,0,False,,0.0721,,,,
-xgboost,perm,18,ids2017->ids2018,Web Attack,257,0,False,,-0.1161,,,,
-xgboost,perm,18,ids2018->ids2017,DDoS,4360,18,False,-0.0863,0.0883,0.1746,0.0008,0.1415,0.8631
-xgboost,perm,18,ids2018->ids2017,DoS,1721,1479,True,0.0225,0.032,0.0095,0.0004,0.044,0.2059
-xgboost,perm,18,ids2018->ids2017,Brute Force,21,111,False,0.1317,0.2185,0.0868,-0.0002,0.1268,0.0445
-xgboost,perm,18,ids2018->ids2017,Bot,584,0,False,,0.204,,,,
-xgboost,perm,18,ids2018->ids2017,Infiltration,10,0,False,,-0.0365,,,,
-xgboost,perm,18,ids2018->ids2017,Web Attack,594,15,False,0.0174,0.1687,0.1513,0.0008,0.1819,0.4263
-catboost,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,0.0874,,,,
-catboost,consensus,13,ids2017->ids2018,DoS,1277,247,True,-0.2982,0.1774,0.4756,-0.0026,0.1199,1.0
-catboost,consensus,13,ids2017->ids2018,Brute Force,738,0,False,,-0.3659,,,,
-catboost,consensus,13,ids2017->ids2018,Bot,9,499,False,0.0842,-0.0374,-0.1216,-0.0015,0.0694,0.024
-catboost,consensus,13,ids2017->ids2018,Infiltration,1093,0,False,,-0.2017,,,,
-catboost,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,-0.114,,,,
-catboost,consensus,13,ids2018->ids2017,DDoS,4584,3,False,-0.1981,-0.1281,0.07,-0.0006,0.1158,0.989
-catboost,consensus,13,ids2018->ids2017,DoS,3209,3677,True,0.0702,-0.0437,-0.1138,0.0005,0.1271,0.1854
-catboost,consensus,13,ids2018->ids2017,Brute Force,2628,99,True,-0.3279,-0.09,0.2379,0.0009,0.1942,0.983
-catboost,consensus,13,ids2018->ids2017,Bot,584,0,False,,-0.2029,,,,
-catboost,consensus,13,ids2018->ids2017,Infiltration,10,0,False,,-0.1773,,,,
-catboost,consensus,13,ids2018->ids2017,Web Attack,598,1,False,-0.1311,-0.1013,0.0298,0.0005,0.2287,0.8026
-catboost,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.2106,,,,
-catboost,shap,26,ids2017->ids2018,DoS,1277,247,True,-0.1763,0.2018,0.3781,-0.0008,0.1656,0.948
-catboost,shap,26,ids2017->ids2018,Brute Force,738,0,False,,-0.1806,,,,
-catboost,shap,26,ids2017->ids2018,Bot,9,499,False,0.0906,-0.0644,-0.155,-0.0027,0.0762,0.0215
-catboost,shap,26,ids2017->ids2018,Infiltration,1093,0,False,,-0.0896,,,,
-catboost,shap,26,ids2017->ids2018,Web Attack,257,0,False,,-0.0631,,,,
-catboost,shap,26,ids2018->ids2017,DDoS,4584,3,False,-0.1632,-0.0182,0.145,-0.0045,0.1508,0.942
-catboost,shap,26,ids2018->ids2017,DoS,3209,3677,True,0.0107,-0.1009,-0.1117,0.0009,0.1207,0.4388
-catboost,shap,26,ids2018->ids2017,Brute Force,2628,99,True,-0.2403,-0.2571,-0.0167,0.0036,0.2676,0.9295
-catboost,shap,26,ids2018->ids2017,Bot,584,0,False,,-0.0896,,,,
-catboost,shap,26,ids2018->ids2017,Infiltration,10,0,False,,-0.1948,,,,
-catboost,shap,26,ids2018->ids2017,Web Attack,598,1,False,-0.2254,-0.081,0.1444,-0.0022,0.2926,0.8776
-catboost,perm,18,ids2017->ids2018,DDoS,6081,0,False,,0.0821,,,,
-catboost,perm,18,ids2017->ids2018,DoS,1277,247,True,-0.2645,0.2201,0.4846,0.0019,0.1414,0.996
-catboost,perm,18,ids2017->ids2018,Brute Force,738,0,False,,-0.3839,,,,
-catboost,perm,18,ids2017->ids2018,Bot,9,499,False,0.0837,-0.0567,-0.1405,0.0005,0.0788,0.04
-catboost,perm,18,ids2017->ids2018,Infiltration,1093,0,False,,-0.1818,,,,
-catboost,perm,18,ids2017->ids2018,Web Attack,257,0,False,,-0.1737,,,,
-catboost,perm,18,ids2018->ids2017,DDoS,4584,3,False,-0.1985,-0.1223,0.0762,0.0012,0.1336,0.987
-catboost,perm,18,ids2018->ids2017,DoS,3209,3677,True,0.0705,-0.1008,-0.1713,0.0017,0.1271,0.2189
-catboost,perm,18,ids2018->ids2017,Brute Force,2628,99,True,-0.3522,-0.0679,0.2843,0.0044,0.2268,0.986
-catboost,perm,18,ids2018->ids2017,Bot,584,0,False,,-0.1763,,,,
-catboost,perm,18,ids2018->ids2017,Infiltration,10,0,False,,-0.1969,,,,
-catboost,perm,18,ids2018->ids2017,Web Attack,598,1,False,-0.144,-0.1134,0.0306,0.0013,0.2667,0.7971
-random_forest,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,-0.1877,,,,
-random_forest,consensus,13,ids2017->ids2018,DoS,1297,240,True,-0.4675,-0.1067,0.3608,0.0001,0.2058,0.999
-random_forest,consensus,13,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-random_forest,consensus,13,ids2017->ids2018,Bot,1133,0,False,,-0.3449,,,,
-random_forest,consensus,13,ids2017->ids2018,Infiltration,1093,0,False,,-0.0619,,,,
-random_forest,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,-0.2358,,,,
-random_forest,consensus,13,ids2018->ids2017,DDoS,3500,3,False,-0.2798,-0.1269,0.1529,-0.0015,0.179,0.9815
-random_forest,consensus,13,ids2018->ids2017,DoS,1002,880,True,-0.2477,-0.0423,0.2054,0.0013,0.1721,0.8811
-random_forest,consensus,13,ids2018->ids2017,Brute Force,2728,5,False,-0.4079,-0.1344,0.2735,-0.0007,0.222,0.9975
-random_forest,consensus,13,ids2018->ids2017,Bot,584,0,False,,-0.1582,,,,
-random_forest,consensus,13,ids2018->ids2017,Infiltration,10,0,False,,-0.1354,,,,
-random_forest,consensus,13,ids2018->ids2017,Web Attack,598,24,False,-0.185,-0.2787,-0.0937,0.0015,0.1815,0.9385
-random_forest,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.0984,,,,
-random_forest,shap,26,ids2017->ids2018,DoS,1297,240,True,-0.262,0.0286,0.2906,-0.0002,0.2828,0.8971
-random_forest,shap,26,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-random_forest,shap,26,ids2017->ids2018,Bot,1133,0,False,,-0.0448,,,,
-random_forest,shap,26,ids2017->ids2018,Infiltration,1093,0,False,,-0.0999,,,,
-random_forest,shap,26,ids2017->ids2018,Web Attack,257,0,False,,0.0185,,,,
-random_forest,shap,26,ids2018->ids2017,DDoS,3500,3,False,-0.2529,-0.0094,0.2435,-0.001,0.2413,0.9505
-random_forest,shap,26,ids2018->ids2017,DoS,1002,880,True,-0.1333,-0.11,0.0232,-0.0056,0.26,0.6687
-random_forest,shap,26,ids2018->ids2017,Brute Force,2728,5,False,-0.2575,-0.0707,0.1868,-0.0017,0.2785,0.9305
-random_forest,shap,26,ids2018->ids2017,Bot,584,0,False,,0.0937,,,,
-random_forest,shap,26,ids2018->ids2017,Infiltration,10,0,False,,-0.0643,,,,
-random_forest,shap,26,ids2018->ids2017,Web Attack,598,24,False,-0.2234,-0.0746,0.1488,-0.0029,0.218,0.948
-random_forest,perm,18,ids2017->ids2018,DDoS,6081,0,False,,-0.1376,,,,
-random_forest,perm,18,ids2017->ids2018,DoS,1297,240,True,-0.4202,-0.1389,0.2813,0.0045,0.245,0.99
-random_forest,perm,18,ids2017->ids2018,Brute Force,738,0,False,,,,,,
-random_forest,perm,18,ids2017->ids2018,Bot,1133,0,False,,-0.3532,,,,
-random_forest,perm,18,ids2017->ids2018,Infiltration,1093,0,False,,-0.0036,,,,
-random_forest,perm,18,ids2017->ids2018,Web Attack,257,0,False,,-0.2743,,,,
-random_forest,perm,18,ids2018->ids2017,DDoS,3500,3,False,-0.2594,-0.1112,0.1482,-0.0016,0.2177,0.9585
-random_forest,perm,18,ids2018->ids2017,DoS,1002,880,True,-0.1996,-0.0162,0.1834,-0.0016,0.2106,0.7956
-random_forest,perm,18,ids2018->ids2017,Brute Force,2728,5,False,-0.4386,-0.1295,0.3092,0.0031,0.247,0.9955
-random_forest,perm,18,ids2018->ids2017,Bot,584,0,False,,-0.0734,,,,
-random_forest,perm,18,ids2018->ids2017,Infiltration,10,0,False,,-0.1755,,,,
-random_forest,perm,18,ids2018->ids2017,Web Attack,598,24,False,-0.1434,-0.2587,-0.1153,0.0002,0.2045,0.8576
+lightgbm,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,-0.012,,,,
+lightgbm,consensus,13,ids2017->ids2018,DoS,1267,239,True,-0.2024,0.0221,0.2245,-0.0018,0.1613,0.9625
+lightgbm,consensus,13,ids2017->ids2018,Brute Force,152,402,True,0.0104,-0.0966,-0.107,-0.0001,0.0433,0.2489
+lightgbm,consensus,13,ids2017->ids2018,Bot,5,0,False,,-0.0432,,,,
+lightgbm,consensus,13,ids2017->ids2018,Infiltration,1089,0,False,,-0.0292,,,,
+lightgbm,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,0.0307,,,,
+lightgbm,consensus,13,ids2018->ids2017,DDoS,4598,2,False,-0.0185,0.0713,0.0898,0.0037,0.2657,0.6157
+lightgbm,consensus,13,ids2018->ids2017,DoS,5134,1207,True,-0.0605,-0.0477,0.0128,0.0028,0.1571,0.7766
+lightgbm,consensus,13,ids2018->ids2017,Brute Force,26,2278,False,0.0183,0.1076,0.0893,0.0,0.0653,0.3353
+lightgbm,consensus,13,ids2018->ids2017,Bot,101,447,True,-0.0344,0.3203,0.3547,0.0003,0.0793,0.7446
+lightgbm,consensus,13,ids2018->ids2017,Infiltration,11,0,False,,-0.1177,,,,
+lightgbm,consensus,13,ids2018->ids2017,Web Attack,600,0,False,,0.3305,,,,
+lightgbm,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.1437,,,,
+lightgbm,shap,26,ids2017->ids2018,DoS,1267,239,True,0.0296,0.0798,0.0502,-0.0015,0.2026,0.4133
+lightgbm,shap,26,ids2017->ids2018,Brute Force,152,402,True,-0.0221,-0.1885,-0.1663,0.0004,0.0438,0.7726
+lightgbm,shap,26,ids2017->ids2018,Bot,5,0,False,,0.0166,,,,
+lightgbm,shap,26,ids2017->ids2018,Infiltration,1089,0,False,,0.1558,,,,
+lightgbm,shap,26,ids2017->ids2018,Web Attack,257,0,False,,-0.0632,,,,
+lightgbm,shap,26,ids2018->ids2017,DDoS,4598,2,False,0.1528,0.3214,0.1686,-0.0101,0.3312,0.2434
+lightgbm,shap,26,ids2018->ids2017,DoS,5134,1207,True,0.0691,0.073,0.0039,-0.0058,0.178,0.2694
+lightgbm,shap,26,ids2018->ids2017,Brute Force,26,2278,False,0.0157,0.0909,0.0752,0.0006,0.0816,0.3793
+lightgbm,shap,26,ids2018->ids2017,Bot,101,447,True,0.0197,0.1891,0.1694,0.0007,0.1042,0.4008
+lightgbm,shap,26,ids2018->ids2017,Infiltration,11,0,False,,-0.0551,,,,
+lightgbm,shap,26,ids2018->ids2017,Web Attack,600,0,False,,0.2542,,,,
+lightgbm,perm,18,ids2017->ids2018,DDoS,6081,0,False,,-0.0496,,,,
+lightgbm,perm,18,ids2017->ids2018,DoS,1267,239,True,-0.1709,0.0367,0.2076,0.0018,0.1749,0.923
+lightgbm,perm,18,ids2017->ids2018,Brute Force,152,402,True,0.0074,-0.0935,-0.101,0.0,0.043,0.3428
+lightgbm,perm,18,ids2017->ids2018,Bot,5,0,False,,-0.0569,,,,
+lightgbm,perm,18,ids2017->ids2018,Infiltration,1089,0,False,,-0.0568,,,,
+lightgbm,perm,18,ids2017->ids2018,Web Attack,257,0,False,,0.023,,,,
+lightgbm,perm,18,ids2018->ids2017,DDoS,4598,2,False,0.0014,0.0536,0.0522,-0.0006,0.2866,0.5397
+lightgbm,perm,18,ids2018->ids2017,DoS,5134,1207,True,-0.0789,-0.125,-0.0461,-0.001,0.1646,0.7776
+lightgbm,perm,18,ids2018->ids2017,Brute Force,26,2278,False,0.0062,0.154,0.1478,-0.0009,0.0693,0.4418
+lightgbm,perm,18,ids2018->ids2017,Bot,101,447,True,-0.0361,0.3219,0.3579,0.0002,0.0945,0.7216
+lightgbm,perm,18,ids2018->ids2017,Infiltration,11,0,False,,-0.0665,,,,
+lightgbm,perm,18,ids2018->ids2017,Web Attack,600,0,False,,0.2654,,,,
+xgboost,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,-0.0777,,,,
+xgboost,consensus,13,ids2017->ids2018,DoS,1301,236,True,-0.0705,0.1253,0.1958,-0.0002,0.1005,0.8306
+xgboost,consensus,13,ids2017->ids2018,Brute Force,82,317,False,0.0078,-0.0094,-0.0172,-0.0002,0.0483,0.2394
+xgboost,consensus,13,ids2017->ids2018,Bot,5,0,False,,-0.08,,,,
+xgboost,consensus,13,ids2017->ids2018,Infiltration,1090,0,False,,0.0454,,,,
+xgboost,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,-0.0996,,,,
+xgboost,consensus,13,ids2018->ids2017,DDoS,4321,199,True,-0.1345,0.159,0.2935,-0.0004,0.125,0.9545
+xgboost,consensus,13,ids2018->ids2017,DoS,2920,1562,True,-0.0396,0.0147,0.0544,0.0004,0.0417,0.8961
+xgboost,consensus,13,ids2018->ids2017,Brute Force,32,32,False,0.1911,0.2069,0.0158,-0.0014,0.1282,0.003
+xgboost,consensus,13,ids2018->ids2017,Bot,584,0,False,,0.12,,,,
+xgboost,consensus,13,ids2018->ids2017,Infiltration,11,0,False,,-0.0657,,,,
+xgboost,consensus,13,ids2018->ids2017,Web Attack,597,12,False,-0.0571,0.1598,0.2169,-0.0027,0.1932,0.6827
+xgboost,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.1827,,,,
+xgboost,shap,26,ids2017->ids2018,DoS,1301,236,True,0.0731,0.228,0.1549,-0.0006,0.1315,0.2084
+xgboost,shap,26,ids2017->ids2018,Brute Force,82,317,False,-0.0214,-0.1582,-0.1367,0.0002,0.0458,0.6957
+xgboost,shap,26,ids2017->ids2018,Bot,5,0,False,,0.0754,,,,
+xgboost,shap,26,ids2017->ids2018,Infiltration,1090,0,False,,0.1873,,,,
+xgboost,shap,26,ids2017->ids2018,Web Attack,257,0,False,,0.0621,,,,
+xgboost,shap,26,ids2018->ids2017,DDoS,4321,199,True,-0.1552,0.2325,0.3877,-0.0014,0.1466,0.952
+xgboost,shap,26,ids2018->ids2017,DoS,2920,1562,True,-0.0238,0.0035,0.0274,-0.001,0.0526,0.7346
+xgboost,shap,26,ids2018->ids2017,Brute Force,32,32,False,0.025,0.0945,0.0696,0.0005,0.1429,0.3833
+xgboost,shap,26,ids2018->ids2017,Bot,584,0,False,,0.1916,,,,
+xgboost,shap,26,ids2018->ids2017,Infiltration,11,0,False,,-0.0864,,,,
+xgboost,shap,26,ids2018->ids2017,Web Attack,597,12,False,-0.1687,0.0372,0.206,-0.0045,0.241,0.8496
+xgboost,perm,18,ids2017->ids2018,DDoS,6081,0,False,,-0.0968,,,,
+xgboost,perm,18,ids2017->ids2018,DoS,1301,236,True,-0.0617,0.123,0.1848,-0.0011,0.1113,0.7716
+xgboost,perm,18,ids2017->ids2018,Brute Force,82,317,False,0.0058,-0.0066,-0.0124,0.0007,0.0488,0.3253
+xgboost,perm,18,ids2017->ids2018,Bot,5,0,False,,-0.0966,,,,
+xgboost,perm,18,ids2017->ids2018,Infiltration,1090,0,False,,0.043,,,,
+xgboost,perm,18,ids2017->ids2018,Web Attack,257,0,False,,-0.1035,,,,
+xgboost,perm,18,ids2018->ids2017,DDoS,4321,199,True,-0.1549,0.118,0.2728,0.0016,0.1407,0.9685
+xgboost,perm,18,ids2018->ids2017,DoS,2920,1562,True,-0.0366,0.0073,0.0439,-0.0001,0.0465,0.8591
+xgboost,perm,18,ids2018->ids2017,Brute Force,32,32,False,0.1994,0.1913,-0.0081,-0.0007,0.134,0.0065
+xgboost,perm,18,ids2018->ids2017,Bot,584,0,False,,0.1128,,,,
+xgboost,perm,18,ids2018->ids2017,Infiltration,11,0,False,,-0.0277,,,,
+xgboost,perm,18,ids2018->ids2017,Web Attack,597,12,False,-0.0431,0.1699,0.213,-0.0005,0.2191,0.6327
+catboost,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,0.0752,,,,
+catboost,consensus,13,ids2017->ids2018,DoS,1276,249,True,-0.2562,0.1879,0.4441,-0.0027,0.1162,0.997
+catboost,consensus,13,ids2017->ids2018,Brute Force,738,0,False,,-0.23,,,,
+catboost,consensus,13,ids2017->ids2018,Bot,1133,0,False,,-0.0649,,,,
+catboost,consensus,13,ids2017->ids2018,Infiltration,1090,0,False,,-0.1783,,,,
+catboost,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,-0.1204,,,,
+catboost,consensus,13,ids2018->ids2017,DDoS,4532,3,False,-0.1253,-0.1042,0.0211,-0.0006,0.1015,0.9755
+catboost,consensus,13,ids2018->ids2017,DoS,2144,3211,True,0.0651,-0.0335,-0.0986,0.0004,0.1122,0.1739
+catboost,consensus,13,ids2018->ids2017,Brute Force,642,23,False,-0.2188,-0.0818,0.137,0.0011,0.1612,0.976
+catboost,consensus,13,ids2018->ids2017,Bot,584,0,False,,-0.1567,,,,
+catboost,consensus,13,ids2018->ids2017,Infiltration,11,0,False,,-0.1465,,,,
+catboost,consensus,13,ids2018->ids2017,Web Attack,597,1,False,-0.0335,-0.064,-0.0304,-0.0007,0.1848,0.6322
+catboost,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.2464,,,,
+catboost,shap,26,ids2017->ids2018,DoS,1276,249,True,-0.1664,0.2005,0.3668,-0.0007,0.1581,0.952
+catboost,shap,26,ids2017->ids2018,Brute Force,738,0,False,,-0.305,,,,
+catboost,shap,26,ids2017->ids2018,Bot,1133,0,False,,-0.0934,,,,
+catboost,shap,26,ids2017->ids2018,Infiltration,1090,0,False,,-0.0006,,,,
+catboost,shap,26,ids2017->ids2018,Web Attack,257,0,False,,-0.087,,,,
+catboost,shap,26,ids2018->ids2017,DDoS,4532,3,False,-0.1223,0.0136,0.1359,-0.0041,0.12,0.9405
+catboost,shap,26,ids2018->ids2017,DoS,2144,3211,True,0.0035,-0.0702,-0.0736,0.0012,0.111,0.4668
+catboost,shap,26,ids2018->ids2017,Brute Force,642,23,False,-0.1977,-0.2043,-0.0066,0.0018,0.2078,0.947
+catboost,shap,26,ids2018->ids2017,Bot,584,0,False,,-0.1725,,,,
+catboost,shap,26,ids2018->ids2017,Infiltration,11,0,False,,-0.1337,,,,
+catboost,shap,26,ids2018->ids2017,Web Attack,597,1,False,-0.166,-0.08,0.086,-0.0007,0.2091,0.8926
+catboost,perm,18,ids2017->ids2018,DDoS,6081,0,False,,0.0485,,,,
+catboost,perm,18,ids2017->ids2018,DoS,1276,249,True,-0.232,0.1966,0.4286,0.0014,0.1309,0.993
+catboost,perm,18,ids2017->ids2018,Brute Force,738,0,False,,-0.2295,,,,
+catboost,perm,18,ids2017->ids2018,Bot,1133,0,False,,-0.0599,,,,
+catboost,perm,18,ids2017->ids2018,Infiltration,1090,0,False,,-0.15,,,,
+catboost,perm,18,ids2017->ids2018,Web Attack,257,0,False,,-0.153,,,,
+catboost,perm,18,ids2018->ids2017,DDoS,4532,3,False,-0.1062,-0.1041,0.002,0.0024,0.115,0.9395
+catboost,perm,18,ids2018->ids2017,DoS,2144,3211,True,0.0701,-0.0926,-0.1628,0.0019,0.1144,0.1849
+catboost,perm,18,ids2018->ids2017,Brute Force,642,23,False,-0.228,-0.0549,0.173,0.0031,0.1803,0.9755
+catboost,perm,18,ids2018->ids2017,Bot,584,0,False,,-0.1218,,,,
+catboost,perm,18,ids2018->ids2017,Infiltration,11,0,False,,-0.1528,,,,
+catboost,perm,18,ids2018->ids2017,Web Attack,597,1,False,-0.0565,-0.0854,-0.0289,0.0017,0.2006,0.6872
+random_forest,consensus,13,ids2017->ids2018,DDoS,6081,0,False,,-0.1936,,,,
+random_forest,consensus,13,ids2017->ids2018,DoS,1297,240,True,-0.4845,-0.1796,0.3049,0.0001,0.2167,0.9995
+random_forest,consensus,13,ids2017->ids2018,Brute Force,738,0,False,,0.0042,,,,
+random_forest,consensus,13,ids2017->ids2018,Bot,1133,0,False,,-0.314,,,,
+random_forest,consensus,13,ids2017->ids2018,Infiltration,1092,0,False,,-0.1094,,,,
+random_forest,consensus,13,ids2017->ids2018,Web Attack,257,0,False,,-0.2331,,,,
+random_forest,consensus,13,ids2018->ids2017,DDoS,3933,3,False,-0.2882,-0.1264,0.1618,-0.0014,0.1919,0.9805
+random_forest,consensus,13,ids2018->ids2017,DoS,1069,526,True,-0.2592,-0.0574,0.2018,0.001,0.1527,0.9025
+random_forest,consensus,13,ids2018->ids2017,Brute Force,2739,5,False,-0.5049,-0.1259,0.3791,-0.0001,0.2481,0.9995
+random_forest,consensus,13,ids2018->ids2017,Bot,584,0,False,,-0.2151,,,,
+random_forest,consensus,13,ids2018->ids2017,Infiltration,11,0,False,,-0.1853,,,,
+random_forest,consensus,13,ids2018->ids2017,Web Attack,598,23,False,-0.1626,-0.307,-0.1445,0.0017,0.1781,0.9155
+random_forest,shap,26,ids2017->ids2018,DDoS,6081,0,False,,0.07,,,,
+random_forest,shap,26,ids2017->ids2018,DoS,1297,240,True,-0.3142,-0.1198,0.1944,-0.0011,0.2779,0.9475
+random_forest,shap,26,ids2017->ids2018,Brute Force,738,0,False,,0.1119,,,,
+random_forest,shap,26,ids2017->ids2018,Bot,1133,0,False,,-0.0669,,,,
+random_forest,shap,26,ids2017->ids2018,Infiltration,1092,0,False,,-0.1399,,,,
+random_forest,shap,26,ids2017->ids2018,Web Attack,257,0,False,,0.0482,,,,
+random_forest,shap,26,ids2018->ids2017,DDoS,3933,3,False,-0.2485,0.0105,0.259,-0.001,0.2566,0.939
+random_forest,shap,26,ids2018->ids2017,DoS,1069,526,True,-0.1444,-0.1066,0.0379,-0.0054,0.2336,0.6707
+random_forest,shap,26,ids2018->ids2017,Brute Force,2739,5,False,-0.3344,-0.1169,0.2175,-0.0042,0.3161,0.9495
+random_forest,shap,26,ids2018->ids2017,Bot,584,0,False,,0.0246,,,,
+random_forest,shap,26,ids2018->ids2017,Infiltration,11,0,False,,-0.1185,,,,
+random_forest,shap,26,ids2018->ids2017,Web Attack,598,23,False,-0.2171,-0.1146,0.1025,-0.0024,0.21,0.948
+random_forest,perm,18,ids2017->ids2018,DDoS,6081,0,False,,-0.1589,,,,
+random_forest,perm,18,ids2017->ids2018,DoS,1297,240,True,-0.4089,-0.1731,0.2358,0.0035,0.2445,0.989
+random_forest,perm,18,ids2017->ids2018,Brute Force,738,0,False,,-0.3049,,,,
+random_forest,perm,18,ids2017->ids2018,Bot,1133,0,False,,-0.2945,,,,
+random_forest,perm,18,ids2017->ids2018,Infiltration,1092,0,False,,-0.0312,,,,
+random_forest,perm,18,ids2017->ids2018,Web Attack,257,0,False,,-0.2684,,,,
+random_forest,perm,18,ids2018->ids2017,DDoS,3933,3,False,-0.2712,-0.1182,0.153,-0.0012,0.2322,0.9605
+random_forest,perm,18,ids2018->ids2017,DoS,1069,526,True,-0.2146,-0.0513,0.1634,-0.0012,0.1874,0.8171
+random_forest,perm,18,ids2018->ids2017,Brute Force,2739,5,False,-0.5431,-0.1201,0.423,0.0037,0.2768,0.9995
+random_forest,perm,18,ids2018->ids2017,Bot,584,0,False,,-0.1344,,,,
+random_forest,perm,18,ids2018->ids2017,Infiltration,11,0,False,,-0.224,,,,
+random_forest,perm,18,ids2018->ids2017,Web Attack,598,23,False,-0.1194,-0.2838,-0.1644,0.0012,0.2027,0.8196

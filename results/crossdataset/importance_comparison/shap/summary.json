@@ -32,9 +32,9 @@
     },
     "spearman": {
       "lightgbm_ids2017": 0.6764,
-      "lightgbm_ids2018": 0.6834,
-      "logistic_regression_ids2017": 0.7437,
-      "logistic_regression_ids2018": 0.8825
+      "lightgbm_ids2018": 0.6867,
+      "logistic_regression_ids2017": 0.7404,
+      "logistic_regression_ids2018": 0.8815
     },
     "moved": {
       "lightgbm": [
@@ -368,16 +368,18 @@
     "shap": {
       "verdict": "partial",
       "judged_classes": [
+        "Brute Force",
         "DDoS",
         "DoS",
         "Web Attack"
       ],
       "n_supported": 1,
-      "n_not_supported": 1
+      "n_not_supported": 2
     },
     "perm": {
-      "verdict": "not supported",
+      "verdict": "partial",
       "judged_classes": [
+        "Brute Force",
         "DDoS",
         "DoS",
         "Web Attack"
@@ -387,5 +389,5 @@
     },
     "main_roles": "both"
   },
-  "minutes": 12.6
+  "minutes": 15.1
 }

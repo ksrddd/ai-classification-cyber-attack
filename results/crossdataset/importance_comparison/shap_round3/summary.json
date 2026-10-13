@@ -77,112 +77,10 @@
   },
   "decision_set": "consensus",
   "part_a": {
-    "xgboost": {
-      "spearman_vs_lightgbm": {
-        "ids2017": 0.8973,
-        "ids2018": 0.912
-      },
-      "kappa_vs_lightgbm": 0.8735,
-      "roles": {
-        "neither": 30,
-        "fingerprint only": 15,
-        "entangled": 11,
-        "attack only": 4
-      },
-      "n_attack_carriers": 15,
-      "differs_from_lightgbm": [
-        {
-          "feature": "Total Fwd Packets",
-          "lightgbm": "attack only",
-          "xgboost": "neither"
-        },
-        {
-          "feature": "Total Length of Fwd Packets",
-          "lightgbm": "entangled",
-          "xgboost": "fingerprint only"
-        },
-        {
-          "feature": "Flow Bytes/s",
-          "lightgbm": "neither",
-          "xgboost": "attack only"
-        },
-        {
-          "feature": "Flow IAT Max",
-          "lightgbm": "attack only",
-          "xgboost": "neither"
-        },
-        {
-          "feature": "RST Flag Count",
-          "lightgbm": "entangled",
-          "xgboost": "fingerprint only"
-        }
-      ]
-    },
-    "catboost": {
-      "spearman_vs_lightgbm": {
-        "ids2017": 0.8662,
-        "ids2018": 0.8566
-      },
-      "kappa_vs_lightgbm": 0.77,
-      "roles": {
-        "neither": 31,
-        "fingerprint only": 14,
-        "entangled": 12,
-        "attack only": 3
-      },
-      "n_attack_carriers": 15,
-      "differs_from_lightgbm": [
-        {
-          "feature": "Total Fwd Packets",
-          "lightgbm": "attack only",
-          "catboost": "neither"
-        },
-        {
-          "feature": "Total Length of Fwd Packets",
-          "lightgbm": "entangled",
-          "catboost": "fingerprint only"
-        },
-        {
-          "feature": "Fwd Packet Length Max",
-          "lightgbm": "attack only",
-          "catboost": "neither"
-        },
-        {
-          "feature": "Flow IAT Std",
-          "lightgbm": "neither",
-          "catboost": "attack only"
-        },
-        {
-          "feature": "Flow IAT Max",
-          "lightgbm": "attack only",
-          "catboost": "neither"
-        },
-        {
-          "feature": "Fwd IAT Total",
-          "lightgbm": "attack only",
-          "catboost": "neither"
-        },
-        {
-          "feature": "Fwd IAT Std",
-          "lightgbm": "entangled",
-          "catboost": "fingerprint only"
-        },
-        {
-          "feature": "ACK Flag Count",
-          "lightgbm": "neither",
-          "catboost": "attack only"
-        },
-        {
-          "feature": "ECE Flag Count",
-          "lightgbm": "fingerprint only",
-          "catboost": "entangled"
-        }
-      ]
-    },
     "random_forest": {
       "spearman_vs_lightgbm": {
         "ids2017": 0.6993,
-        "ids2018": 0.8207
+        "ids2018": 0.8187
       },
       "kappa_vs_lightgbm": 0.6256,
       "roles": {
@@ -274,9 +172,143 @@
           "random_forest": "entangled"
         }
       ]
+    },
+    "xgboost": {
+      "spearman_vs_lightgbm": {
+        "ids2017": 0.8847,
+        "ids2018": 0.9055
+      },
+      "kappa_vs_lightgbm": 0.876,
+      "roles": {
+        "neither": 28,
+        "entangled": 13,
+        "fingerprint only": 13,
+        "attack only": 6
+      },
+      "n_attack_carriers": 19,
+      "differs_from_lightgbm": [
+        {
+          "feature": "Flow Duration",
+          "lightgbm": "neither",
+          "xgboost": "attack only"
+        },
+        {
+          "feature": "Total Fwd Packets",
+          "lightgbm": "attack only",
+          "xgboost": "neither"
+        },
+        {
+          "feature": "Total Length of Fwd Packets",
+          "lightgbm": "entangled",
+          "xgboost": "fingerprint only"
+        },
+        {
+          "feature": "Flow Bytes/s",
+          "lightgbm": "neither",
+          "xgboost": "attack only"
+        },
+        {
+          "feature": "Average Packet Size",
+          "lightgbm": "fingerprint only",
+          "xgboost": "entangled"
+        }
+      ]
+    },
+    "catboost": {
+      "spearman_vs_lightgbm": {
+        "ids2017": 0.8662,
+        "ids2018": 0.8566
+      },
+      "kappa_vs_lightgbm": 0.77,
+      "roles": {
+        "neither": 31,
+        "fingerprint only": 14,
+        "entangled": 12,
+        "attack only": 3
+      },
+      "n_attack_carriers": 15,
+      "differs_from_lightgbm": [
+        {
+          "feature": "Total Fwd Packets",
+          "lightgbm": "attack only",
+          "catboost": "neither"
+        },
+        {
+          "feature": "Total Length of Fwd Packets",
+          "lightgbm": "entangled",
+          "catboost": "fingerprint only"
+        },
+        {
+          "feature": "Fwd Packet Length Max",
+          "lightgbm": "attack only",
+          "catboost": "neither"
+        },
+        {
+          "feature": "Flow IAT Std",
+          "lightgbm": "neither",
+          "catboost": "attack only"
+        },
+        {
+          "feature": "Flow IAT Max",
+          "lightgbm": "attack only",
+          "catboost": "neither"
+        },
+        {
+          "feature": "Fwd IAT Total",
+          "lightgbm": "attack only",
+          "catboost": "neither"
+        },
+        {
+          "feature": "Fwd IAT Std",
+          "lightgbm": "entangled",
+          "catboost": "fingerprint only"
+        },
+        {
+          "feature": "ACK Flag Count",
+          "lightgbm": "neither",
+          "catboost": "attack only"
+        },
+        {
+          "feature": "ECE Flag Count",
+          "lightgbm": "fingerprint only",
+          "catboost": "entangled"
+        }
+      ]
     }
   },
   "part_b": {
+    "random_forest": {
+      "consensus": {
+        "overall": "not supported",
+        "per_class": {
+          "DDoS": "not supported",
+          "DoS": "not supported",
+          "Brute Force": "not supported",
+          "Bot": "not supported",
+          "Web Attack": "not supported"
+        }
+      },
+      "shap": {
+        "overall": "not supported",
+        "per_class": {
+          "DDoS": "not supported",
+          "DoS": "not supported",
+          "Brute Force": "not supported",
+          "Bot": "not supported",
+          "Web Attack": "not supported"
+        }
+      },
+      "perm": {
+        "overall": "not supported",
+        "per_class": {
+          "DDoS": "not supported",
+          "DoS": "not supported",
+          "Brute Force": "not supported",
+          "Bot": "not supported",
+          "Web Attack": "not supported"
+        }
+      }
+    },
     "xgboost": {
       "consensus": {
         "overall": "not supported",
@@ -290,7 +322,7 @@
         "overall": "not supported",
         "per_class": {
           "DDoS": "not supported",
-          "DoS": "not supported",
+          "DoS": "supported",
           "Web Attack": "not supported"
         }
       },
@@ -309,32 +341,7 @@
         "per_class": {
           "DDoS": "not supported",
           "DoS": "not supported",
-          "Web Attack": "not supported"
-        }
-      },
-      "shap": {
-        "overall": "not supported",
-        "per_class": {
-          "DDoS": "unclear",
-          "DoS": "not supported",
-          "Web Attack": "not supported"
-        }
-      },
-      "perm": {
-        "overall": "not supported",
-        "per_class": {
-          "DDoS": "not supported",
-          "DoS": "unclear",
-          "Web Attack": "not supported"
-        }
-      }
-    },
-    "random_forest": {
-      "consensus": {
-        "overall": "not supported",
-        "per_class": {
-          "DDoS": "not supported",
-          "DoS": "not supported",
+          "Brute Force": "not supported",
           "Bot": "not supported",
           "Web Attack": "not supported"
         }
@@ -342,8 +349,9 @@
       "shap": {
         "overall": "not supported",
         "per_class": {
-          "DDoS": "not supported",
+          "DDoS": "supported",
           "DoS": "not supported",
+          "Brute Force": "not supported",
           "Bot": "not supported",
           "Web Attack": "not supported"
         }
@@ -353,6 +361,7 @@
         "per_class": {
           "DDoS": "not supported",
           "DoS": "not supported",
+          "Brute Force": "not supported",
           "Bot": "not supported",
           "Web Attack": "not supported"
         }
@@ -360,10 +369,10 @@
     }
   },
   "minutes_per_model": {
-    "xgboost": 12.6,
-    "catboost": 49.0,
-    "random_forest": 319.3
+    "random_forest": 0.1,
+    "xgboost": 0.0,
+    "catboost": 0.0
   },
   "overall": "not supported",
-  "minutes_this_run": 321.6
+  "minutes_this_run": 0.1
 }
