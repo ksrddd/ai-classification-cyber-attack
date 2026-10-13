@@ -1,0 +1,397 @@
+{
+  "preregistration_sha256": "8ee510df9fcd3f99e240fd77d7597560525e1eb0390ade1ea687455501cc88d8",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "n_draws": 2000,
+  "draw_seed": 2026,
+  "shift_rows": 20000,
+  "shift_seed": 2026,
+  "main_k": 13,
+  "sets": {
+    "13": {
+      "DDoS": [
+        "act_data_pkt_fwd",
+        "Fwd IAT Std",
+        "Fwd Header Length",
+        "Total Fwd Packets",
+        "Flow IAT Std",
+        "Total Length of Fwd Packets",
+        "Average Packet Size",
+        "Max Packet Length",
+        "Packet Length Mean",
+        "ECE Flag Count",
+        "RST Flag Count",
+        "Fwd IAT Min",
+        "Init_Win_bytes_forward"
+      ],
+      "DoS": [
+        "Init_Win_bytes_backward",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Max Packet Length",
+        "Packet Length Std",
+        "Total Backward Packets",
+        "Bwd Header Length",
+        "Flow IAT Std",
+        "Bwd Packet Length Mean",
+        "Total Length of Bwd Packets",
+        "Bwd Packet Length Max",
+        "Bwd Packet Length Std",
+        "Fwd IAT Std"
+      ],
+      "Brute Force": [
+        "Bwd Packet Length Mean",
+        "Bwd Packet Length Std",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Packet Length Std",
+        "Total Fwd Packets",
+        "Fwd Header Length",
+        "act_data_pkt_fwd",
+        "Bwd Packet Length Max",
+        "Fwd Packet Length Max",
+        "Max Packet Length",
+        "Destination Port",
+        "Total Length of Bwd Packets"
+      ],
+      "Bot": [
+        "ECE Flag Count",
+        "RST Flag Count",
+        "Max Packet Length",
+        "Packet Length Std",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Init_Win_bytes_backward",
+        "Fwd Packet Length Std",
+        "Fwd Packet Length Max",
+        "Fwd Packet Length Mean",
+        "Total Length of Fwd Packets",
+        "Total Backward Packets",
+        "Bwd Header Length"
+      ],
+      "Infiltration": [
+        "act_data_pkt_fwd",
+        "Fwd Header Length",
+        "Total Fwd Packets",
+        "Total Length of Fwd Packets",
+        "Fwd Packet Length Max",
+        "Fwd Packet Length Std",
+        "Fwd IAT Total",
+        "Fwd Packet Length Mean",
+        "Flow Duration",
+        "Fwd IAT Max",
+        "Bwd Header Length",
+        "Total Backward Packets",
+        "Bwd IAT Total"
+      ],
+      "Web Attack": [
+        "min_seg_size_forward",
+        "Init_Win_bytes_backward",
+        "Init_Win_bytes_forward",
+        "Total Backward Packets",
+        "Bwd Header Length",
+        "Fwd Header Length",
+        "Fwd IAT Std",
+        "Flow IAT Std",
+        "Fwd IAT Max",
+        "Flow IAT Max",
+        "Fwd Packets/s",
+        "Fwd IAT Mean",
+        "Total Fwd Packets"
+      ]
+    },
+    "5": {
+      "DDoS": [
+        "act_data_pkt_fwd",
+        "Fwd IAT Std",
+        "Fwd Header Length",
+        "Total Fwd Packets",
+        "Flow IAT Std"
+      ],
+      "DoS": [
+        "Init_Win_bytes_backward",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Max Packet Length",
+        "Packet Length Std"
+      ],
+      "Brute Force": [
+        "Bwd Packet Length Mean",
+        "Bwd Packet Length Std",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Packet Length Std"
+      ],
+      "Bot": [
+        "ECE Flag Count",
+        "RST Flag Count",
+        "Max Packet Length",
+        "Packet Length Std",
+        "Packet Length Mean"
+      ],
+      "Infiltration": [
+        "act_data_pkt_fwd",
+        "Fwd Header Length",
+        "Total Fwd Packets",
+        "Total Length of Fwd Packets",
+        "Fwd Packet Length Max"
+      ],
+      "Web Attack": [
+        "min_seg_size_forward",
+        "Init_Win_bytes_backward",
+        "Init_Win_bytes_forward",
+        "Total Backward Packets",
+        "Bwd Header Length"
+      ]
+    },
+    "26": {
+      "DDoS": [
+        "act_data_pkt_fwd",
+        "Fwd IAT Std",
+        "Fwd Header Length",
+        "Total Fwd Packets",
+        "Flow IAT Std",
+        "Total Length of Fwd Packets",
+        "Average Packet Size",
+        "Max Packet Length",
+        "Packet Length Mean",
+        "ECE Flag Count",
+        "RST Flag Count",
+        "Fwd IAT Min",
+        "Init_Win_bytes_forward",
+        "Init_Win_bytes_backward",
+        "Fwd Packet Length Mean",
+        "Bwd Packet Length Max",
+        "Bwd Packet Length Mean",
+        "Total Length of Bwd Packets",
+        "Packet Length Std",
+        "Bwd Packet Length Std",
+        "Active Max",
+        "Active Mean",
+        "Active Min",
+        "Total Backward Packets",
+        "Bwd Header Length",
+        "Flow IAT Min"
+      ],
+      "DoS": [
+        "Init_Win_bytes_backward",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Max Packet Length",
+        "Packet Length Std",
+        "Total Backward Packets",
+        "Bwd Header Length",
+        "Flow IAT Std",
+        "Bwd Packet Length Mean",
+        "Total Length of Bwd Packets",
+        "Bwd Packet Length Max",
+        "Bwd Packet Length Std",
+        "Fwd IAT Std",
+        "Flow Duration",
+        "Flow IAT Max",
+        "Total Fwd Packets",
+        "Fwd IAT Min",
+        "Fwd Header Length",
+        "Idle Max",
+        "Idle Mean",
+        "Fwd Packets/s",
+        "Idle Min",
+        "Fwd IAT Total",
+        "Fwd IAT Max",
+        "act_data_pkt_fwd",
+        "Flow IAT Min"
+      ],
+      "Brute Force": [
+        "Bwd Packet Length Mean",
+        "Bwd Packet Length Std",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Packet Length Std",
+        "Total Fwd Packets",
+        "Fwd Header Length",
+        "act_data_pkt_fwd",
+        "Bwd Packet Length Max",
+        "Fwd Packet Length Max",
+        "Max Packet Length",
+        "Destination Port",
+        "Total Length of Bwd Packets",
+        "Bwd Header Length",
+        "Total Backward Packets",
+        "Init_Win_bytes_backward",
+        "Bwd IAT Min",
+        "Fwd Packet Length Mean",
+        "Total Length of Fwd Packets",
+        "Fwd Packet Length Std",
+        "Init_Win_bytes_forward",
+        "Flow Bytes/s",
+        "Bwd Packets/s",
+        "Fwd IAT Mean",
+        "Flow IAT Mean",
+        "Flow Packets/s"
+      ],
+      "Bot": [
+        "ECE Flag Count",
+        "RST Flag Count",
+        "Max Packet Length",
+        "Packet Length Std",
+        "Packet Length Mean",
+        "Average Packet Size",
+        "Init_Win_bytes_backward",
+        "Fwd Packet Length Std",
+        "Fwd Packet Length Max",
+        "Fwd Packet Length Mean",
+        "Total Length of Fwd Packets",
+        "Total Backward Packets",
+        "Bwd Header Length",
+        "act_data_pkt_fwd",
+        "Bwd Packet Length Std",
+        "Bwd Packet Length Mean",
+        "Total Fwd Packets",
+        "Fwd Header Length",
+        "Bwd Packet Length Max",
+        "Total Length of Bwd Packets",
+        "Fwd IAT Min",
+        "Flow IAT Min",
+        "Fwd IAT Max",
+        "Fwd IAT Total",
+        "Flow IAT Max",
+        "Flow Duration"
+      ],
+      "Infiltration": [
+        "act_data_pkt_fwd",
+        "Fwd Header Length",
+        "Total Fwd Packets",
+        "Total Length of Fwd Packets",
+        "Fwd Packet Length Max",
+        "Fwd Packet Length Std",
+        "Fwd IAT Total",
+        "Fwd Packet Length Mean",
+        "Flow Duration",
+        "Fwd IAT Max",
+        "Bwd Header Length",
+        "Total Backward Packets",
+        "Bwd IAT Total",
+        "Flow IAT Max",
+        "Bwd IAT Max",
+        "Active Mean",
+        "Active Max",
+        "Max Packet Length",
+        "Bwd IAT Std",
+        "Active Min",
+        "Flow IAT Std",
+        "Fwd IAT Std",
+        "ACK Flag Count",
+        "Destination Port",
+        "Init_Win_bytes_backward",
+        "Idle Mean"
+      ],
+      "Web Attack": [
+        "min_seg_size_forward",
+        "Init_Win_bytes_backward",
+        "Init_Win_bytes_forward",
+        "Total Backward Packets",
+        "Bwd Header Length",
+        "Fwd Header Length",
+        "Fwd IAT Std",
+        "Flow IAT Std",
+        "Fwd IAT Max",
+        "Flow IAT Max",
+        "Fwd Packets/s",
+        "Fwd IAT Mean",
+        "Total Fwd Packets",
+        "Flow IAT Mean",
+        "Flow Packets/s",
+        "Fwd IAT Min",
+        "Average Packet Size",
+        "Packet Length Mean",
+        "Fwd Packet Length Mean",
+        "Fwd Packet Length Max",
+        "Total Length of Fwd Packets",
+        "Max Packet Length",
+        "Flow Bytes/s",
+        "act_data_pkt_fwd",
+        "ECE Flag Count",
+        "RST Flag Count"
+      ]
+    }
+  },
+  "overlap_with_consensus": {
+    "DDoS": [
+      "Fwd IAT Min",
+      "Init_Win_bytes_forward",
+      "Max Packet Length",
+      "RST Flag Count",
+      "act_data_pkt_fwd"
+    ],
+    "DoS": [
+      "Bwd Packet Length Std",
+      "Init_Win_bytes_backward",
+      "Max Packet Length"
+    ],
+    "Brute Force": [
+      "Bwd Packet Length Std",
+      "Destination Port",
+      "Max Packet Length",
+      "act_data_pkt_fwd"
+    ],
+    "Bot": [
+      "Init_Win_bytes_backward",
+      "Max Packet Length",
+      "RST Flag Count"
+    ],
+    "Infiltration": [
+      "act_data_pkt_fwd"
+    ],
+    "Web Attack": [
+      "Init_Win_bytes_backward",
+      "Init_Win_bytes_forward",
+      "min_seg_size_forward"
+    ]
+  },
+  "verdicts": {
+    "lightgbm": {
+      "overall": "partial",
+      "per_class": {
+        "DDoS": "not supported",
+        "DoS": "supported",
+        "Brute Force": "not supported",
+        "Web Attack": "supported"
+      }
+    },
+    "random_forest": {
+      "overall": "supported",
+      "per_class": {
+        "DDoS": "unclear",
+        "DoS": "supported",
+        "Brute Force": "supported",
+        "Bot": "supported",
+        "Web Attack": "not supported"
+      }
+    },
+    "xgboost": {
+      "overall": "not supported",
+      "per_class": {
+        "DDoS": "not supported",
+        "DoS": "unclear",
+        "Web Attack": "not supported"
+      }
+    },
+    "catboost": {
+      "overall": "supported",
+      "per_class": {
+        "DDoS": "supported",
+        "DoS": "supported",
+        "Brute Force": "not supported",
+        "Bot": "not supported",
+        "Web Attack": "supported"
+      }
+    }
+  },
+  "overall": "partial",
+  "minutes": 0.3
+}

@@ -1,0 +1,49 @@
+model,direction,class,spearman_shift_vs_d
+lightgbm,ids2017->ids2018,DDoS,0.418
+lightgbm,ids2017->ids2018,DoS,0.315
+lightgbm,ids2017->ids2018,Brute Force,0.102
+lightgbm,ids2017->ids2018,Bot,0.193
+lightgbm,ids2017->ids2018,Infiltration,0.062
+lightgbm,ids2017->ids2018,Web Attack,0.415
+lightgbm,ids2018->ids2017,DDoS,0.451
+lightgbm,ids2018->ids2017,DoS,0.177
+lightgbm,ids2018->ids2017,Brute Force,-0.071
+lightgbm,ids2018->ids2017,Bot,0.204
+lightgbm,ids2018->ids2017,Infiltration,0.456
+lightgbm,ids2018->ids2017,Web Attack,-0.14
+random_forest,ids2017->ids2018,DDoS,0.494
+random_forest,ids2017->ids2018,DoS,0.588
+random_forest,ids2017->ids2018,Brute Force,0.492
+random_forest,ids2017->ids2018,Bot,0.568
+random_forest,ids2017->ids2018,Infiltration,0.289
+random_forest,ids2017->ids2018,Web Attack,0.648
+random_forest,ids2018->ids2017,DDoS,0.754
+random_forest,ids2018->ids2017,DoS,0.349
+random_forest,ids2018->ids2017,Brute Force,0.46
+random_forest,ids2018->ids2017,Bot,0.494
+random_forest,ids2018->ids2017,Infiltration,0.299
+random_forest,ids2018->ids2017,Web Attack,0.472
+xgboost,ids2017->ids2018,DDoS,0.342
+xgboost,ids2017->ids2018,DoS,0.162
+xgboost,ids2017->ids2018,Brute Force,-0.153
+xgboost,ids2017->ids2018,Bot,0.276
+xgboost,ids2017->ids2018,Infiltration,0.03
+xgboost,ids2017->ids2018,Web Attack,0.362
+xgboost,ids2018->ids2017,DDoS,0.554
+xgboost,ids2018->ids2017,DoS,0.191
+xgboost,ids2018->ids2017,Brute Force,0.23
+xgboost,ids2018->ids2017,Bot,0.118
+xgboost,ids2018->ids2017,Infiltration,0.435
+xgboost,ids2018->ids2017,Web Attack,-0.037
+catboost,ids2017->ids2018,DDoS,0.572
+catboost,ids2017->ids2018,DoS,0.454
+catboost,ids2017->ids2018,Brute Force,0.052
+catboost,ids2017->ids2018,Bot,0.204
+catboost,ids2017->ids2018,Infiltration,0.213
+catboost,ids2017->ids2018,Web Attack,0.463
+catboost,ids2018->ids2017,DDoS,0.461
+catboost,ids2018->ids2017,DoS,0.263
+catboost,ids2018->ids2017,Brute Force,0.422
+catboost,ids2018->ids2017,Bot,0.232
+catboost,ids2018->ids2017,Infiltration,0.31
+catboost,ids2018->ids2017,Web Attack,0.104
