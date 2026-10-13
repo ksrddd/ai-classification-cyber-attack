@@ -39,7 +39,7 @@ OUT_DIR = RESULTS / "protocol_comparison"
 
 logger = logging.getLogger("compare_protocols")
 
-VERSIONS = ("v1", "v2")
+DEFAULT_VERSIONS = ("v1", "v2")
 FORWARD, BACKWARD = "2017->2018", "2018->2017"
 #: A 2017 ceiling that moved by less than this between runs is taken as
 #: reproduced. The protocol reports four decimals, so anything smaller is
@@ -79,22 +79,29 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--out-dir", type=Path, default=OUT_DIR)
+    ap.add_argument(
+        "--versions", nargs=2, default=list(DEFAULT_VERSIONS), metavar=("OLD", "NEW"),
+        help="the two protocol_<version> runs to compare (default: v1 v2). A pair that "
+             "changes more than the preparation order has no 2017 control.",
+    )
     args = ap.parse_args(argv)
+    versions = tuple(args.versions)
+    old, new = versions
     logging.basicConfig(
         level=logging.INFO,
         format="%(message)s",
         handlers=[logging.StreamHandler(sys.stdout)],
     )
 
-    runs = {v: load(v) for v in VERSIONS}
-    report: dict = {"versions": list(VERSIONS)}
+    runs = {v: load(v) for v in versions}
+    report: dict = {"versions": list(versions)}
     per_model_rows = []
 
     # 1. The asymmetry, under each split mode.
     report["asymmetry"] = {}
     for mode in ("chronological", "random"):
         report["asymmetry"][mode] = {}
-        for v in VERSIONS:
+        for v in versions:
             t = recovered_by_model(runs[v][0], mode)
             report["asymmetry"][mode][v] = summarise(t)
             for model, r in t.iterrows():
@@ -114,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     #    split that inflates one corpus's ceiling shrinks every transfer into
     #    that corpus even when the transfer itself did not change.
     report["split_mode_effect"] = {}
-    for v in VERSIONS:
+    for v in versions:
         gap = runs[v][0]
         p = gap.pivot_table(index=["model", "direction"], columns="mode", values="recovered_pct")
         delta = (p["random"] - p["chronological"]).groupby(level="direction")
@@ -133,38 +140,41 @@ def main(argv: list[str] | None = None) -> int:
             corpus: round(float(s.mean()), 4)
             for corpus, s in runs[v][1].groupby("test")["inflation"]
         }
-        for v in VERSIONS
+        for v in versions
     }
     report["ceilings"] = {
         v: {
             f"{mode}/{corpus}": round(float(s.mean()), 4)
             for (mode, corpus), s in runs[v][0].groupby(["mode", "test"])["ceiling"]
         }
-        for v in VERSIONS
+        for v in versions
     }
 
     # 4. The control: 2017 was not touched, so its chronological ceilings
-    #    should reproduce for every deterministic model.
-    lk = {v: runs[v][1].set_index(["test", "model"]) for v in VERSIONS}
-    c17 = pd.DataFrame({v: lk[v].loc["ids2017", "chronological"] for v in VERSIONS})
-    c17["delta"] = (c17["v2"] - c17["v1"]).round(4)
-    report["control_2017_ceiling"] = {
-        "reproduced": sorted(c17.index[c17["delta"].abs() < REPRODUCED]),
-        "drifted": {m: float(d) for m, d in c17["delta"].items() if abs(d) >= REPRODUCED},
-    }
+    #    should reproduce for every deterministic model. Only meaningful when
+    #    the 2017 side really is identical, i.e. for the default pair.
+    if versions == DEFAULT_VERSIONS:
+        lk = {v: runs[v][1].set_index(["test", "model"]) for v in versions}
+        c17 = pd.DataFrame({v: lk[v].loc["ids2017", "chronological"] for v in versions})
+        c17["delta"] = (c17[new] - c17[old]).round(4)
+        report["control_2017_ceiling"] = {
+            "reproduced": sorted(c17.index[c17["delta"].abs() < REPRODUCED]),
+            "drifted": {m: float(d) for m, d in c17["delta"].items() if abs(d) >= REPRODUCED},
+        }
 
     logger.info(
-        "asymmetry (chronological): v1 mean %.1f, v2 mean %.1f points",
-        report["asymmetry"]["chronological"]["v1"]["mean"]["asymmetry"],
-        report["asymmetry"]["chronological"]["v2"]["mean"]["asymmetry"],
+        "asymmetry (chronological): %s mean %.1f, %s mean %.1f points",
+        old, report["asymmetry"]["chronological"][old]["mean"]["asymmetry"],
+        new, report["asymmetry"]["chronological"][new]["mean"]["asymmetry"],
     )
     logger.info(
-        "asymmetry (random):        v1 mean %.1f, v2 mean %.1f points",
-        report["asymmetry"]["random"]["v1"]["mean"]["asymmetry"],
-        report["asymmetry"]["random"]["v2"]["mean"]["asymmetry"],
+        "asymmetry (random):        %s mean %.1f, %s mean %.1f points",
+        old, report["asymmetry"]["random"][old]["mean"]["asymmetry"],
+        new, report["asymmetry"]["random"][new]["mean"]["asymmetry"],
     )
-    logger.info("2017 ceiling reproduced for: %s", report["control_2017_ceiling"]["reproduced"])
-    logger.info("2017 ceiling drifted for:    %s", report["control_2017_ceiling"]["drifted"])
+    if "control_2017_ceiling" in report:
+        logger.info("2017 ceiling reproduced for: %s", report["control_2017_ceiling"]["reproduced"])
+        logger.info("2017 ceiling drifted for:    %s", report["control_2017_ceiling"]["drifted"])
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "comparison.json").write_text(json.dumps(report, indent=2), encoding="utf-8")

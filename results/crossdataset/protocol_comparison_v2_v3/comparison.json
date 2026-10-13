@@ -1,0 +1,134 @@
+{
+  "versions": [
+    "v2",
+    "v3"
+  ],
+  "asymmetry": {
+    "chronological": {
+      "v2": {
+        "mean": {
+          "2017->2018": 5.7,
+          "2018->2017": 39.3,
+          "asymmetry": 33.6
+        },
+        "median": {
+          "2017->2018": 5.4,
+          "2018->2017": 39.7,
+          "asymmetry": 34.3
+        },
+        "models_favouring_2018_to_2017": 7,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "logistic_regression",
+          "recovered_pct": 79.8
+        }
+      },
+      "v3": {
+        "mean": {
+          "2017->2018": 14.4,
+          "2018->2017": 28.2,
+          "asymmetry": 13.8
+        },
+        "median": {
+          "2017->2018": 6.1,
+          "2018->2017": 30.4,
+          "asymmetry": 6.4
+        },
+        "models_favouring_2018_to_2017": 6,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "logistic_regression",
+          "recovered_pct": 50.1
+        }
+      }
+    },
+    "random": {
+      "v2": {
+        "mean": {
+          "2017->2018": 11.5,
+          "2018->2017": 15.8,
+          "asymmetry": 4.3
+        },
+        "median": {
+          "2017->2018": 6.0,
+          "2018->2017": 16.2,
+          "asymmetry": -0.3
+        },
+        "models_favouring_2018_to_2017": 3,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "logistic_regression",
+          "recovered_pct": 26.0
+        }
+      },
+      "v3": {
+        "mean": {
+          "2017->2018": 10.6,
+          "2018->2017": 15.2,
+          "asymmetry": 4.6
+        },
+        "median": {
+          "2017->2018": 5.6,
+          "2018->2017": 13.7,
+          "asymmetry": 1.1
+        },
+        "models_favouring_2018_to_2017": 4,
+        "n_models": 7,
+        "best_2018_to_2017": {
+          "model": "logistic_regression",
+          "recovered_pct": 25.5
+        }
+      }
+    }
+  },
+  "split_mode_effect": {
+    "v2": {
+      "2017->2018": {
+        "mean": 5.7,
+        "min": -2.1,
+        "max": 15.9
+      },
+      "2018->2017": {
+        "mean": -23.5,
+        "min": -53.8,
+        "max": -3.6
+      }
+    },
+    "v3": {
+      "2017->2018": {
+        "mean": -3.8,
+        "min": -9.1,
+        "max": 0.3
+      },
+      "2018->2017": {
+        "mean": -13.0,
+        "min": -24.6,
+        "max": -1.2
+      }
+    }
+  },
+  "ceiling_inflation": {
+    "v2": {
+      "ids2017": 0.2559,
+      "ids2018": 0.0129
+    },
+    "v3": {
+      "ids2017": 0.0993,
+      "ids2018": 0.0124
+    }
+  },
+  "ceilings": {
+    "v2": {
+      "chronological/ids2017": 0.6491,
+      "chronological/ids2018": 0.8293,
+      "random/ids2017": 0.905,
+      "random/ids2018": 0.8422
+    },
+    "v3": {
+      "chronological/ids2017": 0.8073,
+      "chronological/ids2018": 0.8314,
+      "random/ids2017": 0.9065,
+      "random/ids2018": 0.8438
+    }
+  }
+}
