@@ -1,0 +1,48 @@
+2026-10-15 16:20:58 | INFO     | src.pipelines.explain | Rebuilt locked test partition: 749401 rows
+2026-10-15 16:20:58 | INFO     | src.pipelines.explain | SHAP: catboost
+2026-10-15 16:20:58 | INFO     | src.explainability.shap_analyzer | SHAP for catboost using tree (analyze=1000, background=200)
+2026-10-15 16:21:03 | INFO     | src.explainability.shap_analyzer | Wrote SHAP report -> C:\Users\ks\GitHub\ai-classification-cyber-attack\results\cicids2017_temporal_v1_shap\shap\shap_report.md
+{
+  "run_dir": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap",
+  "report_path": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\shap_report.md",
+  "models": {
+    "catboost": {
+      "explainer": "tree",
+      "top_overall": [
+        [
+          "Destination Port",
+          2.3635083120135496
+        ],
+        [
+          "Init_Win_bytes_forward",
+          1.6147778452624493
+        ],
+        [
+          "Init_Win_bytes_backward",
+          1.2192786582822037
+        ],
+        [
+          "min_seg_size_forward",
+          0.732172555837251
+        ],
+        [
+          "Flow Bytes/s",
+          0.5866272145734706
+        ]
+      ],
+      "artefacts": {
+        "summary_BENIGN": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_BENIGN.png",
+        "summary_Bot": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_Bot.png",
+        "summary_Brute Force": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_Brute_Force.png",
+        "summary_DDoS": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_DDoS.png",
+        "summary_DoS": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_DoS.png",
+        "summary_Heartbleed": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_Heartbleed.png",
+        "summary_Infiltration": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_Infiltration.png",
+        "summary_PortScan": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_PortScan.png",
+        "summary_Web Attack": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_Web_Attack.png",
+        "summary_bar": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\summary_bar.png",
+        "top_features_json": "C:\\Users\\ks\\GitHub\\ai-classification-cyber-attack\\results\\cicids2017_temporal_v1_shap\\shap\\catboost\\top_features.json"
+      }
+    }
+  }
+}

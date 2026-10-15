@@ -1,0 +1,36 @@
+16:19:31 | INFO    | Applied RAM preset '32gb': {'subsample_n': 3000000, 'hp_search_subsample': 200000, 'hp_search_n_iter': 20, 'hp_search_jobs': 2}
+16:19:33 | INFO    | Serialising HP search (hp_search_jobs 2 -> 1): concurrent fits would each need their own copy of the data in VRAM
+16:19:33 | INFO    | Artefacts -> C:\Users\ks\GitHub\ai-classification-cyber-attack\results\cicids2017_temporal_v1_shap
+16:19:33 | INFO    | Loading cleaned corpus from cache: C:\Users\ks\GitHub\ai-classification-cyber-attack\data\processed\cicids2017_clean.parquet
+16:19:36 | INFO    |   -> 2497980 rows x 83 cols (from cache)
+16:19:36 | INFO    | Full cleaned label distribution:
+Label
+BENIGN          2072254
+DoS              193730
+DDoS             128014
+PortScan          90694
+Brute Force        9150
+Web Attack         2143
+Bot                1948
+Infiltration         36
+Heartbleed           11
+16:19:36 | INFO    | Capture chronology validated against the published CIC schedule (1 ordered pair(s))
+16:19:43 | INFO    | Using temporal per-source per-class manifest C:\Users\ks\GitHub\ai-classification-cyber-attack\configs\splits\cicids2017_temporal_70_30.json (cicids2017_temporal_v1); counts verified against the manifest
+16:19:43 | INFO    | Split: train=1748579, calibration=0, test=749401 (imbalance_strategy=class_weight, target=Infiltration, ratio=1.000)
+16:19:43 | INFO    | Per-class n_train: {'BENIGN': 1450574, 'Bot': 1363, 'Brute Force': 6405, 'DDoS': 89609, 'DoS': 135611, 'Heartbleed': 7, 'Infiltration': 25, 'PortScan': 63485, 'Web Attack': 1500}
+16:19:43 | INFO    | Per-class n_calibration: {'BENIGN': 0, 'Bot': 0, 'Brute Force': 0, 'DDoS': 0, 'DoS': 0, 'Heartbleed': 0, 'Infiltration': 0, 'PortScan': 0, 'Web Attack': 0}
+16:19:43 | INFO    | Per-class n_test:  {'BENIGN': 621680, 'Bot': 585, 'Brute Force': 2745, 'DDoS': 38405, 'DoS': 58119, 'Heartbleed': 4, 'Infiltration': 11, 'PortScan': 27209, 'Web Attack': 643}
+16:19:43 | INFO    | Using 5-fold StratifiedKFold (source grouping is degenerate for a single-capture-per-class corpus)
+16:19:43 | INFO    | ================================================================
+16:19:43 | INFO    | Model: catboost
+16:19:43 | INFO    | Reusing saved best params: {'clf__learning_rate': 0.15, 'clf__l2_leaf_reg': 1, 'clf__iterations': 500, 'clf__depth': 6}
+16:20:23 | INFO    | catboost final fit on full train (1748579 rows): 39.6s
+16:20:23 | INFO    | catboost: no calibration partition; retaining native argmax decision policy
+16:20:24 | INFO    | catboost test: acc=0.9951, bal_acc=0.8969, f1_macro=0.8858, f1_weighted=0.9950
+16:20:24 | INFO    | catboost detection: macro P=0.8828 R=0.8969 | binary FPR=0.00063 (389 benign alerts), FNR=0.01943 (2482 attacks missed) | f1_macro_reportable=0.8593
+16:20:24 | INFO    | catboost target test: recall=1.0000, F2=0.9821, FPR=0.0000, FN=0 (to BENIGN=0), FP=1
+16:20:24 | INFO    | catboost CV trust check skipped
+16:20:24 | INFO    | catboost efficiency: fit=39.6s, p50=5.15ms, p95=5.68ms, 194352 flows/s, 2.5 MB on disk
+16:20:25 | INFO    | Wrote report -> C:\Users\ks\GitHub\ai-classification-cyber-attack\results\cicids2017_temporal_v1_shap\report.md
+16:20:25 | INFO    | Wrote integrity manifest -> C:\Users\ks\GitHub\ai-classification-cyber-attack\results\cicids2017_temporal_v1_shap\bundle_manifest.json
+16:20:25 | INFO    | Done in 51.8s. All artefacts under C:\Users\ks\GitHub\ai-classification-cyber-attack\results\cicids2017_temporal_v1_shap

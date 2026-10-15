@@ -1,0 +1,37 @@
+2026-10-15 16:22:35,856 INFO Rebuilt locked test partition: 749401 rows
+2026-10-15 16:22:36,048 INFO SHAP for catboost using tree (analyze=1415, background=200)
+{
+  "overall": [
+    [
+      "Destination Port",
+      2.7505577844524174
+    ],
+    [
+      "Init_Win_bytes_forward",
+      1.5116472689559326
+    ],
+    [
+      "Init_Win_bytes_backward",
+      1.4553193462249452
+    ],
+    [
+      "min_seg_size_forward",
+      0.7663418282228635
+    ],
+    [
+      "Flow Bytes/s",
+      0.7052737205530745
+    ]
+  ],
+  "per_class_n": {
+    "BENIGN": 200,
+    "Bot": 200,
+    "Brute Force": 200,
+    "DDoS": 200,
+    "DoS": 200,
+    "Heartbleed": 4,
+    "Infiltration": 11,
+    "PortScan": 200,
+    "Web Attack": 200
+  }
+}

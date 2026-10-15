@@ -1,0 +1,859 @@
+{
+  "overall": [
+    [
+      "Destination Port",
+      2.7505577844524174
+    ],
+    [
+      "Init_Win_bytes_forward",
+      1.5116472689559326
+    ],
+    [
+      "Init_Win_bytes_backward",
+      1.4553193462249452
+    ],
+    [
+      "min_seg_size_forward",
+      0.7663418282228635
+    ],
+    [
+      "Flow Bytes/s",
+      0.7052737205530745
+    ],
+    [
+      "Flow IAT Min",
+      0.6530365217301406
+    ],
+    [
+      "Fwd IAT Min",
+      0.5423328089161087
+    ],
+    [
+      "Total Length of Fwd Packets",
+      0.37336294613503557
+    ],
+    [
+      "Bwd IAT Min",
+      0.36179208732452917
+    ],
+    [
+      "Bwd Packet Length Std",
+      0.3062090742621348
+    ]
+  ],
+  "per_class": {
+    "BENIGN": [
+      [
+        "Destination Port",
+        2.920897276347569
+      ],
+      [
+        "Init_Win_bytes_forward",
+        2.658419968150148
+      ],
+      [
+        "Init_Win_bytes_backward",
+        1.717018859766678
+      ],
+      [
+        "min_seg_size_forward",
+        0.9247679135971489
+      ],
+      [
+        "Flow Bytes/s",
+        0.8050168812617788
+      ],
+      [
+        "Flow IAT Min",
+        0.6534680932847554
+      ],
+      [
+        "Bwd Packet Length Min",
+        0.4823288294253371
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.4073293980564142
+      ],
+      [
+        "Fwd IAT Min",
+        0.3692888116069774
+      ],
+      [
+        "Fwd Header Length",
+        0.35595138037440494
+      ]
+    ],
+    "Bot": [
+      [
+        "Destination Port",
+        9.22061070945932
+      ],
+      [
+        "Flow IAT Min",
+        1.285920598955724
+      ],
+      [
+        "Init_Win_bytes_backward",
+        1.254729963790505
+      ],
+      [
+        "Fwd Header Length",
+        0.6528870528613412
+      ],
+      [
+        "Init_Win_bytes_forward",
+        0.6496895862857116
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.6423213234999021
+      ],
+      [
+        "Average Packet Size",
+        0.6113265429265918
+      ],
+      [
+        "Fwd Packets/s",
+        0.5087105318064595
+      ],
+      [
+        "Bwd IAT Min",
+        0.4223880975122233
+      ],
+      [
+        "min_seg_size_forward",
+        0.41766745783071
+      ]
+    ],
+    "Brute Force": [
+      [
+        "Destination Port",
+        7.841849928537121
+      ],
+      [
+        "Init_Win_bytes_forward",
+        1.0822016114727446
+      ],
+      [
+        "Fwd IAT Min",
+        0.9531709299898355
+      ],
+      [
+        "Flow IAT Min",
+        0.7295693482284592
+      ],
+      [
+        "Bwd Header Length",
+        0.6897606723205763
+      ],
+      [
+        "act_data_pkt_fwd",
+        0.5016411926024731
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.4563917280775034
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.381306768460775
+      ],
+      [
+        "min_seg_size_forward",
+        0.31590145323593727
+      ],
+      [
+        "Total Length of Bwd Packets",
+        0.2674562560647971
+      ]
+    ],
+    "DDoS": [
+      [
+        "Init_Win_bytes_backward",
+        3.402986607639845
+      ],
+      [
+        "Init_Win_bytes_forward",
+        3.0051490017563025
+      ],
+      [
+        "min_seg_size_forward",
+        2.9046804993241047
+      ],
+      [
+        "Destination Port",
+        2.486725767752723
+      ],
+      [
+        "Bwd Header Length",
+        1.000934188043739
+      ],
+      [
+        "Bwd Packet Length Std",
+        0.9983498057893704
+      ],
+      [
+        "act_data_pkt_fwd",
+        0.8231094519086491
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.7482369493697789
+      ],
+      [
+        "Fwd Header Length",
+        0.7072344217520186
+      ],
+      [
+        "Bwd IAT Total",
+        0.6977901872915234
+      ]
+    ],
+    "DoS": [
+      [
+        "Init_Win_bytes_forward",
+        3.9125737650118864
+      ],
+      [
+        "Destination Port",
+        3.7337494574428187
+      ],
+      [
+        "Init_Win_bytes_backward",
+        1.3638537729653613
+      ],
+      [
+        "Bwd Packet Length Std",
+        0.9133803030934743
+      ],
+      [
+        "Flow IAT Min",
+        0.7559033917281685
+      ],
+      [
+        "min_seg_size_forward",
+        0.6705932518425166
+      ],
+      [
+        "Fwd IAT Min",
+        0.5971923941468881
+      ],
+      [
+        "Idle Min",
+        0.590218977097554
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.5022176619155413
+      ],
+      [
+        "Flow Packets/s",
+        0.46421661033968725
+      ]
+    ],
+    "Heartbleed": [
+      [
+        "Destination Port",
+        6.520059357747667
+      ],
+      [
+        "Init_Win_bytes_backward",
+        2.5207387845280094
+      ],
+      [
+        "Init_Win_bytes_forward",
+        1.7205295737800175
+      ],
+      [
+        "Flow Bytes/s",
+        1.1790755993918656
+      ],
+      [
+        "Fwd Packet Length Max",
+        1.0357131206171755
+      ],
+      [
+        "Flow IAT Min",
+        0.9218131379343253
+      ],
+      [
+        "Bwd Header Length",
+        0.8414501036385666
+      ],
+      [
+        "Fwd Packets/s",
+        0.737888395224725
+      ],
+      [
+        "Total Length of Bwd Packets",
+        0.6102746383679554
+      ],
+      [
+        "Fwd Header Length",
+        0.6042488694912896
+      ]
+    ],
+    "Infiltration": [
+      [
+        "Destination Port",
+        7.885535136361324
+      ],
+      [
+        "Init_Win_bytes_forward",
+        2.788183070936887
+      ],
+      [
+        "min_seg_size_forward",
+        2.0264884118454916
+      ],
+      [
+        "Init_Win_bytes_backward",
+        1.422245801939522
+      ],
+      [
+        "Fwd Packet Length Max",
+        1.122507194680349
+      ],
+      [
+        "Min Packet Length",
+        0.8290353180735455
+      ],
+      [
+        "Bwd IAT Total",
+        0.7577021112424237
+      ],
+      [
+        "Active Min",
+        0.7306491552637108
+      ],
+      [
+        "Bwd Packet Length Mean",
+        0.6972155038358294
+      ],
+      [
+        "Bwd Header Length",
+        0.6143401042848647
+      ]
+    ],
+    "PortScan": [
+      [
+        "Init_Win_bytes_forward",
+        3.538199669014445
+      ],
+      [
+        "Init_Win_bytes_backward",
+        2.4958425065518184
+      ],
+      [
+        "Destination Port",
+        2.3808918443656424
+      ],
+      [
+        "Flow Bytes/s",
+        1.5388695827154866
+      ],
+      [
+        "Average Packet Size",
+        0.8439287458133212
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.7467725440901839
+      ],
+      [
+        "Bwd Packets/s",
+        0.724978438277825
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.7156743242722594
+      ],
+      [
+        "Fwd Header Length",
+        0.688386271425966
+      ],
+      [
+        "Flow IAT Max",
+        0.6326385722209359
+      ]
+    ],
+    "Web Attack": [
+      [
+        "Total Length of Fwd Packets",
+        0.008496360229169008
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.008116443603622183
+      ],
+      [
+        "Fwd IAT Mean",
+        0.004744862984031984
+      ],
+      [
+        "Fwd IAT Min",
+        0.004581493817536173
+      ],
+      [
+        "Fwd IAT Total",
+        0.004554758155818692
+      ],
+      [
+        "Active Mean",
+        0.004263194003289865
+      ],
+      [
+        "Active Min",
+        0.003429793074635156
+      ],
+      [
+        "Fwd Header Length",
+        0.0027754468187346894
+      ],
+      [
+        "Flow IAT Mean",
+        0.0027321669256761723
+      ],
+      [
+        "Flow Duration",
+        0.0024431907702856578
+      ]
+    ]
+  },
+  "overall_share": [
+    [
+      "Destination Port",
+      0.17908549084927777
+    ],
+    [
+      "Init_Win_bytes_forward",
+      0.09842152551099279
+    ],
+    [
+      "Init_Win_bytes_backward",
+      0.09475408258439115
+    ],
+    [
+      "min_seg_size_forward",
+      0.04989558962963084
+    ],
+    [
+      "Flow Bytes/s",
+      0.04591951899439496
+    ],
+    [
+      "Flow IAT Min",
+      0.04251841815416709
+    ],
+    [
+      "Fwd IAT Min",
+      0.035310633296782155
+    ],
+    [
+      "Total Length of Fwd Packets",
+      0.0243092098815283
+    ],
+    [
+      "Bwd IAT Min",
+      0.023555845258054393
+    ],
+    [
+      "Bwd Packet Length Std",
+      0.019936902499088728
+    ]
+  ],
+  "per_class_share": {
+    "BENIGN": [
+      [
+        "Destination Port",
+        0.16303979116763842
+      ],
+      [
+        "Init_Win_bytes_forward",
+        0.1483887297074205
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.09584123296431339
+      ],
+      [
+        "min_seg_size_forward",
+        0.051619058544895804
+      ],
+      [
+        "Flow Bytes/s",
+        0.044934748397405154
+      ],
+      [
+        "Flow IAT Min",
+        0.03647553863896432
+      ],
+      [
+        "Bwd Packet Length Min",
+        0.026922820004807634
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.022736472293404662
+      ],
+      [
+        "Fwd IAT Min",
+        0.02061310790095122
+      ],
+      [
+        "Fwd Header Length",
+        0.019868633926984392
+      ]
+    ],
+    "Bot": [
+      [
+        "Destination Port",
+        0.4252915561200778
+      ],
+      [
+        "Flow IAT Min",
+        0.05931181673418799
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.057873179513317025
+      ],
+      [
+        "Fwd Header Length",
+        0.030113770056162927
+      ],
+      [
+        "Init_Win_bytes_forward",
+        0.029966290070461286
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.02962643623161916
+      ],
+      [
+        "Average Packet Size",
+        0.028196832610234254
+      ],
+      [
+        "Fwd Packets/s",
+        0.023463770514103817
+      ],
+      [
+        "Bwd IAT Min",
+        0.019482233545906443
+      ],
+      [
+        "min_seg_size_forward",
+        0.019264498706068413
+      ]
+    ],
+    "Brute Force": [
+      [
+        "Destination Port",
+        0.4491764011763312
+      ],
+      [
+        "Init_Win_bytes_forward",
+        0.061987851032394646
+      ],
+      [
+        "Fwd IAT Min",
+        0.0545970519635537
+      ],
+      [
+        "Flow IAT Min",
+        0.04178928916419006
+      ],
+      [
+        "Bwd Header Length",
+        0.03950907238589812
+      ],
+      [
+        "act_data_pkt_fwd",
+        0.028733702841596664
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.026141840995768974
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.021841020111607552
+      ],
+      [
+        "min_seg_size_forward",
+        0.018094643379302933
+      ],
+      [
+        "Total Length of Bwd Packets",
+        0.01531973190842378
+      ]
+    ],
+    "DDoS": [
+      [
+        "Init_Win_bytes_backward",
+        0.12008532210974132
+      ],
+      [
+        "Init_Win_bytes_forward",
+        0.1060463432484558
+      ],
+      [
+        "min_seg_size_forward",
+        0.10250098916173449
+      ],
+      [
+        "Destination Port",
+        0.08775211284956778
+      ],
+      [
+        "Bwd Header Length",
+        0.03532118055123592
+      ],
+      [
+        "Bwd Packet Length Std",
+        0.03522998231531756
+      ],
+      [
+        "act_data_pkt_fwd",
+        0.029046063079447727
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.026403946133010944
+      ],
+      [
+        "Fwd Header Length",
+        0.024957040134251447
+      ],
+      [
+        "Bwd IAT Total",
+        0.024623769960715546
+      ]
+    ],
+    "DoS": [
+      [
+        "Init_Win_bytes_forward",
+        0.18321643057458578
+      ],
+      [
+        "Destination Port",
+        0.17484251782544763
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.06386599591883627
+      ],
+      [
+        "Bwd Packet Length Std",
+        0.0427714054585783
+      ],
+      [
+        "Flow IAT Min",
+        0.03539713999264041
+      ],
+      [
+        "min_seg_size_forward",
+        0.03140227107503925
+      ],
+      [
+        "Fwd IAT Min",
+        0.027965085233748067
+      ],
+      [
+        "Idle Min",
+        0.027638536864970396
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.02351764667302062
+      ],
+      [
+        "Flow Packets/s",
+        0.021738148714395538
+      ]
+    ],
+    "Heartbleed": [
+      [
+        "Destination Port",
+        0.25895131706892816
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.10011390885032478
+      ],
+      [
+        "Init_Win_bytes_forward",
+        0.06833272133588139
+      ],
+      [
+        "Flow Bytes/s",
+        0.046828282172546414
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.04113448390169806
+      ],
+      [
+        "Flow IAT Min",
+        0.036610821015898666
+      ],
+      [
+        "Bwd Header Length",
+        0.033419114862209456
+      ],
+      [
+        "Fwd Packets/s",
+        0.02930604789146081
+      ],
+      [
+        "Total Length of Bwd Packets",
+        0.02423772740525131
+      ],
+      [
+        "Fwd Header Length",
+        0.023998407377418835
+      ]
+    ],
+    "Infiltration": [
+      [
+        "Destination Port",
+        0.2606813909300094
+      ],
+      [
+        "Init_Win_bytes_forward",
+        0.09217224050500113
+      ],
+      [
+        "min_seg_size_forward",
+        0.06699200609322131
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.04701684888630658
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.037108037917289706
+      ],
+      [
+        "Min Packet Length",
+        0.027406393619246187
+      ],
+      [
+        "Bwd IAT Total",
+        0.025048248071141335
+      ],
+      [
+        "Active Min",
+        0.02415392675098381
+      ],
+      [
+        "Bwd Packet Length Mean",
+        0.023048671291794914
+      ],
+      [
+        "Bwd Header Length",
+        0.02030896193089101
+      ]
+    ],
+    "PortScan": [
+      [
+        "Init_Win_bytes_forward",
+        0.1510279169016406
+      ],
+      [
+        "Init_Win_bytes_backward",
+        0.10653494147889242
+      ],
+      [
+        "Destination Port",
+        0.10162827688093938
+      ],
+      [
+        "Flow Bytes/s",
+        0.06568658900065824
+      ],
+      [
+        "Average Packet Size",
+        0.03602306608352116
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.031875957346605754
+      ],
+      [
+        "Bwd Packets/s",
+        0.030945676777535625
+      ],
+      [
+        "Total Length of Fwd Packets",
+        0.030548531028757868
+      ],
+      [
+        "Fwd Header Length",
+        0.029383741541672323
+      ],
+      [
+        "Flow IAT Max",
+        0.02700415314344601
+      ]
+    ],
+    "Web Attack": [
+      [
+        "Total Length of Fwd Packets",
+        0.11292468357898605
+      ],
+      [
+        "Fwd Packet Length Max",
+        0.1078752313936863
+      ],
+      [
+        "Fwd IAT Mean",
+        0.06306372807239846
+      ],
+      [
+        "Fwd IAT Min",
+        0.06089239694524514
+      ],
+      [
+        "Fwd IAT Total",
+        0.060537054650628634
+      ],
+      [
+        "Active Mean",
+        0.05666189060635255
+      ],
+      [
+        "Active Min",
+        0.045585202045094274
+      ],
+      [
+        "Fwd Header Length",
+        0.03688831986194777
+      ],
+      [
+        "Flow IAT Mean",
+        0.03631308904579352
+      ],
+      [
+        "Flow Duration",
+        0.03247232193738934
+      ]
+    ]
+  },
+  "per_class_n": {
+    "BENIGN": 200,
+    "Bot": 200,
+    "Brute Force": 200,
+    "DDoS": 200,
+    "DoS": 200,
+    "Heartbleed": 4,
+    "Infiltration": 11,
+    "PortScan": 200,
+    "Web Attack": 200
+  },
+  "units": "probability",
+  "explainer": "tree"
+}

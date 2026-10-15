@@ -1,0 +1,57 @@
+{
+  "bundle_version": "1",
+  "files": {
+    "catboost.joblib": {
+      "sha256": "81c0a0c95aa780d82b90f637207e1186a7830a97f60ed0ef76004480bb1061f9",
+      "size": 2628520
+    },
+    "catboost_confusion_matrix.png": {
+      "sha256": "7acef04566f8d57966f762cf7e87399aab7fdf67e0202fdcb7b36203fcff7992",
+      "size": 84322
+    },
+    "catboost_metrics.json": {
+      "sha256": "7a68da1471c574bc5bbe1705c335e3f65622429073d3bd4f9da89d8e661b6052",
+      "size": 5169
+    },
+    "catboost_per_class.csv": {
+      "sha256": "b8f14bc2118aff807b9d72366b5f1d10d5675b1319cd861cd816e49761311a86",
+      "size": 477
+    },
+    "feature_columns.json": {
+      "sha256": "c4e51244bb638a5d7c886d75dbcc01b639c30eb174589fd7833d817e797309be",
+      "size": 1749
+    },
+    "label_encoder.joblib": {
+      "sha256": "b013713151b75cbfc4182f16bf8cd2cac557f4b696eb872c3dabdf799c1bb807",
+      "size": 567
+    },
+    "metrics.json": {
+      "sha256": "f4676c5d6b92b20cfe07b9f7a324c9aa406d1a31cfd6582573b13fa0ebd9a569",
+      "size": 8369
+    },
+    "report.md": {
+      "sha256": "438539306337517ec8b52d21e9a191572aefbc886cb5d78ddccdf4d3c7bd4e2e",
+      "size": 10009
+    },
+    "train.log": {
+      "sha256": "d8f56b80f8fc7b24c8bf63dd8dc47571681b595bcd22b0ba8a76f36558e38719",
+      "size": 3190
+    }
+  },
+  "metadata": {
+    "class_names": [
+      "BENIGN",
+      "Bot",
+      "Brute Force",
+      "DDoS",
+      "DoS",
+      "Heartbleed",
+      "Infiltration",
+      "PortScan",
+      "Web Attack"
+    ],
+    "split_protocol": "cicids2017_temporal_v1"
+  },
+  "run_id": "cicids2017_temporal_v1_shap",
+  "schema_version": "1"
+}
