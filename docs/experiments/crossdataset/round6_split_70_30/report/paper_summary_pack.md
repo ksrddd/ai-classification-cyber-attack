@@ -266,13 +266,13 @@
 
 ## 9) Figures ที่ควรเสนอ
 
-ไม่ต้องสร้างรูปใหม่ ทั้ง 4 รูปมีอยู่แล้วในเล่มรายงาน (รูป 4.7–4.10) ไฟล์อยู่ใน `round6_split_70_30/data/` ยกเว้นรูป D
+ไม่ต้องสร้างรูปใหม่ ทั้ง 4 รูปมีอยู่แล้วในเล่มรายงาน (รูป 4.8–4.11) ไฟล์อยู่ใน `round6_split_70_30/data/` ยกเว้นรูป D
 
 | # | รูป | ตอบคำถาม | ไฟล์ข้อมูล |
 |---|---|---|---|
-| A | **60% vs 70% split sensitivity**: แผงซ้ายคือ macro-F1 ทิศ 2017→2018 แผงขวาคือ Brute Force F1 (รูป 4.9) | องค์ประกอบของชุดฝึก (SSH-Patator 0→474) เปลี่ยนข้อสรุปได้แค่ไหน เป็นผลเด่นที่สุดของ paper | `summary_macro_f1_v2.csv`, `summary_macro_f1.csv`, `per_class_v3.csv` |
-| B | **Random vs capture-order**: กราฟแท่ง macro-F1 ของ 7 โมเดล 2 ทิศ พร้อมเส้น baseline (รูป 4.7) | วิธีแบ่งข้อมูลมีผลต่อ transfer และ asymmetry หรือไม่ | `summary_macro_f1.csv`, `summary_gap.csv` |
-| C | **Per-class transfer**: heatmap ของ best F1 วาง ceiling คู่กับ transfer ทั้ง 2 ทิศ (รูป 4.8) | คลาสไหนส่งผ่านได้ (Brute Force, Benign) และคลาสไหนไม่ได้ (DDoS, Web Attack) | `summary_per_class.csv` |
-| D | **Adversarial validation**: ช่วง AUC เรียงจาก label-shuffle → null → within → cross-dataset (รูป 4.10) | fingerprint มีจริงหรือไม่ และใช่ leakage หรือเปล่า | `round5_reliability_audit/data/diagnostics.json`, `within_dataset_control.json`, `tool_matched.json` (เทียบกับ JSON แล้ว: label-shuffle 0.4928–0.5055, null 0.4915–0.5273, tool-matched 0.9999–1.0000 ตรงกัน รูปเดิมพิมพ์ค่าสูงสุดของ null เป็น 0.5311 ซึ่งแก้แล้ว) |
+| A | **60% vs 70% split sensitivity**: แผงซ้ายคือ macro-F1 ทิศ 2017→2018 แผงขวาคือ Brute Force F1 (รูป 4.10) | องค์ประกอบของชุดฝึก (SSH-Patator 0→474) เปลี่ยนข้อสรุปได้แค่ไหน เป็นผลเด่นที่สุดของ paper | `summary_macro_f1_v2.csv`, `summary_macro_f1.csv`, `per_class_v3.csv` |
+| B | **Random vs capture-order**: กราฟแท่ง macro-F1 ของ 7 โมเดล 2 ทิศ พร้อมเส้น baseline (รูป 4.8) | วิธีแบ่งข้อมูลมีผลต่อ transfer และ asymmetry หรือไม่ | `summary_macro_f1.csv`, `summary_gap.csv` |
+| C | **Per-class transfer**: heatmap ของ best F1 วาง ceiling คู่กับ transfer ทั้ง 2 ทิศ (รูป 4.9) | คลาสไหนส่งผ่านได้ (Brute Force, Benign) และคลาสไหนไม่ได้ (DDoS, Web Attack) | `summary_per_class.csv` |
+| D | **Adversarial validation**: ช่วง AUC เรียงจาก label-shuffle → null → within → cross-dataset (รูป 4.11) | fingerprint มีจริงหรือไม่ และใช่ leakage หรือเปล่า | `round5_reliability_audit/data/diagnostics.json`, `within_dataset_control.json`, `tool_matched.json` (เทียบกับ JSON แล้ว: label-shuffle 0.4928–0.5055, null 0.4915–0.5273, tool-matched 0.9999–1.0000 ตรงกัน รูปเดิมพิมพ์ค่าสูงสุดของ null เป็น 0.5311 ซึ่งแก้แล้ว) |
 
 ถ้าพื้นที่จำกัดให้ใช้ A, B, C แล้วรายงาน D เป็นตารางสั้น (ข้อ 5) SHAP ไม่แนะนำให้ทำเป็นรูป เพราะผลเป็น null (0/11) เขียนเป็นประโยคพร้อมตัวเลขจะชัดกว่า
