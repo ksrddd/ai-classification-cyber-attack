@@ -8,6 +8,11 @@ textColor            = "#e2e8f0"
 font                 = "sans serif"
 
 [server]
+# Local demo only: bind to loopback so the upload page is not reachable
+# from other machines on the same Wi-Fi/LAN (there is no login).
+address              = "localhost"
+enableXsrfProtection = true
+maxUploadSize        = 200   # MB; whole CSV is read into RAM
 headless             = true
 runOnSave            = true
 fileWatcherType      = "auto"

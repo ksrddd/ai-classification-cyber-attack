@@ -6,6 +6,8 @@ Single source of truth for colours, CSS, and HTML helpers.
 
 from __future__ import annotations
 
+import html
+
 import streamlit as st
 
 # ---------------------------------------------------------------------------
@@ -433,12 +435,12 @@ def section(title: str, subtitle: str | None = None) -> None:
 
 def pill(text: str, kind: str = "info") -> str:
     kind = kind if kind in {"success", "warn", "danger", "info", "accent"} else "info"
-    return f'<span class="pill {kind}">{text}</span>'
+    return f'<span class="pill {kind}">{html.escape(text)}</span>'
 
 
 def class_badge(label: str) -> str:
     color = class_color(label)
-    return f'<span class="class-badge" style="background:{color}">{label}</span>'
+    return f'<span class="class-badge" style="background:{color}">{html.escape(label)}</span>'
 
 
 def footer(text: str = "AI-Based Cyber Attack Classification") -> None:
