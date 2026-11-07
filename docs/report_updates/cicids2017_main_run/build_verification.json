@@ -1,0 +1,50 @@
+{
+  "compiler": "Tectonic 0.17.0 (XeTeX)",
+  "exit_code": 0,
+  "pages": 79,
+  "unresolved_reference_markers": 0,
+  "confusion_matrix_list_of_figures_entries": 7,
+  "main_bibliography": "BibTeX completed without errors (full-report.blg)",
+  "image_checks": [
+    {
+      "model": "catboost",
+      "pdf_page": 49,
+      "embedded_image_matches": true
+    },
+    {
+      "model": "lightgbm",
+      "pdf_page": 73,
+      "embedded_image_matches": true
+    },
+    {
+      "model": "xgboost",
+      "pdf_page": 74,
+      "embedded_image_matches": true
+    },
+    {
+      "model": "random_forest",
+      "pdf_page": 75,
+      "embedded_image_matches": true
+    },
+    {
+      "model": "stacking",
+      "pdf_page": 76,
+      "embedded_image_matches": true
+    },
+    {
+      "model": "logistic_regression",
+      "pdf_page": 77,
+      "embedded_image_matches": true
+    },
+    {
+      "model": "mlp",
+      "pdf_page": 78,
+      "embedded_image_matches": true
+    }
+  ],
+  "source_tex_modified": false,
+  "notes": [
+    "An existing 2.66023pt overfull line in the abstract remains.",
+    "BibTeX attempts on chapter-only aux files emit no-bibdata/no-bibstyle messages; the root bibliography completes successfully."
+  ]
+}

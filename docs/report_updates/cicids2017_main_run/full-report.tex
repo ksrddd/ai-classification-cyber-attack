@@ -1,0 +1,158 @@
+\documentclass{itkmitlproject}
+
+\usepackage{afterpage}
+\usepackage{graphicx,amsmath,amssymb,amsthm}
+\usepackage{indentfirst}
+\usepackage[hidelinks]{hyperref}
+\usepackage{hyphenat}
+% ระบบอ้างอิงแบบหมายเลขในเครื่องหมายก้ามปู เช่น [1], [2] และเรียงตามลำดับที่
+% ปรากฏในเนื้อหา (ห้ามใช้ option sort หรือรูปแบบนาม-ปี)
+\usepackage[numbers,square]{natbib}
+\usepackage{longtable}          % ตารางที่ยาวข้ามหน้า
+\usepackage{tikz}               % แผนภาพประกอบ
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{placeins}           % \FloatBarrier กันรูปไม่ให้ลอยข้ามหัวข้อ
+% ให้ยืดช่องว่างได้มากขึ้นเมื่อบรรทัดมีคำภาษาอังกฤษยาวที่ตัดไม่ได้
+% เพื่อไม่ให้ข้อความล้นเข้าขอบกระดาษ (คู่มือ ข้อ 4.4)
+\setlength{\emergencystretch}{3em}
+
+% ชื่อพารามิเตอร์และชื่อไฟล์ (\texttt) ใช้ TH SarabunPSK เช่นเดียวกับเนื้อหา (คู่มือ ข้อ 4.2.2)
+\setmonofont{THSarabunPSK}[
+	Path = fonts/,
+	UprightFont = THSarabun,
+	ItalicFont = THSarabun Italic,
+	BoldFont = THSarabun Bold,
+	BoldItalicFont = THSarabun BoldItalic,
+	Extension = .ttf,
+	Script=Thai
+]
+
+% ลูกศรบอกทิศของการส่งผ่าน เช่น 2017\dirarrow{}2018
+%   TH SarabunPSK ไม่มีอักขระ → จึงวาดเส้นเองให้ความหนาตามน้ำหนักของตัวอักษรรอบข้าง
+%   แทนการใช้ $\to$ ซึ่งดึงฟอนต์ Times มาปนกับข้อความไทย
+\makeatletter
+\DeclareRobustCommand{\dirarrow}{%
+	\begingroup
+	\def\dir@w{0.06em}%
+	\ifdefstring{\f@series}{bx}{\def\dir@w{0.1em}}{}%
+	\ifdefstring{\f@series}{b}{\def\dir@w{0.1em}}{}%
+	\kern0.1em\tikz[baseline=-0.62ex]\draw[line width=\dir@w, line cap=round,
+		-{Straight Barb[length=0.28em, width=0.52em, line cap=round]}] (0,0) -- (0.9em,0);\kern0.1em
+	\endgroup}
+\makeatother
+\pdfstringdefDisableCommands{\def\dirarrow{→}}
+
+% \useEnglish
+\useThai
+
+\graphicspath{ {images/} }
+
+% ข้อความที่ยังต้องตรวจหรือเติม พิมพ์เป็นสีแดง ลบออกก่อนส่งเล่มจริง
+\newcommand{\needcheck}[1]{\textcolor{red}{[ต้องตรวจอีกครั้ง: #1]}}
+
+%1. Your thesis title (THAI)
+\newcommand{\ThesisTitle}{ระบบจำแนกประเภทการโจมตีทางไซเบอร์จาก Network Logs \mbox{ด้วยปัญญาประดิษฐ์}}
+%2. Your thesis title (ENG)
+\newcommand{\ThesisTitleENG}{AI-Based Attack Type Classification System \mbox{from Network Logs}}
+%3. Author name
+\newcommand{\Author}{นายศิรเชษฐ์ โชติฐากุลอนันต์}
+%4. Author name ENG
+\newcommand{\AuthorENG}{Sirachet Chottakulanan}
+%5. Author student ID
+\newcommand{\SId}{66070191}
+%6. Author 2 name
+\newcommand{\AuthorTwo}{นายสุขุม ฤดีเมธากุล}
+%7. Author 2 name ENG
+\newcommand{\AuthorTwoENG}{Sukhum Rudeemaetakul}
+%8. Author 2 student ID
+\newcommand{\SIdTwo}{66070315}
+%9. Advisor name
+\newcommand{\Advisor}{ผศ.ดร. ประพันธ์ ปวรางกูร}
+%10. Advisor name ENG
+\newcommand{\AdvisorENG}{Asst.Prof.Dr. Praphan Pavarangkoon}
+%11. ภาคเรียนที่
+\newcommand{\Sem}{1}
+%12. ปีการศึกษา พ.ศ.
+\newcommand{\AcaY}{2569}
+%13. ปีการศึกษา ค.ศ.
+\newcommand{\AcaYAD}{2026}
+%14. วันส่งรายงาน
+\newcommand{\SubD}{10 พฤศจิกายน พ.ศ. 2569}
+%15. Copyright year (AD)
+\newcommand{\CopyrightYAD}{2026}
+
+\begin{document}
+    \frontmatter
+    \lhead{}\rhead{}\chead{}\lfoot{}\cfoot{\thepage}\rfoot{}
+    \makecover
+    \makeinnercover
+    \makeengcover
+    \makecopyrightcover
+    \makethesiscert
+    \makeprojectcert
+
+    % Setting margin for page numbering on frontmatter
+    \newgeometry{top=1in, bottom=1in, left=1.5in, right=1in, includefoot}
+    \setcounter{page}{1}
+    \pagenumbering{Roman}
+
+    \makeabstract{
+        ในยุคที่เครือข่ายคอมพิวเตอร์และอินเทอร์เน็ตเข้ามามีบทบาทสำคัญต่อการดำเนินชีวิตและภาคธุรกิจ ภัยคุกคามทางไซเบอร์ในรูปแบบการโจมตีเครือข่ายก็ทวีความรุนแรงและมีความหลากหลายมากขึ้นตามไปด้วย ระบบตรวจจับการบุกรุกและงานวิจัยด้านการเรียนรู้ของเครื่องจำนวนมากมุ่งเน้นการตรวจจับแบบ Benign/Attack หรือการแจ้งเตือนเหตุการณ์ผิดปกติ ขณะที่การจำแนกประเภทการโจมตีอย่างละเอียดสามารถให้ข้อมูลเพิ่มเติมสำหรับการตอบสนองต่อเหตุการณ์ โครงงานนี้จึงพัฒนาระบบจำแนกประเภทการโจมตีทางไซเบอร์จากข้อมูล Network Flow ด้วยเทคนิคการเรียนรู้ของเครื่อง พร้อมทั้งอธิบายเหตุผลเบื้องหลังการตัดสินใจของโมเดลได้อย่างโปร่งใส โดยใช้ชุดข้อมูล CICIDS2017 จำนวน 2,497,980 แถว ครอบคลุม 9 กลุ่มประเภทการจราจร แบ่งชุดข้อมูลฝึกและทดสอบตามลำดับการจับข้อมูล (capture-order split) ในสัดส่วน 70/30 ภายในแต่ละคู่ของไฟล์การจับข้อมูลและคลาส เพื่อลดความเสี่ยงของการรั่วไหลของข้อมูล จากนั้นฝึกและเปรียบเทียบโมเดลการเรียนรู้ของเครื่องแบบดั้งเดิม 7 ชนิด ได้แก่ Logistic Regression, Random Forest, XGBoost, LightGBM, CatBoost, Multi-Layer Perceptron และ Stacking Ensemble โดย 6 ชนิดแรกปรับไฮเปอร์พารามิเตอร์ภายใต้งบประมาณการค้นหาเท่ากัน ส่วน Stacking ไม่ได้ปรับ ประเมินผลทั้งด้านการจำแนก การตรวจจับการโจมตี ผลกระทบเชิงปฏิบัติการ และประสิทธิภาพเชิงคำนวณ ร่วมกับเทคนิค SHAP (SHapley Additive exPlanations) เพื่ออธิบายผลการทำนายของโมเดล และพัฒนาเป็นเว็บแดชบอร์ดด้วย FastAPI และ Next.js สำหรับนำเสนอผลลัพธ์ ผลภายในชุดข้อมูลพบว่าโมเดล CatBoost ให้ผลลัพธ์ดีที่สุดในภาพรวม ด้วยค่า Macro F1-score เฉลี่ยครบทั้ง 9 คลาสประมาณ 0.887 และมีอัตราการแจ้งเตือนผิดพลาด (False Positive Rate) ต่ำกว่า 0.01 อย่างไรก็ตาม การทดลองเสริมที่วัดการส่งผ่านข้ามชุดข้อมูลแบบสองทิศทางระหว่าง CICIDS2017 และ CSE-CIC-IDS2018 บนโครงร่างคลาสร่วม 7 คลาส ให้ภาพที่ขัดแย้งกัน กล่าวคือ ค่า Macro F1-score สูงสุดลดลงเหลือเพียง 0.34 และ 0.44 ในสองทิศทาง เทียบกับ 0.86--0.88 ภายในชุดข้อมูลเดียวกัน และสองชุดข้อมูลแยกออกจากกันได้เกือบสมบูรณ์จากคุณลักษณะโฟลว์ (AUC ไม่ต่ำกว่า 0.999) ผลนี้ชี้ว่าประสิทธิภาพที่สูงภายในชุดข้อมูลเดียวไม่ได้รับประกันว่าแบบจำลองจะให้ประสิทธิภาพใกล้เคียงกันในสภาพแวดล้อมการจับข้อมูลที่ต่างออกไป ระบบที่พัฒนาขึ้นจึงเหมาะเป็นเครื่องมือสนับสนุนการตัดสินใจในสภาพแวดล้อมที่ใกล้เคียงกับข้อมูลฝึก และควรประเมินซ้ำด้วยข้อมูลของเครือข่ายปลายทางก่อนนำไปใช้
+    }
+
+    \makeabstracteng{
+        The rapid expansion of networked systems has been accompanied by an increasing volume and diversity of cyber attacks. Many machine-learning-based intrusion detection studies focus primarily on binary benign-versus-attack detection, while fine-grained attack classification can provide additional information for incident response. This project develops a machine learning-based system to classify network-flow records into specific cyber attack categories, complemented by explainable-AI techniques that show the rationale behind each prediction. The system is built on the CICIDS2017 dataset, comprising 2,497,980 flow records across nine traffic classes. To reduce data-leakage risk, the pipeline uses a capture-order 70/30 train-test split within each (capture file, class) group and trains and compares seven classical machine learning models: Logistic Regression, Random Forest, XGBoost, LightGBM, CatBoost, Multi-Layer Perceptron, and a Stacking ensemble. The first six models are tuned under an equal search budget; Stacking is not tuned. Models are evaluated on classification performance, attack detection, operational impact, and computational cost. SHAP (SHapley Additive exPlanations) is used for model interpretability, and an interactive web dashboard is developed using FastAPI and Next.js. On this dataset, CatBoost achieves the best overall performance, with a macro F1-score of approximately 0.887 and a false-positive rate below 0.01. A supplementary bidirectional cross-dataset experiment between CICIDS2017 and CSE-CIC-IDS2018, using a shared seven-class schema, shows a sharp contrast: the best macro F1-scores fall to 0.34 and 0.44 in the two directions, compared with 0.86–0.88 within a dataset. The two datasets are also almost perfectly separable using flow features alone (AUC ≥ 0.999). These results indicate that strong within-dataset performance does not guarantee comparable performance in a different capture environment. The system is therefore suited to decision support in environments similar to its training data and should be re-evaluated on target-network data before use.
+    }
+
+    \makeack
+
+    \newpage
+    \addcontentsline{toc}{chapter}{\contentsname}
+    \tableofcontents
+
+    \newpage
+    \addcontentsline{toc}{chapter}{\listtablename}
+    \listoftables
+
+    \newpage
+    \addcontentsline{toc}{chapter}{\listfigurename}
+    \listoffigures
+
+    % Reset frontmatter page numbering margin, back to original margin from class file
+    \restoregeometry
+
+    \mainmatter
+    \lhead{}\rhead{\thepage}\chead{}\lfoot{}\cfoot{}\rfoot{}
+
+    \include{chapter1}
+    \include{chapter2}
+    \include{chapter3}
+    \include{chapter4}
+    \include{chapter5}
+
+    \clearpage
+
+    \def\inbib{1}
+    \addcontentsline{toc}{chapter}{\bibname}
+    \bibliographystyle{IEEEtran-kmitl}
+    \makeatletter
+    \EveryShipout{
+        \ifdim\pagetotal>\pagegoal
+            \if\inbib1
+                \aftergroup\@cont@heading
+            \else
+            \fi
+        \fi
+    }
+    \makeatother
+
+    \bibliography{reference}
+    \def\inbib{0}
+
+    \startappendix
+    \include{appendix}
+    \include{appendix-main-confusion}
+
+    \makeauthorbio
+
+\end{document}
